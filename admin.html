@@ -133,6 +133,7 @@
     .btn-reject { flex: 1; min-width: 90px; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .btn-edit-act { flex: 1; min-width: 90px; background: #3b82f6; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .btn-proofs-act { width: 100%; background: #1e293b; border: 1px solid #334155; color: #38bdf8; padding: 7px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+    .btn-members-manage { width: 100%; background: #064e3b; border: 1px solid #059669; color: #34d399; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
     .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
     .map-badge { padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 10px; font-weight: 700; }
@@ -282,7 +283,7 @@
       max-height: 88vh;
       overflow-y: auto;
     }
-    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
     .form-group input, .form-group select, .form-group textarea {
@@ -306,6 +307,66 @@
       font-size: 13px;
       margin-top: 10px;
       cursor: pointer;
+    }
+
+    /* MEMBER CARD STYLING INSIDE MODAL */
+    .member-manage-card {
+      background: #131b28;
+      border: 1px solid #233148;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .member-info-col {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow: hidden;
+    }
+    .member-name-row {
+      font-size: 12px;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .member-uid-text {
+      font-size: 11px;
+      color: #38bdf8;
+      font-family: monospace;
+      font-weight: 700;
+    }
+    .member-phone-text {
+      font-size: 10.5px;
+      color: #34d399;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-kick-player {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      transition: 0.2s;
+    }
+    .btn-kick-player:hover {
+      background: #ef4444;
+      color: #fff;
     }
 
     .bottom-bar {
@@ -514,6 +575,23 @@
     </div>
   </div>
 
+  <!-- Manage Match Members & Kick Modal (Name, UID, Phone, Kick Option) -->
+  <div class="modal-overlay" id="manageMembersModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span style="color:#34d399;"><i class="fa-solid fa-users-gear"></i> Joined Players & Kick Control</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('manageMembersModal')"></i>
+      </div>
+      <div style="font-size:11px; color:#94a3b8; margin-bottom:12px;" id="manageMembersSubTitle">
+        Players details for winning prize & room management
+      </div>
+
+      <div id="manageMembersContainer" style="display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto;"></div>
+
+      <button onclick="closeModal('manageMembersModal')" style="width:100%; background:transparent; border:none; color:#94a3b8; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
+    </div>
+  </div>
+
   <!-- Create Match Modal -->
   <div class="modal-overlay" id="matchModal">
     <div class="modal-sheet">
@@ -544,6 +622,10 @@
           <option value="NexTerra">NexTerra (Sci-Fi)</option>
           <option value="Clash Squad Arena">Clash Squad Arena</option>
         </select>
+      </div>
+      <div class="form-group">
+        <label><i class="fa-solid fa-image" style="color:#10b981;"></i> Gaming DP / Cover Image URL (Optional)</label>
+        <input type="text" id="newCoverImage" placeholder="https://... (Leave empty for default)">
       </div>
       <div class="form-group">
         <label><i class="fa-solid fa-scroll" style="color:#38bdf8;"></i> Tournament Rules</label>
@@ -580,6 +662,10 @@
       <div class="form-group">
         <label>Match Title</label>
         <input type="text" id="editTitle">
+      </div>
+      <div class="form-group">
+        <label>Gaming DP / Cover Image URL</label>
+        <input type="text" id="editCoverImage" placeholder="Image URL">
       </div>
       <div class="form-group">
         <label>Time Table / Scheduled Timing</label>
@@ -677,6 +763,7 @@
 
   <script>
     let activePlayerUid = null;
+    let currentlyViewingMatchId = null;
 
     setInterval(() => {
       const now = new Date();
@@ -789,15 +876,96 @@
             <strong>Sitting / Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
             <strong>Room ID:</strong> ${m.roomId || 'Not set'} | <strong>Pass:</strong> ${m.roomPass || 'Not set'}
           </div>
-          <div class="req-btn-row">
+          
+          <button class="btn-members-manage" onclick="openManageMembersModal('${m.id}')">
+            <i class="fa-solid fa-users"></i> Joined Players & Kick (${approvedCount})
+          </button>
+
+          <div class="req-btn-row" style="margin-top:6px;">
             <button class="btn-approve" style="background:#334155; color:#fff;" onclick="setSpecificRoom('${m.id}')"><i class="fa-solid fa-key"></i> Room Pass</button>
-            <button class="btn-edit-act" onclick="openEditMatchModal('${m.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit Match</button>
+            <button class="btn-edit-act" onclick="openEditMatchModal('${m.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
             <button class="btn-reject" onclick="deleteMatch('${m.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
           </div>
           <button class="btn-proofs-act" onclick="viewMatchProofs('${m.id}')"><i class="fa-solid fa-receipt"></i> View Paid Screenshots (${approvedCount})</button>
         `;
         matchesContainer.appendChild(item);
       });
+    }
+
+    /* ==========================================================
+       MANAGE JOINED PLAYERS: VIEW NAME, UID, PHONE & KICK
+       ========================================================== */
+    function openManageMembersModal(matchId) {
+      currentlyViewingMatchId = matchId;
+      renderManageMembersList();
+      document.getElementById('manageMembersModal').classList.add('active');
+    }
+
+    function renderManageMembersList() {
+      if (!currentlyViewingMatchId) return;
+
+      const tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === currentlyViewingMatchId);
+      if (!match) return;
+
+      const container = document.getElementById('manageMembersContainer');
+      const approvedPlayers = (match.players || []).filter(p => p.status === 'approved');
+
+      document.getElementById('manageMembersSubTitle').innerHTML = `
+        Match: <b style="color:#fff;">${match.title}</b> | Joined: <b style="color:#10b981;">${approvedPlayers.length}/${match.totalSlots} Slots</b>
+      `;
+
+      container.innerHTML = "";
+
+      if (approvedPlayers.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:25px; color:#64748b; font-size:12px; background:#0b111a; border-radius:12px;">
+            <i class="fa-solid fa-user-slash" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+            Is match me abhi koi confirmed player nahi hai.
+          </div>`;
+        return;
+      }
+
+      approvedPlayers.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'member-manage-card';
+
+        const cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
+        const waLink = cleanPhone ? `https://wa.me/92${cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone}` : '#';
+
+        item.innerHTML = `
+          <div class="member-info-col">
+            <div class="member-name-row">
+              <span style="color:#f59e0b; font-size:11px;">#${idx + 1}</span>
+              <span>${p.name}</span>
+            </div>
+            <div class="member-uid-text">
+              <i class="fa-solid fa-id-card" style="font-size:9.5px; margin-right:2px;"></i> UID: ${p.uid}
+            </div>
+            <div class="member-phone-text">
+              <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp: ${p.phone || 'N/A'}
+              ${cleanPhone ? `<a href="${waLink}" target="_blank" style="color:#38bdf8; text-decoration:none; margin-left:6px; font-size:9.5px;">[Chat]</a>` : ''}
+            </div>
+          </div>
+          <button class="btn-kick-player" onclick="kickPlayerFromMatch('${match.id}', '${p.uid}')">
+            <i class="fa-solid fa-user-xmark"></i> Kick
+          </button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function kickPlayerFromMatch(matchId, uid) {
+      if (!confirm(`Kya aap is player (UID: ${uid}) ko match se kick (nikalna) chahte hain?`)) return;
+
+      let tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      match.players = (match.players || []).filter(p => p.uid !== uid);
+      saveTournaments(tournaments);
+      renderManageMembersList();
+      alert("✅ Player ko kamyabi se match se nikal diya gaya hai!");
     }
 
     /* Edit Match & Timetable Functions */
@@ -808,6 +976,7 @@
 
       document.getElementById('editMatchId').value = match.id;
       document.getElementById('editTitle').value = match.title || "";
+      document.getElementById('editCoverImage').value = match.coverImage || "";
       document.getElementById('editTime').value = match.time || "";
       document.getElementById('editSlots').value = match.totalSlots || 12;
       document.getElementById('editFee').value = match.fee || 0;
@@ -824,6 +993,7 @@
       if (!match) return;
 
       match.title = document.getElementById('editTitle').value.trim();
+      match.coverImage = document.getElementById('editCoverImage').value.trim();
       match.time = document.getElementById('editTime').value.trim();
       match.totalSlots = Number(document.getElementById('editSlots').value) || match.totalSlots;
       match.fee = Number(document.getElementById('editFee').value) || match.fee;
@@ -944,7 +1114,7 @@
       const stream = document.getElementById('chatBodyStream');
       const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
 
-      const playerMessages = supportMsgs.filter(m => (m.uid === activePlayerUid || m.contact.includes(activePlayerUid) || m.name === activePlayerUid));
+      const playerMessages = supportMsgs.filter(m => (m.uid === activePlayerUid || (m.contact && m.contact.includes(activePlayerUid)) || m.name === activePlayerUid));
       playerMessages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
       stream.innerHTML = '';
@@ -975,7 +1145,7 @@
       if (!reply) return;
 
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const msgObj = supportMsgs.slice().reverse().find(m => (m.uid === activePlayerUid || m.contact.includes(activePlayerUid) || m.name === activePlayerUid));
+      const msgObj = supportMsgs.slice().reverse().find(m => (m.uid === activePlayerUid || (m.contact && m.contact.includes(activePlayerUid)) || m.name === activePlayerUid));
       
       if (msgObj) {
         msgObj.adminReply = reply;
@@ -1149,6 +1319,7 @@
       const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
       const mode = document.getElementById('newMode').value;
       const map = document.getElementById('newMap').value;
+      const coverImage = document.getElementById('newCoverImage').value.trim();
       const rules = document.getElementById('newRules').value.trim() || 'Standard Rules';
       const time = document.getElementById('newTime').value.trim() || 'TONIGHT';
       const fee = Number(document.getElementById('newFee').value) || 50;
@@ -1160,6 +1331,7 @@
         id: 'm_' + Date.now(),
         title: `${title} (${mode})`,
         map: map,
+        coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
         rules: rules,
         time,
         fee,
