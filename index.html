@@ -3,353 +3,381 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani.ff - Free Fire Esports Arena</title>
+  <title>Multani.ff - Arena Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --ff-orange: #ff4625;
-      --ff-yellow: #ffd000;
-      --ff-cyan: #00f0ff;
-      --card-bg: #10141f;
+      --bg-dark: #022013;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #08482c 0%, #032316 45%, #01130a 100%);
+      --mint-primary: #00e676;
+      --mint-accent: #2de28d;
+      --mint-glass: rgba(0, 230, 118, 0.15);
+      --card-white: #ffffff;
+      --text-dark: #0a291b;
+      --text-muted: #64748b;
+      --gold: #ffb703;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: #05070a; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
-    
+    body { background: #010d07; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
+
     .app-viewport {
       width: 100%;
       max-width: 440px;
-      background: radial-gradient(circle at 50% 0%, #1a1028 0%, #080a0f 65%);
+      background: var(--bg-gradient);
       min-height: 100vh;
-      padding-bottom: 90px;
+      padding-bottom: 96px;
       position: relative;
-      border-left: 1px solid #1a2333;
-      border-right: 1px solid #1a2333;
-      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      border-left: 1px solid rgba(0, 230, 118, 0.2);
+      border-right: 1px solid rgba(0, 230, 118, 0.2);
+      box-shadow: 0 0 50px rgba(0,0,0,0.9);
+      overflow-x: hidden;
     }
 
-    .gaming-nav {
+    /* Top Bar */
+    .top-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 14px 18px;
-      background: rgba(10, 14, 22, 0.85);
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(2, 32, 19, 0.9);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
       z-index: 100;
-      border-bottom: 1px solid rgba(255, 70, 37, 0.2);
     }
-    .logo-container { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 17px; }
-    .logo-badge {
-      background: linear-gradient(135deg, #ff4625, #ffd000);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-transform: uppercase;
-      font-style: italic;
-    }
-    .profile-pill {
-      background: rgba(0, 240, 255, 0.08);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--ff-cyan);
+    .profile-avatar-badge {
       display: flex;
       align-items: center;
       gap: 6px;
+      background: rgba(0, 230, 118, 0.2);
+      border: 1px solid var(--mint-accent);
+      padding: 4px 10px 4px 5px;
+      border-radius: 20px;
       cursor: pointer;
     }
-
-    .hero-box { padding: 14px 16px; }
-    .hero-card {
-      background: linear-gradient(145deg, #1b122c 0%, #111728 50%, #0d121c 100%);
-      border-radius: 22px;
-      padding: 18px 16px;
-      border: 1px solid rgba(255, 208, 0, 0.2);
-      position: relative;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-    .ff-tag {
-      position: absolute;
-      top: 12px;
-      left: 14px;
-      background: linear-gradient(90deg, #ff4625, #ef4444);
-      color: #fff;
-      font-size: 9px;
-      font-weight: 900;
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-    .hero-profile {
-      width: 58px;
-      height: 58px;
+    .avatar-circle {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #161f30, #0a0d14);
-      border: 2px solid var(--ff-yellow);
-      margin: 6px auto 10px;
+      background: linear-gradient(135deg, var(--mint-primary), #004d40);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
-      color: var(--ff-yellow);
-      box-shadow: 0 0 16px rgba(255, 208, 0, 0.35);
-    }
-    .hero-name { font-size: 17px; font-weight: 900; text-align: center; color: #fff; }
-    .hero-clan { color: #f59e0b; font-size: 12px; font-weight: 700; text-align: center; margin-top: 2px; }
-    .payment-chip {
-      margin: 12px auto 0;
-      display: table;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      color: #94a3b8;
-      border: 1px dashed #10b981;
-    }
-    .payment-chip strong { color: #10b981; }
-
-    .filter-section { padding: 4px 16px 12px; }
-    .filter-label { font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
-    .map-scroll-track { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-    .map-scroll-track::-webkit-scrollbar { display: none; }
-    .map-pill {
-      background: #111726;
-      border: 1px solid #1e2a40;
-      color: #cbd5e1;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 7px 14px;
-      border-radius: 12px;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .map-pill.active {
-      background: linear-gradient(135deg, #ff4625, #ff7e40);
-      color: #fff;
-      border-color: #ff4625;
-      box-shadow: 0 4px 12px rgba(255, 70, 37, 0.35);
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 16px 10px;
       font-size: 13px;
-      font-weight: 800;
-      color: #cbd5e1;
+      font-weight: 900;
+      color: #fff;
     }
+    .badge-name { font-size: 11px; font-weight: 800; color: #fff; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .matches-list { padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
-    .esports-card {
-      background: #0e131d;
-      border: 1px solid #1c2638;
-      border-radius: 18px;
-      padding: 14px;
+    .nav-tabs { display: flex; gap: 14px; font-size: 15px; font-weight: 800; }
+    .nav-tab-item { color: rgba(255,255,255,0.6); cursor: pointer; position: relative; }
+    .nav-tab-item.active { color: #fff; }
+    .nav-tab-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 3px;
+      background: var(--mint-primary);
+      border-radius: 2px;
+    }
+    .top-search-btn { font-size: 17px; color: var(--mint-primary); cursor: pointer; }
+
+    /* Top Hero Card (Image Banner Style) */
+    .hero-banner-container { padding: 12px 16px; }
+    .hero-glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 14px;
+      padding: 12px 14px;
       position: relative;
-    }
-    .card-meta {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      color: var(--text-dark);
     }
-    .match-title { font-size: 14px; font-weight: 800; color: #fff; }
-    .badge-time {
-      background: rgba(255, 208, 0, 0.12);
-      color: var(--ff-yellow);
-      border: 1px solid rgba(255, 208, 0, 0.3);
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 8px;
-    }
-
-    .tags-container { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-    .tag-map {
-      background: rgba(0, 240, 255, 0.1);
-      color: var(--ff-cyan);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-    }
-    .tag-rules {
-      background: rgba(255, 70, 37, 0.1);
-      color: #ff7e67;
-      border: 1px solid rgba(255, 70, 37, 0.25);
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 6px;
-    }
-
-    .stat-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
-    .stat-block {
-      background: #090c12;
-      border: 1px solid #161e2b;
-      border-radius: 10px;
-      padding: 8px 10px;
-    }
-    .stat-block span { font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; display: block; }
-    .stat-block strong { font-size: 14px; font-weight: 800; color: #fff; }
-    .stat-block strong.gold { color: var(--ff-yellow); }
-    .stat-block strong.cyan { color: var(--ff-cyan); }
-
-    .slots-box { margin-bottom: 12px; }
-    .slots-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
-    .slots-bar { width: 100%; height: 7px; background: #07090e; border-radius: 10px; overflow: hidden; border: 1px solid #1e2637; }
-    .slots-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ff4625, #ffd000);
-      border-radius: 10px;
-      width: 0%;
-      transition: width 0.4s ease;
-    }
-
-    .room-alert-box {
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
-      border: 1px solid #00f0ff;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 12px;
-    }
-    .room-header { font-size: 11px; font-weight: 800; color: var(--ff-cyan); margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .room-info-row { font-size: 12px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; }
-
-    .btn-fire-action {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 12px;
+    .mine-ribbon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 900;
+      padding: 3px 12px;
+      border-bottom-right-radius: 8px;
+      border-top-left-radius: 14px;
       letter-spacing: 0.5px;
-      border: none;
-      cursor: pointer;
-      text-transform: uppercase;
+    }
+    .hero-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #022013;
+      border: 2px solid var(--mint-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      color: var(--mint-primary);
+      font-size: 20px;
+      flex-shrink: 0;
     }
-    .btn-fire-join {
-      background: linear-gradient(90deg, #ff4625 0%, #ff7300 100%);
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(255, 70, 37, 0.4);
-    }
-    .btn-fire-pending {
-      background: #1c1810;
-      color: #ffd000;
-      border: 1px solid rgba(255, 208, 0, 0.4);
-      cursor: default;
-    }
-    .btn-fire-approved {
-      background: #091a18;
-      color: #10b981;
-      border: 1px solid #10b981;
-      cursor: default;
-    }
-    .btn-fire-full {
-      background: #141720;
-      color: #475569;
-      border: 1px solid #1e2637;
-      cursor: not-allowed;
+    .hero-details { flex: 1; margin-top: 4px; }
+    .hero-title-row { display: flex; align-items: center; justify-content: space-between; font-weight: 900; font-size: 13px; }
+    .hero-subtitle { font-size: 11px; color: #475569; margin-top: 2px; }
+    .easypaisa-tag {
+      display: inline-block;
+      margin-top: 5px;
+      background: #e8f5e9;
+      color: #1b5e20;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid #a5d6a7;
     }
 
-    .bottom-nav {
+    /* Mint Pill Filter Track */
+    .filter-track {
+      margin: 4px 16px 14px;
+      background: rgba(0, 48, 25, 0.6);
+      padding: 4px;
+      border-radius: 26px;
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+    .filter-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+    .filter-item.active {
+      background: linear-gradient(135deg, var(--mint-primary), #00b0ff);
+      color: #012817;
+      font-weight: 900;
+      box-shadow: 0 3px 10px rgba(0, 230, 118, 0.4);
+    }
+
+    /* 2-Column Grid (From Screenshot) */
+    .grid-container {
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .tournament-grid-card {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .tournament-grid-card:active { transform: scale(0.98); }
+    .card-thumb-wrap {
+      position: relative;
+      width: 100%;
+      height: 125px;
+      background: #0d1e15;
+    }
+    .card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+    }
+    .card-live-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-size: 9px;
+      font-weight: 800;
+      color: #00f0ff;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-thumb-text {
+      position: absolute;
+      bottom: 6px;
+      left: 8px;
+      right: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .card-body {
+      padding: 9px 8px;
+      background: #ffffff;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card-room-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-room-desc {
+      font-size: 10px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-footer-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed #e2e8f0;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .fee-badge { color: #059669; }
+    .prize-badge { color: #d97706; }
+
+    /* Bottom Navigation Bar (4-item round styled) */
+    .bottom-bar {
       position: fixed;
       bottom: 0;
       width: 100%;
       max-width: 440px;
-      height: 64px;
-      background: rgba(8, 11, 17, 0.95);
+      height: 70px;
+      background: rgba(1, 22, 12, 0.95);
       backdrop-filter: blur(15px);
-      border-top: 1px solid #192336;
+      border-top: 1px solid rgba(0, 230, 118, 0.25);
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 100;
     }
-    .nav-link {
+    .bot-item {
       background: transparent;
       border: none;
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 700;
+      color: #94a3b8;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       cursor: pointer;
       position: relative;
     }
-    .nav-link.active { color: var(--ff-cyan); }
-    .nav-link i { font-size: 16px; }
-
-    .nav-badge-dot {
+    .bot-item.active { color: var(--mint-primary); }
+    .bot-icon-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .bot-item.active .bot-icon-circle {
+      background: linear-gradient(135deg, var(--mint-primary), #00796b);
+      color: #fff;
+      border-color: var(--mint-accent);
+      box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+    }
+    .bot-item span { font-size: 10px; font-weight: 800; }
+    .bot-badge-bubble {
       position: absolute;
       top: -2px;
-      right: 10px;
-      background: #10b981;
-      color: #000;
+      right: -2px;
+      background: #ef4444;
+      color: #fff;
       font-size: 9px;
       font-weight: 900;
-      padding: 1px 5px;
-      border-radius: 10px;
-      border: 1px solid #000;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #012213;
     }
 
+    /* Modals */
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(8px);
       z-index: 999;
       justify-content: center;
       align-items: center;
       padding: 16px;
     }
     .modal-dialog {
-      background: #0f1420;
-      border: 1px solid #233148;
+      background: #071f14;
+      border: 1px solid rgba(0, 230, 118, 0.3);
       width: 100%;
-      max-width: 390px;
+      max-width: 380px;
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
       max-height: 90vh;
       overflow-y: auto;
     }
-    .modal-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; }
+    .modal-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; }
     .form-ctrl { margin-bottom: 12px; }
-    .form-ctrl label { font-size: 11px; font-weight: 600; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-ctrl input, .form-ctrl textarea {
+    .form-ctrl label { font-size: 11px; font-weight: 700; color: #a7f3d0; display: block; margin-bottom: 4px; }
+    .form-ctrl input {
       width: 100%;
-      background: #080b11;
-      border: 1px solid #1b2537;
+      background: #02110a;
+      border: 1px solid rgba(0, 230, 118, 0.2);
       border-radius: 10px;
       padding: 10px 12px;
       color: #fff;
       font-size: 13px;
       outline: none;
     }
-    .form-ctrl input:focus, .form-ctrl textarea:focus { border-color: var(--ff-cyan); }
-    
-    .btn-modal-action {
+    .form-ctrl input:focus { border-color: var(--mint-primary); }
+    .btn-green-action {
       width: 100%;
-      background: linear-gradient(90deg, #ff4625, #ff7300);
+      background: linear-gradient(135deg, var(--mint-primary), #00b0ff);
       border: none;
-      color: #fff;
+      color: #012817;
       padding: 12px;
       border-radius: 10px;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
       margin-top: 6px;
     }
@@ -363,77 +391,64 @@
       font-size: 11px;
       margin-top: 4px;
     }
-    .preview-box { width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; border: 1px dashed #334155; margin-top: 8px; display: none; }
+    .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
 
-    /* REAL CHAT BOX UI (Top-to-Bottom Flow) */
+    /* Support Chat */
     .chat-history-box {
-      background: #070a10;
-      border: 1px solid #1b2537;
+      background: #02110a;
+      border: 1px solid rgba(0, 230, 118, 0.2);
       border-radius: 14px;
       padding: 12px;
-      height: 270px;
+      height: 260px;
       overflow-y: auto;
       margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      scroll-behavior: smooth;
     }
     .chat-bubble-user {
-      background: linear-gradient(135deg, #1e293b, #172033);
-      border: 1px solid #29384e;
+      background: #113622;
+      border: 1px solid rgba(0, 230, 118, 0.3);
       border-radius: 14px 14px 2px 14px;
       padding: 8px 12px;
       align-self: flex-end;
       max-width: 82%;
       font-size: 12px;
-      color: #f1f5f9;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      color: #fff;
     }
     .chat-bubble-admin {
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid #10b981;
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid var(--mint-primary);
       border-radius: 14px 14px 14px 2px;
       padding: 8px 12px;
       align-self: flex-start;
       max-width: 82%;
       font-size: 12px;
       color: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
-    .bubble-tag { font-size: 10px; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
-    .bubble-time { font-size: 9px; color: #94a3b8; margin-top: 4px; text-align: right; display: block; }
-
-    /* Bottom Input Row like WhatsApp */
-    .chat-input-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 4px;
-    }
+    .chat-input-row { display: flex; gap: 8px; align-items: center; }
     .chat-input-row input {
       flex: 1;
-      background: #080b11;
-      border: 1px solid #1b2537;
+      background: #02110a;
+      border: 1px solid rgba(0, 230, 118, 0.2);
       border-radius: 20px;
-      padding: 10px 16px;
+      padding: 9px 14px;
       color: #fff;
       font-size: 12px;
       outline: none;
     }
     .chat-send-btn {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #ff4625, #ff7300);
+      background: var(--mint-primary);
       border: none;
-      color: #fff;
-      font-size: 14px;
+      color: #012817;
+      font-size: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      flex-shrink: 0;
     }
   </style>
 </head>
@@ -441,87 +456,88 @@
 
   <div class="app-viewport">
     
-    <div class="gaming-nav">
-      <div class="logo-container">
-        <i class="fa-solid fa-fire-flame-curved" style="color:var(--ff-orange);"></i>
-        <span class="logo-badge">Multani.ff</span>
+    <!-- Top Bar with Image Style Tabs -->
+    <div class="top-header">
+      <div class="profile-avatar-badge" onclick="openLoginModal()">
+        <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
+        <span class="badge-name" id="navUserBadge">LOGIN</span>
       </div>
-      <div class="profile-pill" onclick="openLoginModal()">
-        <i class="fa-solid fa-id-badge"></i>
-        <span id="navUserBadge">LOGIN UID</span>
+
+      <div class="nav-tabs">
+        <span class="nav-tab-item">Explore</span>
+        <span class="nav-tab-item">Hot</span>
+        <span class="nav-tab-item active">My</span>
+      </div>
+
+      <div class="top-search-btn" onclick="openLoginModal()">
+        <i class="fa-solid fa-magnifying-glass"></i>
       </div>
     </div>
 
-    <div class="hero-box">
-      <div class="hero-card">
-        <div class="ff-tag"><i class="fa-solid fa-crown"></i> ESPORTS ARENA</div>
-        <div class="hero-profile"><i class="fa-solid fa-crosshairs"></i></div>
-        <div class="hero-name">☆Mr 💫 Nadeem.ff</div>
-        <div class="hero-clan">꧁Multani.ff Official Tournaments꧂</div>
-        <div class="payment-chip">
-          EasyPaisa: <strong>03186815926</strong> (Nadeem)
+    <!-- Top White Room/Owner Banner (Screenshot style) -->
+    <div class="hero-banner-container">
+      <div class="hero-glass-card">
+        <div class="mine-ribbon">Mine</div>
+        <div class="hero-avatar"><i class="fa-solid fa-crown"></i></div>
+        <div class="hero-details">
+          <div class="hero-title-row">
+            <span><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Multani Official</span>
+            <span style="font-size: 10px; color:#00b0ff;"><i class="fa-solid fa-signal"></i> LIVE</span>
+          </div>
+          <div class="hero-subtitle">💖 Prince & Princess Esports Arena 🔥</div>
+          <div class="easypaisa-tag">EasyPaisa: 03186815926 (Nadeem)</div>
         </div>
       </div>
     </div>
 
-    <div class="filter-section">
-      <div class="filter-label"><i class="fa-solid fa-map-location-dot" style="color:var(--ff-cyan); margin-right:4px;"></i> Select Game Map</div>
-      <div class="map-scroll-track" id="mapTrack">
-        <div class="map-pill active" onclick="setMapFilter('All', this)"><i class="fa-solid fa-globe"></i> All Maps</div>
-        <div class="map-pill" onclick="setMapFilter('Bermuda', this)"><i class="fa-solid fa-mountain"></i> Bermuda</div>
-        <div class="map-pill" onclick="setMapFilter('Purgatory', this)"><i class="fa-solid fa-volcano"></i> Purgatory</div>
-        <div class="map-pill" onclick="setMapFilter('Kalahari', this)"><i class="fa-solid fa-sun"></i> Kalahari</div>
-        <div class="map-pill" onclick="setMapFilter('Alpine', this)"><i class="fa-solid fa-snowflake"></i> Alpine</div>
-        <div class="map-pill" onclick="setMapFilter('Clash Squad', this)"><i class="fa-solid fa-skull"></i> Clash Squad</div>
-      </div>
+    <!-- Mint Pill Filter Segment -->
+    <div class="filter-track">
+      <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
+      <div class="filter-item" onclick="setMapFilter('Bermuda', this)">Bermuda</div>
+      <div class="filter-item" onclick="setMapFilter('Purgatory', this)">Purgatory</div>
+      <div class="filter-item" onclick="setMapFilter('Clash Squad', this)">CS Battle</div>
     </div>
 
-    <div class="section-head">
-      <span><i class="fa-solid fa-bolt" style="color:var(--ff-yellow); margin-right:6px;"></i>AVAILABLE TOURNAMENTS</span>
-      <span style="font-size: 11px; color:var(--ff-cyan);" id="matchCounter">0 Matches</span>
-    </div>
+    <!-- 2-Column Vertical Match Cards (Screenshot Layout) -->
+    <div class="grid-container" id="matchesContainer"></div>
 
-    <div class="matches-list" id="matchesContainer"></div>
+    <!-- Bottom Navigation Bar (Events, Battle, Chat, Social) -->
+    <div class="bottom-bar">
+      <button class="bot-item" onclick="openEventsAlert()">
+        <div class="bot-icon-circle">
+          <i class="fa-solid fa-gift" style="color:#ff4625;"></i>
+        </div>
+        <span class="bot-badge-bubble">6</span>
+        <span>Events</span>
+      </button>
 
-    <div class="bottom-nav">
-      <button class="nav-link active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <i class="fa-solid fa-gamepad"></i>
-        <span>Tournaments</span>
+      <button class="bot-item active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="bot-icon-circle">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <span>Battle</span>
       </button>
-      <button class="nav-link" onclick="openLoginModal()">
-        <i class="fa-solid fa-user-gear"></i>
-        <span>Player ID</span>
+
+      <button class="bot-item" onclick="openSupportModal()">
+        <div class="bot-icon-circle">
+          <i class="fa-solid fa-comments" style="color:var(--mint-primary);"></i>
+        </div>
+        <span class="bot-badge-bubble" id="supportNotifyDot" style="display:none;">1</span>
+        <span>Chat</span>
       </button>
-      <button class="nav-link" onclick="openSupportModal()">
-        <span class="nav-badge-dot" id="supportNotifyDot" style="display:none;">1</span>
-        <i class="fa-solid fa-headset" style="color:#25d366;"></i>
-        <span>Support</span>
+
+      <button class="bot-item" onclick="openLoginModal()">
+        <div class="bot-icon-circle">
+          <i class="fa-solid fa-users" style="color:#ffd000;"></i>
+        </div>
+        <span class="bot-badge-bubble">1</span>
+        <span>Profile</span>
       </button>
     </div>
 
   </div>
 
-  <!-- Real-Style Support / Chat Modal -->
-  <div class="modal-backdrop" id="supportModal">
-    <div class="modal-dialog">
-      <div class="modal-title">
-        <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Help with Owner</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('supportModal')"></i>
-      </div>
-      
-      <!-- Real-Time Chat Stream (Oldest Top, Newest Bottom) -->
-      <div class="chat-history-box" id="playerChatHistory"></div>
-
-      <!-- Quick Message Type & Send Row -->
-      <div class="chat-input-row">
-        <input type="text" id="suppMsg" placeholder="Type your message here..." onkeypress="handleChatEnter(event)">
-        <button class="chat-send-btn" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-      </div>
-      <button class="btn-modal-close" onclick="closeModal('supportModal')">Close Chat</button>
-    </div>
-  </div>
-
-  <!-- Player Login Modal -->
+  <!-- Player Profile Modal -->
   <div class="modal-backdrop" id="loginModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -537,54 +553,124 @@
         <input type="number" id="logUid" placeholder="e.g. 3239454397">
       </div>
       <div class="form-ctrl">
-        <label>WhatsApp / Phone Number</label>
+        <label>WhatsApp Number</label>
         <input type="text" id="logPhone" placeholder="03XXXXXXXXX">
       </div>
-      <button class="btn-modal-action" onclick="saveLogin()">Save & Confirm</button>
-      <button class="btn-modal-close" onclick="closeModal('loginModal')">Close</button>
+      <button class="btn-green-action" onclick="saveLogin()">Save Profile</button>
+      <button class="btn-modal-close" onclick="closeModal('loginModal')">Cancel</button>
     </div>
   </div>
 
-  <!-- Payment Proof Modal -->
+  <!-- Tournament Action / Fee Screenshot Modal -->
   <div class="modal-backdrop" id="joinModal">
     <div class="modal-dialog">
       <div class="modal-title">
-        <span>📸 Submit Fee Screenshot</span>
+        <span id="modalMatchName">Join Battle</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
       </div>
-      <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">
-        EasyPaisa par fee bhej kar screenshot upload karein. Admin verify karega.
-      </p>
-      <div class="form-ctrl">
-        <label>EasyPaisa Number</label>
-        <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--ff-cyan); font-weight:bold;">
+      
+      <div id="roomCredsContainer" style="margin-bottom: 12px; display: none;"></div>
+
+      <div id="paymentFormBlock">
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 10px;">
+          EasyPaisa par fee send karke screenshot upload karein:
+        </p>
+        <div class="form-ctrl">
+          <label>EasyPaisa Account</label>
+          <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
+        </div>
+        <div class="form-ctrl">
+          <label>Payment Screenshot</label>
+          <input type="file" id="ssInput" accept="image/*" onchange="previewScreenshot(event)">
+          <img id="ssPreview" class="preview-box" alt="Payment Proof">
+        </div>
+        <button class="btn-green-action" id="submitProofBtn" onclick="submitJoinWithSS()">Submit Proof</button>
       </div>
-      <div class="form-ctrl">
-        <label>Choose Screenshot</label>
-        <input type="file" id="ssInput" accept="image/*" onchange="previewScreenshot(event)">
-        <img id="ssPreview" class="preview-box" alt="Payment Proof">
+
+      <button class="btn-modal-close" onclick="closeModal('joinModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Support Chat Modal -->
+  <div class="modal-backdrop" id="supportModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-comments" style="color:var(--mint-primary); margin-right:6px;"></i>Help / Owner Chat</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('supportModal')"></i>
       </div>
-      <button class="btn-modal-action" onclick="submitJoinWithSS()">Submit Proof</button>
-      <button class="btn-modal-close" onclick="closeModal('joinModal')">Cancel</button>
+      <div class="chat-history-box" id="playerChatHistory"></div>
+      <div class="chat-input-row">
+        <input type="text" id="suppMsg" placeholder="Type message..." onkeypress="handleChatEnter(event)">
+        <button class="chat-send-btn" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+      <button class="btn-modal-close" onclick="closeModal('supportModal')">Close</button>
     </div>
   </div>
 
   <script>
+    const matchThumbnails = [
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80"
+    ];
+
     const defaultMatches = [
       {
         id: "m_1",
-        title: "BERMUDA CLASH BATTLE #1",
+        title: "Khali Kamra 💥",
+        subtitle: "Alhamdulillah For Everything...",
         map: "Bermuda",
         rules: "Gun Attributes OFF | Solo Only",
-        time: "TONIGHT 09:30 PM",
+        time: "09:30 PM",
         fee: 50,
         prize: 400,
         totalSlots: 12,
         roomId: "",
         roomPass: "",
-        players: [
-          { name: "☆Mr Nadeem", uid: "3239454397", status: "approved" }
-        ]
+        players: [{ name: "☆Mr Nadeem", uid: "3239454397", status: "approved" }]
+      },
+      {
+        id: "m_2",
+        title: "BIG BOSS 👑",
+        subtitle: "Welcome to the room. All welcome",
+        map: "Purgatory",
+        rules: "Standard Rules | Squad",
+        time: "10:30 PM",
+        fee: 100,
+        prize: 800,
+        totalSlots: 48,
+        roomId: "",
+        roomPass: "",
+        players: []
+      },
+      {
+        id: "m_3",
+        title: "Europe Cafe 🖤",
+        subtitle: "Hey beautiful people You j...",
+        map: "Clash Squad",
+        rules: "Unlimited Ammo | CS 4v4",
+        time: "11:00 PM",
+        fee: 60,
+        prize: 500,
+        totalSlots: 8,
+        roomId: "",
+        roomPass: "",
+        players: []
+      },
+      {
+        id: "m_4",
+        title: "BLACK WOR 🔥",
+        subtitle: "We all members Rules apply",
+        map: "Bermuda",
+        rules: "Duo Battle | Bermuda",
+        time: "Tomorrow",
+        fee: 80,
+        prize: 600,
+        totalSlots: 24,
+        roomId: "",
+        roomPass: "",
+        players: []
       }
     ];
 
@@ -595,7 +681,7 @@
     let activeFilter = "All";
 
     function setMapFilter(mapName, btn) {
-      document.querySelectorAll('.map-pill').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.filter-item').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = mapName;
       renderMatches();
@@ -610,95 +696,52 @@
         ? tournaments 
         : tournaments.filter(m => (m.map || "Bermuda").toLowerCase().includes(activeFilter.toLowerCase()));
 
-      document.getElementById('matchCounter').innerText = `${filtered.length} Matches`;
-
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="text-align:center; padding: 40px 20px; color:#475569; font-size:13px; background:#0c1017; border-radius:16px; border:1px dashed #1e293b;">
-            <i class="fa-solid fa-gamepad" style="font-size:28px; color:var(--ff-orange); margin-bottom:8px; display:block;"></i>
-            Is Map par koi match nahi hai.
+          <div style="grid-column: span 2; text-align:center; padding: 40px 10px; color:#a7f3d0; font-size:12px;">
+            <i class="fa-solid fa-gamepad" style="font-size:24px; color:var(--mint-primary); margin-bottom:8px; display:block;"></i>
+            Is Map par koi match available nahi hai.
           </div>`;
         return;
       }
 
-      filtered.forEach(m => {
+      filtered.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === "approved");
         const joinedCount = approvedPlayers.length;
-        const percent = Math.min(100, Math.round((joinedCount / m.totalSlots) * 100));
+        const thumbUrl = matchThumbnails[idx % matchThumbnails.length];
 
+        let statusText = "Tap to Join";
         let userRecord = currentUser ? (m.players || []).find(p => p.uid === currentUser.uid) : null;
-        let actionBtnHtml = "";
-        let roomCredsHtml = "";
-
-        if (!userRecord) {
-          if (joinedCount >= m.totalSlots) {
-            actionBtnHtml = `<button class="btn-fire-action btn-fire-full"><i class="fa-solid fa-lock"></i> SLOTS FULL</button>`;
-          } else {
-            actionBtnHtml = `<button class="btn-fire-action btn-fire-join" onclick="initiateJoin('${m.id}')"><i class="fa-solid fa-bolt"></i> JOIN MATCH (Rs. ${m.fee})</button>`;
-          }
-        } else if (userRecord.status === "pending") {
-          actionBtnHtml = `<button class="btn-fire-action btn-fire-pending"><i class="fa-solid fa-hourglass-half"></i> APPROVAL PENDING BY ADMIN</button>`;
-        } else if (userRecord.status === "approved") {
-          actionBtnHtml = `<button class="btn-fire-action btn-fire-approved"><i class="fa-solid fa-circle-check"></i> SLOT CONFIRMED ✔</button>`;
-          
-          if (m.roomId && m.roomPass) {
-            roomCredsHtml = `
-              <div class="room-alert-box">
-                <div class="room-header">
-                  <span><i class="fa-solid fa-key"></i> CUSTOM ROOM UNLOCKED</span>
-                  <span style="color:#10b981;">READY</span>
-                </div>
-                <div class="room-info-row">
-                  <span>ROOM ID: <b style="color:var(--ff-cyan);">${m.roomId}</b></span>
-                  <span>PASS: <b style="color:var(--ff-yellow);">${m.roomPass}</b></span>
-                </div>
-              </div>
-            `;
-          } else {
-            roomCredsHtml = `
-              <div class="room-alert-box" style="border-color:#eab308; background:rgba(234,179,8,0.1);">
-                <div class="room-header" style="color:#eab308;">
-                  <span><i class="fa-solid fa-clock"></i> ROOM ID & PASS</span>
-                  <span>Awaiting Host</span>
-                </div>
-                <div style="font-size:11px; color:#cbd5e1;">Admin match start hone se pehle Room ID & Password yahan show karega.</div>
-              </div>
-            `;
-          }
+        if (userRecord) {
+          statusText = userRecord.status === "approved" ? "✔ CONFIRMED" : "⌛ PENDING";
+        } else if (joinedCount >= m.totalSlots) {
+          statusText = "FULL";
         }
 
         const card = document.createElement('div');
-        card.className = "esports-card";
+        card.className = "tournament-grid-card";
+        card.onclick = () => handleCardClick(m.id);
         card.innerHTML = `
-          <div class="card-meta">
-            <span class="match-title">${m.title}</span>
-            <span class="badge-time"><i class="fa-solid fa-clock"></i> ${m.time}</span>
+          <div class="card-thumb-wrap">
+            <img class="card-thumb" src="${thumbUrl}" alt="Match Image">
+            <div class="thumb-overlay"></div>
+            <div class="card-live-badge"><i class="fa-solid fa-signal"></i> ${joinedCount}/${m.totalSlots}</div>
+            <div class="card-thumb-text"><i class="fa-solid fa-clock"></i> ${m.time} | ${m.map}</div>
           </div>
-          <div class="tags-container">
-            <span class="tag-map"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
-            <span class="tag-rules"><i class="fa-solid fa-scroll"></i> ${m.rules || 'Standard Rules'}</span>
-          </div>
-          <div class="stat-matrix">
-            <div class="stat-block">
-              <span>Booyah Reward</span>
-              <strong class="gold">Rs. ${m.prize}</strong>
+          <div class="card-body">
+            <div class="card-room-title">
+              <span>🇵🇰</span>
+              <span>${m.title}</span>
             </div>
-            <div class="stat-block">
-              <span>Entry Fee</span>
-              <strong class="cyan">Rs. ${m.fee}</strong>
+            <div class="card-room-desc">${m.subtitle || m.rules}</div>
+            <div class="card-footer-info">
+              <span class="fee-badge">Fee: Rs.${m.fee}</span>
+              <span class="prize-badge">Win: Rs.${m.prize}</span>
             </div>
-          </div>
-          <div class="slots-box">
-            <div class="slots-header">
-              <span>Confirmed Fighters</span>
-              <span>${joinedCount} / ${m.totalSlots} Slots</span>
-            </div>
-            <div class="slots-bar">
-              <div class="slots-bar-fill" style="width: ${percent}%;"></div>
+            <div style="font-size:9px; font-weight:800; color:${userRecord?.status === 'approved' ? '#059669' : '#0284c7'}; margin-top:2px; text-align:right;">
+              ${statusText}
             </div>
           </div>
-          ${roomCredsHtml}
-          ${actionBtnHtml}
         `;
         container.appendChild(card);
       });
@@ -706,11 +749,61 @@
       checkAdminReplies();
     }
 
+    function handleCardClick(matchId) {
+      if (!currentUser) {
+        alert("Pehle apna Profile / UID set karein!");
+        openLoginModal();
+        return;
+      }
+
+      selectedMatchId = matchId;
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      document.getElementById('modalMatchName').innerText = match.title;
+      const credsBox = document.getElementById('roomCredsContainer');
+      const formBlock = document.getElementById('paymentFormBlock');
+      const userRecord = (match.players || []).find(p => p.uid === currentUser.uid);
+
+      if (userRecord && userRecord.status === "approved") {
+        formBlock.style.display = "none";
+        credsBox.style.display = "block";
+        if (match.roomId && match.roomPass) {
+          credsBox.innerHTML = `
+            <div style="background:#022a18; border:1px solid var(--mint-primary); border-radius:10px; padding:12px; font-size:12px;">
+              <b style="color:var(--mint-primary); display:block; margin-bottom:6px;">ROOM DETAILS UNLOCKED</b>
+              <div>Room ID: <b style="color:#00f0ff;">${match.roomId}</b></div>
+              <div>Password: <b style="color:#ffd000;">${match.roomPass}</b></div>
+            </div>`;
+        } else {
+          credsBox.innerHTML = `
+            <div style="background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000;">
+              Slot confirm hai! Match start hone se 15 minute pehle Admin yahan ID Pass dalega.
+            </div>`;
+        }
+      } else if (userRecord && userRecord.status === "pending") {
+        formBlock.style.display = "none";
+        credsBox.style.display = "block";
+        credsBox.innerHTML = `
+          <div style="background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000;">
+            Aapka proof pending hai. Admin check karte hi slot confirm kar dega.
+          </div>`;
+      } else {
+        credsBox.style.display = "none";
+        formBlock.style.display = "block";
+        uploadedScreenshotBase64 = "";
+        document.getElementById('ssInput').value = "";
+        document.getElementById('ssPreview').style.display = "none";
+      }
+
+      document.getElementById('joinModal').style.display = "flex";
+    }
+
     function updateNavProfile() {
       if (currentUser) {
         document.getElementById('navUserBadge').innerText = currentUser.name;
       } else {
-        document.getElementById('navUserBadge').innerText = "LOGIN UID";
+        document.getElementById('navUserBadge').innerText = "LOGIN";
       }
     }
 
@@ -721,115 +814,6 @@
         document.getElementById('logPhone').value = currentUser.phone || "";
       }
       document.getElementById('loginModal').style.display = "flex";
-    }
-
-    function checkAdminReplies() {
-      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const dot = document.getElementById('supportNotifyDot');
-      if (!currentUser) {
-        dot.style.display = 'none';
-        return;
-      }
-
-      const hasReply = supportMsgs.some(m => 
-        (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name) && m.adminReply
-      );
-
-      dot.style.display = hasReply ? 'block' : 'none';
-    }
-
-    function openSupportModal() {
-      renderPlayerChatHistory();
-      document.getElementById('supportModal').style.display = "flex";
-      setTimeout(() => {
-        const historyBox = document.getElementById('playerChatHistory');
-        historyBox.scrollTop = historyBox.scrollHeight;
-      }, 100);
-    }
-
-    /* REAL CHAT RENDER (Oldest at TOP -> Newest at BOTTOM) */
-    function renderPlayerChatHistory() {
-      const historyBox = document.getElementById('playerChatHistory');
-      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-
-      let userMsgs = [];
-      if (currentUser) {
-        userMsgs = supportMsgs.filter(m => 
-          (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name)
-        );
-      } else {
-        userMsgs = supportMsgs;
-      }
-
-      // Chronological sort: purane upar, naye neechay
-      userMsgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-
-      if (userMsgs.length === 0) {
-        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; margin:auto;">Welcome to Support! Type your message below to chat with Owner.</div>`;
-        return;
-      }
-
-      historyBox.innerHTML = "";
-      userMsgs.forEach(msg => {
-        // Player's message bubble (Right side)
-        const uBubble = document.createElement('div');
-        uBubble.className = "chat-bubble-user";
-        uBubble.innerHTML = `
-          <div>${msg.message}</div>
-          <span class="bubble-time">${msg.time || ''}</span>
-        `;
-        historyBox.appendChild(uBubble);
-
-        // Admin Reply bubble (Left side)
-        if (msg.adminReply) {
-          const aBubble = document.createElement('div');
-          aBubble.className = "chat-bubble-admin";
-          aBubble.innerHTML = `
-            <span class="bubble-tag"><i class="fa-solid fa-shield-halved"></i> Multani.ff Owner</span>
-            <div>${msg.adminReply}</div>
-          `;
-          historyBox.appendChild(aBubble);
-        }
-      });
-
-      // Auto scroll to bottom
-      historyBox.scrollTop = historyBox.scrollHeight;
-    }
-
-    function handleChatEnter(e) {
-      if (e.key === 'Enter') submitSupportMessage();
-    }
-
-    function submitSupportMessage() {
-      const messageInput = document.getElementById('suppMsg');
-      const message = messageInput.value.trim();
-
-      if (!message) return;
-
-      if (!currentUser) {
-        alert("Pehle Player ID login karein taake Owner ko pata chale koun baat kar raha hai!");
-        closeModal('supportModal');
-        openLoginModal();
-        return;
-      }
-
-      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      supportMsgs.push({
-        id: "msg_" + Date.now(),
-        timestamp: Date.now(),
-        uid: currentUser.uid,
-        name: currentUser.name,
-        contact: `UID: ${currentUser.uid} (${currentUser.phone})`,
-        message: message,
-        adminReply: "",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-
-      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
-      messageInput.value = "";
-      
-      renderPlayerChatHistory();
-      checkAdminReplies();
     }
 
     function saveLogin() {
@@ -853,20 +837,6 @@
       updateNavProfile();
       closeModal('loginModal');
       renderMatches();
-      alert(`Welcome ${name}! Profile set ho chuki hai.`);
-    }
-
-    function initiateJoin(matchId) {
-      if (!currentUser) {
-        alert("Tournament join karne ke liye pehle apna UID login karein!");
-        openLoginModal();
-        return;
-      }
-      selectedMatchId = matchId;
-      uploadedScreenshotBase64 = "";
-      document.getElementById('ssInput').value = "";
-      document.getElementById('ssPreview').style.display = "none";
-      document.getElementById('joinModal').style.display = "flex";
     }
 
     function previewScreenshot(e) {
@@ -885,7 +855,7 @@
 
     function submitJoinWithSS() {
       if (!uploadedScreenshotBase64) {
-        alert("Payment screenshot upload karna lazmi hai!");
+        alert("Payment screenshot select karein!");
         return;
       }
 
@@ -894,12 +864,6 @@
       if (!match) return;
 
       if (!match.players) match.players = [];
-
-      if (match.players.some(p => p.uid === currentUser.uid)) {
-        alert("Aap pehle hi is tournament ke liye apply kar chuke hain!");
-        closeModal('joinModal');
-        return;
-      }
 
       match.players.push({
         name: currentUser.name,
@@ -913,7 +877,99 @@
       localStorage.setItem('mff_tournaments', JSON.stringify(allTournaments));
       closeModal('joinModal');
       renderMatches();
-      alert("Aapka screenshot Admin Panel par submit ho gaya hai!");
+      alert("Screenshot submit ho gaya hai! Admin verify karega.");
+    }
+
+    function openSupportModal() {
+      renderPlayerChatHistory();
+      document.getElementById('supportModal').style.display = "flex";
+      setTimeout(() => {
+        const historyBox = document.getElementById('playerChatHistory');
+        historyBox.scrollTop = historyBox.scrollHeight;
+      }, 100);
+    }
+
+    function renderPlayerChatHistory() {
+      const historyBox = document.getElementById('playerChatHistory');
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+
+      let userMsgs = currentUser 
+        ? supportMsgs.filter(m => (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name))
+        : supportMsgs;
+
+      userMsgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+      if (userMsgs.length === 0) {
+        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; margin:auto;">Owner se chat karne ke liye message type karein.</div>`;
+        return;
+      }
+
+      historyBox.innerHTML = "";
+      userMsgs.forEach(msg => {
+        const uBubble = document.createElement('div');
+        uBubble.className = "chat-bubble-user";
+        uBubble.innerHTML = `<div>${msg.message}</div><span style="font-size:9px; color:#94a3b8; display:block; text-align:right;">${msg.time || ''}</span>`;
+        historyBox.appendChild(uBubble);
+
+        if (msg.adminReply) {
+          const aBubble = document.createElement('div');
+          aBubble.className = "chat-bubble-admin";
+          aBubble.innerHTML = `<div style="font-size:10px; font-weight:800; color:var(--mint-primary); margin-bottom:3px;"><i class="fa-solid fa-crown"></i> Owner Reply</div><div>${msg.adminReply}</div>`;
+          historyBox.appendChild(aBubble);
+        }
+      });
+      historyBox.scrollTop = historyBox.scrollHeight;
+    }
+
+    function handleChatEnter(e) {
+      if (e.key === 'Enter') submitSupportMessage();
+    }
+
+    function submitSupportMessage() {
+      const input = document.getElementById('suppMsg');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      if (!currentUser) {
+        alert("Pehle login karein!");
+        closeModal('supportModal');
+        openLoginModal();
+        return;
+      }
+
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      supportMsgs.push({
+        id: "msg_" + Date.now(),
+        timestamp: Date.now(),
+        uid: currentUser.uid,
+        name: currentUser.name,
+        contact: `UID: ${currentUser.uid} (${currentUser.phone})`,
+        message: msg,
+        adminReply: "",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
+      input.value = "";
+      renderPlayerChatHistory();
+      checkAdminReplies();
+    }
+
+    function checkAdminReplies() {
+      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      const dot = document.getElementById('supportNotifyDot');
+      if (!currentUser) {
+        dot.style.display = 'none';
+        return;
+      }
+      const hasReply = supportMsgs.some(m => 
+        (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name) && m.adminReply
+      );
+      dot.style.display = hasReply ? 'flex' : 'none';
+    }
+
+    function openEventsAlert() {
+      alert("Multani.ff Weekly Event: Top 3 Fraggers ko 1000 Diamonds ka Giveaway!");
     }
 
     function closeModal(id) {
