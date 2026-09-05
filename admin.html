@@ -135,13 +135,9 @@
     .btn-action:hover { opacity: 0.9; }
     .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
     .btn-approve { background: rgba(0, 230, 118, 0.2); border: 1px solid var(--mint); color: var(--mint); }
-    .btn-whatsapp { background: #25d366; color: #fff; border: none; }
 
     /* Badges */
-    .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
-    .badge-pending { background: rgba(255, 183, 3, 0.2); color: var(--gold); }
-    .badge-approved { background: rgba(0, 230, 118, 0.2); color: var(--mint); }
-
+    .badge-approved { background: rgba(0, 230, 118, 0.2); color: var(--mint); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
     .ss-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid var(--card-border); }
   </style>
 </head>
@@ -174,7 +170,7 @@
         <i class="fa-solid fa-comments"></i> Support Chats
       </button>
       <button class="tab-btn" onclick="switchAdminTab('giveaways', this)">
-        <i class="fa-solid fa-gift"></i> Events / Winners
+        <i class="fa-solid fa-trophy"></i> Events / Winners
       </button>
     </div>
 
@@ -345,7 +341,7 @@
           </td>
           <td>
             ${dep.status === 'approved' 
-              ? `<span class="badge badge-approved">Approved</span>` 
+              ? `<span class="badge-approved">Approved</span>` 
               : `<button class="btn-action btn-approve" onclick="approveDeposit(${idx})"><i class="fa-solid fa-check"></i> Approve</button>`
             }
           </td>
@@ -366,7 +362,6 @@
         user.walletBalance = (Number(user.walletBalance) || 0) + Number(item.requestedCoins);
         localStorage.setItem('mff_accounts_db', JSON.stringify(users));
 
-        // Sync if active user is logged in
         let curUser = JSON.parse(localStorage.getItem('mff_user'));
         if (curUser && curUser.email === user.email) {
           curUser.walletBalance = user.walletBalance;
@@ -420,6 +415,11 @@
       container.innerHTML = "";
       const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
 
+      if (matches.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:10px;">Koi tournament active nahi hai.</div>`;
+        return;
+      }
+
       matches.forEach((m, idx) => {
         const box = document.createElement('div');
         box.style = "background:#070d18; border:1px solid var(--card-border); border-radius:8px; padding:12px; margin-bottom:10px;";
@@ -469,13 +469,18 @@
       tbody.innerHTML = "";
       const users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
 
+      if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Koi registered user mojud nahi hai.</td></tr>`;
+        return;
+      }
+
       users.forEach((u, idx) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><b>${u.name}</b></td>
           <td style="color:var(--blue);">${u.uid}</td>
           <td>${u.email}</td>
-          <td>${u.phone}</td>
+          <td>${u.phone || 'N/A'}</td>
           <td style="color:var(--gold); font-weight:800;">Rs. ${u.walletBalance || 0}</td>
           <td>
             <button class="btn-action" onclick="modifyBalancePrompt(${idx})"><i class="fa-solid fa-pen-to-square"></i> Edit Bal</button>
@@ -541,11 +546,19 @@
       const match = document.getElementById('winMatch').value.trim();
       const prize = document.getElementById('winPrize').value.trim();
 
-      if (!name || !uid) return;
+      if (!name || !uid) {
+        alert("Winner Name aur UID lazmi bharein!");
+        return;
+      }
 
       let winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
       winners.unshift({ name, uid, match, prize });
       localStorage.setItem('mff_winners_list', JSON.stringify(winners));
+      
+      document.getElementById('winName').value = "";
+      document.getElementById('winUid').value = "";
+      document.getElementById('winMatch').value = "";
+      document.getElementById('winPrize').value = "";
       alert("🏆 Winner website par live add ho gaya!");
     }
 
