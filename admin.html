@@ -133,15 +133,27 @@
     .req-btn-row { display: flex; gap: 8px; margin-top: 8px; }
     .btn-approve { flex: 1; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-reply { flex: 1; background: #0284c7; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
     .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
     .map-badge { padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 10px; font-weight: 700; }
     .rules-badge { padding: 2px 8px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; font-size: 10px; font-weight: 600; }
 
+    /* Admin Reply Preview Box */
+    .admin-reply-box {
+      background: rgba(16, 185, 129, 0.08);
+      border-left: 3px solid #10b981;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    .admin-reply-title { font-weight: 700; color: #10b981; margin-bottom: 2px; }
+
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       backdrop-filter: blur(4px);
       display: none;
       justify-content: center;
@@ -162,7 +174,7 @@
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       background: #1e293b;
       border: 1px solid #334155;
@@ -309,7 +321,6 @@
         <span class="grid-label">Filter Map</span>
       </button>
 
-      <!-- HELP DESK WITH NOTIFICATION BADGE -->
       <button class="grid-btn" onclick="showSection('supportSection')">
         <span class="grid-badge" id="badgeSupport" style="display:none; background:#25d366;">0</span>
         <div class="grid-icon-circle"><i class="fa-solid fa-headset" style="color:#25d366;"></i></div>
@@ -322,7 +333,7 @@
       </button>
     </div>
 
-    <!-- Section 1: Support / Help with Owner Messages -->
+    <!-- Section 1: Support Messages with Reply Button -->
     <div class="content-area" id="supportSection" style="display:none;">
       <div class="section-title">
         <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Player Support Messages</span>
@@ -376,7 +387,7 @@
     <div class="modal-sheet">
       <div class="modal-title">
         <span>+ Naya Tournament Banayein</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal()"></i>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('matchModal')"></i>
       </div>
       <div class="form-group">
         <label>Tournament Title</label>
@@ -426,7 +437,28 @@
     </div>
   </div>
 
+  <!-- Admin Reply Modal -->
+  <div class="modal-overlay" id="replyModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span>💬 Reply to Player</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('replyModal')"></i>
+      </div>
+      <div class="form-group">
+        <label>Player Name</label>
+        <input type="text" id="replyToPlayer" readonly style="color:#38bdf8; background:#080d15;">
+      </div>
+      <div class="form-group">
+        <label>Admin Answer / Reply</label>
+        <textarea id="replyText" rows="4" placeholder="Apna jawab yahan likhein (e.g. Aapka payment verify ho gaya hai, Room pass sham 9:15 ko show hoga)..."></textarea>
+      </div>
+      <button class="btn-submit-modal" style="background:linear-gradient(90deg, #0284c7, #0369a1);" onclick="saveAdminReply()"><i class="fa-solid fa-paper-plane"></i> Send Reply</button>
+    </div>
+  </div>
+
   <script>
+    let activeReplyMsgId = null;
+
     setInterval(() => {
       const now = new Date();
       document.getElementById('liveClock').innerText = now.toLocaleTimeString();
@@ -469,7 +501,7 @@
       document.getElementById('badgePending').innerText = pendingList.length;
       document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
 
-      // Render Help Messages
+      // Render Support Messages with Reply Handling
       const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
       const supportContainer = document.getElementById('supportCardsList');
       const badgeSupport = document.getElementById('badgeSupport');
@@ -488,16 +520,34 @@
         supportMsgs.forEach((msg, idx) => {
           const mCard = document.createElement('div');
           mCard.className = 'req-card';
+
+          let replyHtml = "";
+          if (msg.adminReply) {
+            replyHtml = `
+              <div class="admin-reply-box">
+                <div class="admin-reply-title"><i class="fa-solid fa-reply"></i> Your Answer:</div>
+                <div>${msg.adminReply}</div>
+              </div>
+            `;
+          }
+
           mCard.innerHTML = `
             <div class="req-card-top" style="color:#25d366;">
               <span><i class="fa-solid fa-user"></i> ${msg.name}</span>
               <span style="font-size:10px; color:#94a3b8;">${msg.time}</span>
             </div>
             <div class="req-details">
-              <strong>Contact:</strong> ${msg.contact}<br>
-              <strong>Message:</strong> <div style="background:#090d14; padding:8px; border-radius:6px; margin-top:4px; color:#fff; border-left:2px solid #25d366;">${msg.message}</div>
+              <strong>Contact / UID:</strong> ${msg.contact}<br>
+              <strong>Message:</strong> 
+              <div style="background:#090d14; padding:8px; border-radius:6px; margin-top:4px; color:#fff; border-left:2px solid #25d366;">
+                ${msg.message}
+              </div>
+              ${replyHtml}
             </div>
-            <button class="btn-reject" style="width:100%;" onclick="deleteSupportMsg(${idx})"><i class="fa-solid fa-check"></i> Mark Resolved / Delete</button>
+            <div class="req-btn-row">
+              <button class="btn-reply" onclick="openReplyModal('${msg.id}', '${msg.name}', '${msg.adminReply || ''}')"><i class="fa-solid fa-reply"></i> Reply</button>
+              <button class="btn-reject" onclick="deleteSupportMsg(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+            </div>
           `;
           supportContainer.appendChild(mCard);
         });
@@ -579,6 +629,32 @@
       });
     }
 
+    function openReplyModal(msgId, playerName, existingReply) {
+      activeReplyMsgId = msgId;
+      document.getElementById('replyToPlayer').value = playerName;
+      document.getElementById('replyText').value = existingReply || "";
+      document.getElementById('replyModal').classList.add('active');
+    }
+
+    function saveAdminReply() {
+      const reply = document.getElementById('replyText').value.trim();
+      if (!reply) {
+        alert("Jawab likhna lazmi hai!");
+        return;
+      }
+
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      const msgObj = supportMsgs.find(m => m.id === activeReplyMsgId);
+      if (msgObj) {
+        msgObj.adminReply = reply;
+        localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
+        alert("Reply player ke account ke liye save ho gaya!");
+      }
+
+      closeModal('replyModal');
+      renderAll();
+    }
+
     function deleteSupportMsg(idx) {
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
       supportMsgs.splice(idx, 1);
@@ -594,7 +670,7 @@
     }
 
     function openModal() { document.getElementById('matchModal').classList.add('active'); }
-    function closeModal() { document.getElementById('matchModal').classList.remove('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
     function submitMatch() {
       const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
@@ -622,7 +698,7 @@
       });
 
       saveTournaments(tournaments);
-      closeModal();
+      closeModal('matchModal');
       alert('Tournament publish ho gaya!');
     }
 
