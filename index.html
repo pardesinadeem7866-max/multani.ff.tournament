@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multani.ff Gaming Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #06090e; color: #fff; display: flex; justify-content: center; min-height: 100vh; }
+    .app-container { width: 100%; max-width: 430px; background: #0d121d; min-height: 100vh; padding-bottom: 80px; position: relative; border-left: 1px solid #162032; border-right: 1px solid #162032; }
+    .top-navbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #090e17; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #162032; }
+    .brand-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; }
+    .brand-logo i, .brand-logo span { color: #10b981; }
+    .search-box { background: #151d2d; border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; flex-grow: 0.8; margin: 0 10px; }
+    .nav-btn { background: #151d2d; border: none; color: #94a3b8; padding: 8px 10px; border-radius: 8px; text-decoration: none; font-size: 13px; }
+    .nav-btn.admin { color: #f59e0b; }
+    .featured-section { padding: 14px 16px; }
+    .featured-card { background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(13, 18, 29, 0.95) 100%), #121927; border: 1px solid #1e293b; border-radius: 18px; padding: 18px 14px; position: relative; text-align: center; }
+    .featured-badge { position: absolute; top: 12px; left: 12px; background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+    .profile-circle { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #10b981; margin: 10px auto; display: flex; align-items: center; justify-content: center; background: #090e17; color: #10b981; font-size: 28px; }
+    .player-title { font-size: 18px; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 6px; }
+    .clan-title { color: #f59e0b; font-size: 14px; font-weight: 700; margin-top: 2px; }
+    .uid-tag { display: inline-block; margin-top: 6px; font-size: 12px; color: #94a3b8; background: #0a0f18; padding: 4px 12px; border-radius: 12px; }
+    .grid-section { padding: 0 16px; }
+    .match-card { background: #111a28; border: 1px solid #1f2c42; border-radius: 16px; padding: 16px; }
+    .match-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #1a2538; padding-bottom: 8px; }
+    .badge-live { background: rgba(239, 68, 68, 0.15); color: #ef4444; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    .match-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .detail-item { background: #0d1421; padding: 8px 12px; border-radius: 10px; }
+    .detail-item span { font-size: 11px; color: #64748b; display: block; }
+    .detail-item strong { font-size: 14px; color: #fff; }
+    .detail-item strong.prize { color: #10b981; }
+    .payment-box { background: #090e17; border-left: 3px solid #10b981; padding: 10px 12px; border-radius: 0 8px 8px 0; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .payment-box span { color: #f59e0b; font-weight: bold; }
+    .join-full-btn { width: 100%; background: #10b981; color: #06090e; text-align: center; padding: 12px; border-radius: 12px; font-weight: 800; text-decoration: none; display: block; }
+    .bottom-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: #090e17; border-top: 1px solid #162032; display: flex; justify-content: space-around; align-items: center; padding: 10px 0; z-index: 200; }
+    .tab-btn { background: none; border: none; color: #64748b; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; }
+    .tab-btn.active { color: #10b981; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div class="top-navbar">
+      <div class="brand-logo"><i class="fa-solid fa-gamepad"></i><span>Multani.ff</span></div>
+      <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><span>Search match...</span></div>
+      <div class="nav-actions">
+        <a href="admin.html" class="nav-btn admin"><i class="fa-solid fa-gear"></i></a>
+      </div>
+    </div>
+
+    <div class="featured-section">
+      <div class="featured-card">
+        <div class="featured-badge">🔥 MULTANI FEATURED</div>
+        <div class="profile-circle"><i class="fa-solid fa-crosshairs"></i></div>
+        <div class="player-title"><span>☆Mr 💫 Nadeem.ff</span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i></div>
+        <div class="clan-title">꧁Multani.ff꧂</div>
+        <div class="uid-tag">Free Fire UID: 3239454397</div>
+      </div>
+    </div>
+
+    <div class="grid-section">
+      <div class="match-card">
+        <div class="match-header">
+          <span style="font-weight:800;" id="viewTitle">MATCH #1 (SOLO BATTLE)</span>
+          <span class="badge-live" id="viewTime">DAILY 8:00 PM</span>
+        </div>
+        <div class="match-details">
+          <div class="detail-item"><span>ENTRY FEE</span><strong id="viewFee">Rs. 50</strong></div>
+          <div class="detail-item"><span>BOOYAH PRIZE</span><strong class="prize" id="viewPrize">Rs. 400</strong></div>
+          <div class="detail-item"><span>FORMAT</span><strong>Solo - 10 Players</strong></div>
+          <div class="detail-item"><span>GUN RULES</span><strong>Shotgun / All Guns</strong></div>
+        </div>
+        <div class="payment-box">
+          <div>
+            <div style="font-size:11px; color:#64748b;">EASYPAISA NUMBER</div>
+            <strong id="viewPhone">03186815926</strong>
+          </div>
+          <span id="viewBoxFee">Rs. 50</span>
+        </div>
+        <a href="#" id="joinBtn" class="join-full-btn" target="_blank">SUBMIT PAYMENT & JOIN</a>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <a href="index.html" class="tab-btn active"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="admin.html" class="tab-btn"><i class="fa-solid fa-user-shield"></i>Admin</a>
+    </div>
+  </div>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem('multani_data')) || {
+      title: "MATCH #1 (SOLO BATTLE)",
+      time: "DAILY 8:00 PM",
+      fee: "50",
+      prize: "400",
+      phone: "03186815926"
+    };
+
+    document.getElementById('viewTitle').innerText = data.title;
+    document.getElementById('viewTime').innerText = data.time;
+    document.getElementById('viewFee').innerText = "Rs. " + data.fee;
+    document.getElementById('viewBoxFee').innerText = "Rs. " + data.fee;
+    document.getElementById('viewPrize').innerText = "Rs. " + data.prize;
+    document.getElementById('viewPhone').innerText = data.phone;
+    document.getElementById('joinBtn').href = `https://wa.me/92${data.phone.substring(1)}?text=Maine%20${data.fee}%20Rs%20bhej%20diye%20hain`;
+  </script>
+</body>
+</html>
