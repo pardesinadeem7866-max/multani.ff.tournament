@@ -3,7 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani.ff - Arena Dashboard</title>
+
+  <!-- ==========================================================
+       GOOGLE SEO & SOCIAL SHARE TAGS
+       ========================================================== -->
+  <title>Multani.ff - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
+  <meta name="title" content="Multani.ff - Daily Free Fire Tournaments Pakistan | Win Real Cash">
+  <meta name="description" content="Pakistan ka No.1 Free Fire Esports Arena. Daily Solo, Duo, CS 4v4 Custom Rooms khele aur jeetein real cash prize. EasyPaisa & JazzCash instant payouts.">
+  <meta name="keywords" content="Free Fire Pakistan, Free Fire Tournament Pakistan, Multani ff, Paid Custom Room Free Fire, FF Solo Battle, Win Cash FF, EasyPaisa FF Tournament, Prince Princess Arena">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="Urdu, English">
+  <meta name="author" content="Multani Official">
+
+  <!-- WhatsApp / Social Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://66-max.github.io/">
+  <meta property="og:title" content="Multani.ff Esports Arena - Daily Custom Matches">
+  <meta property="og:description" content="Apni UID register karein aur jeetein Cash Prize. 100% fair play tournaments with EasyPaisa payouts!">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -40,38 +58,54 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(2, 32, 19, 0.9);
+      padding: 10px 14px;
+      background: rgba(2, 32, 19, 0.92);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
       z-index: 100;
     }
+    .top-left-group { display: flex; align-items: center; gap: 8px; }
     .profile-avatar-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(0, 230, 118, 0.2);
+      gap: 5px;
+      background: rgba(0, 230, 118, 0.15);
       border: 1px solid var(--mint-accent);
-      padding: 4px 10px 4px 5px;
+      padding: 4px 8px 4px 4px;
       border-radius: 20px;
       cursor: pointer;
     }
     .avatar-circle {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--mint-primary), #004d40);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       color: #fff;
     }
-    .badge-name { font-size: 11px; font-weight: 800; color: #fff; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge-name { font-size: 11px; font-weight: 800; color: #fff; max-width: 65px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .nav-tabs { display: flex; gap: 14px; font-size: 15px; font-weight: 800; }
+    /* Wallet Badge in Top Header */
+    .wallet-header-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 183, 3, 0.15);
+      border: 1px solid var(--gold);
+      padding: 4px 9px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .nav-tabs { display: flex; gap: 12px; font-size: 13px; font-weight: 800; }
     .nav-tab-item { color: rgba(255,255,255,0.6); cursor: pointer; position: relative; }
     .nav-tab-item.active { color: #fff; }
     .nav-tab-item.active::after {
@@ -85,7 +119,6 @@
       background: var(--mint-primary);
       border-radius: 2px;
     }
-    .top-search-btn { font-size: 17px; color: var(--mint-primary); cursor: pointer; }
 
     /* Top Hero Card */
     .hero-banner-container { padding: 12px 16px; }
@@ -139,6 +172,26 @@
       padding: 2px 8px;
       border-radius: 6px;
       border: 1px solid #a5d6a7;
+    }
+
+    /* Broadcast Banner */
+    .broadcast-toast {
+      display: none;
+      margin: 0 16px 10px;
+      background: linear-gradient(90deg, #10b981, #0284c7);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(0.99); }
     }
 
     /* Filter Track */
@@ -362,6 +415,22 @@
       cursor: pointer;
       margin-top: 6px;
     }
+    .btn-wallet-pay {
+      width: 100%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      color: #000;
+      padding: 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
     .btn-modal-close {
       width: 100%;
       background: transparent;
@@ -377,12 +446,7 @@
     /* ==========================================================
        FREE FIRE AUTHENTIC LOBBY ROOM STYLE
        ========================================================== */
-    .ff-lobby-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
+    .ff-lobby-container { display: flex; flex-direction: column; gap: 10px; }
     .ff-notice-strip {
       background: rgba(255, 183, 3, 0.08);
       border: 1px solid rgba(255, 183, 3, 0.4);
@@ -405,11 +469,7 @@
     }
 
     /* Left Card: Map & Room Specs */
-    .ff-left-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .ff-left-panel { display: flex; flex-direction: column; gap: 6px; }
     .ff-map-box {
       position: relative;
       width: 100%;
@@ -419,11 +479,7 @@
       border: 1px solid #333d52;
       background: #000;
     }
-    .ff-map-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .ff-map-img { width: 100%; height: 100%; object-fit: cover; }
     .ff-map-badge {
       position: absolute;
       bottom: 0;
@@ -454,7 +510,17 @@
       margin-top: 4px;
       font-size: 10px;
     }
-    .ff-creds-badge-box div { margin-bottom: 2px; }
+    .copy-btn-chip {
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-size: 8.5px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 4px;
+    }
 
     /* Right Panel: Player Slot Lists */
     .ff-right-panel {
@@ -475,6 +541,18 @@
       padding-bottom: 4px;
       border-bottom: 1px solid #252c3d;
     }
+    .team-slot-heading {
+      font-size: 9.5px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .team-heading-1 { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border-left: 3px solid #38bdf8; }
+    .team-heading-2 { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-left: 3px solid #ef4444; }
 
     .ff-slot-bar {
       background: var(--ff-slot-bg);
@@ -499,15 +577,8 @@
       text-align: center;
       flex-shrink: 0;
     }
-    .ff-slot-bar.occupied .ff-slot-num {
-      color: var(--gold);
-    }
-    .ff-player-details {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      overflow: hidden;
-    }
+    .ff-slot-bar.occupied .ff-slot-num { color: var(--gold); }
+    .ff-player-details { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
     .ff-player-name {
       font-size: 11px;
       font-weight: 800;
@@ -527,10 +598,30 @@
       align-items: center;
       gap: 3px;
     }
-    .ff-slot-empty {
-      font-size: 10px;
-      font-style: italic;
-      color: #475569;
+    .ff-slot-empty { font-size: 10px; font-style: italic; color: #475569; }
+
+    /* Winners View */
+    .winner-card {
+      background: linear-gradient(135deg, rgba(255, 183, 3, 0.15), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(255, 183, 3, 0.35);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .winner-badge-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
     }
 
     /* Event Card */
@@ -583,20 +674,33 @@
     
     <!-- Top Header -->
     <div class="top-header">
-      <div class="profile-avatar-badge" onclick="openLoginModal()">
-        <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
-        <span class="badge-name" id="navUserBadge">LOGIN</span>
+      <div class="top-left-group">
+        <div class="profile-avatar-badge" onclick="openLoginModal()">
+          <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
+          <span class="badge-name" id="navUserBadge">LOGIN</span>
+        </div>
+
+        <!-- Wallet / Coin Balance Chip -->
+        <div class="wallet-header-badge" onclick="openWalletModal()">
+          <i class="fa-solid fa-coins"></i>
+          <span>Rs. <b id="navWalletBal">0</b></span>
+        </div>
       </div>
 
       <div class="nav-tabs">
-        <span class="nav-tab-item">Explore</span>
-        <span class="nav-tab-item">Hot</span>
-        <span class="nav-tab-item active">My</span>
+        <span class="nav-tab-item active" id="tabMatchesBtn" onclick="switchMainTab('matches')">Matches</span>
+        <span class="nav-tab-item" id="tabWinnersBtn" onclick="switchMainTab('winners')">Winners</span>
       </div>
 
       <div class="top-search-btn" onclick="openLoginModal()">
         <i class="fa-solid fa-magnifying-glass"></i>
       </div>
+    </div>
+
+    <!-- Live Broadcast Pop-up Alert -->
+    <div class="broadcast-toast" id="broadcastToastBar">
+      <i class="fa-solid fa-bell"></i>
+      <span id="broadcastMsgText">🔔 Room ID & Pass is out! Join fast!</span>
     </div>
 
     <!-- Top Hero Card -->
@@ -615,16 +719,40 @@
       </div>
     </div>
 
-    <!-- Map Filter -->
-    <div class="filter-track">
-      <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
-      <div class="filter-item" onclick="setMapFilter('Bermuda', this)">Bermuda</div>
-      <div class="filter-item" onclick="setMapFilter('Purgatory', this)">Purgatory</div>
-      <div class="filter-item" onclick="setMapFilter('Clash Squad', this)">CS Battle</div>
+    <!-- Section 1: Matches Section -->
+    <div id="matchesMainView">
+      <!-- Map Filter -->
+      <div class="filter-track">
+        <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
+        <div class="filter-item" onclick="setMapFilter('Bermuda', this)">Bermuda</div>
+        <div class="filter-item" onclick="setMapFilter('Purgatory', this)">Purgatory</div>
+        <div class="filter-item" onclick="setMapFilter('Clash Squad', this)">CS Battle</div>
+      </div>
+
+      <!-- Matches Grid -->
+      <div class="grid-container" id="matchesContainer"></div>
     </div>
 
-    <!-- Matches Grid -->
-    <div class="grid-container" id="matchesContainer"></div>
+    <!-- Section 2: Winners / Hall of Fame Section -->
+    <div id="winnersMainView" style="display: none; padding: 0 16px 20px;">
+      <div style="font-size:13px; font-weight:900; color:var(--gold); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-trophy"></i> Hall of Fame (Recent Tournament Winners)
+      </div>
+      <div id="winnersListContainer"></div>
+    </div>
+
+    <!-- SEO Rich Information Footer -->
+    <div style="margin: 22px 16px 12px; padding: 14px; background: rgba(0, 230, 118, 0.05); border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 12px; font-size: 11px; color: #94a3b8; line-height: 1.6;">
+      <h3 style="color: var(--mint-primary); font-size: 12px; margin-bottom: 6px; font-weight: 800;">
+        🇵🇰 Multani.ff - Pakistan's Trusted Esports Tournament Arena
+      </h3>
+      <p>
+        Welcome to <b>Multani.ff Arena</b>. Hum provide karte hain rozana Free Fire Solo, Duo, aur CS Battle Royale tournaments. Sabhi players ke liye 100% Fair Play, Anti-Cheat monitoring aur instant EasyPaisa / JazzCash winning prize cash payouts.
+      </p>
+      <p style="margin-top: 6px; font-size: 10px; color: #64748b;">
+        <b>Popular:</b> Free Fire Custom Rooms, Bermuda Ranked Battles, CS 4v4 Tournaments, Daily Giveaways Pakistan.
+      </p>
+    </div>
 
     <!-- Bottom Nav -->
     <div class="bottom-bar">
@@ -634,7 +762,7 @@
         <span>Events</span>
       </button>
 
-      <button class="bot-item active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+      <button class="bot-item active" onclick="switchMainTab('matches')">
         <div class="bot-icon-circle"><i class="fa-solid fa-shield-halved"></i></div>
         <span>Battle</span>
       </button>
@@ -652,6 +780,39 @@
       </button>
     </div>
 
+  </div>
+
+  <!-- Wallet / Coin Deposit Modal -->
+  <div class="modal-backdrop" id="walletModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span style="color:var(--gold);"><i class="fa-solid fa-wallet"></i> My Wallet Balance</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('walletModal')"></i>
+      </div>
+      <div style="background:#02150d; border:1px solid rgba(0,230,118,0.3); border-radius:12px; padding:14px; text-align:center; margin-bottom:14px;">
+        <div style="font-size:11px; color:#94a3b8;">Available Balance</div>
+        <div style="font-size:26px; font-weight:900; color:#fff; margin-top:2px;">Rs. <span id="modalWalletBal" style="color:var(--gold);">0</span></div>
+      </div>
+
+      <p style="font-size:11px; color:#a7f3d0; margin-bottom:8px;">
+        Account me coins add karne ke liye EasyPaisa par payment bhej kar screenshot submit karein:
+      </p>
+      <div class="form-ctrl">
+        <label>EasyPaisa Account</label>
+        <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
+      </div>
+      <div class="form-ctrl">
+        <label>Deposit Amount (Rs)</label>
+        <input type="number" id="walletDepositAmount" placeholder="e.g. 550">
+      </div>
+      <div class="form-ctrl">
+        <label>Payment Screenshot</label>
+        <input type="file" id="walletSsInput" accept="image/*" onchange="previewWalletScreenshot(event)">
+        <img id="walletSsPreview" class="preview-box" alt="Deposit Proof">
+      </div>
+      <button class="btn-green-action" onclick="submitWalletDepositProof()">Submit Deposit Proof</button>
+      <button class="btn-modal-close" onclick="closeModal('walletModal')">Close</button>
+    </div>
   </div>
 
   <!-- Events Modal -->
@@ -673,6 +834,12 @@
         <span>🎮 Player Profile Setup</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('loginModal')"></i>
       </div>
+
+      <!-- Fair Play Warning Chip -->
+      <div id="profileWarningBox" style="display:none; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; padding:8px 10px; border-radius:8px; font-size:11px; margin-bottom:12px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> <b>Warning Issued:</b> Fair Play Alert on this UID!
+      </div>
+
       <div class="form-ctrl">
         <label>Game Nickname</label>
         <input type="text" id="logName" placeholder="e.g. MANDOOR_FF">
@@ -791,11 +958,11 @@
                 <span id="lobbyFeeVal" style="color:var(--mint-primary);">Rs. 0</span>
               </div>
               <div class="ff-room-spec-row">
-                <span>Prize:</span>
-                <span id="lobbyPrizeVal" style="color:var(--gold);">Rs. 0</span>
+                <span>Booyah (Win):</span>
+                <span id="lobbyPrizeVal" style="color:var(--gold); font-weight:800;">Rs. 0</span>
               </div>
 
-              <!-- Room Credentials Box -->
+              <!-- Room Credentials Box with 1-Click Copy Buttons -->
               <div class="ff-creds-badge-box" id="lobbyCredsBox"></div>
             </div>
 
@@ -821,6 +988,14 @@
 
       <!-- Payment / Join Form (Showed when NOT joined) -->
       <div id="paymentFormBlock" style="display: none;">
+        
+        <!-- Optional 1-Click Wallet Pay Button -->
+        <button class="btn-wallet-pay" id="btnPayWallet" onclick="payViaWalletAction()">
+          <i class="fa-solid fa-bolt"></i> Pay via Wallet Balance (1-Click)
+        </button>
+
+        <div style="text-align:center; font-size:10px; color:#64748b; margin:8px 0;">-- YA PHIR EASYPAISA SE JOIN KAREIN --</div>
+
         <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 10px;">
           EasyPaisa par entry fee bhej kar screenshot attach karein:
         </p>
@@ -883,13 +1058,13 @@
       {
         id: "m_2",
         title: "Friday MATCH ROOM",
-        subtitle: "Real id only",
+        subtitle: "Clash Squad 4v4",
         map: "Bermuda",
         rules: "Gun Attributes Off",
         time: "5.00 pm. Friday",
         fee: 50,
         prize: 500,
-        totalSlots: 12,
+        totalSlots: 8,
         coverImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
         roomId: "",
         roomPass: "",
@@ -900,7 +1075,28 @@
     let currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
     let selectedMatchId = null;
     let uploadedScreenshotBase64 = "";
+    let uploadedWalletProofBase64 = "";
     let activeFilter = "All";
+
+    function switchMainTab(tab) {
+      const matchView = document.getElementById('matchesMainView');
+      const winView = document.getElementById('winnersMainView');
+      const mBtn = document.getElementById('tabMatchesBtn');
+      const wBtn = document.getElementById('tabWinnersBtn');
+
+      if (tab === 'matches') {
+        matchView.style.display = 'block';
+        winView.style.display = 'none';
+        mBtn.classList.add('active');
+        wBtn.classList.remove('active');
+      } else {
+        matchView.style.display = 'none';
+        winView.style.display = 'block';
+        mBtn.classList.remove('active');
+        wBtn.classList.add('active');
+        renderWinners();
+      }
+    }
 
     function setMapFilter(mapName, btn) {
       document.querySelectorAll('.filter-item').forEach(p => p.classList.remove('active'));
@@ -932,6 +1128,8 @@
         return;
       }
 
+      let activeRoomReleased = false;
+
       filtered.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === "approved");
         const joinedCount = approvedPlayers.length;
@@ -941,6 +1139,9 @@
         let userRecord = currentUser ? (m.players || []).find(p => p.uid === currentUser.uid) : null;
         if (userRecord) {
           statusText = userRecord.status === "approved" ? "✔ CONFIRMED" : "⌛ PENDING";
+          if (userRecord.status === "approved" && m.roomId) {
+            activeRoomReleased = true;
+          }
         } else if (joinedCount >= m.totalSlots) {
           statusText = "FULL";
         }
@@ -963,7 +1164,7 @@
             <div class="card-room-desc">${m.subtitle || m.rules}</div>
             <div class="card-footer-info">
               <span class="fee-badge">Fee: Rs.${m.fee}</span>
-              <span class="prize-badge">Win: Rs.${m.prize}</span>
+              <span class="prize-badge">Booyah: Rs.${m.prize}</span>
             </div>
             <div style="font-size:9px; font-weight:800; color:${userRecord?.status === 'approved' ? '#059669' : '#0284c7'}; margin-top:2px; text-align:right;">
               ${statusText}
@@ -972,6 +1173,10 @@
         `;
         container.appendChild(card);
       });
+
+      // Show Broadcast Toast if user joined match has Room ID out
+      const toast = document.getElementById('broadcastToastBar');
+      toast.style.display = activeRoomReleased ? 'flex' : 'none';
 
       checkAdminReplies();
     }
@@ -1004,7 +1209,6 @@
       if (userRecord && userRecord.status === "approved") {
         joinedContainer.style.display = "block";
 
-        // Setup Left Panel with Gaming DP & Specs
         const fallbackDp = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80";
         document.getElementById('lobbyCoverImg').src = match.coverImage || fallbackDp;
         document.getElementById('lobbyMapBadge').innerText = (match.map || "BERMUDA").toUpperCase();
@@ -1013,13 +1217,19 @@
         document.getElementById('lobbyFeeVal').innerText = `Rs. ${match.fee}`;
         document.getElementById('lobbyPrizeVal').innerText = `Rs. ${match.prize}`;
 
-        // Credentials Box
+        // Credentials Box with 1-Click Copy
         const credsBox = document.getElementById('lobbyCredsBox');
         if (match.roomId && match.roomPass) {
           credsBox.innerHTML = `
-            <div style="color:var(--mint-primary); font-weight:800; font-size:9px;"><i class="fa-solid fa-key"></i> UNLOCKED</div>
-            <div>ID: <b style="color:#00f0ff;">${match.roomId}</b></div>
-            <div>PW: <b style="color:#ffd000;">${match.roomPass}</b></div>
+            <div style="color:var(--mint-primary); font-weight:800; font-size:9px; margin-bottom:4px;"><i class="fa-solid fa-key"></i> ROOM DETAILS UNLOCKED</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+              <span>ID: <b style="color:#00f0ff;">${match.roomId}</b></span>
+              <button class="copy-btn-chip" onclick="copyToClipboard('${match.roomId}', 'Room ID')"><i class="fa-solid fa-copy"></i> Copy</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span>PW: <b style="color:#ffd000;">${match.roomPass}</b></span>
+              <button class="copy-btn-chip" onclick="copyToClipboard('${match.roomPass}', 'Password')"><i class="fa-solid fa-copy"></i> Copy</button>
+            </div>
           `;
         } else {
           credsBox.innerHTML = `
@@ -1029,14 +1239,22 @@
           `;
         }
 
-        // Setup Right Panel Slots (Exact Free Fire Lobby slots)
+        // Auto Slot Assign / Categorization (Clash Squad 4v4 vs Solo)
         const totalSlots = match.totalSlots || 12;
         document.getElementById('lobbySlotsFraction').innerText = `${approvedPlayers.length}/${totalSlots}`;
         
         const slotsContainer = document.getElementById('ffSlotsContainer');
         slotsContainer.innerHTML = "";
 
+        const isCS = (match.subtitle || match.title || "").toLowerCase().includes("clash squad") || (match.subtitle || "").includes("4v4");
+
         for (let i = 0; i < totalSlots; i++) {
+          if (isCS && i === 0) {
+            slotsContainer.innerHTML += `<div class="team-slot-heading team-heading-1">Team 1 (Slots 1-4)</div>`;
+          } else if (isCS && i === 4) {
+            slotsContainer.innerHTML += `<div class="team-slot-heading team-heading-2">Team 2 (Slots 5-8)</div>`;
+          }
+
           const player = approvedPlayers[i];
           const slotRow = document.createElement('div');
           
@@ -1072,16 +1290,160 @@
         uploadedScreenshotBase64 = "";
         document.getElementById('ssInput').value = "";
         document.getElementById('ssPreview').style.display = "none";
+
+        // Wallet Pay Button dynamic text
+        const userBal = currentUser?.walletBalance || 0;
+        document.getElementById('btnPayWallet').innerText = `⚡ Pay via Wallet Balance (Rs. ${match.fee} | Bal: Rs. ${userBal})`;
       }
 
       document.getElementById('joinModal').style.display = "flex";
     }
 
+    /* 1-Click Clipboard Copy */
+    function copyToClipboard(text, label) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert(`✅ ${label} Copied: ${text}`);
+      }).catch(() => {
+        alert(`Copied: ${text}`);
+      });
+    }
+
+    /* Wallet System Functions */
+    function openWalletModal() {
+      if (!currentUser) {
+        alert("Pehle login karein!");
+        openLoginModal();
+        return;
+      }
+      const bal = currentUser.walletBalance || 0;
+      document.getElementById('modalWalletBal').innerText = bal;
+      document.getElementById('walletModal').style.display = 'flex';
+    }
+
+    function previewWalletScreenshot(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedWalletProofBase64 = evt.target.result;
+          const preview = document.getElementById('walletSsPreview');
+          preview.src = evt.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function submitWalletDepositProof() {
+      const amount = Number(document.getElementById('walletDepositAmount').value);
+      if (!amount || amount <= 0) {
+        alert("Sahi Deposit amount likhein!");
+        return;
+      }
+      if (!uploadedWalletProofBase64) {
+        alert("Payment screenshot attach karein!");
+        return;
+      }
+
+      let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+      deposits.push({
+        id: "dep_" + Date.now(),
+        uid: currentUser.uid,
+        name: currentUser.name,
+        phone: currentUser.phone,
+        requestedCoins: amount,
+        screenshot: uploadedWalletProofBase64,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "pending"
+      });
+
+      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
+      closeModal('walletModal');
+      document.getElementById('walletDepositAmount').value = "";
+      document.getElementById('walletSsInput').value = "";
+      document.getElementById('walletSsPreview').style.display = "none";
+      alert("✅ Deposit proof submit ho gaya! Admin verify karke coins aapke account me add kar dega.");
+    }
+
+    function payViaWalletAction() {
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+      const match = tournaments.find(m => m.id === selectedMatchId);
+      if (!match) return;
+
+      const userBal = Number(currentUser.walletBalance || 0);
+      const matchFee = Number(match.fee || 0);
+
+      if (userBal < matchFee) {
+        alert(`❌ Wallet balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}. Upar Wallet se deposit karein ya direct EasyPaisa proof submit karein.`);
+        return;
+      }
+
+      if (!confirm(`Kya aap Rs. ${matchFee} wallet balance se deduct karke slot confirm karna chahte hain?`)) return;
+
+      // Deduct balance
+      currentUser.walletBalance = userBal - matchFee;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      if (!match.players) match.players = [];
+      match.players.push({
+        name: currentUser.name,
+        uid: currentUser.uid,
+        phone: currentUser.phone,
+        screenshot: "WALLET_PAYMENT",
+        status: "approved", // Instantly approved
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+      closeModal('joinModal');
+      updateNavProfile();
+      renderMatches();
+      alert("🎉 Slot successfully confirm ho gaya! Room Lobby open kar sakte hain.");
+    }
+
+    /* Winners View */
+    function renderWinners() {
+      const winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [
+        { name: "MANDOOR_FF", uid: "3239454397", match: "Friday Match Room (CS)", prize: "Rs. 500", date: "Recent" },
+        { name: "Prince_Multani", uid: "1874920193", match: "Kalahari Solo Battle", prize: "Rs. 300", date: "Recent" }
+      ];
+
+      const container = document.getElementById('winnersListContainer');
+      container.innerHTML = "";
+
+      if (winners.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">Abhi koi winner announce nahi hua hai.</div>`;
+        return;
+      }
+
+      winners.forEach(w => {
+        const card = document.createElement('div');
+        card.className = "winner-card";
+        card.innerHTML = `
+          <div class="winner-badge-circle"><i class="fa-solid fa-crown"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:900; color:#fff;">${w.name}</div>
+            <div style="font-size:10px; color:#38bdf8; font-family:monospace;"><i class="fa-solid fa-id-badge"></i> UID: ${w.uid}</div>
+            <div style="font-size:10.5px; color:#cbd5e1; margin-top:2px;">${w.match}</div>
+            <div style="font-size:11px; font-weight:800; color:var(--gold); margin-top:3px;"><i class="fa-solid fa-award"></i> Won: ${w.prize}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
     function updateNavProfile() {
       if (currentUser) {
         document.getElementById('navUserBadge').innerText = currentUser.name;
+        document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
+        
+        // Fair Play Warning Check
+        const warnings = JSON.parse(localStorage.getItem('mff_warned_uids')) || [];
+        const warnBox = document.getElementById('profileWarningBox');
+        warnBox.style.display = warnings.includes(currentUser.uid) ? 'block' : 'none';
       } else {
         document.getElementById('navUserBadge').innerText = "LOGIN";
+        document.getElementById('navWalletBal').innerText = "0";
       }
     }
 
@@ -1091,6 +1453,7 @@
         document.getElementById('logUid').value = currentUser.uid || "";
         document.getElementById('logPhone').value = currentUser.phone || "";
       }
+      updateNavProfile();
       document.getElementById('loginModal').style.display = "flex";
     }
 
@@ -1104,7 +1467,12 @@
         return;
       }
 
-      currentUser = { name, uid, phone };
+      currentUser = { 
+        name, 
+        uid, 
+        phone, 
+        walletBalance: currentUser ? (currentUser.walletBalance || 0) : 0 
+      };
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
       updateNavProfile();
       closeModal('loginModal');
