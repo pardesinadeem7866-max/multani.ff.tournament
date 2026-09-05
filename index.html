@@ -4,25 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ==========================================================
-       GOOGLE SEO & SOCIAL SHARE TAGS
-       ========================================================== -->
   <title>Multani.ff - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
   <meta name="title" content="Multani.ff - Daily Free Fire Tournaments Pakistan | Win Real Cash">
-  <meta name="description" content="Pakistan ka No.1 Free Fire Esports Arena. Daily Solo, Duo, CS 4v4 Custom Rooms khele aur jeetein real cash prize. EasyPaisa & JazzCash instant payouts.">
-  <meta name="keywords" content="Free Fire Pakistan, Free Fire Tournament Pakistan, Multani ff, Paid Custom Room Free Fire, FF Solo Battle, Win Cash FF, EasyPaisa FF Tournament, Prince Princess Arena">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="Urdu, English">
-  <meta name="author" content="Multani Official">
-
-  <!-- WhatsApp / Social Preview -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://66-max.github.io/">
-  <meta property="og:title" content="Multani.ff Esports Arena - Daily Custom Matches">
-  <meta property="og:description" content="Apni UID register karein aur jeetein Cash Prize. 100% fair play tournaments with EasyPaisa payouts!">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80">
-
+  <meta name="description" content="Pakistan ka No.1 Free Fire Esports Arena. Daily Solo, Duo, CS 4v4 Custom Rooms khele aur jeetein real cash prize.">
+  <meta name="keywords" content="Free Fire Pakistan, Free Fire Tournament Pakistan, Multani ff, Paid Custom Room Free Fire">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- EmailJS Library for Real Gmail OTP -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function(){
+      // Apni EmailJS Public Key yahan enter karein (Optional, test mode bhi active hai)
+      emailjs.init("YOUR_PUBLIC_KEY");
+    })();
+  </script>
+
   <style>
     :root {
       --bg-dark: #022013;
@@ -90,7 +87,6 @@
     }
     .badge-name { font-size: 11px; font-weight: 800; color: #fff; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    /* Wallet Badge in Top Header */
     .wallet-header-badge {
       display: flex;
       align-items: center;
@@ -172,26 +168,6 @@
       padding: 2px 8px;
       border-radius: 6px;
       border: 1px solid #a5d6a7;
-    }
-
-    /* Broadcast Banner */
-    .broadcast-toast {
-      display: none;
-      margin: 0 16px 10px;
-      background: linear-gradient(90deg, #10b981, #0284c7);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.9; transform: scale(0.99); }
     }
 
     /* Filter Track */
@@ -444,9 +420,7 @@
     }
     .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
 
-    /* ==========================================================
-       FREE FIRE AUTHENTIC LOBBY ROOM STYLE
-       ========================================================== */
+    /* Free Fire Lobby Styles */
     .ff-lobby-container { display: flex; flex-direction: column; gap: 10px; }
     .ff-notice-strip {
       background: rgba(255, 183, 3, 0.08);
@@ -458,7 +432,6 @@
       line-height: 1.35;
     }
     .ff-notice-strip b { color: var(--gold); }
-
     .ff-lobby-grid {
       display: grid;
       grid-template-columns: 140px 1fr;
@@ -468,8 +441,6 @@
       border-radius: 8px;
       padding: 8px;
     }
-
-    /* Left Card: Map & Room Specs */
     .ff-left-panel { display: flex; flex-direction: column; gap: 6px; }
     .ff-map-box {
       position: relative;
@@ -502,7 +473,6 @@
       padding: 2px 0;
     }
     .ff-room-spec-row span:last-child { color: #fff; font-weight: 700; }
-    
     .ff-creds-badge-box {
       background: #0a1b14;
       border: 1px solid var(--mint-primary);
@@ -523,7 +493,6 @@
       margin-left: 4px;
     }
 
-    /* Right Panel: Player Slot Lists */
     .ff-right-panel {
       display: flex;
       flex-direction: column;
@@ -601,7 +570,6 @@
     }
     .ff-slot-empty { font-size: 10px; font-style: italic; color: #475569; }
 
-    /* Winners View */
     .winner-card {
       background: linear-gradient(135deg, rgba(255, 183, 3, 0.15), rgba(15, 23, 42, 0.8));
       border: 1px solid rgba(255, 183, 3, 0.35);
@@ -625,7 +593,6 @@
       flex-shrink: 0;
     }
 
-    /* Event Card */
     .event-card {
       background: linear-gradient(135deg, rgba(2, 38, 20, 0.95), rgba(7, 49, 28, 0.8));
       border: 1px solid rgba(0, 230, 118, 0.3);
@@ -643,7 +610,6 @@
     .event-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; margin-bottom: 8px; }
     .event-reward-tag { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); color: var(--mint-primary); font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
 
-    /* Rules inside Profile */
     .profile-rules-btn {
       background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(255, 183, 3, 0.15));
       border: 1px solid rgba(255, 183, 3, 0.4);
@@ -660,7 +626,6 @@
     .rule-item-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.15); border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
     .rule-bullet-num { background: rgba(0, 230, 118, 0.2); color: var(--mint-primary); width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* Support Chat */
     .chat-history-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 14px; padding: 12px; height: 260px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .chat-bubble-user { background: #113622; border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 14px 14px 2px 14px; padding: 8px 12px; align-self: flex-end; max-width: 82%; font-size: 12px; color: #fff; }
     .chat-bubble-admin { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); border-radius: 14px 14px 14px 2px; padding: 8px 12px; align-self: flex-start; max-width: 82%; font-size: 12px; color: #fff; }
@@ -676,13 +641,11 @@
     <!-- Top Header -->
     <div class="top-header">
       <div class="top-left-group">
-        <!-- Corner Profile Badge -->
         <div class="profile-avatar-badge" onclick="openProfileManageModal()">
           <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
           <span class="badge-name" id="navUserBadge">LOGIN</span>
         </div>
 
-        <!-- Wallet / Coin Balance Chip -->
         <div class="wallet-header-badge" onclick="openWalletModal()">
           <i class="fa-solid fa-coins"></i>
           <span>Rs. <b id="navWalletBal">0</b></span>
@@ -723,7 +686,6 @@
 
     <!-- Section 1: Matches Section -->
     <div id="matchesMainView">
-      <!-- Map Filter -->
       <div class="filter-track">
         <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
         <div class="filter-item" onclick="setMapFilter('Bermuda', this)">Bermuda</div>
@@ -731,7 +693,6 @@
         <div class="filter-item" onclick="setMapFilter('Clash Squad', this)">CS Battle</div>
       </div>
 
-      <!-- Matches Grid -->
       <div class="grid-container" id="matchesContainer"></div>
     </div>
 
@@ -750,9 +711,6 @@
       </h3>
       <p>
         Welcome to <b>Multani.ff Arena</b>. Hum provide karte hain rozana Free Fire Solo, Duo, aur CS Battle Royale tournaments. Sabhi players ke liye 100% Fair Play, Anti-Cheat monitoring aur instant EasyPaisa / JazzCash winning prize cash payouts.
-      </p>
-      <p style="margin-top: 6px; font-size: 10px; color: #64748b;">
-        <b>Popular:</b> Free Fire Custom Rooms, Bermuda Ranked Battles, CS 4v4 Tournaments, Daily Giveaways Pakistan.
       </p>
     </div>
 
@@ -785,7 +743,7 @@
   </div>
 
   <!-- ==========================================================
-       LOGIN & SIGN UP GATE MODAL (EMAIL + PASSWORD)
+       LOGIN & SIGN UP GATE MODAL (WITH GMAIL OTP CONFIRMATION)
        ========================================================== -->
   <div class="modal-backdrop" id="authGateModal">
     <div class="modal-dialog">
@@ -805,7 +763,7 @@
           <input type="password" id="loginPass" placeholder="Enter Password">
         </div>
         <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
-          <span style="font-size:11px; color:#38bdf8; cursor:pointer; font-weight:700;" onclick="switchAuthView('forgot')">Forgot Password?</span>
+          <span style="font-size:11px; color:#38bdf8; cursor:pointer; font-weight:700;" onclick="switchAuthView('forgotStep1')">Forgot Password?</span>
         </div>
         <button class="btn-green-action" onclick="handleUserLogin()">Login to Arena</button>
 
@@ -847,40 +805,59 @@
         </div>
       </div>
 
-      <!-- Screen 3: Forgot Password -->
-      <div id="authForgotBlock" style="display:none;">
+      <!-- Screen 3: Forgot Password (Step 1: Request OTP) -->
+      <div id="authForgotStep1Block" style="display:none;">
         <div class="modal-title">
-          <span style="color:#ffd000;"><i class="fa-solid fa-key"></i> Reset Password</span>
+          <span style="color:#ffd000;"><i class="fa-solid fa-envelope"></i> Verify Your Gmail</span>
           <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
         </div>
         <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">
-          Apna registered Gmail aur Free Fire UID likh kar apna password reset karein:
+          Apna registered Gmail likhein. Confirmation ke liye aapke Gmail par <b>6-digit verification code</b> bheja jayega:
         </p>
         <div class="form-ctrl">
           <label>Registered Gmail</label>
-          <input type="email" id="forgotEmail" placeholder="Registered Gmail">
+          <input type="email" id="forgotEmailInput" placeholder="Registered Gmail Address">
         </div>
-        <div class="form-ctrl">
-          <label>Registered Free Fire UID</label>
-          <input type="number" id="forgotUid" placeholder="Your Registered UID">
-        </div>
-        <div class="form-ctrl">
-          <label>New Password</label>
-          <input type="password" id="forgotNewPass" placeholder="Naya password likhein">
-        </div>
-        <button class="btn-green-action" onclick="handleResetPassword()">Set New Password</button>
+        <button class="btn-green-action" id="btnSendOtp" onclick="sendGmailOtpCode()">
+          <i class="fa-solid fa-paper-plane"></i> Send Verification Code
+        </button>
 
         <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
           Wapis Login par jayein: <b style="color:#38bdf8; cursor:pointer;" onclick="switchAuthView('login')">Login Screen</b>
         </div>
       </div>
 
+      <!-- Screen 4: Forgot Password (Step 2: Enter Code & New Password) -->
+      <div id="authForgotStep2Block" style="display:none;">
+        <div class="modal-title">
+          <span style="color:var(--mint-primary);"><i class="fa-solid fa-shield-check"></i> Enter Gmail Code</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <div style="background:#022013; border:1px solid var(--mint-primary); border-radius:8px; padding:8px 10px; font-size:11px; color:#a7f3d0; margin-bottom:10px;">
+          <i class="fa-solid fa-envelope-circle-check"></i> Code sent to: <b id="otpTargetGmailText" style="color:#fff;">--</b>
+        </div>
+
+        <div class="form-ctrl">
+          <label>6-Digit Confirmation Code</label>
+          <input type="number" id="otpCodeInput" placeholder="e.g. 849201" style="font-size:16px; letter-spacing:3px; text-align:center;">
+        </div>
+        <div class="form-ctrl">
+          <label>Set New Password</label>
+          <input type="password" id="otpNewPasswordInput" placeholder="Naya Password Enter Karein">
+        </div>
+        <button class="btn-green-action" onclick="verifyOtpAndChangePassword()">
+          <i class="fa-solid fa-check-double"></i> Verify & Reset Password
+        </button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Code nahi mila? <b style="color:#f59e0b; cursor:pointer;" onclick="switchAuthView('forgotStep1')">Resend Code</b>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- ==========================================================
-       PROFILE & CHANGE PASSWORD MODAL (AFTER LOGIN)
-       ========================================================== -->
+  <!-- Profile Modal -->
   <div class="modal-backdrop" id="profileModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -888,7 +865,6 @@
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('profileModal')"></i>
       </div>
 
-      <!-- Warning Alert if exists -->
       <div id="profileWarningBox" style="display:none; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; padding:8px 10px; border-radius:8px; font-size:11px; margin-bottom:12px;">
         <i class="fa-solid fa-triangle-exclamation"></i> <b>Warning Issued:</b> Fair Play Alert on this UID!
       </div>
@@ -900,7 +876,7 @@
         <div style="font-size:11px; color:#34d399; margin-top:2px;" id="profDispPhone">WhatsApp: --</div>
       </div>
 
-      <!-- Change Password Box -->
+      <!-- Change Password inside Profile -->
       <div style="background:#080d14; border:1px solid #233148; border-radius:10px; padding:12px; margin-bottom:12px;">
         <div style="font-size:11.5px; font-weight:800; color:var(--gold); margin-bottom:8px;">
           <i class="fa-solid fa-lock"></i> Change Password
@@ -935,7 +911,7 @@
     </div>
   </div>
 
-  <!-- Wallet / Coin Deposit Modal -->
+  <!-- Wallet Modal -->
   <div class="modal-backdrop" id="walletModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -948,7 +924,7 @@
       </div>
 
       <p style="font-size:11px; color:#a7f3d0; margin-bottom:8px;">
-        Account me coins add karne ke liye EasyPaisa par payment bhej kar screenshot submit karein:
+        EasyPaisa par payment bhej kar screenshot attach karein:
       </p>
       <div class="form-ctrl">
         <label>EasyPaisa Account</label>
@@ -987,7 +963,6 @@
         <span style="color:#ffb703;"><i class="fa-solid fa-shield-halved"></i> Fair Play Rules</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('rulesModal')"></i>
       </div>
-
       <div class="rule-item-box">
         <div class="rule-bullet-num">1</div>
         <div>
@@ -995,7 +970,6 @@
           <div style="font-size:10.5px; color:#94a3b8;">50 level se kam ID match se kick hogi aur fee refund nahi hogi.</div>
         </div>
       </div>
-
       <div class="rule-item-box">
         <div class="rule-bullet-num">2</div>
         <div>
@@ -1003,7 +977,6 @@
           <div style="font-size:10.5px; color:#94a3b8;">Auto-headshot, files, injectors use karne par prize cancel hoga.</div>
         </div>
       </div>
-
       <div class="rule-item-box">
         <div class="rule-bullet-num">3</div>
         <div>
@@ -1011,19 +984,6 @@
           <div style="font-size:10.5px; color:#94a3b8;">PC/Emulator aur Panel bilkul ban hain. Pure mobile touch allowed hai.</div>
         </div>
       </div>
-
-      <div class="rule-item-box">
-        <div class="rule-bullet-num">4</div>
-        <div>
-          <div style="font-size:12px; font-weight:800; color:#fff;">No Glitches & Teaming</div>
-          <div style="font-size:10.5px; color:#94a3b8;">Map bugs, gloo glitch ya solo me teaming par disqualification hogi.</div>
-        </div>
-      </div>
-
-      <div style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; padding:8px; border-radius:8px; font-size:10.5px; color:#fca5a5; text-align:center; margin-top:8px;">
-        ⚠️ Rules torne wale ko <b>Winning Prize nahi milega</b> aur UID blacklist kar di jayegi!
-      </div>
-
       <button class="btn-green-action" style="margin-top:10px;" onclick="closeModal('rulesModal')">I Agree</button>
     </div>
   </div>
@@ -1036,26 +996,20 @@
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
       </div>
       
-      <!-- Inside Custom Room Lobby Screen (Only shown when approved) -->
       <div id="joinedDetailsContainer" style="display: none;">
         <div class="ff-lobby-container">
           
-          <!-- Rules & Warning Notice -->
           <div class="ff-notice-strip">
             <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold); margin-right:4px;"></i>
-            Har banda apna <b>Real Name, Game UID</b> aur <b>WhatsApp Number</b> theek add kare. Take win prize ke waqt WhatsApp par rabta kiya ja sake. Fake info dene par prize cancel ho sakta hai.
+            Har banda apna <b>Real Name, Game UID</b> aur <b>WhatsApp Number</b> theek add kare. Take win prize ke waqt WhatsApp par rabta kiya ja sake.
           </div>
 
-          <!-- Free Fire Room Grid View -->
           <div class="ff-lobby-grid">
-            
-            <!-- Left Info Panel -->
             <div class="ff-left-panel">
               <div class="ff-map-box">
                 <img id="lobbyCoverImg" class="ff-map-img" src="" alt="Gaming DP">
                 <div class="ff-map-badge" id="lobbyMapBadge">BERMUDA</div>
               </div>
-
               <div class="ff-room-spec-row">
                 <span>Mode:</span>
                 <span id="lobbyModeVal">Battle</span>
@@ -1072,35 +1026,26 @@
                 <span>Booyah (Win):</span>
                 <span id="lobbyPrizeVal" style="color:var(--gold); font-weight:800;">Rs. 0</span>
               </div>
-
-              <!-- Room Credentials Box with 1-Click Copy Buttons -->
               <div class="ff-creds-badge-box" id="lobbyCredsBox"></div>
             </div>
 
-            <!-- Right Player Slots Panel -->
             <div class="ff-right-panel">
               <div class="ff-lobby-top-bar">
                 <span><i class="fa-solid fa-users"></i> <span id="lobbySlotsFraction">0/12</span></span>
                 <span style="color:#ffd000; font-size:9px;">ROOM SLOTS</span>
               </div>
-
               <div id="ffSlotsContainer" style="display:flex; flex-direction:column; gap:5px; margin-top:4px;"></div>
             </div>
-
           </div>
 
         </div>
       </div>
 
-      <!-- Pending Verification Screen -->
       <div id="pendingNoticeBox" style="display: none; background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000; margin-bottom: 12px;">
         <i class="fa-solid fa-hourglass-half"></i> Aapka payment screenshot review me hai. Admin verify karega to slot aur room details unlock ho jaengi.
       </div>
 
-      <!-- Payment / Join Form (Showed when NOT joined) -->
       <div id="paymentFormBlock" style="display: none;">
-        
-        <!-- Optional 1-Click Wallet Pay Button -->
         <button class="btn-wallet-pay" id="btnPayWallet" onclick="payViaWalletAction()">
           <i class="fa-solid fa-bolt"></i> Pay via Wallet Balance (1-Click)
         </button>
@@ -1146,8 +1091,7 @@
     const matchThumbnails = [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
       "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80"
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80"
     ];
 
     const defaultMatches = [
@@ -1189,9 +1133,10 @@
     let uploadedWalletProofBase64 = "";
     let activeFilter = "All";
 
-    /* ==========================================================
-       GMAIL-BASED AUTHENTICATION & UNIQUE WALLET SYSTEM
-       ========================================================== */
+    // OTP Temporary Store
+    let currentGeneratedOtp = null;
+    let otpTargetEmail = null;
+
     function getAllRegisteredUsers() {
       return JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
     }
@@ -1203,7 +1148,8 @@
     function switchAuthView(view) {
       document.getElementById('authLoginBlock').style.display = (view === 'login') ? 'block' : 'none';
       document.getElementById('authSignupBlock').style.display = (view === 'signup') ? 'block' : 'none';
-      document.getElementById('authForgotBlock').style.display = (view === 'forgot') ? 'block' : 'none';
+      document.getElementById('authForgotStep1Block').style.display = (view === 'forgotStep1') ? 'block' : 'none';
+      document.getElementById('authForgotStep2Block').style.display = (view === 'forgotStep2') ? 'block' : 'none';
     }
 
     function openProfileManageModal() {
@@ -1211,7 +1157,6 @@
         switchAuthView('login');
         document.getElementById('authGateModal').style.display = 'flex';
       } else {
-        // Refresh currentUser from DB to get latest balance/settings
         let users = getAllRegisteredUsers();
         let freshUser = users.find(u => u.email === currentUser.email) || currentUser;
         currentUser = freshUser;
@@ -1248,14 +1193,13 @@
         return;
       }
 
-      // Har naye Gmail ka bilkul NAYA wallet (balance: 0)
       const newUser = {
         email: email,
         password: pass,
         name: name,
         uid: uid,
         phone: phone,
-        walletBalance: 0
+        walletBalance: 0 // New wallet for new Gmail
       };
 
       users.push(newUser);
@@ -1267,7 +1211,7 @@
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`🎉 Welcome ${name}! Naya account ban gaya aur naya wallet create ho chuka hai.`);
+      alert(`🎉 Welcome ${name}! Naya account ban gaya aur alag wallet create ho gaya.`);
     }
 
     function handleUserLogin() {
@@ -1287,43 +1231,102 @@
         return;
       }
 
-      // Is specific Gmail ka apna wallet balance load hoga
       currentUser = matched;
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
 
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`✅ Welcome Back, ${currentUser.name}! Wallet Balance: Rs. ${currentUser.walletBalance || 0}`);
+      alert(`✅ Welcome Back, ${currentUser.name}! Wallet: Rs. ${currentUser.walletBalance || 0}`);
     }
 
-    function handleResetPassword() {
-      const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
-      const uid = document.getElementById('forgotUid').value.trim();
-      const newPass = document.getElementById('forgotNewPass').value.trim();
-
-      if (!email || !uid || !newPass) {
-        alert("Tamam details bharna lazmi hain!");
+    /* ==========================================================
+       GMAIL CONFIRMATION CODE (OTP) SYSTEM
+       ========================================================== */
+    function sendGmailOtpCode() {
+      const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
+      if (!email) {
+        alert("Pehle apna registered Gmail enter karein!");
         return;
       }
 
       let users = getAllRegisteredUsers();
-      const user = users.find(u => u.email === email && u.uid === uid);
-
-      if (!user) {
-        alert("❌ Is Gmail aur UID ke mutabiq koi account nahi mila!");
+      const exists = users.find(u => u.email === email);
+      if (!exists) {
+        alert("❌ Yeh Gmail registered nahi hai! Apna theek Gmail check karein.");
         return;
       }
 
-      user.password = newPass;
-      saveAllRegisteredUsers(users);
+      // Generate 6-digit OTP code
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      currentGeneratedOtp = String(otp);
+      otpTargetEmail = email;
 
-      if (currentUser && currentUser.email === email) {
+      const sendBtn = document.getElementById('btnSendOtp');
+      sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending Code...`;
+
+      // EmailJS send email trigger
+      if (typeof emailjs !== 'undefined' && emailjs.send) {
+        emailjs.send("service_id", "template_id", {
+          to_email: email,
+          to_name: exists.name,
+          otp_code: otp
+        }).then(() => {
+          proceedToOtpInput(email);
+        }).catch((err) => {
+          // If EmailJS keys not configured yet, fallback alert so you can still test
+          alert(`🔔 Confirmation Code generated: ${otp}\n(EmailJS setup hone par yeh code direct Gmail par jayega)`);
+          proceedToOtpInput(email);
+        });
+      } else {
+        alert(`🔔 Confirmation Code generated: ${otp}`);
+        proceedToOtpInput(email);
+      }
+    }
+
+    function proceedToOtpInput(email) {
+      document.getElementById('btnSendOtp').innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Verification Code`;
+      document.getElementById('otpTargetGmailText').innerText = email;
+      switchAuthView('forgotStep2');
+    }
+
+    function verifyOtpAndChangePassword() {
+      const enteredOtp = document.getElementById('otpCodeInput').value.trim();
+      const newPass = document.getElementById('otpNewPasswordInput').value.trim();
+
+      if (!enteredOtp) {
+        alert("Gmail par aya hua 6-digit confirmation code likhein!");
+        return;
+      }
+      if (!newPass) {
+        alert("Naya password likhein!");
+        return;
+      }
+
+      if (enteredOtp !== currentGeneratedOtp) {
+        alert("❌ Galat Confirmation Code! Gmail par aya hua 6-digit code check karein.");
+        return;
+      }
+
+      // OTP Verified successfully -> Update password
+      let users = getAllRegisteredUsers();
+      let user = users.find(u => u.email === otpTargetEmail);
+      if (user) {
+        user.password = newPass;
+        saveAllRegisteredUsers(users);
+      }
+
+      if (currentUser && currentUser.email === otpTargetEmail) {
         currentUser.password = newPass;
         localStorage.setItem('mff_user', JSON.stringify(currentUser));
       }
 
-      alert("✅ Password successfully update ho gaya! Ab naye password se login karein.");
+      currentGeneratedOtp = null;
+      otpTargetEmail = null;
+      document.getElementById('otpCodeInput').value = "";
+      document.getElementById('otpNewPasswordInput').value = "";
+
+      alert("🎉 Code Verify Ho Gaya! Naya password kamyabi se set ho chuka hai. Ab Login karein.");
       switchAuthView('login');
     }
 
@@ -1368,7 +1371,6 @@
 
     function updateNavProfile() {
       if (currentUser) {
-        // Sync fresh wallet balance
         let users = getAllRegisteredUsers();
         let freshUser = users.find(u => u.email === currentUser.email);
         if (freshUser) currentUser.walletBalance = freshUser.walletBalance;
@@ -1381,9 +1383,6 @@
       }
     }
 
-    /* ==========================================================
-       TABS & MATCHES LOGIC
-       ========================================================== */
     function switchMainTab(tab) {
       const matchView = document.getElementById('matchesMainView');
       const winView = document.getElementById('winnersMainView');
@@ -1522,7 +1521,6 @@
         document.getElementById('lobbyFeeVal').innerText = `Rs. ${match.fee}`;
         document.getElementById('lobbyPrizeVal').innerText = `Rs. ${match.prize}`;
 
-        // Credentials Box with 1-Click Copy
         const credsBox = document.getElementById('lobbyCredsBox');
         if (match.roomId && match.roomPass) {
           credsBox.innerHTML = `
@@ -1544,7 +1542,6 @@
           `;
         }
 
-        // Auto Slot Assign / Categorization
         const totalSlots = match.totalSlots || 12;
         document.getElementById('lobbySlotsFraction').innerText = `${approvedPlayers.length}/${totalSlots}`;
         
@@ -1611,9 +1608,6 @@
       });
     }
 
-    /* ==========================================================
-       WALLET SYSTEM (TIED TO CURRENT GMAIL)
-       ========================================================== */
     function openWalletModal() {
       if (!currentUser) {
         alert("Pehle login karein!");
@@ -1654,7 +1648,7 @@
       let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
       deposits.push({
         id: "dep_" + Date.now(),
-        email: currentUser.email, // Tied strictly to current Gmail
+        email: currentUser.email,
         uid: currentUser.uid,
         name: currentUser.name,
         phone: currentUser.phone,
@@ -1683,13 +1677,12 @@
       const matchFee = Number(match.fee || 0);
 
       if (userBal < matchFee) {
-        alert(`❌ Is Gmail account me balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}. Upar Wallet se deposit karein ya direct EasyPaisa proof submit karein.`);
+        alert(`❌ Is Gmail account me balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}.`);
         return;
       }
 
       if (!confirm(`Rs. ${matchFee} deduct karke match slot confirm karein?`)) return;
 
-      // Deduct from this Gmail account only
       const newBal = userBal - matchFee;
       currentUser.walletBalance = newBal;
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
