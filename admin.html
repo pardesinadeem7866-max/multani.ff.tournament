@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani.ff - Admin Dashboard Panel</title>
-  
+  <title>Multani.ff - Admin Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
@@ -20,48 +19,59 @@
       --text-muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background: var(--admin-bg); color: var(--text-main); min-height: 100vh; padding-bottom: 50px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--admin-bg); color: var(--text-main); min-height: 100vh; padding-bottom: 90px; display: flex; justify-content: center; }
 
-    .admin-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 16px;
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      background: #080e1a;
+      min-height: 100vh;
+      position: relative;
+      border-left: 1px solid var(--card-border);
+      border-right: 1px solid var(--card-border);
+      box-shadow: 0 0 40px rgba(0,0,0,0.8);
     }
 
-    /* Top Nav */
-    .admin-header {
+    .top-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      padding: 14px 18px;
-      border-radius: 12px;
-      margin-bottom: 18px;
+      padding: 14px 16px;
+      background: rgba(13, 22, 38, 0.95);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .brand-title {
-      font-size: 16px;
-      font-weight: 900;
-      color: var(--mint);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .brand-title { font-size: 13px; font-weight: 900; color: var(--mint); display: flex; align-items: center; gap: 6px; }
 
-    /* Tab Controls */
-    .admin-tabs {
+    .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 8px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 14px 16px;
     }
-    .tab-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
+    .stat-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 14px;
+      padding: 12px 10px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .stat-card i { position: absolute; top: 12px; right: 10px; color: #64748b; font-size: 14px; }
+    .stat-num { font-size: 18px; font-weight: 900; margin-top: 4px; color: #020617; }
+    .stat-label { font-size: 10px; font-weight: 700; color: #64748b; margin-top: 2px; }
+
+    .section-btn-bar { padding: 0 16px 14px; }
+    .view-all-btn {
+      width: 100%;
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid var(--mint);
+      color: var(--mint);
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 20px;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
@@ -69,295 +79,388 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: 0.2s;
-    }
-    .tab-btn.active {
-      background: rgba(0, 230, 118, 0.15);
-      border-color: var(--mint);
-      color: #fff;
     }
 
-    /* Content Cards */
-    .content-box {
+    .action-grid-card {
+      background: #ffffff;
+      border-radius: 16px;
+      margin: 0 16px 16px;
+      padding: 16px 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+    .action-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .action-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #0f172a;
+      position: relative;
+    }
+    .action-icon-item span { font-size: 9.5px; font-weight: 800; color: #334155; text-align: center; }
+    .badge-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 900;
+      min-width: 15px;
+      height: 15px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fff;
+    }
+
+    .content-section { padding: 0 16px; }
+    .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; font-weight: 900; color: var(--gold); }
+    
+    .panel-box {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    .box-head {
-      font-size: 14px;
-      font-weight: 900;
-      color: var(--gold);
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 12px;
+      margin-bottom: 10px;
     }
 
-    /* Tables & Lists */
-    .admin-table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    th { background: #131e33; color: var(--text-muted); padding: 10px; font-weight: 800; }
-    td { padding: 10px; border-bottom: 1px solid var(--card-border); }
-
-    /* Form Fields */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .f-field label { font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px; }
-    .f-field input, .f-field select, .f-field textarea {
+    .form-ctrl { margin-bottom: 10px; }
+    .form-ctrl label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 3px; }
+    .form-ctrl input, .form-ctrl select {
       width: 100%;
-      background: #070d18;
+      background: #050b14;
       border: 1px solid var(--card-border);
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 8px 10px;
       color: #fff;
       font-size: 12px;
       outline: none;
     }
-    .f-field input:focus, .f-field select:focus { border-color: var(--mint); }
+    .form-ctrl input:focus { border-color: var(--mint); }
 
-    /* Buttons */
     .btn-action {
       background: var(--mint);
       border: none;
       color: #012817;
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 9px 12px;
+      border-radius: 8px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 440px;
+      height: 68px;
+      background: rgba(13, 22, 38, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .bot-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
       cursor: pointer;
     }
-    .btn-action:hover { opacity: 0.9; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
-    .btn-approve { background: rgba(0, 230, 118, 0.2); border: 1px solid var(--mint); color: var(--mint); }
+    .bot-tab.active { color: var(--mint); }
+    .bot-tab i { font-size: 15px; }
+    .bot-tab span { font-size: 10px; font-weight: 800; }
 
-    /* Badges */
-    .badge-approved { background: rgba(0, 230, 118, 0.2); color: var(--mint); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
-    .ss-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid var(--card-border); }
+    .ss-thumbnail { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--card-border); }
   </style>
 </head>
 <body>
 
-  <div class="admin-container">
+  <div class="app-viewport">
     
-    <!-- Header -->
-    <div class="admin-header">
-      <div class="brand-title">
-        <i class="fa-solid fa-shield-halved"></i> Multani.ff Admin Control
+    <!-- Top Bar -->
+    <div class="top-header">
+      <div class="brand-title"><i class="fa-solid fa-shield-halved"></i> Multani.ff Admin</div>
+      <div style="font-size: 10px; color: var(--text-muted);">EasyPaisa: <b style="color:var(--mint);">03186815926</b></div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fa-solid fa-gamepad"></i>
+        <div class="stat-num" id="statMatches">0</div>
+        <div class="stat-label">Live Matches</div>
       </div>
-      <div style="font-size: 11px; color: var(--text-muted);">
-        EasyPaisa: <b style="color:var(--mint);">03186815926</b>
+      <div class="stat-card">
+        <i class="fa-solid fa-users"></i>
+        <div class="stat-num" id="statSlots">0</div>
+        <div class="stat-label">Approved Slots</div>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div class="stat-num" id="statRequests">0</div>
+        <div class="stat-label">Needs Approval</div>
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="admin-tabs">
-      <button class="tab-btn active" onclick="switchAdminTab('deposits', this)">
-        <i class="fa-solid fa-coins"></i> Wallet Deposits
+    <div class="section-btn-bar">
+      <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> View All Tournaments & Rooms</button>
+    </div>
+
+    <!-- Action Shortcuts Grid -->
+    <div class="action-grid-card">
+      <button class="action-icon-item" onclick="switchAdminTab('matches')">
+        <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
+        <span>Create Match</span>
       </button>
-      <button class="tab-btn" onclick="switchAdminTab('matches', this)">
-        <i class="fa-solid fa-gamepad"></i> Match Rooms
+      <button class="action-icon-item" onclick="switchAdminTab('matches')">
+        <div class="action-circle"><i class="fa-solid fa-key"></i></div>
+        <span>Set ID/Pass</span>
       </button>
-      <button class="tab-btn" onclick="switchAdminTab('registrations', this)">
-        <i class="fa-solid fa-users"></i> User Accounts
+      <button class="action-icon-item" onclick="switchAdminTab('deposits')">
+        <div class="action-circle">
+          <i class="fa-solid fa-receipt"></i>
+          <div class="badge-dot" id="pendingDepositBadge">0</div>
+        </div>
+        <span>Payment Approval</span>
       </button>
-      <button class="tab-btn" onclick="switchAdminTab('support', this)">
-        <i class="fa-solid fa-comments"></i> Support Chats
+      <button class="action-icon-item" onclick="switchAdminTab('users')">
+        <div class="action-circle"><i class="fa-solid fa-user-gear"></i></div>
+        <span>User Accounts</span>
       </button>
-      <button class="tab-btn" onclick="switchAdminTab('giveaways', this)">
-        <i class="fa-solid fa-trophy"></i> Events / Winners
+      <button class="action-icon-item" onclick="switchAdminTab('matches')">
+        <div class="action-circle"><i class="fa-solid fa-list"></i></div>
+        <span>Match Manager</span>
+      </button>
+      <button class="action-icon-item" onclick="switchAdminTab('winners')">
+        <div class="action-circle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i></div>
+        <span>Post Winner</span>
+      </button>
+      <button class="action-icon-item" onclick="switchAdminTab('support')">
+        <div class="action-circle">
+          <i class="fa-solid fa-comments" style="color:var(--mint);"></i>
+          <div class="badge-dot" id="supportBadge">1</div>
+        </div>
+        <span>Help Chats</span>
+      </button>
+      <button class="action-icon-item" onclick="clearOldData()">
+        <div class="action-circle"><i class="fa-solid fa-trash-can" style="color:var(--red);"></i></div>
+        <span>Cleanup Data</span>
       </button>
     </div>
 
-    <!-- 1. WALLET DEPOSITS VIEW -->
-    <div id="viewDeposits" class="content-box">
-      <div class="box-head">
-        <span><i class="fa-solid fa-wallet"></i> Pending Balance Recharges</span>
-        <button class="btn-action" onclick="renderDeposits()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+    <!-- Content Sections -->
+    <div class="content-section">
+      
+      <!-- 1. DEPOSITS & APPROVALS VIEW -->
+      <div id="sectionDeposits" class="panel-box">
+        <div class="section-header-row">
+          <span><i class="fa-solid fa-wallet"></i> Payment Approvals (Pending)</span>
+          <span style="font-size:11px; color:var(--text-muted);" id="reqCountText">0 Requests</span>
+        </div>
+        <div id="depositsContainer"></div>
       </div>
-      <div class="admin-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Player Name / UID</th>
-              <th>Registered Gmail</th>
-              <th>Amount</th>
-              <th>Screenshot</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="depositsTbody"></tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- 2. MATCH ROOMS MANAGEMENT -->
-    <div id="viewMatches" class="content-box" style="display:none;">
-      <div class="box-head">
-        <span><i class="fa-solid fa-plus-circle"></i> Create New Match Room</span>
-      </div>
-      <div class="form-grid">
-        <div class="f-field">
+      <!-- 2. MATCH MANAGER & CREATION VIEW -->
+      <div id="sectionMatches" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-gamepad"></i> Create Tournament Room</span></div>
+        <div class="form-ctrl">
           <label>Match Title</label>
           <input type="text" id="mTitle" placeholder="e.g. Solo Night Cup">
         </div>
-        <div class="f-field">
-          <label>Map</label>
-          <select id="mMap">
-            <option value="Bermuda">Bermuda</option>
-            <option value="Purgatory">Purgatory</option>
-            <option value="Kalahari">Kalahari</option>
-            <option value="Clash Squad">Clash Squad</option>
-          </select>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl">
+            <label>Map</label>
+            <select id="mMap">
+              <option value="Bermuda">Bermuda</option>
+              <option value="Purgatory">Purgatory</option>
+              <option value="Kalahari">Kalahari</option>
+              <option value="Clash Squad">Clash Squad</option>
+            </select>
+          </div>
+          <div class="form-ctrl">
+            <label>Total Slots</label>
+            <input type="number" id="mSlots" value="12">
+          </div>
         </div>
-        <div class="f-field">
-          <label>Entry Fee (Rs)</label>
-          <input type="number" id="mFee" value="30">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl">
+            <label>Entry Fee (Rs)</label>
+            <input type="number" id="mFee" value="30">
+          </div>
+          <div class="form-ctrl">
+            <label>Booyah Prize (Rs)</label>
+            <input type="number" id="mPrize" value="300">
+          </div>
         </div>
-        <div class="f-field">
-          <label>Prize / Booyah (Rs)</label>
-          <input type="number" id="mPrize" value="300">
-        </div>
-        <div class="f-field">
+        <div class="form-ctrl">
           <label>Timing</label>
           <input type="text" id="mTime" placeholder="e.g. 5:00 PM Today">
         </div>
-        <div class="f-field">
-          <label>Total Slots</label>
-          <input type="number" id="mSlots" value="12">
+        <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-plus"></i> Publish Match Room</button>
+
+        <div style="margin-top:16px; border-top:1px solid var(--card-border); padding-top:12px;">
+          <div class="section-header-row"><span>Active Tournaments & Passwords</span></div>
+          <div id="activeMatchesList"></div>
         </div>
       </div>
-      <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Add Tournament</button>
 
-      <hr style="border:none; border-top:1px solid var(--card-border); margin: 20px 0;">
-
-      <div class="box-head">
-        <span><i class="fa-solid fa-list"></i> Active Tournaments & Room Passwords</span>
+      <!-- 3. USERS VIEW -->
+      <div id="sectionUsers" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-users"></i> Registered Player Accounts</span></div>
+        <div id="usersListContainer"></div>
       </div>
-      <div id="activeMatchesContainer"></div>
+
+      <!-- 4. SUPPORT CHATS VIEW -->
+      <div id="sectionSupport" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Replies</span></div>
+        <div id="supportChatsContainer"></div>
+      </div>
+
+      <!-- 5. WINNERS VIEW -->
+      <div id="sectionWinners" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-trophy"></i> Post Hall of Fame Winner</span></div>
+        <div class="form-ctrl"><label>Winner Nickname</label><input type="text" id="winName" placeholder="Player Name"></div>
+        <div class="form-ctrl"><label>Free Fire UID</label><input type="text" id="winUid" placeholder="UID"></div>
+        <div class="form-ctrl"><label>Match Title</label><input type="text" id="winMatch" placeholder="Match Name"></div>
+        <div class="form-ctrl"><label>Prize Won</label><input type="text" id="winPrize" placeholder="e.g. Rs. 500"></div>
+        <button class="btn-action" onclick="postWinner()"><i class="fa-solid fa-award"></i> Publish Winner</button>
+      </div>
+
     </div>
 
-    <!-- 3. USERS / WALLET EDIT -->
-    <div id="viewRegistrations" class="content-box" style="display:none;">
-      <div class="box-head">
-        <span><i class="fa-solid fa-user-gear"></i> Registered Accounts Database</span>
-      </div>
-      <div class="admin-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>UID</th>
-              <th>Gmail</th>
-              <th>WhatsApp</th>
-              <th>Wallet Balance</th>
-              <th>Adjust Balance</th>
-            </tr>
-          </thead>
-          <tbody id="usersTbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 4. SUPPORT CHAT VIEW -->
-    <div id="viewSupport" class="content-box" style="display:none;">
-      <div class="box-head">
-        <span><i class="fa-solid fa-headset"></i> Player Inquiries & Owner Replies</span>
-      </div>
-      <div id="adminSupportChatList"></div>
-    </div>
-
-    <!-- 5. EVENTS & WINNERS -->
-    <div id="viewGiveaways" class="content-box" style="display:none;">
-      <div class="box-head">
-        <span><i class="fa-solid fa-trophy"></i> Add Winner (Hall of Fame)</span>
-      </div>
-      <div class="form-grid">
-        <div class="f-field">
-          <label>Winner Name</label>
-          <input type="text" id="winName" placeholder="Player Nickname">
-        </div>
-        <div class="f-field">
-          <label>Player UID</label>
-          <input type="text" id="winUid" placeholder="Free Fire UID">
-        </div>
-        <div class="f-field">
-          <label>Match Room</label>
-          <input type="text" id="winMatch" placeholder="Match Title">
-        </div>
-        <div class="f-field">
-          <label>Prize Won</label>
-          <input type="text" id="winPrize" placeholder="e.g. Rs. 500">
-        </div>
-      </div>
-      <button class="btn-action" onclick="addWinner()"><i class="fa-solid fa-plus"></i> Post Winner</button>
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+      <button class="bot-tab active" id="navBtnDeposits" onclick="switchAdminTab('deposits')">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </button>
+      <button class="bot-tab" id="navBtnMatches" onclick="switchAdminTab('matches')">
+        <i class="fa-solid fa-gamepad"></i>
+        <span>Matches</span>
+      </button>
+      <button class="bot-tab" id="navBtnUsers" onclick="switchAdminTab('users')">
+        <i class="fa-solid fa-users-gear"></i>
+        <span>Users</span>
+      </button>
+      <button class="bot-tab" id="navBtnSupport" onclick="switchAdminTab('support')">
+        <i class="fa-solid fa-comments"></i>
+        <span>Chats</span>
+      </button>
     </div>
 
   </div>
 
   <script>
-    function switchAdminTab(viewId, btn) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    function updateHeaderStats() {
+      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+      
+      let totalSlots = 0;
+      matches.forEach(m => {
+        if (m.players) totalSlots += m.players.filter(p => p.status === 'approved').length;
+      });
 
-      document.getElementById('viewDeposits').style.display = (viewId === 'deposits') ? 'block' : 'none';
-      document.getElementById('viewMatches').style.display = (viewId === 'matches') ? 'block' : 'none';
-      document.getElementById('viewRegistrations').style.display = (viewId === 'registrations') ? 'block' : 'none';
-      document.getElementById('viewSupport').style.display = (viewId === 'support') ? 'block' : 'none';
-      document.getElementById('viewGiveaways').style.display = (viewId === 'giveaways') ? 'block' : 'none';
+      const pendingCount = deposits.filter(d => d.status === 'pending').length;
 
-      if (viewId === 'deposits') renderDeposits();
-      if (viewId === 'matches') renderMatchesList();
-      if (viewId === 'registrations') renderUsersList();
-      if (viewId === 'support') renderSupportMessages();
+      document.getElementById('statMatches').innerText = matches.length;
+      document.getElementById('statSlots').innerText = totalSlots;
+      document.getElementById('statRequests').innerText = pendingCount;
+      document.getElementById('pendingDepositBadge').innerText = pendingCount;
     }
 
-    /* 1. WALLET DEPOSITS */
-    function renderDeposits() {
-      const tbody = document.getElementById('depositsTbody');
-      tbody.innerHTML = "";
-      const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+    function switchAdminTab(tabName) {
+      document.querySelectorAll('.bot-tab').forEach(b => b.classList.remove('active'));
+      document.getElementById('sectionDeposits').style.display = (tabName === 'deposits') ? 'block' : 'none';
+      document.getElementById('sectionMatches').style.display = (tabName === 'matches') ? 'block' : 'none';
+      document.getElementById('sectionUsers').style.display = (tabName === 'users') ? 'block' : 'none';
+      document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
+      document.getElementById('sectionWinners').style.display = (tabName === 'winners') ? 'block' : 'none';
 
-      if (deposits.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Koi deposit request pending nahi hai.</td></tr>`;
+      if (tabName === 'deposits') {
+        document.getElementById('navBtnDeposits').classList.add('active');
+        renderDeposits();
+      } else if (tabName === 'matches') {
+        document.getElementById('navBtnMatches').classList.add('active');
+        renderAdminMatches();
+      } else if (tabName === 'users') {
+        document.getElementById('navBtnUsers').classList.add('active');
+        renderAdminUsers();
+      } else if (tabName === 'support') {
+        document.getElementById('navBtnSupport').classList.add('active');
+        renderAdminSupport();
+      } else if (tabName === 'winners') {
+        document.getElementById('navBtnMatches').classList.add('active');
+      }
+      updateHeaderStats();
+    }
+
+    /* 1. Deposits Render */
+    function renderDeposits() {
+      const container = document.getElementById('depositsContainer');
+      container.innerHTML = "";
+      const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+      const pending = deposits.filter(d => d.status === 'pending');
+
+      document.getElementById('reqCountText').innerText = `${pending.length} Requests`;
+
+      if (pending.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:11.5px;"><i class="fa-solid fa-circle-check" style="color:var(--mint); font-size:24px; margin-bottom:6px; display:block;"></i>Koi pending verification request nahi hai!</div>`;
         return;
       }
 
-      deposits.forEach((dep, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${dep.time || '--'}</td>
-          <td><b>${dep.name}</b><br><small style="color:var(--blue);">${dep.uid}</small></td>
-          <td>${dep.email}</td>
-          <td style="color:var(--gold); font-weight:800;">Rs. ${dep.requestedCoins}</td>
-          <td>
-            ${dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumb" onclick="openFullImage('${dep.screenshot}')" alt="proof">` : 'No Image'}
-          </td>
-          <td>
-            ${dep.status === 'approved' 
-              ? `<span class="badge-approved">Approved</span>` 
-              : `<button class="btn-action btn-approve" onclick="approveDeposit(${idx})"><i class="fa-solid fa-check"></i> Approve</button>`
-            }
-          </td>
+      pending.forEach((dep, index) => {
+        const globalIdx = deposits.findIndex(d => d.id === dep.id);
+        const card = document.createElement('div');
+        card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        card.innerHTML = `
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">${dep.name} <span style="color:var(--blue); font-size:10px;">(${dep.uid})</span></div>
+            <div style="font-size:10.5px; color:var(--text-muted);">${dep.email}</div>
+            <div style="font-size:12px; font-weight:900; color:var(--gold); margin-top:2px;">Rs. ${dep.requestedCoins}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumbnail" onclick="window.open().document.write('<img src=\x22${dep.screenshot}\x22 style=\x22max-width:100%\x22>')">` : ''}
+            <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="approveDepositReq(${globalIdx})">Approve</button>
+          </div>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(card);
       });
     }
 
-    function approveDeposit(index) {
+    function approveDepositReq(idx) {
       let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      const item = deposits[index];
+      const item = deposits[idx];
       if (!item) return;
 
       let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
       let user = users.find(u => u.email === item.email);
-
       if (user) {
         user.walletBalance = (Number(user.walletBalance) || 0) + Number(item.requestedCoins);
         localStorage.setItem('mff_accounts_db', JSON.stringify(users));
@@ -369,206 +472,198 @@
         }
       }
 
-      item.status = "approved";
+      item.status = 'approved';
       localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
       renderDeposits();
-      alert(`✅ Rs. ${item.requestedCoins} user ke wallet me credit kar diye gaye hain!`);
+      updateHeaderStats();
+      alert("✅ Deposit approve ho gaya aur user ke wallet me balance add ho gaya!");
     }
 
-    /* 2. MATCH CREATION & ROOM CREDENTIALS */
+    /* 2. Matches Render & Create */
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
+      const slots = Number(document.getElementById('mSlots').value);
       const fee = Number(document.getElementById('mFee').value);
       const prize = Number(document.getElementById('mPrize').value);
       const time = document.getElementById('mTime').value.trim();
-      const slots = Number(document.getElementById('mSlots').value);
 
       if (!title || !time) {
-        alert("Match Title aur Time lazmi bharein!");
+        alert("Match title aur timing likhna lazmi hai!");
         return;
       }
 
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       matches.push({
         id: "m_" + Date.now(),
-        title: title,
+        title, map, totalSlots: slots, fee, prize, time,
         subtitle: `${map} - ${slots} Slots`,
-        map: map,
-        rules: "Standard Esports Rules",
-        time: time,
-        fee: fee,
-        prize: prize,
-        totalSlots: slots,
-        roomId: "",
-        roomPass: "",
-        players: []
+        roomId: "", roomPass: "", players: []
       });
 
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      renderMatchesList();
-      alert("✅ Match create ho gaya!");
+      document.getElementById('mTitle').value = "";
+      document.getElementById('mTime').value = "";
+      renderAdminMatches();
+      updateHeaderStats();
+      alert("✅ Match successfully create ho gaya!");
     }
 
-    function renderMatchesList() {
-      const container = document.getElementById('activeMatchesContainer');
+    function renderAdminMatches() {
+      const container = document.getElementById('activeMatchesList');
       container.innerHTML = "";
       const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
 
       if (matches.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:10px;">Koi tournament active nahi hai.</div>`;
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Koi active match nahi hai.</div>`;
         return;
       }
 
       matches.forEach((m, idx) => {
-        const box = document.createElement('div');
-        box.style = "background:#070d18; border:1px solid var(--card-border); border-radius:8px; padding:12px; margin-bottom:10px;";
-        box.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <b style="color:#fff;">${m.title} (${m.map})</b>
-            <span style="color:var(--gold); font-size:11px;">Fee: Rs.${m.fee} | Booyah: Rs.${m.prize}</span>
+        const div = document.createElement('div');
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px;";
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:800; color:#fff; margin-bottom:6px;">
+            <span>${m.title} (${m.map})</span>
+            <span style="color:var(--gold);">Rs.${m.fee}</span>
           </div>
-          <div class="form-grid" style="margin-bottom:6px;">
-            <div class="f-field">
-              <label>Room ID</label>
-              <input type="text" id="rid_${idx}" value="${m.roomId || ''}" placeholder="Custom Room ID">
-            </div>
-            <div class="f-field">
-              <label>Room Password</label>
-              <input type="text" id="rpass_${idx}" value="${m.roomPass || ''}" placeholder="Room Password">
-            </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
+            <input type="text" id="rid_${idx}" value="${m.roomId || ''}" placeholder="Room ID" style="background:#09101d; border:1px solid var(--card-border); color:#fff; padding:6px; border-radius:4px; font-size:11px;">
+            <input type="text" id="rpass_${idx}" value="${m.roomPass || ''}" placeholder="Password" style="background:#09101d; border:1px solid var(--card-border); color:#fff; padding:6px; border-radius:4px; font-size:11px;">
           </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn-action" onclick="saveRoomCreds(${idx})"><i class="fa-solid fa-key"></i> Save & Release Credentials</button>
-            <button class="btn-action btn-danger" onclick="deleteMatch(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-action" style="padding:6px; font-size:10.5px;" onclick="saveCreds(${idx})">Save ID/Pass</button>
+            <button class="btn-action btn-danger" style="padding:6px; font-size:10.5px;" onclick="deleteMatchAdmin(${idx})">Delete</button>
           </div>
         `;
-        container.appendChild(box);
+        container.appendChild(div);
       });
     }
 
-    function saveRoomCreds(index) {
+    function saveCreds(idx) {
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches[index].roomId = document.getElementById(`rid_${index}`).value.trim();
-      matches[index].roomPass = document.getElementById(`rpass_${index}`).value.trim();
+      matches[idx].roomId = document.getElementById(`rid_${idx}`).value.trim();
+      matches[idx].roomPass = document.getElementById(`rpass_${idx}`).value.trim();
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      alert("✅ Room ID aur Password live tournament players ke liye release ho gaya!");
+      alert("✅ Room ID & Password save ho gaye!");
     }
 
-    function deleteMatch(index) {
+    function deleteMatchAdmin(idx) {
       if (!confirm("Match delete karna chahte hain?")) return;
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches.splice(index, 1);
+      matches.splice(idx, 1);
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      renderMatchesList();
+      renderAdminMatches();
+      updateHeaderStats();
     }
 
-    /* 3. USER ACCOUNTS */
-    function renderUsersList() {
-      const tbody = document.getElementById('usersTbody');
-      tbody.innerHTML = "";
+    /* 3. Users Render */
+    function renderAdminUsers() {
+      const container = document.getElementById('usersListContainer');
+      container.innerHTML = "";
       const users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
 
       if (users.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Koi registered user mojud nahi hai.</td></tr>`;
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Koi registered user nahi hai.</div>`;
         return;
       }
 
       users.forEach((u, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><b>${u.name}</b></td>
-          <td style="color:var(--blue);">${u.uid}</td>
-          <td>${u.email}</td>
-          <td>${u.phone || 'N/A'}</td>
-          <td style="color:var(--gold); font-weight:800;">Rs. ${u.walletBalance || 0}</td>
-          <td>
-            <button class="btn-action" onclick="modifyBalancePrompt(${idx})"><i class="fa-solid fa-pen-to-square"></i> Edit Bal</button>
-          </td>
+        const div = document.createElement('div');
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        div.innerHTML = `
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">${u.name} <span style="color:var(--blue); font-size:10px;">(${u.uid})</span></div>
+            <div style="font-size:10px; color:var(--text-muted);">${u.email}</div>
+            <div style="font-size:11.5px; font-weight:800; color:var(--gold); margin-top:2px;">Bal: Rs. ${u.walletBalance || 0}</div>
+          </div>
+          <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="editUserBal(${idx})">Edit Bal</button>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(div);
       });
     }
 
-    function modifyBalancePrompt(index) {
+    function editUserBal(idx) {
       let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-      const user = users[index];
-      const newBal = prompt(`Naya balance enter karein for ${user.name} (${user.email}):`, user.walletBalance || 0);
+      let u = users[idx];
+      let newBal = prompt(`Enter new balance for ${u.name}:`, u.walletBalance || 0);
       if (newBal !== null && !isNaN(newBal)) {
-        user.walletBalance = Number(newBal);
+        u.walletBalance = Number(newBal);
         localStorage.setItem('mff_accounts_db', JSON.stringify(users));
-        renderUsersList();
+        renderAdminUsers();
         alert("Balance update ho gaya!");
       }
     }
 
-    /* 4. SUPPORT REPLIES */
-    function renderSupportMessages() {
-      const container = document.getElementById('adminSupportChatList');
+    /* 4. Support Chats Render */
+    function renderAdminSupport() {
+      const container = document.getElementById('supportChatsContainer');
       container.innerHTML = "";
       const msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
 
       if (msgs.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">Koi messages mojud nahi hain.</div>`;
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Koi message nahi hai.</div>`;
         return;
       }
 
       msgs.forEach((m, idx) => {
-        const item = document.createElement('div');
-        item.style = "background:#070d18; border:1px solid var(--card-border); border-radius:8px; padding:12px; margin-bottom:10px;";
-        item.innerHTML = `
-          <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
-            <b>${m.name} (${m.contact})</b>
-            <span style="color:var(--text-muted);">${m.time || ''}</span>
-          </div>
-          <div style="font-size:12px; color:#cbd5e1; margin-bottom:8px;">${m.message}</div>
+        const div = document.createElement('div');
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px;";
+        div.innerHTML = `
+          <div style="font-size:11px; font-weight:800; color:var(--blue); margin-bottom:2px;">${m.name} (${m.contact})</div>
+          <div style="font-size:11.5px; color:#fff; margin-bottom:6px;">${m.message}</div>
           <div style="display:flex; gap:6px;">
-            <input type="text" id="reply_${idx}" placeholder="Owner ka jawab likhein..." value="${m.adminReply || ''}" style="flex:1; background:#000; border:1px solid var(--card-border); border-radius:4px; padding:6px 8px; color:#fff; font-size:11px;">
-            <button class="btn-action" onclick="sendAdminReply(${idx})"><i class="fa-solid fa-reply"></i> Reply</button>
+            <input type="text" id="adminReply_${idx}" value="${m.adminReply || ''}" placeholder="Type reply..." style="flex:1; background:#09101d; border:1px solid var(--card-border); color:#fff; padding:6px; border-radius:4px; font-size:11px;">
+            <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="sendReplyAdmin(${idx})">Reply</button>
           </div>
         `;
-        container.appendChild(item);
+        container.appendChild(div);
       });
     }
 
-    function sendAdminReply(index) {
+    function sendReplyAdmin(idx) {
       let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const replyText = document.getElementById(`reply_${index}`).value.trim();
-      msgs[index].adminReply = replyText;
+      msgs[idx].adminReply = document.getElementById(`adminReply_${idx}`).value.trim();
       localStorage.setItem('mff_support_msgs', JSON.stringify(msgs));
       alert("✅ Reply bhej diya gaya!");
     }
 
-    /* 5. WINNERS */
-    function addWinner() {
+    /* 5. Post Winner */
+    function postWinner() {
       const name = document.getElementById('winName').value.trim();
       const uid = document.getElementById('winUid').value.trim();
       const match = document.getElementById('winMatch').value.trim();
       const prize = document.getElementById('winPrize').value.trim();
 
       if (!name || !uid) {
-        alert("Winner Name aur UID lazmi bharein!");
+        alert("Winner Name aur UID likhna lazmi hai!");
         return;
       }
 
       let winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
       winners.unshift({ name, uid, match, prize });
       localStorage.setItem('mff_winners_list', JSON.stringify(winners));
-      
+
       document.getElementById('winName').value = "";
       document.getElementById('winUid').value = "";
       document.getElementById('winMatch').value = "";
       document.getElementById('winPrize').value = "";
-      alert("🏆 Winner website par live add ho gaya!");
+      alert("🏆 Winner Hall of Fame par post ho gaya!");
     }
 
-    function openFullImage(src) {
-      const w = window.open("");
-      w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+    function clearOldData() {
+      if (confirm("Kya aap saara purana data clean karna chahte hain?")) {
+        localStorage.removeItem('mff_wallet_deposits');
+        localStorage.removeItem('mff_support_msgs');
+        renderDeposits();
+        updateHeaderStats();
+        alert("✅ Data clean ho gaya!");
+      }
     }
 
     window.onload = function() {
       renderDeposits();
+      updateHeaderStats();
     };
   </script>
 </body>
