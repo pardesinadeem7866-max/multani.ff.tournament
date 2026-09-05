@@ -11,7 +11,6 @@
       --card-gradient: linear-gradient(135deg, #1b0a2a 0%, #3b0d3a 45%, #130a21 100%);
       --accent-pink: #c9186e;
       --accent-purple: #8b1368;
-      --light-card-bg: #ffffff;
       --text-dark: #1e293b;
       --text-muted: #64748b;
     }
@@ -30,7 +29,6 @@
       margin: 0 16px 14px 16px;
       padding: 22px 20px;
       box-shadow: 0 12px 30px rgba(139, 19, 104, 0.25);
-      position: relative;
       border: 1px solid rgba(201, 24, 110, 0.2);
     }
     .vault-top { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -133,26 +131,137 @@
     .req-btn-row { display: flex; gap: 8px; margin-top: 8px; }
     .btn-approve { flex: 1; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .btn-reply { flex: 1; background: #0284c7; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
     .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
     .map-badge { padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 10px; font-weight: 700; }
     .rules-badge { padding: 2px 8px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; font-size: 10px; font-weight: 600; }
 
-    /* Admin Reply Preview Box */
-    .admin-reply-box {
-      background: rgba(16, 185, 129, 0.08);
-      border-left: 3px solid #10b981;
-      padding: 8px 10px;
-      border-radius: 6px;
-      margin-top: 8px;
-      font-size: 11px;
+    /* INBOX CONTACT CARDS */
+    .user-inbox-item {
+      background: #111726;
+      border: 1px solid #1e2a40;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .admin-reply-title { font-weight: 700; color: #10b981; margin-bottom: 2px; }
+    .user-inbox-item:hover { border-color: #25d366; background: #151d30; }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #0284c7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    .user-info { flex: 1; overflow: hidden; }
+    .user-title { font-size: 13px; font-weight: 700; color: #f8fafc; display: flex; justify-content: space-between; }
+    .user-lastmsg { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
+
+    /* FULLSCREEN CHAT MODAL (WHATSAPP STYLE) */
+    .chat-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 10px;
+    }
+    .chat-modal-overlay.active { display: flex; }
+    .chat-box-container {
+      background: #0b1019;
+      width: 100%;
+      max-width: 420px;
+      height: 85vh;
+      border-radius: 20px;
+      border: 1px solid #233148;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-top-header {
+      background: #111726;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e2a40;
+    }
+    .chat-body-stream {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #080c14;
+    }
+    .bubble-player {
+      background: #1e293b;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 12px 12px 12px 2px;
+      align-self: flex-start;
+      max-width: 80%;
+      font-size: 12px;
+    }
+    .bubble-admin {
+      background: #10b981;
+      color: #022c22;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 12px 12px 2px 12px;
+      align-self: flex-end;
+      max-width: 80%;
+      font-size: 12px;
+    }
+    .chat-bottom-input {
+      padding: 10px 14px;
+      background: #111726;
+      border-top: 1px solid #1e2a40;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chat-bottom-input input {
+      flex: 1;
+      background: #090e17;
+      border: 1px solid #24344d;
+      border-radius: 20px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    .btn-send-chat {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #10b981;
+      border: none;
+      color: #000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      inset: 0;
       background: rgba(0,0,0,0.75);
       backdrop-filter: blur(4px);
       display: none;
@@ -174,7 +283,7 @@
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea {
+    .form-group input, .form-group select {
       width: 100%;
       background: #1e293b;
       border: 1px solid #334155;
@@ -321,10 +430,11 @@
         <span class="grid-label">Filter Map</span>
       </button>
 
+      <!-- HELP MESSAGES BUTTON -->
       <button class="grid-btn" onclick="showSection('supportSection')">
         <span class="grid-badge" id="badgeSupport" style="display:none; background:#25d366;">0</span>
-        <div class="grid-icon-circle"><i class="fa-solid fa-headset" style="color:#25d366;"></i></div>
-        <span class="grid-label">Help Messages</span>
+        <div class="grid-icon-circle"><i class="fa-solid fa-comments" style="color:#25d366;"></i></div>
+        <span class="grid-label">Help Chats</span>
       </button>
 
       <button class="grid-btn" onclick="clearCompletedMatches()">
@@ -333,13 +443,13 @@
       </button>
     </div>
 
-    <!-- Section 1: Support Messages with Reply Button -->
+    <!-- Section 1: Player Conversations Inbox (Memberwise) -->
     <div class="content-area" id="supportSection" style="display:none;">
       <div class="section-title">
-        <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Player Support Messages</span>
+        <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Player Chat Inboxes</span>
         <button onclick="clearAllSupportMsgs()" style="background:#ef4444; border:none; color:#fff; font-size:10px; padding:3px 8px; border-radius:4px; cursor:pointer;">Clear All</button>
       </div>
-      <div id="supportCardsList"></div>
+      <div id="inboxUsersList"></div>
     </div>
 
     <!-- Section 2: Pending Approval -->
@@ -375,11 +485,36 @@
         <span>Requests</span>
       </button>
       <button class="nav-item" onclick="switchNav(this, 'support')">
-        <i class="fa-solid fa-envelope"></i>
-        <span>Help Msgs</span>
+        <i class="fa-solid fa-comment-dots"></i>
+        <span>Chats</span>
       </button>
     </div>
 
+  </div>
+
+  <!-- Real-Time Chat Modal with Specific Player -->
+  <div class="chat-modal-overlay" id="chatRoomModal">
+    <div class="chat-box-container">
+      <div class="chat-top-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="user-avatar" style="width:34px; height:34px; font-size:13px;" id="activeChatAvatar">U</div>
+          <div>
+            <div style="font-size:13px; font-weight:700;" id="activeChatName">Player Name</div>
+            <div style="font-size:10px; color:#38bdf8;" id="activeChatUid">UID: --</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:18px; color:#94a3b8;" onclick="closeChatRoom()"></i>
+      </div>
+
+      <!-- Messages Stream -->
+      <div class="chat-body-stream" id="chatBodyStream"></div>
+
+      <!-- Admin Reply Input -->
+      <div class="chat-bottom-input">
+        <input type="text" id="adminMsgInput" placeholder="Type reply to player..." onkeypress="handleAdminEnter(event)">
+        <button class="btn-send-chat" onclick="sendAdminChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
   </div>
 
   <!-- Create Match Modal -->
@@ -437,27 +572,8 @@
     </div>
   </div>
 
-  <!-- Admin Reply Modal -->
-  <div class="modal-overlay" id="replyModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span>💬 Reply to Player</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('replyModal')"></i>
-      </div>
-      <div class="form-group">
-        <label>Player Name</label>
-        <input type="text" id="replyToPlayer" readonly style="color:#38bdf8; background:#080d15;">
-      </div>
-      <div class="form-group">
-        <label>Admin Answer / Reply</label>
-        <textarea id="replyText" rows="4" placeholder="Apna jawab yahan likhein (e.g. Aapka payment verify ho gaya hai, Room pass sham 9:15 ko show hoga)..."></textarea>
-      </div>
-      <button class="btn-submit-modal" style="background:linear-gradient(90deg, #0284c7, #0369a1);" onclick="saveAdminReply()"><i class="fa-solid fa-paper-plane"></i> Send Reply</button>
-    </div>
-  </div>
-
   <script>
-    let activeReplyMsgId = null;
+    let activePlayerUid = null;
 
     setInterval(() => {
       const now = new Date();
@@ -501,57 +617,8 @@
       document.getElementById('badgePending').innerText = pendingList.length;
       document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
 
-      // Render Support Messages with Reply Handling
-      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const supportContainer = document.getElementById('supportCardsList');
-      const badgeSupport = document.getElementById('badgeSupport');
-      
-      if (supportMsgs.length > 0) {
-        badgeSupport.style.display = 'block';
-        badgeSupport.innerText = supportMsgs.length;
-      } else {
-        badgeSupport.style.display = 'none';
-      }
-
-      supportContainer.innerHTML = '';
-      if (supportMsgs.length === 0) {
-        supportContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b; font-size:12px; background:#131b28; border-radius:14px;">Koi naya help message nahi hai.</div>`;
-      } else {
-        supportMsgs.forEach((msg, idx) => {
-          const mCard = document.createElement('div');
-          mCard.className = 'req-card';
-
-          let replyHtml = "";
-          if (msg.adminReply) {
-            replyHtml = `
-              <div class="admin-reply-box">
-                <div class="admin-reply-title"><i class="fa-solid fa-reply"></i> Your Answer:</div>
-                <div>${msg.adminReply}</div>
-              </div>
-            `;
-          }
-
-          mCard.innerHTML = `
-            <div class="req-card-top" style="color:#25d366;">
-              <span><i class="fa-solid fa-user"></i> ${msg.name}</span>
-              <span style="font-size:10px; color:#94a3b8;">${msg.time}</span>
-            </div>
-            <div class="req-details">
-              <strong>Contact / UID:</strong> ${msg.contact}<br>
-              <strong>Message:</strong> 
-              <div style="background:#090d14; padding:8px; border-radius:6px; margin-top:4px; color:#fff; border-left:2px solid #25d366;">
-                ${msg.message}
-              </div>
-              ${replyHtml}
-            </div>
-            <div class="req-btn-row">
-              <button class="btn-reply" onclick="openReplyModal('${msg.id}', '${msg.name}', '${msg.adminReply || ''}')"><i class="fa-solid fa-reply"></i> Reply</button>
-              <button class="btn-reject" onclick="deleteSupportMsg(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
-            </div>
-          `;
-          supportContainer.appendChild(mCard);
-        });
-      }
+      // Group Messages by Player/UID
+      renderInboxUsers();
 
       // Render Pending Verification Cards
       const reqContainer = document.getElementById('pendingCardsList');
@@ -629,41 +696,132 @@
       });
     }
 
-    function openReplyModal(msgId, playerName, existingReply) {
-      activeReplyMsgId = msgId;
-      document.getElementById('replyToPlayer').value = playerName;
-      document.getElementById('replyText').value = existingReply || "";
-      document.getElementById('replyModal').classList.add('active');
-    }
+    /* RENDER UNIQUE MEMBERS IN INBOX LIST */
+    function renderInboxUsers() {
+      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      const inboxContainer = document.getElementById('inboxUsersList');
+      const badgeSupport = document.getElementById('badgeSupport');
 
-    function saveAdminReply() {
-      const reply = document.getElementById('replyText').value.trim();
-      if (!reply) {
-        alert("Jawab likhna lazmi hai!");
+      if (supportMsgs.length > 0) {
+        badgeSupport.style.display = 'block';
+        badgeSupport.innerText = supportMsgs.length;
+      } else {
+        badgeSupport.style.display = 'none';
+      }
+
+      inboxContainer.innerHTML = '';
+      if (supportMsgs.length === 0) {
+        inboxContainer.innerHTML = `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px; background:#131b28; border-radius:14px;">Koi chat ya message nahi hai.</div>`;
         return;
       }
 
+      // Group by UID or Name
+      const usersMap = {};
+      supportMsgs.forEach(m => {
+        const key = m.uid || m.name;
+        if (!usersMap[key]) {
+          usersMap[key] = {
+            name: m.name,
+            uid: m.uid || m.contact || "Unknown",
+            messages: []
+          };
+        }
+        usersMap[key].messages.push(m);
+      });
+
+      Object.keys(usersMap).forEach(key => {
+        const uData = usersMap[key];
+        const lastMsg = uData.messages[uData.messages.length - 1];
+
+        const item = document.createElement('div');
+        item.className = 'user-inbox-item';
+        item.onclick = () => openChatRoom(uData);
+        item.innerHTML = `
+          <div class="user-avatar">${uData.name.charAt(0).toUpperCase()}</div>
+          <div class="user-info">
+            <div class="user-title">
+              <span>${uData.name}</span>
+              <span style="font-size:10px; color:#64748b;">${lastMsg.time || ''}</span>
+            </div>
+            <div class="user-lastmsg">
+              <span style="color:#38bdf8;">UID: ${uData.uid}</span> • ${lastMsg.message}
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color:#475569; font-size:12px; margin-left:10px;"></i>
+        `;
+        inboxContainer.appendChild(item);
+      });
+    }
+
+    /* OPEN DEDICATED PLAYER CHAT ROOM */
+    function openChatRoom(uData) {
+      activePlayerUid = uData.uid;
+      document.getElementById('activeChatName').innerText = uData.name;
+      document.getElementById('activeChatUid').innerText = `UID: ${uData.uid}`;
+      document.getElementById('activeChatAvatar').innerText = uData.name.charAt(0).toUpperCase();
+
+      renderChatStream();
+      document.getElementById('chatRoomModal').classList.add('active');
+    }
+
+    function closeChatRoom() {
+      document.getElementById('chatRoomModal').classList.remove('active');
+      activePlayerUid = null;
+      renderAll();
+    }
+
+    function renderChatStream() {
+      const stream = document.getElementById('chatBodyStream');
+      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+
+      // Filter messages belonging to this player
+      const playerMessages = supportMsgs.filter(m => (m.uid === activePlayerUid || m.contact.includes(activePlayerUid) || m.name === activePlayerUid));
+      playerMessages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+      stream.innerHTML = '';
+      playerMessages.forEach(m => {
+        // Player's Message
+        const pBubble = document.createElement('div');
+        pBubble.className = 'bubble-player';
+        pBubble.innerHTML = `<div>${m.message}</div><span style="font-size:9px; color:#94a3b8; display:block; margin-top:3px; text-align:right;">${m.time || ''}</span>`;
+        stream.appendChild(pBubble);
+
+        // Admin's Answer / Reply
+        if (m.adminReply) {
+          const aBubble = document.createElement('div');
+          aBubble.className = 'bubble-admin';
+          aBubble.innerHTML = `<div>${m.adminReply}</div><span style="font-size:9px; color:#064e3b; display:block; margin-top:3px; text-align:right;">Owner (You)</span>`;
+          stream.appendChild(aBubble);
+        }
+      });
+
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function handleAdminEnter(e) {
+      if (e.key === 'Enter') sendAdminChatMessage();
+    }
+
+    function sendAdminChatMessage() {
+      const input = document.getElementById('adminMsgInput');
+      const reply = input.value.trim();
+      if (!reply) return;
+
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const msgObj = supportMsgs.find(m => m.id === activeReplyMsgId);
+      
+      // Find the last message of this player and set reply
+      const msgObj = supportMsgs.slice().reverse().find(m => (m.uid === activePlayerUid || m.contact.includes(activePlayerUid) || m.name === activePlayerUid));
+      
       if (msgObj) {
         msgObj.adminReply = reply;
         localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
-        alert("Reply player ke account ke liye save ho gaya!");
+        input.value = '';
+        renderChatStream();
       }
-
-      closeModal('replyModal');
-      renderAll();
-    }
-
-    function deleteSupportMsg(idx) {
-      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      supportMsgs.splice(idx, 1);
-      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
-      renderAll();
     }
 
     function clearAllSupportMsgs() {
-      if (confirm('Tamam messages clear karne hain?')) {
+      if (confirm('Tamam chat history delete karni hai?')) {
         localStorage.removeItem('mff_support_msgs');
         renderAll();
       }
