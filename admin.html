@@ -185,7 +185,7 @@
     .content-area { padding: 0 16px; margin-bottom: 20px; }
     .section-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     
-    /* Pending & Match Cards */
+    /* Cards UI */
     .req-card {
       background: #131b28;
       border: 1px solid #1e293b;
@@ -201,6 +201,7 @@
     .btn-approve { flex: 1; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
+    .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
     .map-badge {
       display: inline-block;
       padding: 2px 8px;
@@ -210,7 +211,16 @@
       border-radius: 6px;
       font-size: 10px;
       font-weight: 700;
-      margin-bottom: 6px;
+    }
+    .rules-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
     }
 
     /* Modal Sheet */
@@ -238,7 +248,7 @@
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       background: #1e293b;
       border: 1px solid #334155;
@@ -372,11 +382,11 @@
       </button>
     </div>
 
-    <!-- Quick Tags -->
+    <!-- Horizontal Quick Tags -->
     <div class="promo-scroll">
       <div class="promo-chip"><i class="fa-solid fa-bell"></i> Instant Push Room ID</div>
       <div class="promo-chip"><i class="fa-solid fa-trophy"></i> Booyah Prize Automation</div>
-      <div class="promo-chip"><i class="fa-solid fa-map-location-dot"></i> Maps: Bermuda, Purgatory</div>
+      <div class="promo-chip"><i class="fa-solid fa-map-location-dot"></i> Maps & Rules Active</div>
     </div>
 
     <!-- 8 Quick Action Grid -->
@@ -463,7 +473,7 @@
 
   </div>
 
-  <!-- Create Match Bottom Modal (Updated With Map Filter) -->
+  <!-- Create Match Bottom Modal -->
   <div class="modal-overlay" id="matchModal">
     <div class="modal-sheet">
       <div class="modal-title">
@@ -486,7 +496,7 @@
         </select>
       </div>
 
-      <!-- FREE FIRE MAP SELECTOR -->
+      <!-- Map Selection -->
       <div class="form-group">
         <label><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Select Map (Free Fire)</label>
         <select id="newMap">
@@ -497,6 +507,12 @@
           <option value="NexTerra">NexTerra (Sci-Fi)</option>
           <option value="Clash Squad Arena">Clash Squad Arena</option>
         </select>
+      </div>
+
+      <!-- Rules & Instructions Field -->
+      <div class="form-group">
+        <label><i class="fa-solid fa-scroll" style="color:#38bdf8;"></i> Tournament Rules & Instructions</label>
+        <input type="text" id="newRules" placeholder="e.g. Gun Attributes Off, No Grenade, Solo Only" value="Gun Attributes Off | Headshot Only">
       </div>
 
       <div class="form-group">
@@ -586,7 +602,10 @@
               <span>${item.match.title}</span>
               <span style="color:#f59e0b;">Fee: Rs ${item.match.fee}</span>
             </div>
-            <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${item.match.map || 'Bermuda'}</span>
+            <div class="tag-row">
+              <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${item.match.map || 'Bermuda'}</span>
+              <span class="rules-badge"><i class="fa-solid fa-scroll"></i> ${item.match.rules || 'Standard Rules'}</span>
+            </div>
             <div class="req-details">
               <strong>Player Name:</strong> ${item.player.name}<br>
               <strong>FF UID:</strong> <span style="color:#38bdf8;">${item.player.uid}</span><br>
@@ -605,7 +624,7 @@
         });
       }
 
-      // Render Matches List (Filtered by Map if selected)
+      // Render Matches List
       const matchesContainer = document.getElementById('matchesList');
       matchesContainer.innerHTML = '';
 
@@ -622,7 +641,10 @@
             <span>${m.title}</span>
             <span style="color:#10b981;">Rs ${m.prize} Prize</span>
           </div>
-          <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
+          <div class="tag-row">
+            <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
+            <span class="rules-badge"><i class="fa-solid fa-scroll"></i> ${m.rules || 'Standard Rules'}</span>
+          </div>
           <div class="req-details">
             <strong>Timing:</strong> ${m.time}<br>
             <strong>Filled Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
@@ -644,6 +666,7 @@
       const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
       const mode = document.getElementById('newMode').value;
       const map = document.getElementById('newMap').value;
+      const rules = document.getElementById('newRules').value.trim() || 'Standard FF Rules';
       const time = document.getElementById('newTime').value.trim() || 'TONIGHT';
       const fee = Number(document.getElementById('newFee').value) || 50;
       const prize = Number(document.getElementById('newPrize').value) || 400;
@@ -654,6 +677,7 @@
         id: 'm_' + Date.now(),
         title: `${title} (${mode})`,
         map: map,
+        rules: rules,
         time,
         fee,
         prize,
@@ -665,7 +689,7 @@
 
       saveTournaments(tournaments);
       closeModal();
-      alert('Tournament ' + map + ' map ke sath publish ho gaya!');
+      alert('Tournament publish ho gaya Rules aur Map ke sath!');
     }
 
     function filterByMapPrompt() {
