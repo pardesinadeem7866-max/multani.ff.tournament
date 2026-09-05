@@ -3,1626 +3,560 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - Multani.ff</title>
+  <title>Multani.ff - Admin Dashboard Panel</title>
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     :root {
-      --bg-dark: #07090e;
-      --card-gradient: linear-gradient(135deg, #1b0a2a 0%, #3b0d3a 45%, #130a21 100%);
-      --accent-pink: #c9186e;
-      --accent-purple: #8b1368;
-      --text-dark: #1e293b;
-      --text-muted: #64748b;
+      --admin-bg: #050b14;
+      --card-bg: #0d1626;
+      --card-border: #1c2b42;
+      --mint: #00e676;
+      --gold: #ffb703;
+      --blue: #38bdf8;
+      --red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background: #0c111a; color: #fff; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 90px; }
-    .app-shell { width: 100%; max-width: 440px; background: #0b0f17; min-height: 100vh; position: relative; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--admin-bg); color: var(--text-main); min-height: 100vh; padding-bottom: 50px; }
 
-    .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; font-size: 13px; color: #94a3b8; }
-    .status-left { font-weight: 600; color: #f1f5f9; font-size: 14px; }
-    .status-right i { margin-left: 8px; font-size: 12px; }
+    .admin-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
 
-    .vault-card {
-      background: var(--card-gradient);
-      border-radius: 26px;
-      margin: 0 16px 14px 16px;
-      padding: 22px 20px;
-      box-shadow: 0 12px 30px rgba(139, 19, 104, 0.25);
-      border: 1px solid rgba(201, 24, 110, 0.2);
-    }
-    .vault-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .vault-label { font-size: 12px; color: #cbd5e1; opacity: 0.85; margin-bottom: 4px; }
-    .vault-amount { font-size: 32px; font-weight: 800; color: #fff; }
-    .vault-amount span { font-size: 18px; font-weight: 500; margin-right: 4px; color: #f472b6; }
-    
-    .vault-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-    .btn-action-primary {
-      background: linear-gradient(90deg, #d91b75, #a21262);
-      border: none;
-      color: #fff;
-      padding: 9px 24px;
-      border-radius: 25px;
-      font-weight: 700;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .btn-action-secondary {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.4);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .vault-sync { font-size: 10px; color: #cbd5e1; opacity: 0.7; margin-top: 14px; display: flex; align-items: center; gap: 6px; }
-
-    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 16px 14px 16px; }
-    .metric-card {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 12px 10px;
-      color: var(--text-dark);
+    /* Top Nav */
+    .admin-header {
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
-      min-height: 96px;
-    }
-    .metric-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; color: #475569; }
-    .metric-val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
-    .metric-sub { font-size: 10px; color: #64748b; }
-
-    .pill-center { display: flex; justify-content: center; margin-bottom: 14px; }
-    .view-all-pill {
-      background: linear-gradient(90deg, #dcfce7, #ccfbf1);
-      color: #0f766e;
-      border: none;
-      padding: 6px 20px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
       align-items: center;
-      gap: 6px;
-    }
-
-    .action-grid-box {
-      background: #ffffff;
-      border-radius: 24px;
-      margin: 0 16px 18px 16px;
-      padding: 16px 10px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      row-gap: 16px;
-    }
-    .grid-btn { display: flex; flex-direction: column; align-items: center; background: transparent; border: none; cursor: pointer; position: relative; }
-    .grid-icon-circle {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1.5px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #0f172a;
-      font-size: 16px;
-      margin-bottom: 6px;
-    }
-    .grid-label { font-size: 10px; font-weight: 600; color: #334155; line-height: 1.2; width: 68px; text-align: center; }
-    .grid-badge { position: absolute; top: -4px; right: 10px; background: #ef4444; color: #fff; font-size: 8px; padding: 2px 5px; border-radius: 10px; font-weight: bold; }
-
-    .content-area { padding: 0 16px; margin-bottom: 20px; }
-    .section-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    
-    .req-card {
-      background: #131b28;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-    .req-card-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px; }
-    .req-details { font-size: 11px; color: #cbd5e1; line-height: 1.6; margin-bottom: 10px; }
-    .req-ss-holder { text-align: center; margin: 8px 0; background: #000; border-radius: 10px; padding: 4px; border: 1px dashed #334155; }
-    .req-ss-holder img { max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain; }
-    .req-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-    .btn-approve { flex: 1; min-width: 90px; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .btn-reject { flex: 1; min-width: 90px; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .btn-edit-act { flex: 1; min-width: 90px; background: #3b82f6; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .btn-proofs-act { width: 100%; background: #1e293b; border: 1px solid #334155; color: #38bdf8; padding: 7px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 4px; }
-    .btn-members-manage { width: 100%; background: #064e3b; border: 1px solid #059669; color: #34d399; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-
-    .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-    .map-badge { padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 10px; font-weight: 700; }
-    .rules-badge { padding: 2px 8px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; font-size: 10px; font-weight: 600; }
-
-    /* INBOX CONTACT CARDS */
-    .user-inbox-item {
-      background: #111726;
-      border: 1px solid #1e2a40;
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .user-inbox-item:hover { border-color: #25d366; background: #151d30; }
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #10b981, #0284c7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      margin-right: 12px;
-      flex-shrink: 0;
-    }
-    .user-info { flex: 1; overflow: hidden; }
-    .user-title { font-size: 13px; font-weight: 700; color: #f8fafc; display: flex; justify-content: space-between; }
-    .user-lastmsg { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
-
-    /* FULLSCREEN CHAT MODAL */
-    .chat-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(4px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 10px;
-    }
-    .chat-modal-overlay.active { display: flex; }
-    .chat-box-container {
-      background: #0b1019;
-      width: 100%;
-      max-width: 420px;
-      height: 85vh;
-      border-radius: 20px;
-      border: 1px solid #233148;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .chat-top-header {
-      background: #111726;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #1e2a40;
-    }
-    .chat-body-stream {
-      flex: 1;
-      padding: 14px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: #080c14;
-    }
-    .bubble-player {
-      background: #1e293b;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 12px 12px 12px 2px;
-      align-self: flex-start;
-      max-width: 80%;
-      font-size: 12px;
-    }
-    .bubble-admin {
-      background: #10b981;
-      color: #022c22;
-      font-weight: 600;
-      padding: 8px 12px;
-      border-radius: 12px 12px 2px 12px;
-      align-self: flex-end;
-      max-width: 80%;
-      font-size: 12px;
-    }
-    .chat-bottom-input {
-      padding: 10px 14px;
-      background: #111726;
-      border-top: 1px solid #1e2a40;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .chat-bottom-input input {
-      flex: 1;
-      background: #090e17;
-      border: 1px solid #24344d;
-      border-radius: 20px;
-      padding: 10px 14px;
-      color: #fff;
-      font-size: 12px;
-      outline: none;
-    }
-    .btn-send-chat {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #10b981;
-      border: none;
-      color: #000;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(4px);
-      display: none;
-      justify-content: center;
-      align-items: flex-end;
-      z-index: 1000;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-sheet {
-      background: #0f172a;
-      width: 100%;
-      max-width: 440px;
-      border-radius: 24px 24px 0 0;
-      padding: 20px;
-      border-top: 1px solid #334155;
-      max-height: 88vh;
-      overflow-y: auto;
-    }
-    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
-    .form-group { margin-bottom: 10px; }
-    .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 9px 12px;
-      color: #fff;
-      font-size: 12px;
-      outline: none;
-    }
-    .btn-submit-modal {
-      width: 100%;
-      background: linear-gradient(90deg, #d91b75, #a21262);
-      border: none;
-      color: #fff;
-      padding: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 14px 18px;
       border-radius: 12px;
-      font-weight: 700;
-      font-size: 13px;
-      margin-top: 10px;
-      cursor: pointer;
+      margin-bottom: 18px;
     }
-
-    /* MEMBER CARD STYLING INSIDE MODAL */
-    .member-manage-card {
-      background: #131b28;
-      border: 1px solid #233148;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .member-top-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-    .member-info-col {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      overflow: hidden;
-    }
-    .member-name-row {
-      font-size: 12.5px;
-      font-weight: 800;
-      color: #f8fafc;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .member-uid-text {
-      font-size: 11px;
-      color: #38bdf8;
-      font-family: monospace;
-      font-weight: 700;
-    }
-    .member-phone-text {
-      font-size: 11px;
-      color: #34d399;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .member-actions-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-    .btn-send-prize {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      border: none;
-      color: #000;
-      font-size: 10px;
+    .brand-title {
+      font-size: 16px;
       font-weight: 900;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
+      color: var(--mint);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
     }
-    .btn-publish-win {
-      background: #0284c7;
-      border: none;
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
+
+    /* Tab Controls */
+    .admin-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
     }
-    .btn-warn-player {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid #f59e0b;
-      color: #f59e0b;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 5px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .btn-kick-player {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid #ef4444;
-      color: #ef4444;
-      padding: 5px 8px;
-      border-radius: 6px;
-      font-size: 10px;
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 6px;
       transition: 0.2s;
     }
-    .btn-kick-player:hover { background: #ef4444; color: #fff; }
-
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      max-width: 440px;
-      height: 68px;
-      background: #e2f4ea;
-      border-radius: 28px 28px 0 0;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 0 10px;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
-      z-index: 99;
+    .tab-btn.active {
+      background: rgba(0, 230, 118, 0.15);
+      border-color: var(--mint);
+      color: #fff;
     }
-    .nav-item {
+
+    /* Content Cards */
+    .content-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .box-head {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 12px;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      color: #1e293b;
-      background: transparent;
+    }
+
+    /* Tables & Lists */
+    .admin-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th { background: #131e33; color: var(--text-muted); padding: 10px; font-weight: 800; }
+    td { padding: 10px; border-bottom: 1px solid var(--card-border); }
+
+    /* Form Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .f-field label { font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px; }
+    .f-field input, .f-field select, .f-field textarea {
+      width: 100%;
+      background: #070d18;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    .f-field input:focus, .f-field select:focus { border-color: var(--mint); }
+
+    /* Buttons */
+    .btn-action {
+      background: var(--mint);
       border: none;
-      font-size: 10px;
-      font-weight: 700;
+      color: #012817;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
       cursor: pointer;
     }
-    .nav-item.active-pill {
-      background: #0f172a;
-      color: #fff;
-      padding: 8px 18px;
-      border-radius: 25px;
-      flex-direction: row;
-      gap: 6px;
-    }
+    .btn-action:hover { opacity: 0.9; }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
+    .btn-approve { background: rgba(0, 230, 118, 0.2); border: 1px solid var(--mint); color: var(--mint); }
+    .btn-whatsapp { background: #25d366; color: #fff; border: none; }
+
+    /* Badges */
+    .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
+    .badge-pending { background: rgba(255, 183, 3, 0.2); color: var(--gold); }
+    .badge-approved { background: rgba(0, 230, 118, 0.2); color: var(--mint); }
+
+    .ss-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid var(--card-border); }
   </style>
 </head>
 <body>
 
-  <div class="app-shell">
+  <div class="admin-container">
     
-    <div class="top-bar">
-      <div class="status-left"><i class="fa-solid fa-fire" style="color:#ef4444; margin-right:5px;"></i>Multani.ff Admin</div>
-      <div class="status-right">
-        <i class="fa-solid fa-wifi"></i>
-        <i class="fa-solid fa-bolt"></i>
-        <span>100%</span>
+    <!-- Header -->
+    <div class="admin-header">
+      <div class="brand-title">
+        <i class="fa-solid fa-shield-halved"></i> Multani.ff Admin Control
+      </div>
+      <div style="font-size: 11px; color: var(--text-muted);">
+        EasyPaisa: <b style="color:var(--mint);">03186815926</b>
       </div>
     </div>
 
-    <div class="vault-card">
-      <div class="vault-top">
-        <div>
-          <div class="vault-label">Total Match Revenue</div>
-          <div class="vault-amount"><span>Rs</span><span id="vaultRevenue">0</span></div>
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchAdminTab('deposits', this)">
+        <i class="fa-solid fa-coins"></i> Wallet Deposits
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('matches', this)">
+        <i class="fa-solid fa-gamepad"></i> Match Rooms
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('registrations', this)">
+        <i class="fa-solid fa-users"></i> User Accounts
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('support', this)">
+        <i class="fa-solid fa-comments"></i> Support Chats
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('giveaways', this)">
+        <i class="fa-solid fa-gift"></i> Events / Winners
+      </button>
+    </div>
+
+    <!-- 1. WALLET DEPOSITS VIEW -->
+    <div id="viewDeposits" class="content-box">
+      <div class="box-head">
+        <span><i class="fa-solid fa-wallet"></i> Pending Balance Recharges</span>
+        <button class="btn-action" onclick="renderDeposits()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Player Name / UID</th>
+              <th>Registered Gmail</th>
+              <th>Amount</th>
+              <th>Screenshot</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="depositsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. MATCH ROOMS MANAGEMENT -->
+    <div id="viewMatches" class="content-box" style="display:none;">
+      <div class="box-head">
+        <span><i class="fa-solid fa-plus-circle"></i> Create New Match Room</span>
+      </div>
+      <div class="form-grid">
+        <div class="f-field">
+          <label>Match Title</label>
+          <input type="text" id="mTitle" placeholder="e.g. Solo Night Cup">
         </div>
-        <div class="vault-actions">
-          <button class="btn-action-primary" onclick="openModal()">+ MATCH</button>
-          <button class="btn-action-secondary" onclick="exportData()">BACKUP DATA</button>
+        <div class="f-field">
+          <label>Map</label>
+          <select id="mMap">
+            <option value="Bermuda">Bermuda</option>
+            <option value="Purgatory">Purgatory</option>
+            <option value="Kalahari">Kalahari</option>
+            <option value="Clash Squad">Clash Squad</option>
+          </select>
+        </div>
+        <div class="f-field">
+          <label>Entry Fee (Rs)</label>
+          <input type="number" id="mFee" value="30">
+        </div>
+        <div class="f-field">
+          <label>Prize / Booyah (Rs)</label>
+          <input type="number" id="mPrize" value="300">
+        </div>
+        <div class="f-field">
+          <label>Timing</label>
+          <input type="text" id="mTime" placeholder="e.g. 5:00 PM Today">
+        </div>
+        <div class="f-field">
+          <label>Total Slots</label>
+          <input type="number" id="mSlots" value="12">
         </div>
       </div>
-      <div class="vault-sync">
-        <span id="liveClock">--:--:--</span> • Free Fire Tournament Admin
-        <i class="fa-solid fa-rotate-right" onclick="renderAll()"></i>
+      <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Add Tournament</button>
+
+      <hr style="border:none; border-top:1px solid var(--card-border); margin: 20px 0;">
+
+      <div class="box-head">
+        <span><i class="fa-solid fa-list"></i> Active Tournaments & Room Passwords</span>
+      </div>
+      <div id="activeMatchesContainer"></div>
+    </div>
+
+    <!-- 3. USERS / WALLET EDIT -->
+    <div id="viewRegistrations" class="content-box" style="display:none;">
+      <div class="box-head">
+        <span><i class="fa-solid fa-user-gear"></i> Registered Accounts Database</span>
+      </div>
+      <div class="admin-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>UID</th>
+              <th>Gmail</th>
+              <th>WhatsApp</th>
+              <th>Wallet Balance</th>
+              <th>Adjust Balance</th>
+            </tr>
+          </thead>
+          <tbody id="usersTbody"></tbody>
+        </table>
       </div>
     </div>
 
-    <div class="metrics-row">
-      <div class="metric-card">
-        <div class="metric-header"><span>Active</span><i class="fa-solid fa-gamepad"></i></div>
-        <div class="metric-val" id="metricMatches">0</div>
-        <div class="metric-sub">Live Matches</div>
+    <!-- 4. SUPPORT CHAT VIEW -->
+    <div id="viewSupport" class="content-box" style="display:none;">
+      <div class="box-head">
+        <span><i class="fa-solid fa-headset"></i> Player Inquiries & Owner Replies</span>
       </div>
-      <div class="metric-card">
-        <div class="metric-header"><span>Players</span><i class="fa-solid fa-users"></i></div>
-        <div class="metric-val" id="metricPlayers">0</div>
-        <div class="metric-sub">Approved Slots</div>
+      <div id="adminSupportChatList"></div>
+    </div>
+
+    <!-- 5. EVENTS & WINNERS -->
+    <div id="viewGiveaways" class="content-box" style="display:none;">
+      <div class="box-head">
+        <span><i class="fa-solid fa-trophy"></i> Add Winner (Hall of Fame)</span>
       </div>
-      <div class="metric-card">
-        <div class="metric-header"><span>Requests</span><i class="fa-solid fa-clock-rotate-left"></i></div>
-        <div class="metric-val" id="metricPending">0</div>
-        <div class="metric-sub">Needs Approval</div>
-      </div>
-    </div>
-
-    <div class="pill-center">
-      <button class="view-all-pill" onclick="showSection('matchesSection')">
-        View All Tournaments <i class="fa-solid fa-chevron-right"></i>
-      </button>
-    </div>
-
-    <!-- Quick Action Grid -->
-    <div class="action-grid-box">
-      <button class="grid-btn" onclick="openModal()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-circle-plus"></i></div>
-        <span class="grid-label">Create Match</span>
-      </button>
-
-      <button class="grid-btn" onclick="showSection('walletDepositSection')">
-        <span class="grid-badge" id="badgeWalletDeposits" style="display:none; background:#f59e0b;">0</span>
-        <div class="grid-icon-circle"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i></div>
-        <span class="grid-label">Wallet Coins</span>
-      </button>
-
-      <button class="grid-btn" onclick="showSection('pendingSection')">
-        <span class="grid-badge" id="badgePending">0</span>
-        <div class="grid-icon-circle"><i class="fa-solid fa-receipt"></i></div>
-        <span class="grid-label">Payment Approval</span>
-      </button>
-
-      <button class="grid-btn" onclick="openAdminGiveawayModal()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-gift" style="color:#ef4444;"></i></div>
-        <span class="grid-label">Giveaways</span>
-      </button>
-
-      <button class="grid-btn" onclick="openBanModal()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-user-slash" style="color:#ef4444;"></i></div>
-        <span class="grid-label">Ban Player</span>
-      </button>
-
-      <button class="grid-btn" onclick="showSection('matchesSection')">
-        <div class="grid-icon-circle"><i class="fa-solid fa-list-check"></i></div>
-        <span class="grid-label">Match Manager</span>
-      </button>
-
-      <button class="grid-btn" onclick="showSection('supportSection')">
-        <span class="grid-badge" id="badgeSupport" style="display:none; background:#25d366;">0</span>
-        <div class="grid-icon-circle"><i class="fa-solid fa-comments" style="color:#25d366;"></i></div>
-        <span class="grid-label">Help Chats</span>
-      </button>
-
-      <button class="grid-btn" onclick="clearCompletedMatches()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-trash-can"></i></div>
-        <span class="grid-label">Cleanup Old</span>
-      </button>
-    </div>
-
-    <!-- Section 0: Wallet Coins Deposit Approvals -->
-    <div class="content-area" id="walletDepositSection" style="display:none;">
-      <div class="section-title">
-        <span><i class="fa-solid fa-wallet" style="color:#f59e0b; margin-right:6px;"></i>Wallet Coins Deposit Requests</span>
-        <span style="color:#f59e0b;" id="countWalletDeposits">0 Requests</span>
-      </div>
-      <div id="walletDepositCardsList"></div>
-    </div>
-
-    <!-- Section 1: Player Chat Inboxes -->
-    <div class="content-area" id="supportSection" style="display:none;">
-      <div class="section-title">
-        <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Player Chat Inboxes</span>
-        <button onclick="clearAllSupportMsgs()" style="background:#ef4444; border:none; color:#fff; font-size:10px; padding:3px 8px; border-radius:4px; cursor:pointer;">Clear All</button>
-      </div>
-      <div id="inboxUsersList"></div>
-    </div>
-
-    <!-- Section 2: Pending Match Approval -->
-    <div class="content-area" id="pendingSection">
-      <div class="section-title">
-        <span>Match Payment Approvals (Screenshots)</span>
-        <span style="color:#f59e0b;" id="countPending">0 Requests</span>
-      </div>
-      <div id="pendingCardsList"></div>
-    </div>
-
-    <!-- Section 3: Tournaments List -->
-    <div class="content-area" id="matchesSection">
-      <div class="section-title">
-        <span>Live & Upcoming Matches</span>
-        <span style="color:#10b981;" id="countMatches">0</span>
-      </div>
-      <div id="matchesList"></div>
-    </div>
-
-    <!-- Bottom Bar -->
-    <div class="bottom-bar">
-      <button class="nav-item active-pill" onclick="switchNav(this, 'all')">
-        <i class="fa-solid fa-house"></i>
-        <span>Home</span>
-      </button>
-      <button class="nav-item" onclick="switchNav(this, 'matches')">
-        <i class="fa-solid fa-trophy"></i>
-        <span>Matches</span>
-      </button>
-      <button class="nav-item" onclick="switchNav(this, 'pending')">
-        <i class="fa-solid fa-inbox"></i>
-        <span>Requests</span>
-      </button>
-      <button class="nav-item" onclick="switchNav(this, 'support')">
-        <i class="fa-solid fa-comment-dots"></i>
-        <span>Chats</span>
-      </button>
-    </div>
-
-  </div>
-
-  <!-- Real-Time Chat Modal with Specific Player -->
-  <div class="chat-modal-overlay" id="chatRoomModal">
-    <div class="chat-box-container">
-      <div class="chat-top-header">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="user-avatar" style="width:34px; height:34px; font-size:13px;" id="activeChatAvatar">U</div>
-          <div>
-            <div style="font-size:13px; font-weight:700;" id="activeChatName">Player Name</div>
-            <div style="font-size:10px; color:#38bdf8;" id="activeChatUid">UID: --</div>
-          </div>
+      <div class="form-grid">
+        <div class="f-field">
+          <label>Winner Name</label>
+          <input type="text" id="winName" placeholder="Player Nickname">
         </div>
-        <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:18px; color:#94a3b8;" onclick="closeChatRoom()"></i>
-      </div>
-      <div class="chat-body-stream" id="chatBodyStream"></div>
-      <div class="chat-bottom-input">
-        <input type="text" id="adminMsgInput" placeholder="Type reply to player..." onkeypress="handleAdminEnter(event)">
-        <button class="btn-send-chat" onclick="sendAdminChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Manage Match Members & Kick / Send Prize Modal -->
-  <div class="modal-overlay" id="manageMembersModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span style="color:#34d399;"><i class="fa-solid fa-users-gear"></i> Joined Players & Prize Control</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('manageMembersModal')"></i>
-      </div>
-      <div style="font-size:11px; color:#94a3b8; margin-bottom:12px;" id="manageMembersSubTitle">
-        Players details for winning prize & room management
-      </div>
-
-      <div id="manageMembersContainer" style="display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto;"></div>
-
-      <button onclick="closeModal('manageMembersModal')" style="width:100%; background:transparent; border:none; color:#94a3b8; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
-    </div>
-  </div>
-
-  <!-- Create Match Modal -->
-  <div class="modal-overlay" id="matchModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span>+ Naya Tournament Banayein</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('matchModal')"></i>
-      </div>
-      <div class="form-group">
-        <label>Tournament Title</label>
-        <input type="text" id="newTitle" placeholder="MATCH #3 (CS 4V4)">
-      </div>
-      <div class="form-group">
-        <label>Match Type / Mode</label>
-        <select id="newMode">
-          <option value="Solo (Battle Royale)">Solo (Battle Royale)</option>
-          <option value="Duo (Battle Royale)">Duo (Battle Royale)</option>
-          <option value="Squad (Battle Royale)">Squad (Battle Royale)</option>
-          <option value="Clash Squad 4v4">Clash Squad 4v4</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Select Map (Free Fire)</label>
-        <select id="newMap">
-          <option value="Bermuda">Bermuda (Classic / Ranked)</option>
-          <option value="Purgatory">Purgatory</option>
-          <option value="Kalahari">Kalahari (Desert)</option>
-          <option value="Alpine">Alpine (Snow)</option>
-          <option value="NexTerra">NexTerra (Sci-Fi)</option>
-          <option value="Clash Squad Arena">Clash Squad Arena</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label><i class="fa-solid fa-image" style="color:#10b981;"></i> Gaming DP / Cover Image URL (Optional)</label>
-        <input type="text" id="newCoverImage" placeholder="https://... (Leave empty for default)">
-      </div>
-      <div class="form-group">
-        <label><i class="fa-solid fa-scroll" style="color:#38bdf8;"></i> Tournament Rules</label>
-        <input type="text" id="newRules" placeholder="e.g. Gun Attributes Off, No Grenade" value="Gun Attributes Off | Headshot Only">
-      </div>
-      <div class="form-group">
-        <label>Scheduled Time</label>
-        <input type="text" id="newTime" placeholder="Tonight 09:30 PM">
-      </div>
-      <div class="form-group">
-        <label>Entry Fee (Rs)</label>
-        <input type="number" id="newFee" placeholder="50">
-      </div>
-      <div class="form-group">
-        <label>Prize Pool (Rs)</label>
-        <input type="number" id="newPrize" placeholder="400">
-      </div>
-      <div class="form-group">
-        <label>Total Slots (Sitting)</label>
-        <input type="number" id="newSlots" value="12">
-      </div>
-      <button class="btn-submit-modal" onclick="submitMatch()">Publish Tournament</button>
-    </div>
-  </div>
-
-  <!-- Edit Match & Time Table Modal -->
-  <div class="modal-overlay" id="editMatchModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span style="color:#38bdf8;"><i class="fa-solid fa-sliders"></i> Edit Match Settings & Timing</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('editMatchModal')"></i>
-      </div>
-      <input type="hidden" id="editMatchId">
-      <div class="form-group">
-        <label>Match Title</label>
-        <input type="text" id="editTitle">
-      </div>
-      <div class="form-group">
-        <label>Gaming DP / Cover Image URL</label>
-        <input type="text" id="editCoverImage" placeholder="Image URL">
-      </div>
-      <div class="form-group">
-        <label>Time Table / Scheduled Timing</label>
-        <input type="text" id="editTime" placeholder="e.g. Hfte din 1 bje ya 05:00 PM">
-      </div>
-      <div class="form-group">
-        <label>Total Slots / Sitting Limit</label>
-        <input type="number" id="editSlots" placeholder="e.g. 12, 24, 48">
-      </div>
-      <div class="form-group">
-        <label>Entry Fee (Rs)</label>
-        <input type="number" id="editFee">
-      </div>
-      <div class="form-group">
-        <label>Win Prize (Rs)</label>
-        <input type="number" id="editPrize">
-      </div>
-      <div class="form-group">
-        <label>Rules / Subtitle</label>
-        <input type="text" id="editRules">
-      </div>
-      <button class="btn-submit-modal" onclick="saveEditedMatch()" style="background:linear-gradient(90deg, #0284c7, #0284c7);">Save & Update Match</button>
-    </div>
-  </div>
-
-  <!-- Approved Payments / Proofs Archive Modal -->
-  <div class="modal-overlay" id="proofsArchiveModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span style="color:#10b981;"><i class="fa-solid fa-images"></i> Saved Payment Screenshots</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('proofsArchiveModal')"></i>
-      </div>
-      <div id="proofsArchiveContent" style="display:flex; flex-direction:column; gap:12px;"></div>
-      <button onclick="closeModal('proofsArchiveModal')" style="width:100%; background:transparent; border:none; color:#94a3b8; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
-    </div>
-  </div>
-
-  <!-- Giveaways Manager Modal -->
-  <div class="modal-overlay" id="adminGiveawayModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span style="color:#ef4444;"><i class="fa-solid fa-gift" style="margin-right:6px;"></i>Manage Giveaways</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAdminGiveawayModal()"></i>
-      </div>
-      <div class="form-group">
-        <label>Giveaway Title</label>
-        <input type="text" id="admGiveawayTitle" placeholder="e.g. Weekly 1000 Diamonds Giveaway">
-      </div>
-      <div class="form-group">
-        <label>Reward / Prize</label>
-        <input type="text" id="admGiveawayReward" placeholder="e.g. 1,000 Diamonds ya Rs. 1,000">
-      </div>
-      <div class="form-group">
-        <label>End Time / Expiry</label>
-        <input type="text" id="admGiveawayTime" placeholder="e.g. Sunday 10:00 PM">
-      </div>
-      <div class="form-group">
-        <label>Rules / Winner Details</label>
-        <textarea id="admGiveawayDesc" placeholder="e.g. Top 3 Fraggers ko giveaway reward transfer hoga." style="height:60px;"></textarea>
-      </div>
-      <button class="btn-submit-modal" onclick="saveAdminGiveaway()" style="background:linear-gradient(90deg, #10b981, #059669); color:#022c22;">Publish Giveaway</button>
-
-      <div style="margin-top:16px; border-top:1px solid #334155; padding-top:12px;">
-        <div style="font-size:12px; font-weight:700; color:#f59e0b; margin-bottom:8px;">Live Giveaways:</div>
-        <div id="admGiveawayActiveContainer"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Ban Player Manager Modal -->
-  <div class="modal-overlay" id="banModal">
-    <div class="modal-sheet">
-      <div class="modal-title">
-        <span style="color:#ef4444;"><i class="fa-solid fa-user-slash" style="margin-right:6px;"></i>Ban & Blacklist Manager</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeBanModal()"></i>
-      </div>
-      <div class="form-group">
-        <label>Free Fire Player UID</label>
-        <input type="text" id="banUidInput" placeholder="e.g. 3239454397">
-      </div>
-      <button class="btn-submit-modal" onclick="executeBanPlayer()" style="background:#ef4444; color:#fff; margin-top:2px;">
-        <i class="fa-solid fa-ban"></i> Ban This UID
-      </button>
-
-      <div style="margin-top:18px; border-top:1px solid #334155; padding-top:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <span style="font-size:12px; font-weight:700; color:#cbd5e1;">Banned Players List:</span>
-          <span style="font-size:11px; color:#ef4444; font-weight:800;" id="bannedCountBadge">0 Banned</span>
+        <div class="f-field">
+          <label>Player UID</label>
+          <input type="text" id="winUid" placeholder="Free Fire UID">
         </div>
-        <div id="bannedPlayersListContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+        <div class="f-field">
+          <label>Match Room</label>
+          <input type="text" id="winMatch" placeholder="Match Title">
+        </div>
+        <div class="f-field">
+          <label>Prize Won</label>
+          <input type="text" id="winPrize" placeholder="e.g. Rs. 500">
+        </div>
       </div>
-      <button onclick="closeBanModal()" style="width:100%; background:transparent; border:none; color:#64748b; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
+      <button class="btn-action" onclick="addWinner()"><i class="fa-solid fa-plus"></i> Post Winner</button>
     </div>
+
   </div>
 
   <script>
-    let activePlayerUid = null;
-    let currentlyViewingMatchId = null;
+    function switchAdminTab(viewId, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-    setInterval(() => {
-      const now = new Date();
-      document.getElementById('liveClock').innerText = now.toLocaleTimeString();
-    }, 1000);
+      document.getElementById('viewDeposits').style.display = (viewId === 'deposits') ? 'block' : 'none';
+      document.getElementById('viewMatches').style.display = (viewId === 'matches') ? 'block' : 'none';
+      document.getElementById('viewRegistrations').style.display = (viewId === 'registrations') ? 'block' : 'none';
+      document.getElementById('viewSupport').style.display = (viewId === 'support') ? 'block' : 'none';
+      document.getElementById('viewGiveaways').style.display = (viewId === 'giveaways') ? 'block' : 'none';
 
-    function getTournaments() {
-      return JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (viewId === 'deposits') renderDeposits();
+      if (viewId === 'matches') renderMatchesList();
+      if (viewId === 'registrations') renderUsersList();
+      if (viewId === 'support') renderSupportMessages();
     }
 
-    function saveTournaments(data) {
-      localStorage.setItem('mff_tournaments', JSON.stringify(data));
-      renderAll();
-    }
-
-    let activeMapFilter = "All";
-
-    function renderAll() {
-      const tournaments = getTournaments();
-      let totalRevenue = 0;
-      let totalApprovedPlayers = 0;
-      let pendingList = [];
-
-      tournaments.forEach(m => {
-        if (!m.players) m.players = [];
-        m.players.forEach(p => {
-          if (p.status === 'approved') {
-            totalRevenue += Number(m.fee || 0);
-            totalApprovedPlayers++;
-          } else if (p.status === 'pending') {
-            pendingList.push({ match: m, player: p });
-          }
-        });
-      });
-
-      document.getElementById('vaultRevenue').innerText = totalRevenue.toLocaleString();
-      document.getElementById('metricMatches').innerText = tournaments.length;
-      document.getElementById('metricPlayers').innerText = totalApprovedPlayers;
-      document.getElementById('metricPending').innerText = pendingList.length;
-      document.getElementById('countPending').innerText = `${pendingList.length} Requests`;
-      document.getElementById('badgePending').innerText = pendingList.length;
-      document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
-
-      renderInboxUsers();
-      renderWalletDeposits();
-
-      // Render Pending Match Payment Requests
-      const reqContainer = document.getElementById('pendingCardsList');
-      reqContainer.innerHTML = '';
-
-      if (pendingList.length === 0) {
-        reqContainer.innerHTML = `
-          <div style="text-align:center; padding: 25px; color:#475569; font-size:12px; background:#131b28; border-radius:14px; border:1px dashed #1e293b;">
-            <i class="fa-solid fa-circle-check" style="font-size:24px; color:#10b981; margin-bottom:8px; display:block;"></i>
-            Koi pending verification request nahi hai!
-          </div>`;
-      } else {
-        pendingList.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'req-card';
-          card.innerHTML = `
-            <div class="req-card-top">
-              <span>${item.match.title}</span>
-              <span style="color:#f59e0b;">Fee: Rs ${item.match.fee}</span>
-            </div>
-            <div class="tag-row">
-              <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${item.match.map || 'Bermuda'}</span>
-              <span class="rules-badge"><i class="fa-solid fa-scroll"></i> ${item.match.rules || 'Standard Rules'}</span>
-            </div>
-            <div class="req-details">
-              <strong>Player Name:</strong> ${item.player.name}<br>
-              <strong>FF UID:</strong> <span style="color:#38bdf8;">${item.player.uid}</span><br>
-              <strong>Phone:</strong> ${item.player.phone || 'N/A'}<br>
-              <strong>Submitted:</strong> ${item.player.time || 'Just now'}
-            </div>
-            <div class="req-ss-holder">
-              <img src="${item.player.screenshot}" alt="Payment Screenshot" onerror="this.src='https://via.placeholder.com/300x120?text=No+Screenshot+Provided'">
-            </div>
-            <div class="req-btn-row">
-              <button class="btn-approve" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'approved')"><i class="fa-solid fa-check"></i> Approve</button>
-              <button class="btn-reject" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
-            </div>
-          `;
-          reqContainer.appendChild(card);
-        });
-      }
-
-      // Render Matches List
-      const matchesContainer = document.getElementById('matchesList');
-      matchesContainer.innerHTML = '';
-
-      const filteredMatches = activeMapFilter === "All" 
-        ? tournaments 
-        : tournaments.filter(m => (m.map || "Bermuda").toLowerCase() === activeMapFilter.toLowerCase());
-
-      filteredMatches.forEach(m => {
-        const approvedCount = (m.players || []).filter(p => p.status === 'approved').length;
-        const item = document.createElement('div');
-        item.className = 'req-card';
-        item.innerHTML = `
-          <div class="req-card-top">
-            <span>${m.title}</span>
-            <span style="color:#10b981;">Rs ${m.prize} Prize</span>
-          </div>
-          <div class="tag-row">
-            <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
-            <span class="rules-badge"><i class="fa-solid fa-scroll"></i> ${m.rules || 'Standard Rules'}</span>
-          </div>
-          <div class="req-details">
-            <strong>Timing:</strong> ${m.time}<br>
-            <strong>Sitting / Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
-            <strong>Room ID:</strong> ${m.roomId || 'Not set'} | <strong>Pass:</strong> ${m.roomPass || 'Not set'}
-          </div>
-          
-          <button class="btn-members-manage" onclick="openManageMembersModal('${m.id}')">
-            <i class="fa-solid fa-users"></i> Joined Players & Prize Control (${approvedCount})
-          </button>
-
-          <div class="req-btn-row" style="margin-top:6px;">
-            <button class="btn-approve" style="background:#334155; color:#fff;" onclick="setSpecificRoom('${m.id}')"><i class="fa-solid fa-key"></i> Room Pass</button>
-            <button class="btn-edit-act" onclick="openEditMatchModal('${m.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-            <button class="btn-reject" onclick="deleteMatch('${m.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
-          </div>
-          <button class="btn-proofs-act" onclick="viewMatchProofs('${m.id}')"><i class="fa-solid fa-receipt"></i> View Paid Screenshots (${approvedCount})</button>
-        `;
-        matchesContainer.appendChild(item);
-      });
-    }
-
-    /* ==========================================================
-       WALLET DEPOSITS APPROVAL WITH CUSTOM COINS INPUT
-       ========================================================== */
-    function renderWalletDeposits() {
+    /* 1. WALLET DEPOSITS */
+    function renderDeposits() {
+      const tbody = document.getElementById('depositsTbody');
+      tbody.innerHTML = "";
       const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      const pendingDeposits = deposits.filter(d => d.status === 'pending');
 
-      const badge = document.getElementById('badgeWalletDeposits');
-      const countText = document.getElementById('countWalletDeposits');
-      const container = document.getElementById('walletDepositCardsList');
-
-      if (pendingDeposits.length > 0) {
-        badge.style.display = 'block';
-        badge.innerText = pendingDeposits.length;
-      } else {
-        badge.style.display = 'none';
-      }
-
-      countText.innerText = `${pendingDeposits.length} Requests`;
-      container.innerHTML = "";
-
-      if (pendingDeposits.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding: 25px; color:#475569; font-size:12px; background:#131b28; border-radius:14px; border:1px dashed #1e293b;">
-            <i class="fa-solid fa-coins" style="font-size:24px; color:#f59e0b; margin-bottom:8px; display:block;"></i>
-            Koi pending wallet deposit request nahi hai!
-          </div>`;
+      if (deposits.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Koi deposit request pending nahi hai.</td></tr>`;
         return;
       }
 
-      pendingDeposits.forEach(dep => {
-        const card = document.createElement('div');
-        card.className = 'req-card';
-        card.innerHTML = `
-          <div class="req-card-top">
-            <span style="color:#f59e0b;"><i class="fa-solid fa-wallet"></i> Coin Load Request</span>
-            <span style="color:#10b981; font-weight:800;">Requested: Rs. ${dep.requestedCoins}</span>
-          </div>
-          <div class="req-details">
-            <strong>Player Name:</strong> ${dep.name}<br>
-            <strong>Free Fire UID:</strong> <span style="color:#38bdf8;">${dep.uid}</span><br>
-            <strong>WhatsApp:</strong> ${dep.phone || 'N/A'}<br>
-            <strong>Time:</strong> ${dep.time || 'Just now'}
-          </div>
-          <div class="req-ss-holder">
-            <img src="${dep.screenshot}" alt="Deposit Screenshot" onerror="this.src='https://via.placeholder.com/300x120?text=No+Screenshot'">
-          </div>
-          <div style="margin: 8px 0;">
-            <label style="font-size:11px; color:#cbd5e1; font-weight:700; display:block; margin-bottom:4px;">Kitne Coins Account Me Add Karne Hain?</label>
-            <input type="number" id="coinInput_${dep.id}" value="${dep.requestedCoins}" style="width:100%; background:#090e17; border:1px solid #252c3d; border-radius:8px; padding:8px 10px; color:#ffd000; font-size:14px; font-weight:800; outline:none;">
-          </div>
-          <div class="req-btn-row">
-            <button class="btn-approve" onclick="approveWalletDeposit('${dep.id}')"><i class="fa-solid fa-check"></i> Add Coins & Approve</button>
-            <button class="btn-reject" onclick="rejectWalletDeposit('${dep.id}')"><i class="fa-solid fa-xmark"></i> Reject</button>
-          </div>
+      deposits.forEach((dep, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${dep.time || '--'}</td>
+          <td><b>${dep.name}</b><br><small style="color:var(--blue);">${dep.uid}</small></td>
+          <td>${dep.email}</td>
+          <td style="color:var(--gold); font-weight:800;">Rs. ${dep.requestedCoins}</td>
+          <td>
+            ${dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumb" onclick="openFullImage('${dep.screenshot}')" alt="proof">` : 'No Image'}
+          </td>
+          <td>
+            ${dep.status === 'approved' 
+              ? `<span class="badge badge-approved">Approved</span>` 
+              : `<button class="btn-action btn-approve" onclick="approveDeposit(${idx})"><i class="fa-solid fa-check"></i> Approve</button>`
+            }
+          </td>
         `;
-        container.appendChild(card);
+        tbody.appendChild(tr);
       });
     }
 
-    function approveWalletDeposit(depositId) {
+    function approveDeposit(index) {
       let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      const dep = deposits.find(d => d.id === depositId);
-      if (!dep) return;
+      const item = deposits[index];
+      if (!item) return;
 
-      const coinInput = document.getElementById(`coinInput_${dep.id}`);
-      const coinsToAdd = Number(coinInput.value) || dep.requestedCoins;
+      let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+      let user = users.find(u => u.email === item.email);
 
-      // Update current user if matches
-      let user = JSON.parse(localStorage.getItem('mff_user'));
-      if (user && user.uid === dep.uid) {
-        user.walletBalance = (Number(user.walletBalance) || 0) + coinsToAdd;
-        localStorage.setItem('mff_user', JSON.stringify(user));
-      }
+      if (user) {
+        user.walletBalance = (Number(user.walletBalance) || 0) + Number(item.requestedCoins);
+        localStorage.setItem('mff_accounts_db', JSON.stringify(users));
 
-      dep.status = "approved";
-      dep.creditedCoins = coinsToAdd;
-      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
-
-      renderAll();
-      alert(`✅ ${coinsToAdd} Coins player (UID: ${dep.uid}) ke wallet me add ho gaye hain!`);
-    }
-
-    function rejectWalletDeposit(depositId) {
-      if (!confirm("Kya aap is wallet deposit proof ko reject karna chahte hain?")) return;
-      let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      deposits = deposits.filter(d => d.id !== depositId);
-      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
-      renderAll();
-      alert("❌ Deposit proof reject kar diya gaya.");
-    }
-
-    /* ==========================================================
-       MANAGE JOINED PLAYERS: SEND PRIZE, PUBLISH WINNER, WARN & KICK
-       ========================================================== */
-    function openManageMembersModal(matchId) {
-      currentlyViewingMatchId = matchId;
-      renderManageMembersList();
-      document.getElementById('manageMembersModal').classList.add('active');
-    }
-
-    function renderManageMembersList() {
-      if (!currentlyViewingMatchId) return;
-
-      const tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === currentlyViewingMatchId);
-      if (!match) return;
-
-      const container = document.getElementById('manageMembersContainer');
-      const approvedPlayers = (match.players || []).filter(p => p.status === 'approved');
-
-      document.getElementById('manageMembersSubTitle').innerHTML = `
-        Match: <b style="color:#fff;">${match.title}</b> | Win Prize: <b style="color:#ffd000;">Rs. ${match.prize}</b> | Confirmed: <b style="color:#10b981;">${approvedPlayers.length}/${match.totalSlots} Slots</b>
-      `;
-
-      container.innerHTML = "";
-
-      if (approvedPlayers.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding:25px; color:#64748b; font-size:12px; background:#0b111a; border-radius:12px;">
-            <i class="fa-solid fa-user-slash" style="font-size:24px; margin-bottom:8px; display:block;"></i>
-            Is match me abhi koi confirmed player nahi hai.
-          </div>`;
-        return;
-      }
-
-      approvedPlayers.forEach((p, idx) => {
-        const item = document.createElement('div');
-        item.className = 'member-manage-card';
-
-        const cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
-
-        item.innerHTML = `
-          <div class="member-top-info">
-            <div class="member-info-col">
-              <div class="member-name-row">
-                <span style="color:#f59e0b; font-size:11px;">#${idx + 1}</span>
-                <span>${p.name}</span>
-              </div>
-              <div class="member-uid-text">
-                <i class="fa-solid fa-id-card" style="font-size:9.5px; margin-right:2px;"></i> UID: ${p.uid}
-              </div>
-              <div class="member-phone-text">
-                <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp: ${p.phone || 'N/A'}
-              </div>
-            </div>
-            <button class="btn-kick-player" onclick="kickPlayerFromMatch('${match.id}', '${p.uid}')">
-              <i class="fa-solid fa-user-xmark"></i> Kick
-            </button>
-          </div>
-
-          <div class="member-actions-row">
-            <button class="btn-send-prize" onclick="sendWinnerPrizeWhatsApp('${p.name}', '${p.phone}', '${match.title}', '${match.prize}')">
-              <i class="fa-brands fa-whatsapp"></i> 🏆 Send Prize (WhatsApp)
-            </button>
-            <button class="btn-publish-win" onclick="publishWinnerToSite('${p.name}', '${p.uid}', '${match.title}', '${match.prize}')">
-              <i class="fa-solid fa-trophy"></i> Publish to Winners
-            </button>
-            <button class="btn-warn-player" onclick="issuePlayerWarning('${p.uid}')">
-              <i class="fa-solid fa-triangle-exclamation"></i> Issue Warning
-            </button>
-          </div>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    /* 1-Click WhatsApp Winner Automation */
-    function sendWinnerPrizeWhatsApp(name, phone, matchTitle, prizeAmount) {
-      if (!phone) {
-        alert("Is player ka WhatsApp number mojood nahi hai!");
-        return;
-      }
-
-      let cleanPhone = phone.replace(/[^0-9]/g, '');
-      if (cleanPhone.startsWith('0')) {
-        cleanPhone = '92' + cleanPhone.slice(1);
-      } else if (!cleanPhone.startsWith('92')) {
-        cleanPhone = '92' + cleanPhone;
-      }
-
-      const messageText = `Congratulations ${name}! 🎉 Aapne ${matchTitle} me Booyah (Win) kar liya hai! 🏆 Win Prize Rs. ${prizeAmount} transfer karne ke liye apna EasyPaisa ya JazzCash Account Number aur Account Title send karein.`;
-      const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`;
-
-      window.open(waUrl, '_blank');
-    }
-
-    /* Publish Winner directly to Website "Winners" Tab */
-    function publishWinnerToSite(name, uid, matchTitle, prizeAmount) {
-      let winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      winners.unshift({
-        name: name,
-        uid: uid,
-        match: matchTitle,
-        prize: `Rs. ${prizeAmount}`,
-        date: new Date().toLocaleDateString()
-      });
-
-      localStorage.setItem('mff_winners_list', JSON.stringify(winners));
-      alert(`🎉 ${name} ko website ke 'Winners' tab par publish kar diya gaya hai!`);
-    }
-
-    /* Issue Yellow Card / Warning */
-    function issuePlayerWarning(uid) {
-      let warnings = JSON.parse(localStorage.getItem('mff_warned_uids')) || [];
-      if (!warnings.includes(uid)) {
-        warnings.push(uid);
-        localStorage.setItem('mff_warned_uids', JSON.stringify(warnings));
-      }
-      alert(`⚠️ UID ${uid} ko warning issue kar di gayi hai! Player ke profile me red alert show hoga.`);
-    }
-
-    function kickPlayerFromMatch(matchId, uid) {
-      if (!confirm(`Kya aap is player (UID: ${uid}) ko match se kick (nikalna) chahte hain?`)) return;
-
-      let tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === matchId);
-      if (!match) return;
-
-      match.players = (match.players || []).filter(p => p.uid !== uid);
-      saveTournaments(tournaments);
-      renderManageMembersList();
-      alert("✅ Player ko kamyabi se match se nikal diya gaya hai!");
-    }
-
-    /* Edit Match & Timetable Functions */
-    function openEditMatchModal(matchId) {
-      const tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === matchId);
-      if (!match) return;
-
-      document.getElementById('editMatchId').value = match.id;
-      document.getElementById('editTitle').value = match.title || "";
-      document.getElementById('editCoverImage').value = match.coverImage || "";
-      document.getElementById('editTime').value = match.time || "";
-      document.getElementById('editSlots').value = match.totalSlots || 12;
-      document.getElementById('editFee').value = match.fee || 0;
-      document.getElementById('editPrize').value = match.prize || 0;
-      document.getElementById('editRules').value = match.rules || match.subtitle || "";
-
-      document.getElementById('editMatchModal').classList.add('active');
-    }
-
-    function saveEditedMatch() {
-      const id = document.getElementById('editMatchId').value;
-      let tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === id);
-      if (!match) return;
-
-      match.title = document.getElementById('editTitle').value.trim();
-      match.coverImage = document.getElementById('editCoverImage').value.trim();
-      match.time = document.getElementById('editTime').value.trim();
-      match.totalSlots = Number(document.getElementById('editSlots').value) || match.totalSlots;
-      match.fee = Number(document.getElementById('editFee').value) || match.fee;
-      match.prize = Number(document.getElementById('editPrize').value) || match.prize;
-      match.rules = document.getElementById('editRules').value.trim();
-
-      saveTournaments(tournaments);
-      closeModal('editMatchModal');
-      alert("✅ Match details, time table aur slots update ho chuke hain!");
-    }
-
-    /* View Saved Screenshot Proofs */
-    function viewMatchProofs(matchId) {
-      const tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === matchId);
-      if (!match) return;
-
-      const container = document.getElementById('proofsArchiveContent');
-      container.innerHTML = "";
-
-      const approvedPlayers = (match.players || []).filter(p => p.status === 'approved' && p.screenshot);
-
-      if (approvedPlayers.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12px;">Is match me abhi tak koi verified payment proof save nahi hai.</div>`;
-      } else {
-        approvedPlayers.forEach(p => {
-          const item = document.createElement('div');
-          item.style = "background:#090e17; border:1px solid #1e293b; border-radius:12px; padding:10px;";
-          item.innerHTML = `
-            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
-              <b style="color:#38bdf8;">${p.name} (UID: ${p.uid})</b>
-              <span style="color:#10b981;">Verified ✔</span>
-            </div>
-            <div style="font-size:10px; color:#94a3b8; margin-bottom:6px;">Phone: ${p.phone || 'N/A'} | Time: ${p.time || ''}</div>
-            <div style="text-align:center; background:#000; padding:4px; border-radius:8px;">
-              <img src="${p.screenshot}" style="max-width:100%; max-height:220px; object-fit:contain; border-radius:6px;">
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      }
-
-      document.getElementById('proofsArchiveModal').classList.add('active');
-    }
-
-    function renderInboxUsers() {
-      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const inboxContainer = document.getElementById('inboxUsersList');
-      const badgeSupport = document.getElementById('badgeSupport');
-
-      if (supportMsgs.length > 0) {
-        badgeSupport.style.display = 'block';
-        badgeSupport.innerText = supportMsgs.length;
-      } else {
-        badgeSupport.style.display = 'none';
-      }
-
-      inboxContainer.innerHTML = '';
-      if (supportMsgs.length === 0) {
-        inboxContainer.innerHTML = `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px; background:#131b28; border-radius:14px;">Koi chat ya message nahi hai.</div>`;
-        return;
-      }
-
-      const usersMap = {};
-      supportMsgs.forEach(m => {
-        const key = m.uid || m.name;
-        if (!usersMap[key]) {
-          usersMap[key] = {
-            name: m.name,
-            uid: m.uid || m.contact || "Unknown",
-            messages: []
-          };
+        // Sync if active user is logged in
+        let curUser = JSON.parse(localStorage.getItem('mff_user'));
+        if (curUser && curUser.email === user.email) {
+          curUser.walletBalance = user.walletBalance;
+          localStorage.setItem('mff_user', JSON.stringify(curUser));
         }
-        usersMap[key].messages.push(m);
-      });
-
-      Object.keys(usersMap).forEach(key => {
-        const uData = usersMap[key];
-        const lastMsg = uData.messages[uData.messages.length - 1];
-
-        const item = document.createElement('div');
-        item.className = 'user-inbox-item';
-        item.onclick = () => openChatRoom(uData);
-        item.innerHTML = `
-          <div class="user-avatar">${uData.name.charAt(0).toUpperCase()}</div>
-          <div class="user-info">
-            <div class="user-title">
-              <span>${uData.name}</span>
-              <span style="font-size:10px; color:#64748b;">${lastMsg.time || ''}</span>
-            </div>
-            <div class="user-lastmsg">
-              <span style="color:#38bdf8;">UID: ${uData.uid}</span> • ${lastMsg.message}
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right" style="color:#475569; font-size:12px; margin-left:10px;"></i>
-        `;
-        inboxContainer.appendChild(item);
-      });
-    }
-
-    function openChatRoom(uData) {
-      activePlayerUid = uData.uid;
-      document.getElementById('activeChatName').innerText = uData.name;
-      document.getElementById('activeChatUid').innerText = `UID: ${uData.uid}`;
-      document.getElementById('activeChatAvatar').innerText = uData.name.charAt(0).toUpperCase();
-
-      renderChatStream();
-      document.getElementById('chatRoomModal').classList.add('active');
-    }
-
-    function closeChatRoom() {
-      document.getElementById('chatRoomModal').classList.remove('active');
-      activePlayerUid = null;
-      renderAll();
-    }
-
-    function renderChatStream() {
-      const stream = document.getElementById('chatBodyStream');
-      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-
-      const playerMessages = supportMsgs.filter(m => (m.uid === activePlayerUid || (m.contact && m.contact.includes(activePlayerUid)) || m.name === activePlayerUid));
-      playerMessages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-
-      stream.innerHTML = '';
-      playerMessages.forEach(m => {
-        const pBubble = document.createElement('div');
-        pBubble.className = 'bubble-player';
-        pBubble.innerHTML = `<div>${m.message}</div><span style="font-size:9px; color:#94a3b8; display:block; margin-top:3px; text-align:right;">${m.time || ''}</span>`;
-        stream.appendChild(pBubble);
-
-        if (m.adminReply) {
-          const aBubble = document.createElement('div');
-          aBubble.className = 'bubble-admin';
-          aBubble.innerHTML = `<div>${m.adminReply}</div><span style="font-size:9px; color:#064e3b; display:block; margin-top:3px; text-align:right;">Owner (You)</span>`;
-          stream.appendChild(aBubble);
-        }
-      });
-
-      stream.scrollTop = stream.scrollHeight;
-    }
-
-    function handleAdminEnter(e) {
-      if (e.key === 'Enter') sendAdminChatMessage();
-    }
-
-    function sendAdminChatMessage() {
-      const input = document.getElementById('adminMsgInput');
-      const reply = input.value.trim();
-      if (!reply) return;
-
-      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const msgObj = supportMsgs.slice().reverse().find(m => (m.uid === activePlayerUid || (m.contact && m.contact.includes(activePlayerUid)) || m.name === activePlayerUid));
-      
-      if (msgObj) {
-        msgObj.adminReply = reply;
-        localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
-        input.value = '';
-        renderChatStream();
       }
+
+      item.status = "approved";
+      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
+      renderDeposits();
+      alert(`✅ Rs. ${item.requestedCoins} user ke wallet me credit kar diye gaye hain!`);
     }
 
-    function clearAllSupportMsgs() {
-      if (confirm('Tamam chat history delete karni hai?')) {
-        localStorage.removeItem('mff_support_msgs');
-        renderAll();
-      }
-    }
+    /* 2. MATCH CREATION & ROOM CREDENTIALS */
+    function createMatchRoom() {
+      const title = document.getElementById('mTitle').value.trim();
+      const map = document.getElementById('mMap').value;
+      const fee = Number(document.getElementById('mFee').value);
+      const prize = Number(document.getElementById('mPrize').value);
+      const time = document.getElementById('mTime').value.trim();
+      const slots = Number(document.getElementById('mSlots').value);
 
-    function openModal() { document.getElementById('matchModal').classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-    /* Giveaways Functions */
-    function openAdminGiveawayModal() {
-      renderAdminGiveawaysList();
-      document.getElementById('adminGiveawayModal').classList.add('active');
-    }
-
-    function closeAdminGiveawayModal() {
-      document.getElementById('adminGiveawayModal').classList.remove('active');
-    }
-
-    function saveAdminGiveaway() {
-      const title = document.getElementById('admGiveawayTitle').value.trim();
-      const reward = document.getElementById('admGiveawayReward').value.trim();
-      const time = document.getElementById('admGiveawayTime').value.trim();
-      const desc = document.getElementById('admGiveawayDesc').value.trim();
-
-      if (!title || !reward) {
-        alert("Giveaway Title aur Reward likhna lazmi hai!");
+      if (!title || !time) {
+        alert("Match Title aur Time lazmi bharein!");
         return;
       }
 
-      let giveaways = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
-      giveaways.push({
-        id: "ev_" + Date.now(),
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      matches.push({
+        id: "m_" + Date.now(),
         title: title,
-        reward: reward,
-        endDate: time || "Active Now",
-        desc: desc || "Top players and active members are eligible."
-      });
-
-      localStorage.setItem('mff_giveaways', JSON.stringify(giveaways));
-
-      document.getElementById('admGiveawayTitle').value = "";
-      document.getElementById('admGiveawayReward').value = "";
-      document.getElementById('admGiveawayTime').value = "";
-      document.getElementById('admGiveawayDesc').value = "";
-
-      renderAdminGiveawaysList();
-      alert("✅ Giveaway publish ho gaya!");
-    }
-
-    function removeAdminGiveaway(id) {
-      if (!confirm("Kya aap is giveaway ko delete karna chahte hain?")) return;
-      let giveaways = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
-      giveaways = giveaways.filter(g => g.id !== id);
-      localStorage.setItem('mff_giveaways', JSON.stringify(giveaways));
-      renderAdminGiveawaysList();
-    }
-
-    function renderAdminGiveawaysList() {
-      const list = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
-      const container = document.getElementById('admGiveawayActiveContainer');
-      container.innerHTML = "";
-
-      if (list.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:#64748b; text-align:center; padding:10px;">Koi giveaway active nahi hai.</div>`;
-        return;
-      }
-
-      list.forEach(item => {
-        const card = document.createElement('div');
-        card.style = "background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        card.innerHTML = `
-          <div>
-            <div style="font-size:11px; font-weight:800; color:#fff;">${item.title}</div>
-            <div style="font-size:10px; color:#10b981; font-weight:700;">Prize: ${item.reward} | Time: ${item.endDate}</div>
-          </div>
-          <button onclick="removeAdminGiveaway('${item.id}')" style="background:#ef4444; border:none; color:#fff; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer;">
-            Delete
-          </button>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    /* Ban Player Functions */
-    function openBanModal() {
-      renderBannedPlayersList();
-      document.getElementById('banModal').classList.add('active');
-    }
-
-    function closeBanModal() {
-      document.getElementById('banModal').classList.remove('active');
-    }
-
-    function executeBanPlayer() {
-      const input = document.getElementById('banUidInput');
-      const uid = input.value.trim();
-
-      if (!uid) {
-        alert("Free Fire Player UID likhna zaroori hai!");
-        return;
-      }
-
-      let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-
-      if (bans.includes(uid)) {
-        alert("Yeh UID pehle se banned hai!");
-        return;
-      }
-
-      bans.push(uid);
-      localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
-      input.value = "";
-      renderBannedPlayersList();
-      alert(`UID ${uid} ko ban kar diya gaya hai!`);
-    }
-
-    function unbanPlayer(uid) {
-      if (!confirm(`Kya aap UID ${uid} ko unban karna chahte hain?`)) return;
-
-      let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      bans = bans.filter(id => id !== uid);
-      localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
-      renderBannedPlayersList();
-      alert(`UID ${uid} ko unban kar diya gaya hai!`);
-    }
-
-    function renderBannedPlayersList() {
-      const bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      const container = document.getElementById('bannedPlayersListContainer');
-      const countBadge = document.getElementById('bannedCountBadge');
-
-      countBadge.innerText = `${bans.length} Banned`;
-      container.innerHTML = "";
-
-      if (bans.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:#64748b; text-align:center; padding:12px;">Koi banned player mojood nahi hai.</div>`;
-        return;
-      }
-
-      bans.forEach(uid => {
-        const item = document.createElement('div');
-        item.style = "background:#131b28; border:1px solid #1e293b; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;";
-        item.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-ban" style="color:#ef4444; font-size:12px;"></i>
-            <div>
-              <div style="font-size:12px; font-weight:800; color:#fff;">UID: ${uid}</div>
-              <div style="font-size:10px; color:#ef4444;">Status: Blacklisted</div>
-            </div>
-          </div>
-          <button onclick="unbanPlayer('${uid}')" style="background:#10b981; color:#022c22; border:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">
-            <i class="fa-solid fa-lock-open"></i> Unban
-          </button>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function submitMatch() {
-      const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
-      const mode = document.getElementById('newMode').value;
-      const map = document.getElementById('newMap').value;
-      const coverImage = document.getElementById('newCoverImage').value.trim();
-      const rules = document.getElementById('newRules').value.trim() || 'Standard Rules';
-      const time = document.getElementById('newTime').value.trim() || 'TONIGHT';
-      const fee = Number(document.getElementById('newFee').value) || 50;
-      const prize = Number(document.getElementById('newPrize').value) || 400;
-      const totalSlots = Number(document.getElementById('newSlots').value) || 12;
-
-      let tournaments = getTournaments();
-      tournaments.unshift({
-        id: 'm_' + Date.now(),
-        title: `${title} (${mode})`,
+        subtitle: `${map} - ${slots} Slots`,
         map: map,
-        coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
-        rules: rules,
-        time,
-        fee,
-        prize,
-        totalSlots,
-        roomId: '',
-        roomPass: '',
+        rules: "Standard Esports Rules",
+        time: time,
+        fee: fee,
+        prize: prize,
+        totalSlots: slots,
+        roomId: "",
+        roomPass: "",
         players: []
       });
 
-      saveTournaments(tournaments);
-      closeModal('matchModal');
-      alert('Tournament publish ho gaya!');
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      renderMatchesList();
+      alert("✅ Match create ho gaya!");
     }
 
-    function handlePlayerStatus(matchId, uid, action) {
-      let tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === matchId);
-      if (!match) return;
+    function renderMatchesList() {
+      const container = document.getElementById('activeMatchesContainer');
+      container.innerHTML = "";
+      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
 
-      if (action === 'approved') {
-        const player = match.players.find(p => p.uid === uid);
-        if (player) {
-          player.status = 'approved';
-        }
-      } else if (action === 'rejected') {
-        match.players = match.players.filter(p => p.uid !== uid);
+      matches.forEach((m, idx) => {
+        const box = document.createElement('div');
+        box.style = "background:#070d18; border:1px solid var(--card-border); border-radius:8px; padding:12px; margin-bottom:10px;";
+        box.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <b style="color:#fff;">${m.title} (${m.map})</b>
+            <span style="color:var(--gold); font-size:11px;">Fee: Rs.${m.fee} | Booyah: Rs.${m.prize}</span>
+          </div>
+          <div class="form-grid" style="margin-bottom:6px;">
+            <div class="f-field">
+              <label>Room ID</label>
+              <input type="text" id="rid_${idx}" value="${m.roomId || ''}" placeholder="Custom Room ID">
+            </div>
+            <div class="f-field">
+              <label>Room Password</label>
+              <input type="text" id="rpass_${idx}" value="${m.roomPass || ''}" placeholder="Room Password">
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-action" onclick="saveRoomCreds(${idx})"><i class="fa-solid fa-key"></i> Save & Release Credentials</button>
+            <button class="btn-action btn-danger" onclick="deleteMatch(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        `;
+        container.appendChild(box);
+      });
+    }
+
+    function saveRoomCreds(index) {
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      matches[index].roomId = document.getElementById(`rid_${index}`).value.trim();
+      matches[index].roomPass = document.getElementById(`rpass_${index}`).value.trim();
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      alert("✅ Room ID aur Password live tournament players ke liye release ho gaya!");
+    }
+
+    function deleteMatch(index) {
+      if (!confirm("Match delete karna chahte hain?")) return;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      matches.splice(index, 1);
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      renderMatchesList();
+    }
+
+    /* 3. USER ACCOUNTS */
+    function renderUsersList() {
+      const tbody = document.getElementById('usersTbody');
+      tbody.innerHTML = "";
+      const users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+
+      users.forEach((u, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${u.name}</b></td>
+          <td style="color:var(--blue);">${u.uid}</td>
+          <td>${u.email}</td>
+          <td>${u.phone}</td>
+          <td style="color:var(--gold); font-weight:800;">Rs. ${u.walletBalance || 0}</td>
+          <td>
+            <button class="btn-action" onclick="modifyBalancePrompt(${idx})"><i class="fa-solid fa-pen-to-square"></i> Edit Bal</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function modifyBalancePrompt(index) {
+      let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+      const user = users[index];
+      const newBal = prompt(`Naya balance enter karein for ${user.name} (${user.email}):`, user.walletBalance || 0);
+      if (newBal !== null && !isNaN(newBal)) {
+        user.walletBalance = Number(newBal);
+        localStorage.setItem('mff_accounts_db', JSON.stringify(users));
+        renderUsersList();
+        alert("Balance update ho gaya!");
+      }
+    }
+
+    /* 4. SUPPORT REPLIES */
+    function renderSupportMessages() {
+      const container = document.getElementById('adminSupportChatList');
+      container.innerHTML = "";
+      const msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+
+      if (msgs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">Koi messages mojud nahi hain.</div>`;
+        return;
       }
 
-      saveTournaments(tournaments);
+      msgs.forEach((m, idx) => {
+        const item = document.createElement('div');
+        item.style = "background:#070d18; border:1px solid var(--card-border); border-radius:8px; padding:12px; margin-bottom:10px;";
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
+            <b>${m.name} (${m.contact})</b>
+            <span style="color:var(--text-muted);">${m.time || ''}</span>
+          </div>
+          <div style="font-size:12px; color:#cbd5e1; margin-bottom:8px;">${m.message}</div>
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="reply_${idx}" placeholder="Owner ka jawab likhein..." value="${m.adminReply || ''}" style="flex:1; background:#000; border:1px solid var(--card-border); border-radius:4px; padding:6px 8px; color:#fff; font-size:11px;">
+            <button class="btn-action" onclick="sendAdminReply(${idx})"><i class="fa-solid fa-reply"></i> Reply</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
     }
 
-    function setSpecificRoom(matchId) {
-      let tournaments = getTournaments();
-      const match = tournaments.find(m => m.id === matchId);
-      if (!match) return;
-
-      const rId = prompt('Room ID darj karein:', match.roomId || '');
-      if (rId === null) return;
-      const rPass = prompt('Room Password darj karein:', match.roomPass || '');
-      if (rPass === null) return;
-
-      match.roomId = rId;
-      match.roomPass = rPass;
-      saveTournaments(tournaments);
-      alert('Room credentials save ho gaye!');
+    function sendAdminReply(index) {
+      let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      const replyText = document.getElementById(`reply_${index}`).value.trim();
+      msgs[index].adminReply = replyText;
+      localStorage.setItem('mff_support_msgs', JSON.stringify(msgs));
+      alert("✅ Reply bhej diya gaya!");
     }
 
-    function deleteMatch(matchId) {
-      if (!confirm('Kya aap is tournament ko delete karna chahte hain?')) return;
-      let tournaments = getTournaments();
-      tournaments = tournaments.filter(m => m.id !== matchId);
-      saveTournaments(tournaments);
+    /* 5. WINNERS */
+    function addWinner() {
+      const name = document.getElementById('winName').value.trim();
+      const uid = document.getElementById('winUid').value.trim();
+      const match = document.getElementById('winMatch').value.trim();
+      const prize = document.getElementById('winPrize').value.trim();
+
+      if (!name || !uid) return;
+
+      let winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
+      winners.unshift({ name, uid, match, prize });
+      localStorage.setItem('mff_winners_list', JSON.stringify(winners));
+      alert("🏆 Winner website par live add ho gaya!");
     }
 
-    function showSection(id) {
-      document.getElementById('pendingSection').style.display = (id === 'pendingSection') ? 'block' : 'none';
-      document.getElementById('matchesSection').style.display = (id === 'matchesSection') ? 'block' : 'none';
-      document.getElementById('supportSection').style.display = (id === 'supportSection') ? 'block' : 'none';
-      document.getElementById('walletDepositSection').style.display = (id === 'walletDepositSection') ? 'block' : 'none';
+    function openFullImage(src) {
+      const w = window.open("");
+      w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
-    function switchNav(btn, view) {
-      document.querySelectorAll('.bottom-bar button').forEach(b => b.className = 'nav-item');
-      btn.className = 'nav-item active-pill';
-      if (view === 'all') {
-        document.getElementById('pendingSection').style.display = 'block';
-        document.getElementById('matchesSection').style.display = 'block';
-        document.getElementById('supportSection').style.display = 'none';
-        document.getElementById('walletDepositSection').style.display = 'none';
-      } else if (view === 'matches') {
-        showSection('matchesSection');
-      } else if (view === 'pending') {
-        showSection('pendingSection');
-      } else if (view === 'support') {
-        showSection('supportSection');
-      }
-    }
-
-    function exportData() {
-      const data = localStorage.getItem('mff_tournaments');
-      navigator.clipboard.writeText(data || '[]');
-      alert('Backup copied!');
-    }
-
-    function clearCompletedMatches() {
-      if (confirm('Matches clear karne hain?')) {
-        saveTournaments([]);
-      }
-    }
-
-    window.onload = renderAll;
+    window.onload = function() {
+      renderDeposits();
+    };
   </script>
 </body>
 </html>
