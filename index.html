@@ -11,11 +11,12 @@
       --bg-gradient: radial-gradient(circle at 50% 0%, #08482c 0%, #032316 45%, #01130a 100%);
       --mint-primary: #00e676;
       --mint-accent: #2de28d;
-      --mint-glass: rgba(0, 230, 118, 0.15);
       --card-white: #ffffff;
       --text-dark: #0a291b;
-      --text-muted: #64748b;
       --gold: #ffb703;
+      --ff-slot-bg: #1c1f26;
+      --ff-slot-border: #2e3544;
+      --ff-active-slot: linear-gradient(90deg, #604620, #2c2518);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -313,50 +314,49 @@
       border: 1.5px solid #012213;
     }
 
-    /* Modals */
+    /* Modals Base */
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(8px);
       z-index: 999;
       justify-content: center;
       align-items: center;
-      padding: 16px;
+      padding: 12px;
     }
     .modal-dialog {
-      background: #071f14;
+      background: #0d121a;
       border: 1px solid rgba(0, 230, 118, 0.3);
       width: 100%;
-      max-width: 380px;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      max-height: 90vh;
+      max-width: 410px;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+      max-height: 94vh;
       overflow-y: auto;
     }
-    .modal-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     .form-ctrl { margin-bottom: 12px; }
     .form-ctrl label { font-size: 11px; font-weight: 700; color: #a7f3d0; display: block; margin-bottom: 4px; }
     .form-ctrl input {
       width: 100%;
-      background: #02110a;
+      background: #06090e;
       border: 1px solid rgba(0, 230, 118, 0.2);
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 10px 12px;
       color: #fff;
       font-size: 13px;
       outline: none;
     }
-    .form-ctrl input:focus { border-color: var(--mint-primary); }
     .btn-green-action {
       width: 100%;
       background: linear-gradient(135deg, var(--mint-primary), #00b0ff);
       border: none;
       color: #012817;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 11px;
+      border-radius: 8px;
       font-size: 13px;
       font-weight: 900;
       cursor: pointer;
@@ -374,72 +374,164 @@
     }
     .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
 
-    /* New Detail Boxes inside Match Modal */
-    .match-overview-card {
-      background: rgba(0, 230, 118, 0.08);
-      border: 1px solid rgba(0, 230, 118, 0.25);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    .overview-row {
+    /* ==========================================================
+       FREE FIRE AUTHENTIC LOBBY ROOM STYLE
+       ========================================================== */
+    .ff-lobby-container {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      padding: 3px 0;
-      color: #cbd5e1;
-    }
-    .overview-row b { color: #fff; }
-    
-    .match-rules-box {
-      background: rgba(255, 183, 3, 0.1);
-      border: 1px solid rgba(255, 183, 3, 0.35);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 12px;
-    }
-    .match-rules-box h4 {
-      font-size: 11px;
-      color: var(--gold);
-      font-weight: 900;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .match-rules-box p {
-      font-size: 10.5px;
-      color: #fed7aa;
-      line-height: 1.4;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .members-list-box {
-      background: #02110a;
-      border: 1px solid rgba(0, 230, 118, 0.2);
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 12px;
+    .ff-notice-strip {
+      background: rgba(255, 183, 3, 0.08);
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 10.5px;
+      color: #fed7aa;
+      line-height: 1.35;
     }
-    .members-list-header {
+    .ff-notice-strip b { color: var(--gold); }
+
+    .ff-lobby-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      background: #10141d;
+      border: 1px solid #252c3d;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    /* Left Card: Map & Room Specs */
+    .ff-left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ff-map-box {
+      position: relative;
+      width: 100%;
+      height: 85px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #333d52;
+      background: #000;
+    }
+    .ff-map-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .ff-map-badge {
+      position: absolute;
+      bottom: 0;
+      inset-inline: 0;
+      background: rgba(0, 0, 0, 0.75);
+      text-align: center;
+      font-size: 9px;
+      font-weight: 900;
+      color: #fff;
+      padding: 2px 0;
+      letter-spacing: 0.5px;
+    }
+    .ff-room-spec-row {
+      font-size: 9.5px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #1a2233;
+      padding: 2px 0;
+    }
+    .ff-room-spec-row span:last-child { color: #fff; font-weight: 700; }
+    
+    .ff-creds-badge-box {
+      background: #0a1b14;
+      border: 1px solid var(--mint-primary);
+      border-radius: 6px;
+      padding: 6px;
+      margin-top: 4px;
+      font-size: 10px;
+    }
+    .ff-creds-badge-box div { margin-bottom: 2px; }
+
+    /* Right Panel: Player Slot Lists */
+    .ff-right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .ff-lobby-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 800;
+      color: #cbd5e1;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #252c3d;
+    }
+
+    .ff-slot-bar {
+      background: var(--ff-slot-bg);
+      border: 1px solid var(--ff-slot-border);
+      border-radius: 4px;
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      min-height: 40px;
+    }
+    .ff-slot-bar.occupied {
+      background: var(--ff-active-slot);
+      border-color: #9a6f23;
+    }
+    .ff-slot-num {
+      font-size: 10px;
+      font-weight: 900;
+      color: #64748b;
+      width: 14px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .ff-slot-bar.occupied .ff-slot-num {
+      color: var(--gold);
+    }
+    .ff-player-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      overflow: hidden;
+    }
+    .ff-player-name {
       font-size: 11px;
       font-weight: 800;
-      color: var(--mint-primary);
-      margin-bottom: 8px;
+      color: #fff;
       display: flex;
-      justify-content: space-between;
-    }
-    .player-row-item {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 6px 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 6px;
-      margin-bottom: 4px;
-      font-size: 11px;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .player-row-item:nth-child(even) { background: rgba(0, 230, 118, 0.05); }
+    .ff-player-uid {
+      font-size: 9.5px;
+      font-family: monospace;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .ff-slot-empty {
+      font-size: 10px;
+      font-style: italic;
+      color: #475569;
+    }
 
     /* Event Card */
     .event-card {
@@ -537,9 +629,7 @@
     <!-- Bottom Nav -->
     <div class="bottom-bar">
       <button class="bot-item" onclick="openEventsModal()">
-        <div class="bot-icon-circle">
-          <i class="fa-solid fa-gift" style="color:#ff4625;"></i>
-        </div>
+        <div class="bot-icon-circle"><i class="fa-solid fa-gift" style="color:#ff4625;"></i></div>
         <span class="bot-badge-bubble" id="eventsBadgeCount">0</span>
         <span>Events</span>
       </button>
@@ -660,40 +750,68 @@
     </div>
   </div>
 
-  <!-- Match View / Join Modal -->
+  <!-- Match View / Lobby Modal -->
   <div class="modal-backdrop" id="joinModal">
     <div class="modal-dialog">
       <div class="modal-title">
-        <span id="modalMatchName">Match Details</span>
+        <span id="modalMatchName">Match Lobby</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
       </div>
       
-      <!-- Inside Match Details View (Unlocked when joined & approved) -->
+      <!-- Inside Custom Room Lobby Screen (Only shown when approved) -->
       <div id="joinedDetailsContainer" style="display: none;">
-        
-        <!-- Room ID & Pass Display -->
-        <div id="roomCredsBox" style="margin-bottom: 12px;"></div>
-
-        <!-- Full Overview Box (Same details as card) -->
-        <div class="match-overview-card" id="matchOverviewBox"></div>
-
-        <!-- Important Rules & Prize Notice -->
-        <div class="match-rules-box">
-          <h4><i class="fa-solid fa-triangle-exclamation"></i> Important Notice & Rules</h4>
-          <p>
-            Har banda apna <b>Real Name</b>, <b>Game UID</b>, aur <b>WhatsApp Number</b> add kare. Take win prize dene ke time WhatsApp par rabta kiya ja sake. Fake details dene par win prize ke time masla ban sakta hai ya prize cancel ho sakta hai.
-          </p>
-        </div>
-
-        <!-- Joined Members List (Only Name and UID) -->
-        <div class="members-list-box">
-          <div class="members-list-header">
-            <span><i class="fa-solid fa-users"></i> Joined Players</span>
-            <span id="membersCountBadge">0</span>
+        <div class="ff-lobby-container">
+          
+          <!-- Rules & Warning Notice -->
+          <div class="ff-notice-strip">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold); margin-right:4px;"></i>
+            Har banda apna <b>Real Name, Game UID</b> aur <b>WhatsApp Number</b> theek add kare. Take win prize ke waqt WhatsApp par rabta kiya ja sake. Fake info dene par prize cancel ho sakta hai.
           </div>
-          <div id="membersListContainer" style="max-height: 180px; overflow-y: auto;"></div>
-        </div>
 
+          <!-- Free Fire Room Grid View -->
+          <div class="ff-lobby-grid">
+            
+            <!-- Left Info Panel -->
+            <div class="ff-left-panel">
+              <div class="ff-map-box">
+                <img id="lobbyCoverImg" class="ff-map-img" src="" alt="Gaming DP">
+                <div class="ff-map-badge" id="lobbyMapBadge">BERMUDA</div>
+              </div>
+
+              <div class="ff-room-spec-row">
+                <span>Mode:</span>
+                <span id="lobbyModeVal">Battle</span>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Time:</span>
+                <span id="lobbyTimeVal">--</span>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Fee:</span>
+                <span id="lobbyFeeVal" style="color:var(--mint-primary);">Rs. 0</span>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Prize:</span>
+                <span id="lobbyPrizeVal" style="color:var(--gold);">Rs. 0</span>
+              </div>
+
+              <!-- Room Credentials Box -->
+              <div class="ff-creds-badge-box" id="lobbyCredsBox"></div>
+            </div>
+
+            <!-- Right Player Slots Panel -->
+            <div class="ff-right-panel">
+              <div class="ff-lobby-top-bar">
+                <span><i class="fa-solid fa-users"></i> <span id="lobbySlotsFraction">0/12</span></span>
+                <span style="color:#ffd000; font-size:9px;">ROOM SLOTS</span>
+              </div>
+
+              <div id="ffSlotsContainer" style="display:flex; flex-direction:column; gap:5px; margin-top:4px;"></div>
+            </div>
+
+          </div>
+
+        </div>
       </div>
 
       <!-- Pending Verification Screen -->
@@ -757,6 +875,7 @@
         fee: 30,
         prize: 300,
         totalSlots: 12,
+        coverImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
         roomId: "",
         roomPass: "",
         players: []
@@ -771,6 +890,7 @@
         fee: 50,
         prize: 500,
         totalSlots: 12,
+        coverImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
         roomId: "",
         roomPass: "",
         players: []
@@ -815,7 +935,7 @@
       filtered.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === "approved");
         const joinedCount = approvedPlayers.length;
-        const thumbUrl = matchThumbnails[idx % matchThumbnails.length];
+        const thumbUrl = m.coverImage || matchThumbnails[idx % matchThumbnails.length];
 
         let statusText = "Tap to Join";
         let userRecord = currentUser ? (m.players || []).find(p => p.uid === currentUser.uid) : null;
@@ -873,74 +993,81 @@
       const joinedContainer = document.getElementById('joinedDetailsContainer');
       const pendingNoticeBox = document.getElementById('pendingNoticeBox');
       const paymentFormBlock = document.getElementById('paymentFormBlock');
-      const roomCredsBox = document.getElementById('roomCredsBox');
 
       const approvedPlayers = (match.players || []).filter(p => p.status === "approved");
       const userRecord = (match.players || []).find(p => p.uid === currentUser.uid);
 
-      // Reset display states
       joinedContainer.style.display = "none";
       pendingNoticeBox.style.display = "none";
       paymentFormBlock.style.display = "none";
 
       if (userRecord && userRecord.status === "approved") {
-        // User joined & approved -> Show room details, rules, and members list
         joinedContainer.style.display = "block";
 
-        // Room ID & Pass
+        // Setup Left Panel with Gaming DP & Specs
+        const fallbackDp = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80";
+        document.getElementById('lobbyCoverImg').src = match.coverImage || fallbackDp;
+        document.getElementById('lobbyMapBadge').innerText = (match.map || "BERMUDA").toUpperCase();
+        document.getElementById('lobbyModeVal').innerText = match.subtitle || "Battle";
+        document.getElementById('lobbyTimeVal').innerText = match.time || "--";
+        document.getElementById('lobbyFeeVal').innerText = `Rs. ${match.fee}`;
+        document.getElementById('lobbyPrizeVal').innerText = `Rs. ${match.prize}`;
+
+        // Credentials Box
+        const credsBox = document.getElementById('lobbyCredsBox');
         if (match.roomId && match.roomPass) {
-          roomCredsBox.innerHTML = `
-            <div style="background:#022a18; border:1px solid var(--mint-primary); border-radius:10px; padding:12px; font-size:12px;">
-              <b style="color:var(--mint-primary); display:block; margin-bottom:6px;"><i class="fa-solid fa-key"></i> ROOM DETAILS UNLOCKED</b>
-              <div>Room ID: <b style="color:#00f0ff; letter-spacing:1px;">${match.roomId}</b></div>
-              <div>Password: <b style="color:#ffd000; letter-spacing:1px;">${match.roomPass}</b></div>
-            </div>`;
+          credsBox.innerHTML = `
+            <div style="color:var(--mint-primary); font-weight:800; font-size:9px;"><i class="fa-solid fa-key"></i> UNLOCKED</div>
+            <div>ID: <b style="color:#00f0ff;">${match.roomId}</b></div>
+            <div>PW: <b style="color:#ffd000;">${match.roomPass}</b></div>
+          `;
         } else {
-          roomCredsBox.innerHTML = `
-            <div style="background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000;">
-              <i class="fa-solid fa-circle-check"></i> Slot confirm hai! Match shuru hone se pehle Admin yahan ID aur Pass show karega.
-            </div>`;
+          credsBox.innerHTML = `
+            <div style="color:#ffd000; font-size:9px; line-height:1.2;">
+              <i class="fa-solid fa-lock"></i> Match se thori der pehle ID & PW update hoga.
+            </div>
+          `;
         }
 
-        // Inside Match Overview (Same as card info)
-        document.getElementById('matchOverviewBox').innerHTML = `
-          <div class="overview-row"><span>Map & Mode:</span> <b>${match.map} (${match.subtitle || 'Battle'})</b></div>
-          <div class="overview-row"><span>Match Time:</span> <b>${match.time}</b></div>
-          <div class="overview-row"><span>Entry Fee:</span> <b style="color:var(--mint-primary);">Rs. ${match.fee}</b></div>
-          <div class="overview-row"><span>Winning Prize:</span> <b style="color:var(--gold);">Rs. ${match.prize}</b></div>
-          <div class="overview-row"><span>Total Slots:</span> <b>${approvedPlayers.length} / ${match.totalSlots} Players Joined</b></div>
-        `;
+        // Setup Right Panel Slots (Exact Free Fire Lobby slots)
+        const totalSlots = match.totalSlots || 12;
+        document.getElementById('lobbySlotsFraction').innerText = `${approvedPlayers.length}/${totalSlots}`;
+        
+        const slotsContainer = document.getElementById('ffSlotsContainer');
+        slotsContainer.innerHTML = "";
 
-        // Render Members List (Name & UID ONLY, Phone is NOT shown)
-        document.getElementById('membersCountBadge').innerText = `${approvedPlayers.length}/${match.totalSlots}`;
-        const listContainer = document.getElementById('membersListContainer');
-        listContainer.innerHTML = "";
-
-        if (approvedPlayers.length === 0) {
-          listContainer.innerHTML = `<div style="text-align:center; font-size:11px; color:#64748b; padding:8px;">Abhi tak koi confirmed player nahi hai.</div>`;
-        } else {
-          approvedPlayers.forEach((p, idx) => {
-            const isMe = p.uid === currentUser.uid;
-            const pRow = document.createElement('div');
-            pRow.className = "player-row-item";
-            pRow.innerHTML = `
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span style="color:var(--mint-primary); font-weight:800; font-size:10px;">#${idx + 1}</span>
-                <span style="font-weight:700; color:#fff;">${p.name} ${isMe ? '<small style="color:var(--mint-primary);">(You)</small>' : ''}</span>
-              </div>
-              <div style="color:#38bdf8; font-family:monospace; font-size:11px; font-weight:700;">
-                <i class="fa-solid fa-id-badge" style="font-size:10px; margin-right:2px;"></i> ${p.uid}
+        for (let i = 0; i < totalSlots; i++) {
+          const player = approvedPlayers[i];
+          const slotRow = document.createElement('div');
+          
+          if (player) {
+            const isMe = player.uid === currentUser.uid;
+            slotRow.className = "ff-slot-bar occupied";
+            slotRow.innerHTML = `
+              <div class="ff-slot-num">${i + 1}</div>
+              <div class="ff-player-details">
+                <div class="ff-player-name">
+                  <i class="fa-solid fa-user-ninja" style="font-size:10px; color:var(--gold);"></i>
+                  ${player.name} ${isMe ? '<span style="color:var(--mint-primary); font-size:9px;">(You)</span>' : ''}
+                </div>
+                <div class="ff-player-uid">
+                  <i class="fa-solid fa-id-card" style="font-size:8.5px;"></i> UID: ${player.uid}
+                </div>
               </div>
             `;
-            listContainer.appendChild(pRow);
-          });
+          } else {
+            slotRow.className = "ff-slot-bar";
+            slotRow.innerHTML = `
+              <div class="ff-slot-num">${i + 1}</div>
+              <div class="ff-slot-empty">Empty Slot</div>
+            `;
+          }
+          slotsContainer.appendChild(slotRow);
         }
 
       } else if (userRecord && userRecord.status === "pending") {
-        // Payment proof pending review
         pendingNoticeBox.style.display = "block";
       } else {
-        // User not joined -> Show normal payment form
         paymentFormBlock.style.display = "block";
         uploadedScreenshotBase64 = "";
         document.getElementById('ssInput').value = "";
