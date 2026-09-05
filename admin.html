@@ -33,24 +33,52 @@
       box-shadow: 0 0 40px rgba(0,0,0,0.8);
     }
 
-    .top-header {
+    /* Top Hero Header Box (Exact match with screenshot) */
+    .hero-top-box {
+      background: radial-gradient(circle at 50% 0%, #20132b 0%, #0d1626 70%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .hero-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 16px;
-      background: rgba(13, 22, 38, 0.95);
-      border-bottom: 1px solid var(--card-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      margin-bottom: 12px;
     }
-    .brand-title { font-size: 13px; font-weight: 900; color: var(--mint); display: flex; align-items: center; gap: 6px; }
+    .brand-title { font-size: 13px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px; }
+    .hero-rev-label { font-size: 10px; color: var(--text-muted); font-weight: 700; }
+    .hero-rev-val { font-size: 22px; font-weight: 900; color: var(--mint); margin-top: 2px; }
+    
+    .hero-btn-col { display: flex; flex-direction: column; gap: 6px; }
+    .btn-pink-match {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .btn-outline-backup {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .hero-sub-time { font-size: 9.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 4px; }
 
+    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      padding: 14px 16px;
+      padding: 0 16px 12px;
     }
     .stat-card {
       background: #ffffff;
@@ -81,6 +109,7 @@
       gap: 6px;
     }
 
+    /* Action Shortcuts Grid (Exact Screenshot Layout) */
     .action-grid-card {
       background: #ffffff;
       border-radius: 16px;
@@ -168,7 +197,22 @@
       width: 100%;
     }
     .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
+    .btn-whatsapp-winner {
+      background: #25d366;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+    }
 
+    /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -204,10 +248,22 @@
 
   <div class="app-viewport">
     
-    <!-- Top Bar -->
-    <div class="top-header">
-      <div class="brand-title"><i class="fa-solid fa-shield-halved"></i> Multani.ff Admin</div>
-      <div style="font-size: 10px; color: var(--text-muted);">EasyPaisa: <b style="color:var(--mint);">03186815926</b></div>
+    <!-- Top Hero Header (Matched with screenshot style) -->
+    <div class="hero-top-box">
+      <div class="hero-top-row">
+        <div>
+          <div class="brand-title"><i class="fa-solid fa-shield-halved" style="color:var(--mint);"></i> Multani.ff Admin</div>
+          <div class="hero-rev-label" style="margin-top:6px;">Total Match Revenue</div>
+          <div class="hero-rev-val" id="totalRevVal">Rs 0</div>
+        </div>
+        <div class="hero-btn-col">
+          <button class="btn-pink-match" onclick="switchAdminTab('matches')">+ MATCH</button>
+          <button class="btn-outline-backup" onclick="alert('Data is safely synced in local storage.')">BACKUP DATA</button>
+        </div>
+      </div>
+      <div class="hero-sub-time" id="liveClockStamp">
+        <i class="fa-solid fa-rotate"></i> Free Fire Tournament Admin Panel
+      </div>
     </div>
 
     <!-- Stats Row -->
@@ -230,18 +286,18 @@
     </div>
 
     <div class="section-btn-bar">
-      <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> View All Tournaments & Rooms</button>
+      <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> View All Tournaments & Member Lists</button>
     </div>
 
-    <!-- Action Shortcuts Grid -->
+    <!-- Action Shortcuts Grid (Exact Screenshot Layout) -->
     <div class="action-grid-card">
       <button class="action-icon-item" onclick="switchAdminTab('matches')">
         <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
         <span>Create Match</span>
       </button>
-      <button class="action-icon-item" onclick="switchAdminTab('matches')">
-        <div class="action-circle"><i class="fa-solid fa-key"></i></div>
-        <span>Set ID/Pass</span>
+      <button class="action-icon-item" onclick="switchAdminTab('giveaways')">
+        <div class="action-circle"><i class="fa-solid fa-gift" style="color:#ff4625;"></i></div>
+        <span>Giveaways</span>
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('deposits')">
         <div class="action-circle">
@@ -251,16 +307,16 @@
         <span>Payment Approval</span>
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('users')">
-        <div class="action-circle"><i class="fa-solid fa-user-gear"></i></div>
-        <span>User Accounts</span>
+        <div class="action-circle"><i class="fa-solid fa-user-xmark" style="color:var(--red);"></i></div>
+        <span>Ban Player</span>
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('matches')">
         <div class="action-circle"><i class="fa-solid fa-list"></i></div>
         <span>Match Manager</span>
       </button>
-      <button class="action-icon-item" onclick="switchAdminTab('winners')">
-        <div class="action-circle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i></div>
-        <span>Post Winner</span>
+      <button class="action-icon-item" onclick="switchAdminTab('matches')">
+        <div class="action-circle"><i class="fa-solid fa-map-location-dot"></i></div>
+        <span>Filter Map</span>
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('support')">
         <div class="action-circle">
@@ -271,7 +327,7 @@
       </button>
       <button class="action-icon-item" onclick="clearOldData()">
         <div class="action-circle"><i class="fa-solid fa-trash-can" style="color:var(--red);"></i></div>
-        <span>Cleanup Data</span>
+        <span>Cleanup Old</span>
       </button>
     </div>
 
@@ -287,13 +343,10 @@
         <div id="depositsContainer"></div>
       </div>
 
-      <!-- 2. MATCH MANAGER & CREATION VIEW -->
+      <!-- 2. MATCH MANAGER & DETAILS VIEW -->
       <div id="sectionMatches" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-gamepad"></i> Create Tournament Room</span></div>
-        <div class="form-ctrl">
-          <label>Match Title</label>
-          <input type="text" id="mTitle" placeholder="e.g. Solo Night Cup">
-        </div>
+        <div class="form-ctrl"><label>Match Title</label><input type="text" id="mTitle" placeholder="e.g. Solo Night Cup"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
           <div class="form-ctrl">
             <label>Map</label>
@@ -304,29 +357,17 @@
               <option value="Clash Squad">Clash Squad</option>
             </select>
           </div>
-          <div class="form-ctrl">
-            <label>Total Slots</label>
-            <input type="number" id="mSlots" value="12">
-          </div>
+          <div class="form-ctrl"><label>Total Slots</label><input type="number" id="mSlots" value="12"></div>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-ctrl">
-            <label>Entry Fee (Rs)</label>
-            <input type="number" id="mFee" value="30">
-          </div>
-          <div class="form-ctrl">
-            <label>Booyah Prize (Rs)</label>
-            <input type="number" id="mPrize" value="300">
-          </div>
+          <div class="form-ctrl"><label>Entry Fee (Rs)</label><input type="number" id="mFee" value="30"></div>
+          <div class="form-ctrl"><label>Booyah Prize (Rs)</label><input type="number" id="mPrize" value="300"></div>
         </div>
-        <div class="form-ctrl">
-          <label>Timing</label>
-          <input type="text" id="mTime" placeholder="e.g. 5:00 PM Today">
-        </div>
+        <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM Today"></div>
         <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-plus"></i> Publish Match Room</button>
 
         <div style="margin-top:16px; border-top:1px solid var(--card-border); padding-top:12px;">
-          <div class="section-header-row"><span>Active Tournaments & Passwords</span></div>
+          <div class="section-header-row"><span>Click Any Match to Edit & View Members</span></div>
           <div id="activeMatchesList"></div>
         </div>
       </div>
@@ -343,14 +384,13 @@
         <div id="supportChatsContainer"></div>
       </div>
 
-      <!-- 5. WINNERS VIEW -->
-      <div id="sectionWinners" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-trophy"></i> Post Hall of Fame Winner</span></div>
-        <div class="form-ctrl"><label>Winner Nickname</label><input type="text" id="winName" placeholder="Player Name"></div>
-        <div class="form-ctrl"><label>Free Fire UID</label><input type="text" id="winUid" placeholder="UID"></div>
-        <div class="form-ctrl"><label>Match Title</label><input type="text" id="winMatch" placeholder="Match Name"></div>
-        <div class="form-ctrl"><label>Prize Won</label><input type="text" id="winPrize" placeholder="e.g. Rs. 500"></div>
-        <button class="btn-action" onclick="postWinner()"><i class="fa-solid fa-award"></i> Publish Winner</button>
+      <!-- 5. GIVEAWAYS VIEW -->
+      <div id="sectionGiveaways" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
+        <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
+        <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
+        <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
+        <button class="btn-action" onclick="postGiveaway()"><i class="fa-solid fa-check"></i> Add Giveaway</button>
       </div>
 
     </div>
@@ -367,7 +407,7 @@
       </button>
       <button class="bot-tab" id="navBtnUsers" onclick="switchAdminTab('users')">
         <i class="fa-solid fa-users-gear"></i>
-        <span>Users</span>
+        <span>Requests</span>
       </button>
       <button class="bot-tab" id="navBtnSupport" onclick="switchAdminTab('support')">
         <i class="fa-solid fa-comments"></i>
@@ -383,12 +423,18 @@
       const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
       
       let totalSlots = 0;
+      let totalRev = 0;
       matches.forEach(m => {
-        if (m.players) totalSlots += m.players.filter(p => p.status === 'approved').length;
+        if (m.players) {
+          const approved = m.players.filter(p => p.status === 'approved');
+          totalSlots += approved.length;
+          totalRev += approved.length * Number(m.fee || 0);
+        }
       });
 
       const pendingCount = deposits.filter(d => d.status === 'pending').length;
 
+      document.getElementById('totalRevVal').innerText = `Rs ${totalRev}`;
       document.getElementById('statMatches').innerText = matches.length;
       document.getElementById('statSlots').innerText = totalSlots;
       document.getElementById('statRequests').innerText = pendingCount;
@@ -401,7 +447,7 @@
       document.getElementById('sectionMatches').style.display = (tabName === 'matches') ? 'block' : 'none';
       document.getElementById('sectionUsers').style.display = (tabName === 'users') ? 'block' : 'none';
       document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
-      document.getElementById('sectionWinners').style.display = (tabName === 'winners') ? 'block' : 'none';
+      document.getElementById('sectionGiveaways').style.display = (tabName === 'giveaways') ? 'block' : 'none';
 
       if (tabName === 'deposits') {
         document.getElementById('navBtnDeposits').classList.add('active');
@@ -415,7 +461,7 @@
       } else if (tabName === 'support') {
         document.getElementById('navBtnSupport').classList.add('active');
         renderAdminSupport();
-      } else if (tabName === 'winners') {
+      } else if (tabName === 'giveaways') {
         document.getElementById('navBtnMatches').classList.add('active');
       }
       updateHeaderStats();
@@ -435,7 +481,7 @@
         return;
       }
 
-      pending.forEach((dep, index) => {
+      pending.forEach((dep) => {
         const globalIdx = deposits.findIndex(d => d.id === dep.id);
         const card = document.createElement('div');
         card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
@@ -479,7 +525,7 @@
       alert("✅ Deposit approve ho gaya aur user ke wallet me balance add ho gaya!");
     }
 
-    /* 2. Matches Render & Create */
+    /* 2. Matches Render & Member List / Winner WhatsApp */
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
@@ -520,32 +566,68 @@
       }
 
       matches.forEach((m, idx) => {
+        const approvedPlayers = (m.players || []).filter(p => p.status === 'approved');
         const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px;";
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:10px;";
+        
+        let membersHtml = "";
+        if (approvedPlayers.length === 0) {
+          membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:6px;">Abhi koi member join nahi hua.</div>`;
+        } else {
+          membersHtml = `<div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:6px;"><div style="font-size:10.5px; font-weight:800; color:var(--mint); margin-bottom:4px;">Registered Members (${approvedPlayers.length})</div>`;
+          approvedPlayers.forEach(p => {
+            let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
+            if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
+            const waMsg = encodeURIComponent(`Congratulations 🎉 Aap tournament ki Rs. ${m.prize} prize jeet chukay ho!`);
+            const waLink = `https://wa.me/${cleanPhone}?text=${waMsg}`;
+
+            membersHtml += `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#09101d; padding:6px; border-radius:6px; margin-bottom:4px;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
+                  <div style="font-size:9.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${p.phone || 'N/A'}</div>
+                </div>
+                <a href="${waLink}" target="_blank" class="btn-whatsapp-winner">
+                  <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner Announcement
+                </a>
+              </div>
+            `;
+          });
+          membersHtml += `</div>`;
+        }
+
         div.innerHTML = `
           <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:800; color:#fff; margin-bottom:6px;">
             <span>${m.title} (${m.map})</span>
-            <span style="color:var(--gold);">Rs.${m.fee}</span>
+            <span style="color:var(--gold);">Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</span>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
-            <input type="text" id="rid_${idx}" value="${m.roomId || ''}" placeholder="Room ID" style="background:#09101d; border:1px solid var(--card-border); color:#fff; padding:6px; border-radius:4px; font-size:11px;">
-            <input type="text" id="rpass_${idx}" value="${m.roomPass || ''}" placeholder="Password" style="background:#09101d; border:1px solid var(--card-border); color:#fff; padding:6px; border-radius:4px; font-size:11px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
+            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Title</label><input type="text" id="mtitle_${idx}" value="${m.title}" style="padding:5px; font-size:11px;"></div>
+            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Timing</label><input type="text" id="mtime_${idx}" value="${m.time}" style="padding:5px; font-size:11px;"></div>
           </div>
-          <div style="display:flex; gap:6px;">
-            <button class="btn-action" style="padding:6px; font-size:10.5px;" onclick="saveCreds(${idx})">Save ID/Pass</button>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
+            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Room ID</label><input type="text" id="rid_${idx}" value="${m.roomId || ''}" placeholder="Room ID" style="padding:5px; font-size:11px;"></div>
+            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Password</label><input type="text" id="rpass_${idx}" value="${m.roomPass || ''}" placeholder="Password" style="padding:5px; font-size:11px;"></div>
+          </div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="btn-action" style="padding:6px; font-size:10.5px;" onclick="updateMatchSettings(${idx})">Save Settings</button>
             <button class="btn-action btn-danger" style="padding:6px; font-size:10.5px;" onclick="deleteMatchAdmin(${idx})">Delete</button>
           </div>
+          ${membersHtml}
         `;
         container.appendChild(div);
       });
     }
 
-    function saveCreds(idx) {
+    function updateMatchSettings(idx) {
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      matches[idx].title = document.getElementById(`mtitle_${idx}`).value.trim();
+      matches[idx].time = document.getElementById(`mtime_${idx}`).value.trim();
       matches[idx].roomId = document.getElementById(`rid_${idx}`).value.trim();
       matches[idx].roomPass = document.getElementById(`rpass_${idx}`).value.trim();
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      alert("✅ Room ID & Password save ho gaye!");
+      alert("✅ Match settings aur room credentials update ho gaye!");
+      renderAdminMatches();
     }
 
     function deleteMatchAdmin(idx) {
@@ -574,25 +656,21 @@
         div.innerHTML = `
           <div>
             <div style="font-size:12px; font-weight:800; color:#fff;">${u.name} <span style="color:var(--blue); font-size:10px;">(${u.uid})</span></div>
-            <div style="font-size:10px; color:var(--text-muted);">${u.email}</div>
-            <div style="font-size:11.5px; font-weight:800; color:var(--gold); margin-top:2px;">Bal: Rs. ${u.walletBalance || 0}</div>
+            <div style="font-size:10px; color:var(--text-muted);">${u.email} | WhatsApp: ${u.phone || 'N/A'}</div>
           </div>
-          <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="editUserBal(${idx})">Edit Bal</button>
+          <button class="btn-action btn-danger" style="width:auto; padding:6px 10px; font-size:11px;" onclick="banUser(${idx})">Ban</button>
         `;
         container.appendChild(div);
       });
     }
 
-    function editUserBal(idx) {
+    function banUser(idx) {
+      if (!confirm("Is user ko ban karna chahte hain?")) return;
       let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-      let u = users[idx];
-      let newBal = prompt(`Enter new balance for ${u.name}:`, u.walletBalance || 0);
-      if (newBal !== null && !isNaN(newBal)) {
-        u.walletBalance = Number(newBal);
-        localStorage.setItem('mff_accounts_db', JSON.stringify(users));
-        renderAdminUsers();
-        alert("Balance update ho gaya!");
-      }
+      users.splice(idx, 1);
+      localStorage.setItem('mff_accounts_db', JSON.stringify(users));
+      renderAdminUsers();
+      alert("✅ Player ban kar diya gaya hai.");
     }
 
     /* 4. Support Chats Render */
@@ -628,27 +706,24 @@
       alert("✅ Reply bhej diya gaya!");
     }
 
-    /* 5. Post Winner */
-    function postWinner() {
-      const name = document.getElementById('winName').value.trim();
-      const uid = document.getElementById('winUid').value.trim();
-      const match = document.getElementById('winMatch').value.trim();
-      const prize = document.getElementById('winPrize').value.trim();
+    function postGiveaway() {
+      const title = document.getElementById('gTitle').value.trim();
+      const desc = document.getElementById('gDesc').value.trim();
+      const reward = document.getElementById('gReward').value.trim();
 
-      if (!name || !uid) {
-        alert("Winner Name aur UID likhna lazmi hai!");
+      if (!title) {
+        alert("Giveaway title likhna lazmi hai!");
         return;
       }
 
-      let winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      winners.unshift({ name, uid, match, prize });
-      localStorage.setItem('mff_winners_list', JSON.stringify(winners));
+      let gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      gList.unshift({ title, desc, reward, endDate: "Active" });
+      localStorage.setItem('mff_giveaways', JSON.stringify(gList));
 
-      document.getElementById('winName').value = "";
-      document.getElementById('winUid').value = "";
-      document.getElementById('winMatch').value = "";
-      document.getElementById('winPrize').value = "";
-      alert("🏆 Winner Hall of Fame par post ho gaya!");
+      document.getElementById('gTitle').value = "";
+      document.getElementById('gDesc').value = "";
+      document.getElementById('gReward').value = "";
+      alert("🎁 Giveaway live post ho gaya!");
     }
 
     function clearOldData() {
