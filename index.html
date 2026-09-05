@@ -88,7 +88,7 @@
       font-weight: 900;
       color: #fff;
     }
-    .badge-name { font-size: 11px; font-weight: 800; color: #fff; max-width: 65px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge-name { font-size: 11px; font-weight: 800; color: #fff; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* Wallet Badge in Top Header */
     .wallet-header-badge {
@@ -391,18 +391,19 @@
       overflow-y: auto;
     }
     .modal-title { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .form-ctrl { margin-bottom: 12px; }
+    .form-ctrl { margin-bottom: 10px; }
     .form-ctrl label { font-size: 11px; font-weight: 700; color: #a7f3d0; display: block; margin-bottom: 4px; }
     .form-ctrl input {
       width: 100%;
       background: #06090e;
       border: 1px solid rgba(0, 230, 118, 0.2);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 9px 12px;
       color: #fff;
-      font-size: 13px;
+      font-size: 12.5px;
       outline: none;
     }
+    .form-ctrl input:focus { border-color: var(--mint-primary); }
     .btn-green-action {
       width: 100%;
       background: linear-gradient(135deg, var(--mint-primary), #00b0ff);
@@ -675,7 +676,8 @@
     <!-- Top Header -->
     <div class="top-header">
       <div class="top-left-group">
-        <div class="profile-avatar-badge" onclick="openLoginModal()">
+        <!-- Corner Profile Badge -->
+        <div class="profile-avatar-badge" onclick="openProfileManageModal()">
           <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
           <span class="badge-name" id="navUserBadge">LOGIN</span>
         </div>
@@ -692,8 +694,8 @@
         <span class="nav-tab-item" id="tabWinnersBtn" onclick="switchMainTab('winners')">Winners</span>
       </div>
 
-      <div class="top-search-btn" onclick="openLoginModal()">
-        <i class="fa-solid fa-magnifying-glass"></i>
+      <div class="top-search-btn" onclick="openProfileManageModal()">
+        <i class="fa-solid fa-gear"></i>
       </div>
     </div>
 
@@ -773,13 +775,164 @@
         <span>Chat</span>
       </button>
 
-      <button class="bot-item" onclick="openLoginModal()">
+      <button class="bot-item" onclick="openProfileManageModal()">
         <div class="bot-icon-circle"><i class="fa-solid fa-users" style="color:#ffd000;"></i></div>
         <span class="bot-badge-bubble">1</span>
         <span>Profile</span>
       </button>
     </div>
 
+  </div>
+
+  <!-- ==========================================================
+       LOGIN & SIGN UP GATE MODAL (EMAIL + PASSWORD)
+       ========================================================== -->
+  <div class="modal-backdrop" id="authGateModal">
+    <div class="modal-dialog">
+      
+      <!-- Screen 1: Login -->
+      <div id="authLoginBlock">
+        <div class="modal-title">
+          <span>🎮 Multani.ff Login</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <div class="form-ctrl">
+          <label>Gmail Address</label>
+          <input type="email" id="loginEmail" placeholder="e.g. player@gmail.com">
+        </div>
+        <div class="form-ctrl">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="Enter Password">
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+          <span style="font-size:11px; color:#38bdf8; cursor:pointer; font-weight:700;" onclick="switchAuthView('forgot')">Forgot Password?</span>
+        </div>
+        <button class="btn-green-action" onclick="handleUserLogin()">Login to Arena</button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Naya account banana hai? <b style="color:var(--mint-primary); cursor:pointer;" onclick="switchAuthView('signup')">Sign Up Karein</b>
+        </div>
+      </div>
+
+      <!-- Screen 2: Sign Up -->
+      <div id="authSignupBlock" style="display:none;">
+        <div class="modal-title">
+          <span>📝 Create Account</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <div class="form-ctrl">
+          <label>Gmail Address</label>
+          <input type="email" id="signEmail" placeholder="yourname@gmail.com">
+        </div>
+        <div class="form-ctrl">
+          <label>Create Password</label>
+          <input type="password" id="signPass" placeholder="Apni marzi ka password">
+        </div>
+        <div class="form-ctrl">
+          <label>Game Nickname</label>
+          <input type="text" id="signName" placeholder="e.g. MANDOOR_FF">
+        </div>
+        <div class="form-ctrl">
+          <label>Free Fire UID</label>
+          <input type="number" id="signUid" placeholder="e.g. 3239454397">
+        </div>
+        <div class="form-ctrl">
+          <label>WhatsApp Number</label>
+          <input type="text" id="signPhone" placeholder="03XXXXXXXXX">
+        </div>
+        <button class="btn-green-action" onclick="handleUserSignup()">Register & Save</button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Pehle se account hai? <b style="color:var(--mint-primary); cursor:pointer;" onclick="switchAuthView('login')">Login Karein</b>
+        </div>
+      </div>
+
+      <!-- Screen 3: Forgot Password -->
+      <div id="authForgotBlock" style="display:none;">
+        <div class="modal-title">
+          <span style="color:#ffd000;"><i class="fa-solid fa-key"></i> Reset Password</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">
+          Apna registered Gmail aur Free Fire UID likh kar apna password reset karein:
+        </p>
+        <div class="form-ctrl">
+          <label>Registered Gmail</label>
+          <input type="email" id="forgotEmail" placeholder="Registered Gmail">
+        </div>
+        <div class="form-ctrl">
+          <label>Registered Free Fire UID</label>
+          <input type="number" id="forgotUid" placeholder="Your Registered UID">
+        </div>
+        <div class="form-ctrl">
+          <label>New Password</label>
+          <input type="password" id="forgotNewPass" placeholder="Naya password likhein">
+        </div>
+        <button class="btn-green-action" onclick="handleResetPassword()">Set New Password</button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Wapis Login par jayein: <b style="color:#38bdf8; cursor:pointer;" onclick="switchAuthView('login')">Login Screen</b>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       PROFILE & CHANGE PASSWORD MODAL (AFTER LOGIN)
+       ========================================================== -->
+  <div class="modal-backdrop" id="profileModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span>🎮 Player Profile & Settings</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('profileModal')"></i>
+      </div>
+
+      <!-- Warning Alert if exists -->
+      <div id="profileWarningBox" style="display:none; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; padding:8px 10px; border-radius:8px; font-size:11px; margin-bottom:12px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> <b>Warning Issued:</b> Fair Play Alert on this UID!
+      </div>
+
+      <div style="background:#04130b; border:1px solid rgba(0,230,118,0.25); border-radius:10px; padding:12px; margin-bottom:14px;">
+        <div style="font-size:13px; font-weight:800; color:#fff;" id="profDispName">--</div>
+        <div style="font-size:11px; color:#38bdf8; margin-top:2px;" id="profDispUid">UID: --</div>
+        <div style="font-size:11px; color:#94a3b8; margin-top:2px;" id="profDispEmail">Gmail: --</div>
+        <div style="font-size:11px; color:#34d399; margin-top:2px;" id="profDispPhone">WhatsApp: --</div>
+      </div>
+
+      <!-- Change Password Box -->
+      <div style="background:#080d14; border:1px solid #233148; border-radius:10px; padding:12px; margin-bottom:12px;">
+        <div style="font-size:11.5px; font-weight:800; color:var(--gold); margin-bottom:8px;">
+          <i class="fa-solid fa-lock"></i> Change Password
+        </div>
+        <div class="form-ctrl">
+          <label>Current Password</label>
+          <input type="password" id="curPasswordInput" placeholder="Purana Password">
+        </div>
+        <div class="form-ctrl">
+          <label>New Password</label>
+          <input type="password" id="newPasswordInput" placeholder="Naya Password">
+        </div>
+        <button class="btn-green-action" style="padding:8px;" onclick="handleChangePassword()">Update Password</button>
+      </div>
+
+      <div class="profile-rules-btn" onclick="openRulesModal()">
+        <div class="profile-rules-left">
+          <div class="profile-rules-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">Tournament Fair Play Rules</div>
+            <div style="font-size:10px; color:#a7f3d0;">Must read before joining matches</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color:var(--gold); font-size:12px;"></i>
+      </div>
+
+      <button onclick="handleLogout()" style="width:100%; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#ef4444; padding:10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; margin-top:12px;">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout Account
+      </button>
+
+      <button class="btn-modal-close" onclick="closeModal('profileModal')">Close</button>
+    </div>
   </div>
 
   <!-- Wallet / Coin Deposit Modal -->
@@ -790,7 +943,7 @@
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('walletModal')"></i>
       </div>
       <div style="background:#02150d; border:1px solid rgba(0,230,118,0.3); border-radius:12px; padding:14px; text-align:center; margin-bottom:14px;">
-        <div style="font-size:11px; color:#94a3b8;">Available Balance</div>
+        <div style="font-size:11px; color:#94a3b8;">Available Balance (This Gmail)</div>
         <div style="font-size:26px; font-weight:900; color:#fff; margin-top:2px;">Rs. <span id="modalWalletBal" style="color:var(--gold);">0</span></div>
       </div>
 
@@ -824,48 +977,6 @@
       </div>
       <div id="eventsListContainer"></div>
       <button class="btn-modal-close" onclick="closeModal('eventsModal')">Close</button>
-    </div>
-  </div>
-
-  <!-- Profile Modal -->
-  <div class="modal-backdrop" id="loginModal">
-    <div class="modal-dialog">
-      <div class="modal-title">
-        <span>🎮 Player Profile Setup</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('loginModal')"></i>
-      </div>
-
-      <!-- Fair Play Warning Chip -->
-      <div id="profileWarningBox" style="display:none; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; padding:8px 10px; border-radius:8px; font-size:11px; margin-bottom:12px;">
-        <i class="fa-solid fa-triangle-exclamation"></i> <b>Warning Issued:</b> Fair Play Alert on this UID!
-      </div>
-
-      <div class="form-ctrl">
-        <label>Game Nickname</label>
-        <input type="text" id="logName" placeholder="e.g. MANDOOR_FF">
-      </div>
-      <div class="form-ctrl">
-        <label>Free Fire UID</label>
-        <input type="number" id="logUid" placeholder="e.g. 3239454397">
-      </div>
-      <div class="form-ctrl">
-        <label>WhatsApp Number</label>
-        <input type="text" id="logPhone" placeholder="03XXXXXXXXX">
-      </div>
-      <button class="btn-green-action" onclick="saveLogin()">Save Profile</button>
-
-      <div class="profile-rules-btn" onclick="openRulesModal()">
-        <div class="profile-rules-left">
-          <div class="profile-rules-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">Tournament Fair Play Rules</div>
-            <div style="font-size:10px; color:#a7f3d0;">Must read before joining matches</div>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right" style="color:var(--gold); font-size:12px;"></i>
-      </div>
-
-      <button class="btn-modal-close" onclick="closeModal('loginModal')">Close</button>
     </div>
   </div>
 
@@ -1078,6 +1189,201 @@
     let uploadedWalletProofBase64 = "";
     let activeFilter = "All";
 
+    /* ==========================================================
+       GMAIL-BASED AUTHENTICATION & UNIQUE WALLET SYSTEM
+       ========================================================== */
+    function getAllRegisteredUsers() {
+      return JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+    }
+
+    function saveAllRegisteredUsers(users) {
+      localStorage.setItem('mff_accounts_db', JSON.stringify(users));
+    }
+
+    function switchAuthView(view) {
+      document.getElementById('authLoginBlock').style.display = (view === 'login') ? 'block' : 'none';
+      document.getElementById('authSignupBlock').style.display = (view === 'signup') ? 'block' : 'none';
+      document.getElementById('authForgotBlock').style.display = (view === 'forgot') ? 'block' : 'none';
+    }
+
+    function openProfileManageModal() {
+      if (!currentUser) {
+        switchAuthView('login');
+        document.getElementById('authGateModal').style.display = 'flex';
+      } else {
+        // Refresh currentUser from DB to get latest balance/settings
+        let users = getAllRegisteredUsers();
+        let freshUser = users.find(u => u.email === currentUser.email) || currentUser;
+        currentUser = freshUser;
+        localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+        document.getElementById('profDispName').innerText = currentUser.name || "Player";
+        document.getElementById('profDispUid').innerText = `UID: ${currentUser.uid}`;
+        document.getElementById('profDispEmail').innerText = `Gmail: ${currentUser.email || 'Not Linked'}`;
+        document.getElementById('profDispPhone').innerText = `WhatsApp: ${currentUser.phone || 'N/A'}`;
+        
+        const warnings = JSON.parse(localStorage.getItem('mff_warned_uids')) || [];
+        document.getElementById('profileWarningBox').style.display = warnings.includes(currentUser.uid) ? 'block' : 'none';
+
+        document.getElementById('profileModal').style.display = 'flex';
+      }
+    }
+
+    function handleUserSignup() {
+      const email = document.getElementById('signEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('signPass').value.trim();
+      const name = document.getElementById('signName').value.trim();
+      const uid = document.getElementById('signUid').value.trim();
+      const phone = document.getElementById('signPhone').value.trim();
+
+      if (!email || !pass || !name || !uid || !phone) {
+        alert("Tamam details bharna lazmi hain!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      if (users.some(u => u.email === email)) {
+        alert("Yeh Gmail pehle se registered hai! Login karein.");
+        switchAuthView('login');
+        return;
+      }
+
+      // Har naye Gmail ka bilkul NAYA wallet (balance: 0)
+      const newUser = {
+        email: email,
+        password: pass,
+        name: name,
+        uid: uid,
+        phone: phone,
+        walletBalance: 0
+      };
+
+      users.push(newUser);
+      saveAllRegisteredUsers(users);
+
+      currentUser = newUser;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      closeModal('authGateModal');
+      updateNavProfile();
+      renderMatches();
+      alert(`🎉 Welcome ${name}! Naya account ban gaya aur naya wallet create ho chuka hai.`);
+    }
+
+    function handleUserLogin() {
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPass').value.trim();
+
+      if (!email || !pass) {
+        alert("Gmail aur Password enter karein!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      const matched = users.find(u => u.email === email && u.password === pass);
+
+      if (!matched) {
+        alert("❌ Galat Gmail ya Password! Agar password bhool gaye hain to 'Forgot Password?' par click karein.");
+        return;
+      }
+
+      // Is specific Gmail ka apna wallet balance load hoga
+      currentUser = matched;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      closeModal('authGateModal');
+      updateNavProfile();
+      renderMatches();
+      alert(`✅ Welcome Back, ${currentUser.name}! Wallet Balance: Rs. ${currentUser.walletBalance || 0}`);
+    }
+
+    function handleResetPassword() {
+      const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+      const uid = document.getElementById('forgotUid').value.trim();
+      const newPass = document.getElementById('forgotNewPass').value.trim();
+
+      if (!email || !uid || !newPass) {
+        alert("Tamam details bharna lazmi hain!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      const user = users.find(u => u.email === email && u.uid === uid);
+
+      if (!user) {
+        alert("❌ Is Gmail aur UID ke mutabiq koi account nahi mila!");
+        return;
+      }
+
+      user.password = newPass;
+      saveAllRegisteredUsers(users);
+
+      if (currentUser && currentUser.email === email) {
+        currentUser.password = newPass;
+        localStorage.setItem('mff_user', JSON.stringify(currentUser));
+      }
+
+      alert("✅ Password successfully update ho gaya! Ab naye password se login karein.");
+      switchAuthView('login');
+    }
+
+    function handleChangePassword() {
+      const curPass = document.getElementById('curPasswordInput').value.trim();
+      const newPass = document.getElementById('newPasswordInput').value.trim();
+
+      if (!curPass || !newPass) {
+        alert("Purana aur naya password dono likhein!");
+        return;
+      }
+
+      if (currentUser.password !== curPass) {
+        alert("❌ Current password theek nahi hai!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      const user = users.find(u => u.email === currentUser.email);
+      if (user) {
+        user.password = newPass;
+        saveAllRegisteredUsers(users);
+      }
+
+      currentUser.password = newPass;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      document.getElementById('curPasswordInput').value = "";
+      document.getElementById('newPasswordInput').value = "";
+      alert("✅ Password kamyabi se badal diya gaya hai!");
+    }
+
+    function handleLogout() {
+      if (!confirm("Kya aap logout karna chahte hain?")) return;
+      currentUser = null;
+      localStorage.removeItem('mff_user');
+      closeModal('profileModal');
+      updateNavProfile();
+      renderMatches();
+      alert("Account logged out!");
+    }
+
+    function updateNavProfile() {
+      if (currentUser) {
+        // Sync fresh wallet balance
+        let users = getAllRegisteredUsers();
+        let freshUser = users.find(u => u.email === currentUser.email);
+        if (freshUser) currentUser.walletBalance = freshUser.walletBalance;
+
+        document.getElementById('navUserBadge').innerText = currentUser.name;
+        document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
+      } else {
+        document.getElementById('navUserBadge').innerText = "LOGIN";
+        document.getElementById('navWalletBal').innerText = "0";
+      }
+    }
+
+    /* ==========================================================
+       TABS & MATCHES LOGIC
+       ========================================================== */
     function switchMainTab(tab) {
       const matchView = document.getElementById('matchesMainView');
       const winView = document.getElementById('winnersMainView');
@@ -1136,7 +1442,7 @@
         const thumbUrl = m.coverImage || matchThumbnails[idx % matchThumbnails.length];
 
         let statusText = "Tap to Join";
-        let userRecord = currentUser ? (m.players || []).find(p => p.uid === currentUser.uid) : null;
+        let userRecord = currentUser ? (m.players || []).find(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid) : null;
         if (userRecord) {
           statusText = userRecord.status === "approved" ? "✔ CONFIRMED" : "⌛ PENDING";
           if (userRecord.status === "approved" && m.roomId) {
@@ -1174,7 +1480,6 @@
         container.appendChild(card);
       });
 
-      // Show Broadcast Toast if user joined match has Room ID out
       const toast = document.getElementById('broadcastToastBar');
       toast.style.display = activeRoomReleased ? 'flex' : 'none';
 
@@ -1183,8 +1488,8 @@
 
     function handleCardClick(matchId) {
       if (!currentUser) {
-        alert("Pehle apna Profile / UID set karein!");
-        openLoginModal();
+        alert("Pehle apna Account Login karein ya Register karein!");
+        openProfileManageModal();
         return;
       }
 
@@ -1200,7 +1505,7 @@
       const paymentFormBlock = document.getElementById('paymentFormBlock');
 
       const approvedPlayers = (match.players || []).filter(p => p.status === "approved");
-      const userRecord = (match.players || []).find(p => p.uid === currentUser.uid);
+      const userRecord = (match.players || []).find(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid);
 
       joinedContainer.style.display = "none";
       pendingNoticeBox.style.display = "none";
@@ -1239,7 +1544,7 @@
           `;
         }
 
-        // Auto Slot Assign / Categorization (Clash Squad 4v4 vs Solo)
+        // Auto Slot Assign / Categorization
         const totalSlots = match.totalSlots || 12;
         document.getElementById('lobbySlotsFraction').innerText = `${approvedPlayers.length}/${totalSlots}`;
         
@@ -1259,7 +1564,7 @@
           const slotRow = document.createElement('div');
           
           if (player) {
-            const isMe = player.uid === currentUser.uid;
+            const isMe = (player.email && player.email === currentUser.email) || player.uid === currentUser.uid;
             slotRow.className = "ff-slot-bar occupied";
             slotRow.innerHTML = `
               <div class="ff-slot-num">${i + 1}</div>
@@ -1291,7 +1596,6 @@
         document.getElementById('ssInput').value = "";
         document.getElementById('ssPreview').style.display = "none";
 
-        // Wallet Pay Button dynamic text
         const userBal = currentUser?.walletBalance || 0;
         document.getElementById('btnPayWallet').innerText = `⚡ Pay via Wallet Balance (Rs. ${match.fee} | Bal: Rs. ${userBal})`;
       }
@@ -1299,7 +1603,6 @@
       document.getElementById('joinModal').style.display = "flex";
     }
 
-    /* 1-Click Clipboard Copy */
     function copyToClipboard(text, label) {
       navigator.clipboard.writeText(text).then(() => {
         alert(`✅ ${label} Copied: ${text}`);
@@ -1308,13 +1611,16 @@
       });
     }
 
-    /* Wallet System Functions */
+    /* ==========================================================
+       WALLET SYSTEM (TIED TO CURRENT GMAIL)
+       ========================================================== */
     function openWalletModal() {
       if (!currentUser) {
         alert("Pehle login karein!");
-        openLoginModal();
+        openProfileManageModal();
         return;
       }
+      updateNavProfile();
       const bal = currentUser.walletBalance || 0;
       document.getElementById('modalWalletBal').innerText = bal;
       document.getElementById('walletModal').style.display = 'flex';
@@ -1348,6 +1654,7 @@
       let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
       deposits.push({
         id: "dep_" + Date.now(),
+        email: currentUser.email, // Tied strictly to current Gmail
         uid: currentUser.uid,
         name: currentUser.name,
         phone: currentUser.phone,
@@ -1362,7 +1669,7 @@
       document.getElementById('walletDepositAmount').value = "";
       document.getElementById('walletSsInput').value = "";
       document.getElementById('walletSsPreview').style.display = "none";
-      alert("✅ Deposit proof submit ho gaya! Admin verify karke coins aapke account me add kar dega.");
+      alert("✅ Deposit proof submit ho gaya! Admin verify karte hi is Gmail me coins transfer ho jayenge.");
     }
 
     function payViaWalletAction() {
@@ -1370,27 +1677,36 @@
       const match = tournaments.find(m => m.id === selectedMatchId);
       if (!match) return;
 
-      const userBal = Number(currentUser.walletBalance || 0);
+      let users = getAllRegisteredUsers();
+      let dbUser = users.find(u => u.email === currentUser.email);
+      const userBal = Number(dbUser ? dbUser.walletBalance : (currentUser.walletBalance || 0));
       const matchFee = Number(match.fee || 0);
 
       if (userBal < matchFee) {
-        alert(`❌ Wallet balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}. Upar Wallet se deposit karein ya direct EasyPaisa proof submit karein.`);
+        alert(`❌ Is Gmail account me balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}. Upar Wallet se deposit karein ya direct EasyPaisa proof submit karein.`);
         return;
       }
 
-      if (!confirm(`Kya aap Rs. ${matchFee} wallet balance se deduct karke slot confirm karna chahte hain?`)) return;
+      if (!confirm(`Rs. ${matchFee} deduct karke match slot confirm karein?`)) return;
 
-      // Deduct balance
-      currentUser.walletBalance = userBal - matchFee;
+      // Deduct from this Gmail account only
+      const newBal = userBal - matchFee;
+      currentUser.walletBalance = newBal;
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      if (dbUser) {
+        dbUser.walletBalance = newBal;
+        saveAllRegisteredUsers(users);
+      }
 
       if (!match.players) match.players = [];
       match.players.push({
         name: currentUser.name,
+        email: currentUser.email,
         uid: currentUser.uid,
         phone: currentUser.phone,
         screenshot: "WALLET_PAYMENT",
-        status: "approved", // Instantly approved
+        status: "approved",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
@@ -1401,7 +1717,6 @@
       alert("🎉 Slot successfully confirm ho gaya! Room Lobby open kar sakte hain.");
     }
 
-    /* Winners View */
     function renderWinners() {
       const winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [
         { name: "MANDOOR_FF", uid: "3239454397", match: "Friday Match Room (CS)", prize: "Rs. 500", date: "Recent" },
@@ -1432,55 +1747,8 @@
       });
     }
 
-    function updateNavProfile() {
-      if (currentUser) {
-        document.getElementById('navUserBadge').innerText = currentUser.name;
-        document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
-        
-        // Fair Play Warning Check
-        const warnings = JSON.parse(localStorage.getItem('mff_warned_uids')) || [];
-        const warnBox = document.getElementById('profileWarningBox');
-        warnBox.style.display = warnings.includes(currentUser.uid) ? 'block' : 'none';
-      } else {
-        document.getElementById('navUserBadge').innerText = "LOGIN";
-        document.getElementById('navWalletBal').innerText = "0";
-      }
-    }
-
-    function openLoginModal() {
-      if (currentUser) {
-        document.getElementById('logName').value = currentUser.name || "";
-        document.getElementById('logUid').value = currentUser.uid || "";
-        document.getElementById('logPhone').value = currentUser.phone || "";
-      }
-      updateNavProfile();
-      document.getElementById('loginModal').style.display = "flex";
-    }
-
-    function saveLogin() {
-      const name = document.getElementById('logName').value.trim();
-      const uid = document.getElementById('logUid').value.trim();
-      const phone = document.getElementById('logPhone').value.trim();
-
-      if (!name || !uid || !phone) {
-        alert("Tamam details bharna lazmi hain!");
-        return;
-      }
-
-      currentUser = { 
-        name, 
-        uid, 
-        phone, 
-        walletBalance: currentUser ? (currentUser.walletBalance || 0) : 0 
-      };
-      localStorage.setItem('mff_user', JSON.stringify(currentUser));
-      updateNavProfile();
-      closeModal('loginModal');
-      renderMatches();
-    }
-
     function openRulesModal() {
-      closeModal('loginModal');
+      closeModal('profileModal');
       document.getElementById('rulesModal').style.display = 'flex';
     }
 
@@ -1547,6 +1815,7 @@
 
       match.players.push({
         name: currentUser.name,
+        email: currentUser.email,
         uid: currentUser.uid,
         phone: currentUser.phone,
         screenshot: uploadedScreenshotBase64,
@@ -1574,7 +1843,7 @@
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
 
       let userMsgs = currentUser 
-        ? supportMsgs.filter(m => (m.uid === currentUser.uid || (m.contact && m.contact.includes(currentUser.uid)) || m.name === currentUser.name))
+        ? supportMsgs.filter(m => (m.email && m.email === currentUser.email) || m.uid === currentUser.uid || (m.contact && m.contact.includes(currentUser.uid)) || m.name === currentUser.name)
         : [];
 
       userMsgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
@@ -1613,7 +1882,7 @@
       if (!currentUser) {
         alert("Pehle login karein!");
         closeModal('supportModal');
-        openLoginModal();
+        openProfileManageModal();
         return;
       }
 
@@ -1621,6 +1890,7 @@
       supportMsgs.push({
         id: "msg_" + Date.now(),
         timestamp: Date.now(),
+        email: currentUser.email,
         uid: currentUser.uid,
         name: currentUser.name,
         contact: `UID: ${currentUser.uid} (${currentUser.phone})`,
@@ -1643,7 +1913,7 @@
         return;
       }
       const hasReply = supportMsgs.some(m => 
-        (m.uid === currentUser.uid || (m.contact && m.contact.includes(currentUser.uid)) || m.name === currentUser.name) && m.adminReply
+        ((m.email && m.email === currentUser.email) || m.uid === currentUser.uid || (m.contact && m.contact.includes(currentUser.uid)) || m.name === currentUser.name) && m.adminReply
       );
       dot.style.display = hasReply ? 'flex' : 'none';
     }
