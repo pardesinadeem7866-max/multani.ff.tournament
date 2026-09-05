@@ -1,153 +1,520 @@
 <!DOCTYPE html>
-<html lang="ur" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani.ff Esports Portal</title>
+  <title>Multani.ff - Free Fire Esports Arena</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #06090e; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; }
-    .app-container { width: 100%; max-width: 430px; background: #0b1019; min-height: 100vh; padding-bottom: 90px; position: relative; border-left: 1px solid #162032; border-right: 1px solid #162032; }
+    :root {
+      --ff-orange: #ff4625;
+      --ff-fire: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+      --ff-yellow: #ffd000;
+      --ff-cyan: #00f0ff;
+      --ff-gold: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      --dark-bg: #090b10;
+      --card-bg: #10141f;
+      --border-glow: rgba(255, 70, 37, 0.25);
+    }
 
-    /* Top Navbar */
-    .top-navbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #080d15; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #162032; }
-    .brand-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; }
-    .brand-logo i, .brand-logo span { color: #10b981; }
-    .user-pill { background: #141d2c; border: 1px solid #1f2d44; padding: 6px 12px; border-radius: 20px; font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: #05070a; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
+    
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      background: radial-gradient(circle at 50% 0%, #1a1028 0%, #080a0f 65%);
+      min-height: 100vh;
+      padding-bottom: 90px;
+      position: relative;
+      border-left: 1px solid #1a2333;
+      border-right: 1px solid #1a2333;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    }
 
-    /* Hero Banner */
-    .featured-section { padding: 12px 16px; }
-    .featured-card { background: linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, rgba(11, 16, 25, 0.95) 100%), #121927; border: 1px solid #1f2d44; border-radius: 16px; padding: 14px; text-align: center; position: relative; }
-    .featured-badge { position: absolute; top: 10px; left: 10px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 12px; }
-    .profile-circle { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #10b981; margin: 4px auto 8px; display: flex; align-items: center; justify-content: center; background: #080d15; color: #10b981; font-size: 22px; }
-    .player-title { font-size: 16px; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 6px; }
-    .clan-title { color: #f59e0b; font-size: 13px; font-weight: 700; }
-    .org-easypaisa { font-size: 12px; margin-top: 6px; color: #94a3b8; background: #080d15; display: inline-block; padding: 5px 12px; border-radius: 12px; border: 1px dashed #10b981; }
-    .org-easypaisa strong { color: #10b981; }
+    /* Neon Top App Bar */
+    .gaming-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(10, 14, 22, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 70, 37, 0.2);
+    }
+    .logo-container { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 17px; letter-spacing: 0.5px; }
+    .logo-badge {
+      background: linear-gradient(135deg, #ff4625, #ffd000);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      font-style: italic;
+    }
+    .profile-pill {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ff-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+    }
+
+    /* Cyber Hero Banner */
+    .hero-box { padding: 14px 16px; }
+    .hero-card {
+      background: linear-gradient(145deg, #1b122c 0%, #111728 50%, #0d121c 100%);
+      border-radius: 22px;
+      padding: 18px 16px;
+      border: 1px solid rgba(255, 208, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(255,70,37,0.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .ff-tag {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      background: linear-gradient(90deg, #ff4625, #ef4444);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .hero-profile {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #161f30, #0a0d14);
+      border: 2px solid var(--ff-yellow);
+      margin: 6px auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--ff-yellow);
+      box-shadow: 0 0 16px rgba(255, 208, 0, 0.35);
+    }
+    .hero-name { font-size: 17px; font-weight: 900; text-align: center; color: #fff; letter-spacing: 0.5px; }
+    .hero-clan { color: #f59e0b; font-size: 12px; font-weight: 700; text-align: center; margin-top: 2px; }
+    .payment-chip {
+      margin: 12px auto 0;
+      display: table;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #94a3b8;
+      border: 1px dashed #10b981;
+    }
+    .payment-chip strong { color: #10b981; }
+
+    /* Map Filters Row */
+    .filter-section { padding: 4px 16px 12px; }
+    .filter-label { font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .map-scroll-track {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .map-scroll-track::-webkit-scrollbar { display: none; }
+    .map-pill {
+      background: #111726;
+      border: 1px solid #1e2a40;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .map-pill.active {
+      background: linear-gradient(135deg, #ff4625, #ff7e40);
+      color: #fff;
+      border-color: #ff4625;
+      box-shadow: 0 4px 12px rgba(255, 70, 37, 0.35);
+    }
+
+    /* Section Head */
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 16px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #cbd5e1;
+    }
 
     /* Matches List */
-    .section-title { padding: 10px 16px 6px; font-size: 14px; font-weight: 700; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; }
     .matches-list { padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
-    .match-card { background: #101724; border: 1px solid #1a2538; border-radius: 14px; padding: 14px; position: relative; }
-    .match-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #172132; padding-bottom: 8px; }
-    .match-tag { font-size: 10px; font-weight: 800; background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 3px 8px; border-radius: 6px; }
-    .match-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    .detail-box { background: #0a0f18; padding: 8px 10px; border-radius: 8px; }
-    .detail-box span { font-size: 10px; color: #64748b; display: block; }
-    .detail-box strong { font-size: 13px; color: #fff; }
-    .detail-box strong.prize { color: #10b981; }
+    .esports-card {
+      background: #0e131d;
+      border: 1px solid #1c2638;
+      border-radius: 18px;
+      padding: 14px;
+      position: relative;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    .esports-card:hover { transform: translateY(-2px); border-color: rgba(255, 70, 37, 0.4); }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .match-title { font-size: 14px; font-weight: 800; color: #fff; }
+    .badge-time {
+      background: rgba(255, 208, 0, 0.12);
+      color: var(--ff-yellow);
+      border: 1px solid rgba(255, 208, 0, 0.3);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+
+    /* Badges Row */
+    .tags-container { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tag-map {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--ff-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .tag-rules {
+      background: rgba(255, 70, 37, 0.1);
+      color: #ff7e67;
+      border: 1px solid rgba(255, 70, 37, 0.25);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Match Stats Grid */
+    .stat-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .stat-block {
+      background: #090c12;
+      border: 1px solid #161e2b;
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .stat-block span { font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; display: block; }
+    .stat-block strong { font-size: 14px; font-weight: 800; color: #fff; }
+    .stat-block strong.gold { color: var(--ff-yellow); }
+    .stat-block strong.cyan { color: var(--ff-cyan); }
 
     /* Slots Progress */
-    .slot-bar-wrap { margin-bottom: 12px; }
-    .slot-bar-text { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-bottom: 4px; font-weight: 600; }
-    .slot-bar { width: 100%; height: 6px; background: #080d15; border-radius: 10px; overflow: hidden; }
-    .slot-bar-fill { height: 100%; background: #10b981; width: 0%; transition: width 0.3s ease; }
+    .slots-box { margin-bottom: 12px; }
+    .slots-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
+    .slots-bar { width: 100%; height: 7px; background: #07090e; border-radius: 10px; overflow: hidden; border: 1px solid #1e2637; }
+    .slots-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4625, #ffd000);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
 
-    /* Approved Players */
-    .joined-players-box { background: #080d15; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: 11px; }
-    .joined-players-title { color: #94a3b8; margin-bottom: 6px; font-weight: 700; display: flex; justify-content: space-between; }
-    .player-chips { display: flex; flex-wrap: wrap; gap: 5px; max-height: 70px; overflow-y: auto; }
-    .player-chip { background: #141d2c; padding: 3px 8px; border-radius: 6px; font-size: 10px; color: #cbd5e1; border: 1px solid #1f2d44; }
+    /* Secret Room Info Box for Approved Players */
+    .room-alert-box {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+      border: 1px solid #00f0ff;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+      animation: pulseGlow 2s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 5px rgba(0,240,255,0.2); }
+      100% { box-shadow: 0 0 15px rgba(0,240,255,0.4); }
+    }
+    .room-header { font-size: 11px; font-weight: 800; color: var(--ff-cyan); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .room-info-row { font-size: 12px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; }
 
     /* Action Buttons */
-    .btn-action { width: 100%; font-weight: 800; border: none; padding: 11px; border-radius: 10px; font-size: 13px; cursor: pointer; text-align: center; display: block; }
-    .btn-join { background: #10b981; color: #06090e; }
-    .btn-pending { background: #f59e0b; color: #06090e; cursor: default; }
-    .btn-approved { background: #141d2c; color: #10b981; border: 1px solid #10b981; cursor: default; }
-    .btn-full { background: #1e293b; color: #64748b; cursor: not-allowed; }
+    .btn-fire-action {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-fire-join {
+      background: linear-gradient(90deg, #ff4625 0%, #ff7300 100%);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(255, 70, 37, 0.4);
+    }
+    .btn-fire-join:active { transform: scale(0.97); }
+    .btn-fire-pending {
+      background: #1c1810;
+      color: #ffd000;
+      border: 1px solid rgba(255, 208, 0, 0.4);
+      cursor: default;
+    }
+    .btn-fire-approved {
+      background: #091a18;
+      color: #10b981;
+      border: 1px solid #10b981;
+      cursor: default;
+    }
+    .btn-fire-full {
+      background: #141720;
+      color: #475569;
+      border: 1px solid #1e2637;
+      cursor: not-allowed;
+    }
 
-    /* Bottom Bar */
-    .bottom-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: #080d15; border-top: 1px solid #162032; display: flex; justify-content: space-around; align-items: center; padding: 10px 0; z-index: 200; }
-    .tab-btn { background: none; border: none; color: #64748b; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; cursor: pointer; }
-    .tab-btn.active { color: #10b981; }
+    /* Bottom Cyber Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 440px;
+      height: 64px;
+      background: rgba(8, 11, 17, 0.95);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid #192336;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .nav-link {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .nav-link.active { color: var(--ff-cyan); }
+    .nav-link i { font-size: 16px; }
 
     /* Modals */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
-    .modal-box { background: #101724; border: 1px solid #1a2538; width: 100%; max-width: 380px; border-radius: 16px; padding: 18px; max-height: 90vh; overflow-y: auto; }
-    .modal-box h3 { color: #10b981; margin-bottom: 14px; font-size: 16px; }
-    .form-group { margin-bottom: 11px; }
-    .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
-    .form-group input { width: 100%; background: #080d15; border: 1px solid #1a2538; padding: 9px 12px; border-radius: 8px; color: #fff; font-size: 13px; }
-    .btn-submit { width: 100%; background: #10b981; color: #06090e; border: none; padding: 11px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
-    .btn-cancel { width: 100%; background: transparent; color: #94a3b8; border: none; padding: 8px; cursor: pointer; font-size: 12px; }
-    .preview-img { width: 100%; max-height: 150px; object-fit: contain; margin-top: 8px; border-radius: 8px; display: none; border: 1px solid #1f2d44; }
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-dialog {
+      background: #0f1420;
+      border: 1px solid #233148;
+      width: 100%;
+      max-width: 390px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; }
+    .form-ctrl { margin-bottom: 12px; }
+    .form-ctrl label { font-size: 11px; font-weight: 600; color: #94a3b8; display: block; margin-bottom: 4px; }
+    .form-ctrl input {
+      width: 100%;
+      background: #080b11;
+      border: 1px solid #1b2537;
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .form-ctrl input:focus { border-color: var(--ff-cyan); }
+    .btn-modal-action {
+      width: 100%;
+      background: linear-gradient(90deg, #ff4625, #ff7300);
+      border: none;
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .btn-modal-close {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #64748b;
+      padding: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .preview-box { width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; border: 1px dashed #334155; margin-top: 8px; display: none; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <div class="top-navbar">
-      <div class="brand-logo"><i class="fa-solid fa-gamepad"></i><span>Multani.ff</span></div>
-      <div class="user-pill" onclick="openLoginModal()">
-        <i class="fa-solid fa-user-astronaut" style="color:#10b981;"></i>
-        <span id="navUserName">Login UID</span>
+  <div class="app-viewport">
+    
+    <!-- Cyber Gaming Navbar -->
+    <div class="gaming-nav">
+      <div class="logo-container">
+        <i class="fa-solid fa-fire-flame-curved" style="color:var(--ff-orange);"></i>
+        <span class="logo-badge">Multani.ff</span>
+      </div>
+      <div class="profile-pill" onclick="openLoginModal()">
+        <i class="fa-solid fa-id-badge"></i>
+        <span id="navUserBadge">LOGIN UID</span>
       </div>
     </div>
 
-    <div class="featured-section">
-      <div class="featured-card">
-        <div class="featured-badge">OFFICIAL TOURNAMENTS</div>
-        <div class="profile-circle"><i class="fa-solid fa-crosshairs"></i></div>
-        <div class="player-title"><span>☆Mr 💫 Nadeem.ff</span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i></div>
-        <div class="clan-title">꧁Multani.ff Official꧂</div>
-        <div class="org-easypaisa">EasyPaisa: <strong>03186815926</strong></div>
+    <!-- Hero Card -->
+    <div class="hero-box">
+      <div class="hero-card">
+        <div class="ff-tag"><i class="fa-solid fa-crown"></i> ESPORTS ARENA</div>
+        <div class="hero-profile"><i class="fa-solid fa-crosshairs"></i></div>
+        <div class="hero-name">☆Mr 💫 Nadeem.ff</div>
+        <div class="hero-clan">꧁Multani.ff Official Tournaments꧂</div>
+        <div class="payment-chip">
+          EasyPaisa: <strong>03186815926</strong> (Nadeem)
+        </div>
       </div>
     </div>
 
-    <div class="section-title">
-      <span>ACTIVE TOURNAMENTS</span>
-      <span style="font-size: 11px; color:#10b981;" id="matchCounter">0 Matches</span>
+    <!-- Map Filter Bar -->
+    <div class="filter-section">
+      <div class="filter-label"><i class="fa-solid fa-map-location-dot" style="color:var(--ff-cyan); margin-right:4px;"></i> Select Game Map</div>
+      <div class="map-scroll-track" id="mapTrack">
+        <div class="map-pill active" onclick="setMapFilter('All', this)"><i class="fa-solid fa-globe"></i> All Maps</div>
+        <div class="map-pill" onclick="setMapFilter('Bermuda', this)"><i class="fa-solid fa-mountain"></i> Bermuda</div>
+        <div class="map-pill" onclick="setMapFilter('Purgatory', this)"><i class="fa-solid fa-volcano"></i> Purgatory</div>
+        <div class="map-pill" onclick="setMapFilter('Kalahari', this)"><i class="fa-solid fa-sun"></i> Kalahari</div>
+        <div class="map-pill" onclick="setMapFilter('Alpine', this)"><i class="fa-solid fa-snowflake"></i> Alpine</div>
+        <div class="map-pill" onclick="setMapFilter('Clash Squad', this)"><i class="fa-solid fa-skull"></i> Clash Squad</div>
+      </div>
     </div>
 
+    <!-- Section Title -->
+    <div class="section-head">
+      <span><i class="fa-solid fa-bolt" style="color:var(--ff-yellow); margin-right:6px;"></i>AVAILABLE TOURNAMENTS</span>
+      <span style="font-size: 11px; color:var(--ff-cyan);" id="matchCounter">0 Matches</span>
+    </div>
+
+    <!-- Matches List Container -->
     <div class="matches-list" id="matchesContainer"></div>
 
-    <div class="bottom-bar">
-      <button class="tab-btn active"><i class="fa-solid fa-house"></i>Home</button>
-      <button class="tab-btn" onclick="openLoginModal()"><i class="fa-solid fa-id-card"></i>My Profile</button>
-      <a href="https://wa.me/923186815926" class="tab-btn" target="_blank"><i class="fa-brands fa-whatsapp"></i>Help Support</a>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-link active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fa-solid fa-gamepad"></i>
+        <span>Tournaments</span>
+      </button>
+      <button class="nav-link" onclick="openLoginModal()">
+        <i class="fa-solid fa-user-gear"></i>
+        <span>Player ID</span>
+      </button>
+      <a href="https://wa.me/923186815926" class="nav-link" target="_blank">
+        <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i>
+        <span>Support</span>
+      </a>
     </div>
+
   </div>
 
-  <!-- Player Login Modal -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="modal-box">
-      <h3>🎮 Player Account</h3>
-      <div class="form-group">
-        <label>Game Nickname</label>
+  <!-- Player Login / Account Modal -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span>🎮 Player Profile Setup</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('loginModal')"></i>
+      </div>
+      <div class="form-ctrl">
+        <label>Game Nickname (In-Game Name)</label>
         <input type="text" id="logName" placeholder="e.g. MANDOOR_FF">
       </div>
-      <div class="form-group">
-        <label>Free Fire UID</label>
+      <div class="form-ctrl">
+        <label>Free Fire UID (Numbers only)</label>
         <input type="number" id="logUid" placeholder="e.g. 3239454397">
       </div>
-      <div class="form-group">
-        <label>EasyPaisa / JazzCash Number</label>
+      <div class="form-ctrl">
+        <label>WhatsApp / EasyPaisa Number</label>
         <input type="text" id="logPhone" placeholder="03XXXXXXXXX">
       </div>
-      <button class="btn-submit" onclick="saveLogin()">Save Profile</button>
-      <button class="btn-cancel" onclick="closeModal('loginModal')">Cancel</button>
+      <button class="btn-modal-action" onclick="saveLogin()">Save & Confirm</button>
+      <button class="btn-modal-close" onclick="closeModal('loginModal')">Close</button>
     </div>
   </div>
 
-  <!-- Screenshot Upload & Join Modal -->
-  <div class="modal-overlay" id="joinModal">
-    <div class="modal-box">
-      <h3>📸 Submit Payment Proof</h3>
-      <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
-        براہ کرم ایزی پیسہ پر فیس ٹرانسفر کر کے اسکرین شاٹ منتخب کریں۔ ایڈمن تصدیق کے بعد آپ کا سلاٹ کنفرم کرے گا۔
+  <!-- Payment Proof Modal -->
+  <div class="modal-backdrop" id="joinModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span>📸 Submit Fee Screenshot</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
+      </div>
+      <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5;">
+        Pehle EasyPaisa par fee transfer karein aur transaction ka screenshot upload karein. Admin verification ke baad aapko Room ID & Password show hoga.
       </p>
-      <div class="form-group">
-        <label>ایزی پیسہ نمبر:</label>
-        <input type="text" value="03186815926 (Nadeem)" readonly style="color:#10b981; font-weight:bold;">
+      <div class="form-ctrl">
+        <label>EasyPaisa Account Number</label>
+        <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--ff-cyan); font-weight:bold;">
       </div>
-      <div class="form-group">
-        <label>پیمنٹ اسکرین شاٹ اپلوڈ کریں:</label>
+      <div class="form-ctrl">
+        <label>Choose Screenshot File</label>
         <input type="file" id="ssInput" accept="image/*" onchange="previewScreenshot(event)">
-        <img id="ssPreview" class="preview-img" alt="SS Preview">
+        <img id="ssPreview" class="preview-box" alt="Payment Proof">
       </div>
-      <button class="btn-submit" onclick="submitJoinWithSS()">Submit for Approval</button>
-      <button class="btn-cancel" onclick="closeModal('joinModal')">Cancel</button>
+      <button class="btn-modal-action" onclick="submitJoinWithSS()">Submit Proof</button>
+      <button class="btn-modal-close" onclick="closeModal('joinModal')">Cancel</button>
     </div>
   </div>
 
@@ -155,12 +522,15 @@
     const defaultMatches = [
       {
         id: "m_1",
-        title: "MATCH #1 (SOLO CLASH)",
-        time: "DAILY 8:00 PM",
+        title: "BERMUDA CLASH BATTLE #1",
+        map: "Bermuda",
+        rules: "Gun Attributes OFF | Solo Only",
+        time: "TONIGHT 09:30 PM",
         fee: 50,
         prize: 400,
-        totalSlots: 10,
-        rules: "Solo - All Guns",
+        totalSlots: 12,
+        roomId: "",
+        roomPass: "",
         players: [
           { name: "☆Mr Nadeem", uid: "3239454397", status: "approved" }
         ]
@@ -171,75 +541,121 @@
     let currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
     let selectedMatchId = null;
     let uploadedScreenshotBase64 = "";
+    let activeFilter = "All";
+
+    function setMapFilter(mapName, btn) {
+      document.querySelectorAll('.map-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = mapName;
+      renderMatches();
+    }
 
     function renderMatches() {
+      // Always pull latest sync from localStorage
+      tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+
       const container = document.getElementById('matchesContainer');
       container.innerHTML = "";
-      document.getElementById('matchCounter').innerText = `${tournaments.length} Matches`;
 
-      tournaments.forEach(m => {
-        // Only count approved players for public slots
-        const approvedPlayers = m.players.filter(p => p.status === "approved");
+      const filtered = activeFilter === "All" 
+        ? tournaments 
+        : tournaments.filter(m => (m.map || "Bermuda").toLowerCase().includes(activeFilter.toLowerCase()));
+
+      document.getElementById('matchCounter').innerText = `${filtered.length} Matches`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 40px 20px; color:#475569; font-size:13px; background:#0c1017; border-radius:16px; border:1px dashed #1e293b;">
+            <i class="fa-solid fa-gamepad" style="font-size:28px; color:var(--ff-orange); margin-bottom:8px; display:block;"></i>
+            Is Map par abhi koi live match nahi hai.
+          </div>`;
+        return;
+      }
+
+      filtered.forEach(m => {
+        const approvedPlayers = (m.players || []).filter(p => p.status === "approved");
         const joinedCount = approvedPlayers.length;
         const percent = Math.min(100, Math.round((joinedCount / m.totalSlots) * 100));
 
-        let userRecord = currentUser ? m.players.find(p => p.uid === currentUser.uid) : null;
-
-        let playersListHtml = "";
-        if (approvedPlayers.length === 0) {
-          playersListHtml = `<span style="color:#64748b;">No confirmed players yet.</span>`;
-        } else {
-          approvedPlayers.forEach(p => {
-            playersListHtml += `<span class="player-chip"><i class="fa-solid fa-user-check"></i> ${p.name}</span>`;
-          });
-        }
+        let userRecord = currentUser ? (m.players || []).find(p => p.uid === currentUser.uid) : null;
 
         let actionBtnHtml = "";
+        let roomCredsHtml = "";
+
+        // Status & Action button handling
         if (!userRecord) {
           if (joinedCount >= m.totalSlots) {
-            actionBtnHtml = `<button class="btn-action btn-full">SLOTS FULL</button>`;
+            actionBtnHtml = `<button class="btn-fire-action btn-fire-full"><i class="fa-solid fa-lock"></i> SLOTS FULL</button>`;
           } else {
-            actionBtnHtml = `<button class="btn-action btn-join" onclick="initiateJoin('${m.id}')">JOIN NOW (Rs. ${m.fee})</button>`;
+            actionBtnHtml = `<button class="btn-fire-action btn-fire-join" onclick="initiateJoin('${m.id}')"><i class="fa-solid fa-bolt"></i> JOIN MATCH (Rs. ${m.fee})</button>`;
           }
         } else if (userRecord.status === "pending") {
-          actionBtnHtml = `<button class="btn-action btn-pending"><i class="fa-solid fa-clock"></i> APPROVAL PENDING...</button>`;
+          actionBtnHtml = `<button class="btn-fire-action btn-fire-pending"><i class="fa-solid fa-hourglass-half"></i> APPROVAL PENDING BY ADMIN</button>`;
         } else if (userRecord.status === "approved") {
-          actionBtnHtml = `<button class="btn-action btn-approved"><i class="fa-solid fa-circle-check"></i> JOIN CONFIRMED ✔</button>`;
+          actionBtnHtml = `<button class="btn-fire-action btn-fire-approved"><i class="fa-solid fa-circle-check"></i> SLOT CONFIRMED ✔</button>`;
+          
+          // Show Room ID and Password once approved
+          if (m.roomId && m.roomPass) {
+            roomCredsHtml = `
+              <div class="room-alert-box">
+                <div class="room-header">
+                  <span><i class="fa-solid fa-key"></i> CUSTOM ROOM UNLOCKED</span>
+                  <span style="color:#10b981;">READY</span>
+                </div>
+                <div class="room-info-row">
+                  <span>ROOM ID: <b style="color:var(--ff-cyan);">${m.roomId}</b></span>
+                  <span>PASS: <b style="color:var(--ff-yellow);">${m.roomPass}</b></span>
+                </div>
+              </div>
+            `;
+          } else {
+            roomCredsHtml = `
+              <div class="room-alert-box" style="border-color:#eab308; background:rgba(234,179,8,0.1);">
+                <div class="room-header" style="color:#eab308;">
+                  <span><i class="fa-solid fa-clock"></i> ROOM ID & PASS</span>
+                  <span>Awaiting Host</span>
+                </div>
+                <div style="font-size:11px; color:#cbd5e1;">Admin match start hone se 15 minute pehle Room ID & Password yahan show karega.</div>
+              </div>
+            `;
+          }
         }
 
         const card = document.createElement('div');
-        card.className = "match-card";
+        card.className = "esports-card";
         card.innerHTML = `
-          <div class="match-header">
-            <span style="font-weight:800; font-size:13px;">${m.title}</span>
-            <span class="match-tag">${m.time}</span>
+          <div class="card-meta">
+            <span class="match-title">${m.title}</span>
+            <span class="badge-time"><i class="fa-solid fa-clock"></i> ${m.time}</span>
           </div>
 
-          <div class="match-details">
-            <div class="detail-box"><span>ENTRY FEE</span><strong>Rs. ${m.fee}</strong></div>
-            <div class="detail-box"><span>BOOYAH PRIZE</span><strong class="prize">Rs. ${m.prize}</strong></div>
-            <div class="detail-box"><span>FORMAT</span><strong>Slots: ${m.totalSlots}</strong></div>
-            <div class="detail-box"><span>RULES</span><strong>${m.rules}</strong></div>
+          <div class="tags-container">
+            <span class="tag-map"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
+            <span class="tag-rules"><i class="fa-solid fa-scroll"></i> ${m.rules || 'Standard Rules'}</span>
           </div>
 
-          <div class="slot-bar-wrap">
-            <div class="slot-bar-text">
-              <span>Confirmed Players</span>
-              <span>${joinedCount} / ${m.totalSlots}</span>
+          <div class="stat-matrix">
+            <div class="stat-block">
+              <span>Booyah Reward</span>
+              <strong class="gold">Rs. ${m.prize}</strong>
             </div>
-            <div class="slot-bar">
-              <div class="slot-bar-fill" style="width: ${percent}%;"></div>
+            <div class="stat-block">
+              <span>Entry Fee</span>
+              <strong class="cyan">Rs. ${m.fee}</strong>
             </div>
           </div>
 
-          <div class="joined-players-box">
-            <div class="joined-players-title">
-              <span>CONFIRMED PLAYERS (${joinedCount})</span>
-              <i class="fa-solid fa-shield" style="color:#10b981;"></i>
+          <div class="slots-box">
+            <div class="slots-header">
+              <span>Confirmed Fighters</span>
+              <span>${joinedCount} / ${m.totalSlots} Slots</span>
             </div>
-            <div class="player-chips">${playersListHtml}</div>
+            <div class="slots-bar">
+              <div class="slots-bar-fill" style="width: ${percent}%;"></div>
+            </div>
           </div>
 
+          ${roomCredsHtml}
           ${actionBtnHtml}
         `;
         container.appendChild(card);
@@ -248,17 +664,17 @@
 
     function updateNavProfile() {
       if (currentUser) {
-        document.getElementById('navUserName').innerText = currentUser.name;
+        document.getElementById('navUserBadge').innerText = currentUser.name;
       } else {
-        document.getElementById('navUserName').innerText = "Login UID";
+        document.getElementById('navUserBadge').innerText = "LOGIN UID";
       }
     }
 
     function openLoginModal() {
       if (currentUser) {
-        document.getElementById('logName').value = currentUser.name;
-        document.getElementById('logUid').value = currentUser.uid;
-        document.getElementById('logPhone').value = currentUser.phone;
+        document.getElementById('logName').value = currentUser.name || "";
+        document.getElementById('logUid').value = currentUser.uid || "";
+        document.getElementById('logPhone').value = currentUser.phone || "";
       }
       document.getElementById('loginModal').style.display = "flex";
     }
@@ -269,7 +685,14 @@
       const phone = document.getElementById('logPhone').value.trim();
 
       if (!name || !uid || !phone) {
-        alert("تمام خانے پر کرنا لازمی ہیں!");
+        alert("Tamam details bharna lazmi hain!");
+        return;
+      }
+
+      // Check if UID is banned by Admin
+      const bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bans.includes(uid)) {
+        alert("Yeh UID admin ki taraf se blacklist/ban hai!");
         return;
       }
 
@@ -278,12 +701,12 @@
       updateNavProfile();
       closeModal('loginModal');
       renderMatches();
-      alert(`ویلکم ${name}! پروفائل محفوظ ہو گئی۔`);
+      alert(`Welcome ${name}! Profile set ho chuki hai.`);
     }
 
     function initiateJoin(matchId) {
       if (!currentUser) {
-        alert("ٹورنامنٹ جوائن کرنے کے لیے پہلے لاگ ان کریں!");
+        alert("Tournament join karne ke liye pehle apna UID login karein!");
         openLoginModal();
         return;
       }
@@ -310,14 +733,23 @@
 
     function submitJoinWithSS() {
       if (!uploadedScreenshotBase64) {
-        alert("براہ کرم پیمنٹ کا اسکرین شاٹ اپلوڈ کریں!");
+        alert("Payment screenshot upload karna lazmi hai!");
         return;
       }
 
-      const match = tournaments.find(m => m.id === selectedMatchId);
+      let allTournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+      const match = allTournaments.find(m => m.id === selectedMatchId);
       if (!match) return;
 
-      // Add to match with 'pending' status
+      if (!match.players) match.players = [];
+
+      // Check if already submitted
+      if (match.players.some(p => p.uid === currentUser.uid)) {
+        alert("Aap pehle hi is tournament ke liye apply kar chuke hain!");
+        closeModal('joinModal');
+        return;
+      }
+
       match.players.push({
         name: currentUser.name,
         uid: currentUser.uid,
@@ -327,10 +759,10 @@
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
-      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+      localStorage.setItem('mff_tournaments', JSON.stringify(allTournaments));
       closeModal('joinModal');
       renderMatches();
-      alert("آپ کی درخواست اور اسکرین شاٹ ایڈمن پینل پر بھیج دی گئی ہے! ایڈمن کے Approve کرتے ہی آپ کا سلاٹ کنفرم ہو جائے گا۔");
+      alert("Aapka screenshot Admin Panel par submit ho gaya hai! Admin verify karte hi aapko Room ID yahan show ho jayegi.");
     }
 
     function closeModal(id) {
