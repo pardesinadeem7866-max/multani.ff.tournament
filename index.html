@@ -16,6 +16,7 @@
       --text-dark: #0a291b;
       --text-muted: #64748b;
       --gold: #ffb703;
+      --danger: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -86,7 +87,7 @@
     }
     .top-search-btn { font-size: 17px; color: var(--mint-primary); cursor: pointer; }
 
-    /* Top Hero Card (Image Banner Style) */
+    /* Top Hero Card */
     .hero-banner-container { padding: 12px 16px; }
     .hero-glass-card {
       background: rgba(255, 255, 255, 0.95);
@@ -169,7 +170,7 @@
       box-shadow: 0 3px 10px rgba(0, 230, 118, 0.4);
     }
 
-    /* 2-Column Grid (From Screenshot) */
+    /* Grid Layout */
     .grid-container {
       padding: 0 16px;
       display: grid;
@@ -270,7 +271,7 @@
     .fee-badge { color: #059669; }
     .prize-badge { color: #d97706; }
 
-    /* Bottom Navigation Bar (4-item round styled) */
+    /* Bottom Navigation Bar */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -355,7 +356,7 @@
       max-height: 90vh;
       overflow-y: auto;
     }
-    .modal-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; }
+    .modal-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
     .form-ctrl { margin-bottom: 12px; }
     .form-ctrl label { font-size: 11px; font-weight: 700; color: #a7f3d0; display: block; margin-bottom: 4px; }
     .form-ctrl input {
@@ -380,7 +381,9 @@
       font-weight: 900;
       cursor: pointer;
       margin-top: 6px;
+      transition: opacity 0.2s;
     }
+    .btn-green-action:active { opacity: 0.85; }
     .btn-modal-close {
       width: 100%;
       background: transparent;
@@ -392,6 +395,76 @@
       margin-top: 4px;
     }
     .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
+
+    /* Rules Banner & Section Styles */
+    .profile-rules-btn {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(255, 183, 3, 0.15));
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .profile-rules-btn:active { transform: scale(0.98); }
+    .profile-rules-left { display: flex; align-items: center; gap: 10px; }
+    .profile-rules-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 183, 3, 0.2);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .rule-item-box {
+      background: #02110a;
+      border: 1px solid rgba(0, 230, 118, 0.15);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .rule-bullet-num {
+      background: rgba(0, 230, 118, 0.2);
+      color: var(--mint-primary);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .rule-title-txt { font-size: 12px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .rule-desc-txt { font-size: 10.5px; color: #94a3b8; line-height: 1.4; }
+    .rule-warning-bar {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: #fca5a5;
+      line-height: 1.4;
+      text-align: center;
+      margin-top: 6px;
+    }
 
     /* Support Chat */
     .chat-history-box {
@@ -456,7 +529,7 @@
 
   <div class="app-viewport">
     
-    <!-- Top Bar with Image Style Tabs -->
+    <!-- Top Bar -->
     <div class="top-header">
       <div class="profile-avatar-badge" onclick="openLoginModal()">
         <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
@@ -474,7 +547,7 @@
       </div>
     </div>
 
-    <!-- Top White Room/Owner Banner (Screenshot style) -->
+    <!-- Top White Room/Owner Banner -->
     <div class="hero-banner-container">
       <div class="hero-glass-card">
         <div class="mine-ribbon">Mine</div>
@@ -498,10 +571,10 @@
       <div class="filter-item" onclick="setMapFilter('Clash Squad', this)">CS Battle</div>
     </div>
 
-    <!-- 2-Column Vertical Match Cards (Screenshot Layout) -->
+    <!-- 2-Column Match Cards -->
     <div class="grid-container" id="matchesContainer"></div>
 
-    <!-- Bottom Navigation Bar (Events, Battle, Chat, Social) -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-bar">
       <button class="bot-item" onclick="openEventsAlert()">
         <div class="bot-icon-circle">
@@ -537,7 +610,7 @@
 
   </div>
 
-  <!-- Player Profile Modal -->
+  <!-- Player Profile Modal (With Rules Button Added) -->
   <div class="modal-backdrop" id="loginModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -557,7 +630,88 @@
         <input type="text" id="logPhone" placeholder="03XXXXXXXXX">
       </div>
       <button class="btn-green-action" onclick="saveLogin()">Save Profile</button>
-      <button class="btn-modal-close" onclick="closeModal('loginModal')">Cancel</button>
+
+      <!-- Professional Rules Navigation Trigger -->
+      <div class="profile-rules-btn" onclick="openRulesModal()">
+        <div class="profile-rules-left">
+          <div class="profile-rules-icon">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">Tournament Fair Play Rules</div>
+            <div style="font-size:10px; color:#a7f3d0;">Must read before joining matches</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color:var(--gold); font-size:12px;"></i>
+      </div>
+
+      <button class="btn-modal-close" onclick="closeModal('loginModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Detailed Tournament Rules Modal -->
+  <div class="modal-backdrop" id="rulesModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span style="display:flex; align-items:center; gap:6px; color:#ffb703;">
+          <i class="fa-solid fa-shield-halved"></i> Fair Play Rules
+        </span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('rulesModal')"></i>
+      </div>
+
+      <div class="rules-list">
+        <!-- Rule 1 -->
+        <div class="rule-item-box">
+          <div class="rule-bullet-num">1</div>
+          <div>
+            <div class="rule-title-txt">Level 50+ Real ID Only</div>
+            <div class="rule-desc-txt">Sirf original accounts allow hain. 50 level se kam ya guest ID match se kick hogi aur koi refund nahi milega.</div>
+          </div>
+        </div>
+
+        <!-- Rule 2 -->
+        <div class="rule-item-box">
+          <div class="rule-bullet-num">2</div>
+          <div>
+            <div class="rule-title-txt">No Hack / Config / Mod Menu</div>
+            <div class="rule-desc-txt">Auto-headshot, speed hack, file edit, antenna ya kisi bhi 3rd-party tool ka use sakht mana hai.</div>
+          </div>
+        </div>
+
+        <!-- Rule 3 -->
+        <div class="rule-item-box">
+          <div class="rule-bullet-num">3</div>
+          <div>
+            <div class="rule-title-txt">No Panel / Emulator (Mobile Only)</div>
+            <div class="rule-desc-txt">Mobile matches me PC/Emulator aur Panel injectors 100% prohibited hain. Sirf real mobile touch players allow hain.</div>
+          </div>
+        </div>
+
+        <!-- Rule 4 -->
+        <div class="rule-item-box">
+          <div class="rule-bullet-num">4</div>
+          <div>
+            <div class="rule-title-txt">No Glitches & Teaming</div>
+            <div class="rule-desc-txt">Gloo wall glitch, invisible bug ya solo matches me teaming karne wale dono players foran disqualify honge.</div>
+          </div>
+        </div>
+
+        <!-- Rule 5 -->
+        <div class="rule-item-box">
+          <div class="rule-bullet-num">5</div>
+          <div>
+            <div class="rule-title-txt">Screen Recording Proof</div>
+            <div class="rule-desc-txt">Har player ko apne game play ya end-phase ki screen recording rakhna lazmi hai. Shak hone par admin video maang sakta hai.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strict Penalty Warning -->
+      <div class="rule-warning-bar">
+        ⚠️ <b>Strict Warning:</b> Kisi bhi 2-numberi ya cheating ki surat me <b>Winning Prize zero</b> hoga, entry fee zabt hogi aur UID website se permanent ban kar di jayegi!
+      </div>
+
+      <button class="btn-green-action" style="margin-top:12px;" onclick="closeModal('rulesModal')">I Agree & Understood</button>
     </div>
   </div>
 
@@ -814,6 +968,12 @@
         document.getElementById('logPhone').value = currentUser.phone || "";
       }
       document.getElementById('loginModal').style.display = "flex";
+    }
+
+    /* Rules Modal Functions */
+    function openRulesModal() {
+      document.getElementById('loginModal').style.display = "none";
+      document.getElementById('rulesModal').style.display = "flex";
     }
 
     function saveLogin() {
