@@ -8,13 +8,9 @@
   <style>
     :root {
       --ff-orange: #ff4625;
-      --ff-fire: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
       --ff-yellow: #ffd000;
       --ff-cyan: #00f0ff;
-      --ff-gold: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-      --dark-bg: #090b10;
       --card-bg: #10141f;
-      --border-glow: rgba(255, 70, 37, 0.25);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -32,7 +28,6 @@
       box-shadow: 0 0 50px rgba(0,0,0,0.8);
     }
 
-    /* Neon Top App Bar */
     .gaming-nav {
       display: flex;
       justify-content: space-between;
@@ -45,7 +40,7 @@
       z-index: 100;
       border-bottom: 1px solid rgba(255, 70, 37, 0.2);
     }
-    .logo-container { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 17px; letter-spacing: 0.5px; }
+    .logo-container { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 17px; }
     .logo-badge {
       background: linear-gradient(135deg, #ff4625, #ffd000);
       -webkit-background-clip: text;
@@ -65,10 +60,8 @@
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
     }
 
-    /* Cyber Hero Banner */
     .hero-box { padding: 14px 16px; }
     .hero-card {
       background: linear-gradient(145deg, #1b122c 0%, #111728 50%, #0d121c 100%);
@@ -76,18 +69,7 @@
       padding: 18px 16px;
       border: 1px solid rgba(255, 208, 0, 0.2);
       position: relative;
-      overflow: hidden;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, rgba(255,70,37,0.3) 0%, transparent 70%);
-      pointer-events: none;
     }
     .ff-tag {
       position: absolute;
@@ -99,7 +81,6 @@
       font-weight: 900;
       padding: 3px 8px;
       border-radius: 6px;
-      letter-spacing: 0.5px;
     }
     .hero-profile {
       width: 58px;
@@ -115,7 +96,7 @@
       color: var(--ff-yellow);
       box-shadow: 0 0 16px rgba(255, 208, 0, 0.35);
     }
-    .hero-name { font-size: 17px; font-weight: 900; text-align: center; color: #fff; letter-spacing: 0.5px; }
+    .hero-name { font-size: 17px; font-weight: 900; text-align: center; color: #fff; }
     .hero-clan { color: #f59e0b; font-size: 12px; font-weight: 700; text-align: center; margin-top: 2px; }
     .payment-chip {
       margin: 12px auto 0;
@@ -129,15 +110,9 @@
     }
     .payment-chip strong { color: #10b981; }
 
-    /* Map Filters Row */
     .filter-section { padding: 4px 16px 12px; }
-    .filter-label { font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .map-scroll-track {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
+    .filter-label { font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
+    .map-scroll-track { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
     .map-scroll-track::-webkit-scrollbar { display: none; }
     .map-pill {
       background: #111726;
@@ -149,10 +124,6 @@
       border-radius: 12px;
       white-space: nowrap;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
     }
     .map-pill.active {
       background: linear-gradient(135deg, #ff4625, #ff7e40);
@@ -161,7 +132,6 @@
       box-shadow: 0 4px 12px rgba(255, 70, 37, 0.35);
     }
 
-    /* Section Head */
     .section-head {
       display: flex;
       justify-content: space-between;
@@ -172,7 +142,6 @@
       color: #cbd5e1;
     }
 
-    /* Matches List */
     .matches-list { padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
     .esports-card {
       background: #0e131d;
@@ -180,11 +149,7 @@
       border-radius: 18px;
       padding: 14px;
       position: relative;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-      transition: transform 0.2s;
     }
-    .esports-card:hover { transform: translateY(-2px); border-color: rgba(255, 70, 37, 0.4); }
-
     .card-meta {
       display: flex;
       justify-content: space-between;
@@ -204,7 +169,6 @@
       border-radius: 8px;
     }
 
-    /* Badges Row */
     .tags-container { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
     .tag-map {
       background: rgba(0, 240, 255, 0.1);
@@ -225,7 +189,6 @@
       border-radius: 6px;
     }
 
-    /* Match Stats Grid */
     .stat-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
     .stat-block {
       background: #090c12;
@@ -238,7 +201,6 @@
     .stat-block strong.gold { color: var(--ff-yellow); }
     .stat-block strong.cyan { color: var(--ff-cyan); }
 
-    /* Slots Progress */
     .slots-box { margin-bottom: 12px; }
     .slots-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
     .slots-bar { width: 100%; height: 7px; background: #07090e; border-radius: 10px; overflow: hidden; border: 1px solid #1e2637; }
@@ -250,23 +212,16 @@
       transition: width 0.4s ease;
     }
 
-    /* Secret Room Info Box for Approved Players */
     .room-alert-box {
       background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
       border: 1px solid #00f0ff;
       border-radius: 10px;
       padding: 10px;
       margin-bottom: 12px;
-      animation: pulseGlow 2s infinite alternate;
-    }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 5px rgba(0,240,255,0.2); }
-      100% { box-shadow: 0 0 15px rgba(0,240,255,0.4); }
     }
     .room-header { font-size: 11px; font-weight: 800; color: var(--ff-cyan); margin-bottom: 4px; display: flex; justify-content: space-between; }
     .room-info-row { font-size: 12px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; }
 
-    /* Action Buttons */
     .btn-fire-action {
       width: 100%;
       padding: 12px;
@@ -281,14 +236,12 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all 0.2s;
     }
     .btn-fire-join {
       background: linear-gradient(90deg, #ff4625 0%, #ff7300 100%);
       color: #fff;
       box-shadow: 0 6px 18px rgba(255, 70, 37, 0.4);
     }
-    .btn-fire-join:active { transform: scale(0.97); }
     .btn-fire-pending {
       background: #1c1810;
       color: #ffd000;
@@ -308,7 +261,6 @@
       cursor: not-allowed;
     }
 
-    /* Bottom Cyber Bar */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -334,12 +286,10 @@
       align-items: center;
       gap: 4px;
       cursor: pointer;
-      text-decoration: none;
     }
     .nav-link.active { color: var(--ff-cyan); }
     .nav-link i { font-size: 16px; }
 
-    /* Modals */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -365,7 +315,7 @@
     .modal-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; }
     .form-ctrl { margin-bottom: 12px; }
     .form-ctrl label { font-size: 11px; font-weight: 600; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-ctrl input {
+    .form-ctrl input, .form-ctrl textarea {
       width: 100%;
       background: #080b11;
       border: 1px solid #1b2537;
@@ -375,7 +325,7 @@
       font-size: 13px;
       outline: none;
     }
-    .form-ctrl input:focus { border-color: var(--ff-cyan); }
+    .form-ctrl input:focus, .form-ctrl textarea:focus { border-color: var(--ff-cyan); }
     .btn-modal-action {
       width: 100%;
       background: linear-gradient(90deg, #ff4625, #ff7300);
@@ -405,7 +355,6 @@
 
   <div class="app-viewport">
     
-    <!-- Cyber Gaming Navbar -->
     <div class="gaming-nav">
       <div class="logo-container">
         <i class="fa-solid fa-fire-flame-curved" style="color:var(--ff-orange);"></i>
@@ -417,7 +366,6 @@
       </div>
     </div>
 
-    <!-- Hero Card -->
     <div class="hero-box">
       <div class="hero-card">
         <div class="ff-tag"><i class="fa-solid fa-crown"></i> ESPORTS ARENA</div>
@@ -430,7 +378,6 @@
       </div>
     </div>
 
-    <!-- Map Filter Bar -->
     <div class="filter-section">
       <div class="filter-label"><i class="fa-solid fa-map-location-dot" style="color:var(--ff-cyan); margin-right:4px;"></i> Select Game Map</div>
       <div class="map-scroll-track" id="mapTrack">
@@ -443,16 +390,14 @@
       </div>
     </div>
 
-    <!-- Section Title -->
     <div class="section-head">
       <span><i class="fa-solid fa-bolt" style="color:var(--ff-yellow); margin-right:6px;"></i>AVAILABLE TOURNAMENTS</span>
       <span style="font-size: 11px; color:var(--ff-cyan);" id="matchCounter">0 Matches</span>
     </div>
 
-    <!-- Matches List Container -->
     <div class="matches-list" id="matchesContainer"></div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
       <button class="nav-link active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <i class="fa-solid fa-gamepad"></i>
@@ -462,12 +407,40 @@
         <i class="fa-solid fa-user-gear"></i>
         <span>Player ID</span>
       </button>
-      <a href="https://wa.me/923186815926" class="nav-link" target="_blank">
-        <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i>
+      <!-- Click opens in-app support modal -->
+      <button class="nav-link" onclick="openSupportModal()">
+        <i class="fa-solid fa-headset" style="color:#25d366;"></i>
         <span>Support</span>
-      </a>
+      </button>
     </div>
 
+  </div>
+
+  <!-- Help With Owner Support Modal -->
+  <div class="modal-backdrop" id="supportModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span>💬 Help with Owner</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('supportModal')"></i>
+      </div>
+      <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">
+        Apna masla ya sawaal yahan likhein. Yeh seedha Owner / Admin Dashboard par bhej diya jayega.
+      </p>
+      <div class="form-ctrl">
+        <label>Player Name</label>
+        <input type="text" id="suppName" placeholder="Aapka Name">
+      </div>
+      <div class="form-ctrl">
+        <label>Free Fire UID ya Phone Number</label>
+        <input type="text" id="suppContact" placeholder="UID ya Phone number">
+      </div>
+      <div class="form-ctrl">
+        <label>Apna Masla / Message Likhein</label>
+        <textarea id="suppMsg" rows="4" placeholder="Masla tafseel se likhein (e.g. Room password nahi mila, fee sent proof verification, etc.)..."></textarea>
+      </div>
+      <button class="btn-modal-action" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i> Send to Owner</button>
+      <button class="btn-modal-close" onclick="closeModal('supportModal')">Cancel</button>
+    </div>
   </div>
 
   <!-- Player Login / Account Modal -->
@@ -502,7 +475,7 @@
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
       </div>
       <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5;">
-        Pehle EasyPaisa par fee transfer karein aur transaction ka screenshot upload karein. Admin verification ke baad aapko Room ID & Password show hoga.
+        Pehle EasyPaisa par fee transfer karein aur screenshot upload karein. Admin verification ke baad Room ID & Pass show hoga.
       </p>
       <div class="form-ctrl">
         <label>EasyPaisa Account Number</label>
@@ -551,9 +524,7 @@
     }
 
     function renderMatches() {
-      // Always pull latest sync from localStorage
       tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
-
       const container = document.getElementById('matchesContainer');
       container.innerHTML = "";
 
@@ -578,11 +549,9 @@
         const percent = Math.min(100, Math.round((joinedCount / m.totalSlots) * 100));
 
         let userRecord = currentUser ? (m.players || []).find(p => p.uid === currentUser.uid) : null;
-
         let actionBtnHtml = "";
         let roomCredsHtml = "";
 
-        // Status & Action button handling
         if (!userRecord) {
           if (joinedCount >= m.totalSlots) {
             actionBtnHtml = `<button class="btn-fire-action btn-fire-full"><i class="fa-solid fa-lock"></i> SLOTS FULL</button>`;
@@ -594,7 +563,6 @@
         } else if (userRecord.status === "approved") {
           actionBtnHtml = `<button class="btn-fire-action btn-fire-approved"><i class="fa-solid fa-circle-check"></i> SLOT CONFIRMED ✔</button>`;
           
-          // Show Room ID and Password once approved
           if (m.roomId && m.roomPass) {
             roomCredsHtml = `
               <div class="room-alert-box">
@@ -615,7 +583,7 @@
                   <span><i class="fa-solid fa-clock"></i> ROOM ID & PASS</span>
                   <span>Awaiting Host</span>
                 </div>
-                <div style="font-size:11px; color:#cbd5e1;">Admin match start hone se 15 minute pehle Room ID & Password yahan show karega.</div>
+                <div style="font-size:11px; color:#cbd5e1;">Match start hone se pehle admin yahan credentials show karega.</div>
               </div>
             `;
           }
@@ -628,12 +596,10 @@
             <span class="match-title">${m.title}</span>
             <span class="badge-time"><i class="fa-solid fa-clock"></i> ${m.time}</span>
           </div>
-
           <div class="tags-container">
             <span class="tag-map"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
             <span class="tag-rules"><i class="fa-solid fa-scroll"></i> ${m.rules || 'Standard Rules'}</span>
           </div>
-
           <div class="stat-matrix">
             <div class="stat-block">
               <span>Booyah Reward</span>
@@ -644,7 +610,6 @@
               <strong class="cyan">Rs. ${m.fee}</strong>
             </div>
           </div>
-
           <div class="slots-box">
             <div class="slots-header">
               <span>Confirmed Fighters</span>
@@ -654,7 +619,6 @@
               <div class="slots-bar-fill" style="width: ${percent}%;"></div>
             </div>
           </div>
-
           ${roomCredsHtml}
           ${actionBtnHtml}
         `;
@@ -679,6 +643,39 @@
       document.getElementById('loginModal').style.display = "flex";
     }
 
+    function openSupportModal() {
+      if (currentUser) {
+        document.getElementById('suppName').value = currentUser.name || "";
+        document.getElementById('suppContact').value = currentUser.uid ? `UID: ${currentUser.uid}` : (currentUser.phone || "");
+      }
+      document.getElementById('supportModal').style.display = "flex";
+    }
+
+    function submitSupportMessage() {
+      const name = document.getElementById('suppName').value.trim();
+      const contact = document.getElementById('suppContact').value.trim();
+      const message = document.getElementById('suppMsg').value.trim();
+
+      if (!message || !name) {
+        alert("Naam aur message likhna lazmi hai!");
+        return;
+      }
+
+      let supportMessages = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      supportMessages.unshift({
+        id: "msg_" + Date.now(),
+        name,
+        contact: contact || "Not specified",
+        message,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date().toLocaleDateString()
+      });
+
+      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMessages));
+      document.getElementById('suppMsg').value = "";
+      closeModal('supportModal');
+      alert("Aapka message Owner/Admin tak pohanch gaya hai! Jald reply milega.");
+    }
+
     function saveLogin() {
       const name = document.getElementById('logName').value.trim();
       const uid = document.getElementById('logUid').value.trim();
@@ -689,10 +686,9 @@
         return;
       }
 
-      // Check if UID is banned by Admin
       const bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
       if (bans.includes(uid)) {
-        alert("Yeh UID admin ki taraf se blacklist/ban hai!");
+        alert("Yeh UID blacklist/ban hai!");
         return;
       }
 
@@ -743,7 +739,6 @@
 
       if (!match.players) match.players = [];
 
-      // Check if already submitted
       if (match.players.some(p => p.uid === currentUser.uid)) {
         alert("Aap pehle hi is tournament ke liye apply kar chuke hain!");
         closeModal('joinModal');
@@ -762,7 +757,7 @@
       localStorage.setItem('mff_tournaments', JSON.stringify(allTournaments));
       closeModal('joinModal');
       renderMatches();
-      alert("Aapka screenshot Admin Panel par submit ho gaya hai! Admin verify karte hi aapko Room ID yahan show ho jayegi.");
+      alert("Aapka screenshot Admin Panel par submit ho gaya hai!");
     }
 
     function closeModal(id) {
