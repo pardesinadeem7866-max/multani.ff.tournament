@@ -280,7 +280,7 @@
       max-height: 88vh;
       overflow-y: auto;
     }
-    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
     .form-group input, .form-group select, .form-group textarea {
@@ -404,7 +404,7 @@
         <span class="grid-label">Create Match</span>
       </button>
 
-      <!-- Replaced with Giveaways Button -->
+      <!-- Giveaways Button -->
       <button class="grid-btn" onclick="openAdminGiveawayModal()">
         <div class="grid-icon-circle"><i class="fa-solid fa-gift" style="color:#ef4444;"></i></div>
         <span class="grid-label">Giveaways</span>
@@ -416,8 +416,9 @@
         <span class="grid-label">Payment Approval</span>
       </button>
 
-      <button class="grid-btn" onclick="banPlayerPrompt()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-user-slash"></i></div>
+      <!-- Ban Player Modal Trigger -->
+      <button class="grid-btn" onclick="openBanModal()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-user-slash" style="color:#ef4444;"></i></div>
         <span class="grid-label">Ban Player</span>
       </button>
 
@@ -431,7 +432,6 @@
         <span class="grid-label">Filter Map</span>
       </button>
 
-      <!-- HELP MESSAGES BUTTON -->
       <button class="grid-btn" onclick="showSection('supportSection')">
         <span class="grid-badge" id="badgeSupport" style="display:none; background:#25d366;">0</span>
         <div class="grid-icon-circle"><i class="fa-solid fa-comments" style="color:#25d366;"></i></div>
@@ -444,7 +444,7 @@
       </button>
     </div>
 
-    <!-- Section 1: Player Conversations Inbox (Memberwise) -->
+    <!-- Section 1: Player Chat Inboxes -->
     <div class="content-area" id="supportSection" style="display:none;">
       <div class="section-title">
         <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Player Chat Inboxes</span>
@@ -506,11 +506,7 @@
         </div>
         <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:18px; color:#94a3b8;" onclick="closeChatRoom()"></i>
       </div>
-
-      <!-- Messages Stream -->
       <div class="chat-body-stream" id="chatBodyStream"></div>
-
-      <!-- Admin Reply Input -->
       <div class="chat-bottom-input">
         <input type="text" id="adminMsgInput" placeholder="Type reply to player..." onkeypress="handleAdminEnter(event)">
         <button class="btn-send-chat" onclick="sendAdminChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -602,6 +598,36 @@
         <div style="font-size:12px; font-weight:700; color:#f59e0b; margin-bottom:8px;">Live Giveaways:</div>
         <div id="admGiveawayActiveContainer"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Ban Player Manager Modal -->
+  <div class="modal-overlay" id="banModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span style="color:#ef4444;"><i class="fa-solid fa-user-slash" style="margin-right:6px;"></i>Ban & Blacklist Manager</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeBanModal()"></i>
+      </div>
+
+      <!-- Add New Ban Form -->
+      <div class="form-group">
+        <label>Free Fire Player UID</label>
+        <input type="text" id="banUidInput" placeholder="e.g. 3239454397">
+      </div>
+      <button class="btn-submit-modal" onclick="executeBanPlayer()" style="background:#ef4444; color:#fff; margin-top:2px;">
+        <i class="fa-solid fa-ban"></i> Ban This UID
+      </button>
+
+      <!-- Banned Players List with Unban Option -->
+      <div style="margin-top:18px; border-top:1px solid #334155; padding-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="font-size:12px; font-weight:700; color:#cbd5e1;">Banned Players List:</span>
+          <span style="font-size:11px; color:#ef4444; font-weight:800;" id="bannedCountBadge">0 Banned</span>
+        </div>
+        <div id="bannedPlayersListContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <button onclick="closeBanModal()" style="width:100%; background:transparent; border:none; color:#64748b; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
     </div>
   </div>
 
@@ -852,7 +878,7 @@
     function openModal() { document.getElementById('matchModal').classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-    /* Giveaways Manager Functions */
+    /* Giveaways Functions */
     function openAdminGiveawayModal() {
       renderAdminGiveawaysList();
       document.getElementById('adminGiveawayModal').classList.add('active');
@@ -890,7 +916,7 @@
       document.getElementById('admGiveawayDesc').value = "";
 
       renderAdminGiveawaysList();
-      alert("✅ Giveaway kamyabi se publish ho gaya! Website par show ho chuka hai.");
+      alert("✅ Giveaway publish ho gaya!");
     }
 
     function removeAdminGiveaway(id) {
@@ -924,6 +950,81 @@
           </button>
         `;
         container.appendChild(card);
+      });
+    }
+
+    /* Ban Player Functions */
+    function openBanModal() {
+      renderBannedPlayersList();
+      document.getElementById('banModal').classList.add('active');
+    }
+
+    function closeBanModal() {
+      document.getElementById('banModal').classList.remove('active');
+    }
+
+    function executeBanPlayer() {
+      const input = document.getElementById('banUidInput');
+      const uid = input.value.trim();
+
+      if (!uid) {
+        alert("Free Fire Player UID likhna zaroori hai!");
+        return;
+      }
+
+      let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+
+      if (bans.includes(uid)) {
+        alert("Yeh UID pehle se banned hai!");
+        return;
+      }
+
+      bans.push(uid);
+      localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
+      input.value = "";
+      renderBannedPlayersList();
+      alert(`UID ${uid} ko ban kar diya gaya hai!`);
+    }
+
+    function unbanPlayer(uid) {
+      if (!confirm(`Kya aap UID ${uid} ko unban karna chahte hain?`)) return;
+
+      let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      bans = bans.filter(id => id !== uid);
+      localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
+      renderBannedPlayersList();
+      alert(`UID ${uid} ko unban kar diya gaya hai!`);
+    }
+
+    function renderBannedPlayersList() {
+      const bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      const container = document.getElementById('bannedPlayersListContainer');
+      const countBadge = document.getElementById('bannedCountBadge');
+
+      countBadge.innerText = `${bans.length} Banned`;
+      container.innerHTML = "";
+
+      if (bans.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:#64748b; text-align:center; padding:12px;">Koi banned player mojood nahi hai.</div>`;
+        return;
+      }
+
+      bans.forEach(uid => {
+        const item = document.createElement('div');
+        item.style = "background:#131b28; border:1px solid #1e293b; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;";
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-ban" style="color:#ef4444; font-size:12px;"></i>
+            <div>
+              <div style="font-size:12px; font-weight:800; color:#fff;">UID: ${uid}</div>
+              <div style="font-size:10px; color:#ef4444;">Status: Blacklisted</div>
+            </div>
+          </div>
+          <button onclick="unbanPlayer('${uid}')" style="background:#10b981; color:#022c22; border:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">
+            <i class="fa-solid fa-lock-open"></i> Unban
+          </button>
+        `;
+        container.appendChild(item);
       });
     }
 
@@ -1002,15 +1103,6 @@
       let tournaments = getTournaments();
       tournaments = tournaments.filter(m => m.id !== matchId);
       saveTournaments(tournaments);
-    }
-
-    function banPlayerPrompt() {
-      const uid = prompt('Player ki Free Fire UID likhein:');
-      if (!uid) return;
-      let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      bans.push(uid);
-      localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
-      alert(`UID ${uid} ban ho chuki hai!`);
     }
 
     function showSection(id) {
