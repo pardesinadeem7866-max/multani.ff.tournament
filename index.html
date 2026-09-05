@@ -374,6 +374,73 @@
     }
     .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
 
+    /* New Detail Boxes inside Match Modal */
+    .match-overview-card {
+      background: rgba(0, 230, 118, 0.08);
+      border: 1px solid rgba(0, 230, 118, 0.25);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .overview-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      padding: 3px 0;
+      color: #cbd5e1;
+    }
+    .overview-row b { color: #fff; }
+    
+    .match-rules-box {
+      background: rgba(255, 183, 3, 0.1);
+      border: 1px solid rgba(255, 183, 3, 0.35);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .match-rules-box h4 {
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 900;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .match-rules-box p {
+      font-size: 10.5px;
+      color: #fed7aa;
+      line-height: 1.4;
+    }
+
+    .members-list-box {
+      background: #02110a;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .members-list-header {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--mint-primary);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .player-row-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+    .player-row-item:nth-child(even) { background: rgba(0, 230, 118, 0.05); }
+
     /* Event Card */
     .event-card {
       background: linear-gradient(135deg, rgba(2, 38, 20, 0.95), rgba(7, 49, 28, 0.8));
@@ -593,19 +660,51 @@
     </div>
   </div>
 
-  <!-- Join Modal -->
+  <!-- Match View / Join Modal -->
   <div class="modal-backdrop" id="joinModal">
     <div class="modal-dialog">
       <div class="modal-title">
-        <span id="modalMatchName">Join Battle</span>
+        <span id="modalMatchName">Match Details</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
       </div>
       
-      <div id="roomCredsContainer" style="margin-bottom: 12px; display: none;"></div>
+      <!-- Inside Match Details View (Unlocked when joined & approved) -->
+      <div id="joinedDetailsContainer" style="display: none;">
+        
+        <!-- Room ID & Pass Display -->
+        <div id="roomCredsBox" style="margin-bottom: 12px;"></div>
 
-      <div id="paymentFormBlock">
+        <!-- Full Overview Box (Same details as card) -->
+        <div class="match-overview-card" id="matchOverviewBox"></div>
+
+        <!-- Important Rules & Prize Notice -->
+        <div class="match-rules-box">
+          <h4><i class="fa-solid fa-triangle-exclamation"></i> Important Notice & Rules</h4>
+          <p>
+            Har banda apna <b>Real Name</b>, <b>Game UID</b>, aur <b>WhatsApp Number</b> add kare. Take win prize dene ke time WhatsApp par rabta kiya ja sake. Fake details dene par win prize ke time masla ban sakta hai ya prize cancel ho sakta hai.
+          </p>
+        </div>
+
+        <!-- Joined Members List (Only Name and UID) -->
+        <div class="members-list-box">
+          <div class="members-list-header">
+            <span><i class="fa-solid fa-users"></i> Joined Players</span>
+            <span id="membersCountBadge">0</span>
+          </div>
+          <div id="membersListContainer" style="max-height: 180px; overflow-y: auto;"></div>
+        </div>
+
+      </div>
+
+      <!-- Pending Verification Screen -->
+      <div id="pendingNoticeBox" style="display: none; background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000; margin-bottom: 12px;">
+        <i class="fa-solid fa-hourglass-half"></i> Aapka payment screenshot review me hai. Admin verify karega to slot aur room details unlock ho jaengi.
+      </div>
+
+      <!-- Payment / Join Form (Showed when NOT joined) -->
+      <div id="paymentFormBlock" style="display: none;">
         <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 10px;">
-          EasyPaisa par fee send karke screenshot upload karein:
+          EasyPaisa par entry fee bhej kar screenshot attach karein:
         </p>
         <div class="form-ctrl">
           <label>EasyPaisa Account</label>
@@ -770,36 +869,79 @@
       if (!match) return;
 
       document.getElementById('modalMatchName').innerText = match.title;
-      const credsBox = document.getElementById('roomCredsContainer');
-      const formBlock = document.getElementById('paymentFormBlock');
+      
+      const joinedContainer = document.getElementById('joinedDetailsContainer');
+      const pendingNoticeBox = document.getElementById('pendingNoticeBox');
+      const paymentFormBlock = document.getElementById('paymentFormBlock');
+      const roomCredsBox = document.getElementById('roomCredsBox');
+
+      const approvedPlayers = (match.players || []).filter(p => p.status === "approved");
       const userRecord = (match.players || []).find(p => p.uid === currentUser.uid);
 
+      // Reset display states
+      joinedContainer.style.display = "none";
+      pendingNoticeBox.style.display = "none";
+      paymentFormBlock.style.display = "none";
+
       if (userRecord && userRecord.status === "approved") {
-        formBlock.style.display = "none";
-        credsBox.style.display = "block";
+        // User joined & approved -> Show room details, rules, and members list
+        joinedContainer.style.display = "block";
+
+        // Room ID & Pass
         if (match.roomId && match.roomPass) {
-          credsBox.innerHTML = `
+          roomCredsBox.innerHTML = `
             <div style="background:#022a18; border:1px solid var(--mint-primary); border-radius:10px; padding:12px; font-size:12px;">
-              <b style="color:var(--mint-primary); display:block; margin-bottom:6px;">ROOM DETAILS UNLOCKED</b>
-              <div>Room ID: <b style="color:#00f0ff;">${match.roomId}</b></div>
-              <div>Password: <b style="color:#ffd000;">${match.roomPass}</b></div>
+              <b style="color:var(--mint-primary); display:block; margin-bottom:6px;"><i class="fa-solid fa-key"></i> ROOM DETAILS UNLOCKED</b>
+              <div>Room ID: <b style="color:#00f0ff; letter-spacing:1px;">${match.roomId}</b></div>
+              <div>Password: <b style="color:#ffd000; letter-spacing:1px;">${match.roomPass}</b></div>
             </div>`;
         } else {
-          credsBox.innerHTML = `
+          roomCredsBox.innerHTML = `
             <div style="background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000;">
-              Slot confirm hai! Match start hone se pehle Admin ID Pass update karega.
+              <i class="fa-solid fa-circle-check"></i> Slot confirm hai! Match shuru hone se pehle Admin yahan ID aur Pass show karega.
             </div>`;
         }
+
+        // Inside Match Overview (Same as card info)
+        document.getElementById('matchOverviewBox').innerHTML = `
+          <div class="overview-row"><span>Map & Mode:</span> <b>${match.map} (${match.subtitle || 'Battle'})</b></div>
+          <div class="overview-row"><span>Match Time:</span> <b>${match.time}</b></div>
+          <div class="overview-row"><span>Entry Fee:</span> <b style="color:var(--mint-primary);">Rs. ${match.fee}</b></div>
+          <div class="overview-row"><span>Winning Prize:</span> <b style="color:var(--gold);">Rs. ${match.prize}</b></div>
+          <div class="overview-row"><span>Total Slots:</span> <b>${approvedPlayers.length} / ${match.totalSlots} Players Joined</b></div>
+        `;
+
+        // Render Members List (Name & UID ONLY, Phone is NOT shown)
+        document.getElementById('membersCountBadge').innerText = `${approvedPlayers.length}/${match.totalSlots}`;
+        const listContainer = document.getElementById('membersListContainer');
+        listContainer.innerHTML = "";
+
+        if (approvedPlayers.length === 0) {
+          listContainer.innerHTML = `<div style="text-align:center; font-size:11px; color:#64748b; padding:8px;">Abhi tak koi confirmed player nahi hai.</div>`;
+        } else {
+          approvedPlayers.forEach((p, idx) => {
+            const isMe = p.uid === currentUser.uid;
+            const pRow = document.createElement('div');
+            pRow.className = "player-row-item";
+            pRow.innerHTML = `
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--mint-primary); font-weight:800; font-size:10px;">#${idx + 1}</span>
+                <span style="font-weight:700; color:#fff;">${p.name} ${isMe ? '<small style="color:var(--mint-primary);">(You)</small>' : ''}</span>
+              </div>
+              <div style="color:#38bdf8; font-family:monospace; font-size:11px; font-weight:700;">
+                <i class="fa-solid fa-id-badge" style="font-size:10px; margin-right:2px;"></i> ${p.uid}
+              </div>
+            `;
+            listContainer.appendChild(pRow);
+          });
+        }
+
       } else if (userRecord && userRecord.status === "pending") {
-        formBlock.style.display = "none";
-        credsBox.style.display = "block";
-        credsBox.innerHTML = `
-          <div style="background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000;">
-            Aapka proof pending hai. Admin check karte hi slot confirm kar dega.
-          </div>`;
+        // Payment proof pending review
+        pendingNoticeBox.style.display = "block";
       } else {
-        credsBox.style.display = "none";
-        formBlock.style.display = "block";
+        // User not joined -> Show normal payment form
+        paymentFormBlock.style.display = "block";
         uploadedScreenshotBase64 = "";
         document.getElementById('ssInput').value = "";
         document.getElementById('ssPreview').style.display = "none";
