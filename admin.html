@@ -1,163 +1,716 @@
 <!DOCTYPE html>
-<html lang="ur" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - Multani.ff</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background: #06090e; color: #fff; display: flex; justify-content: center; padding: 16px 12px; }
-    .panel-box { width: 100%; max-width: 440px; background: #0d121d; border: 1px solid #162032; border-radius: 14px; padding: 16px; }
-    h2 { color: #10b981; font-size: 18px; margin-bottom: 15px; text-align: center; }
+    :root {
+      --bg-dark: #07090e;
+      --card-gradient: linear-gradient(135deg, #1b0a2a 0%, #3b0d3a 45%, #130a21 100%);
+      --accent-pink: #c9186e;
+      --accent-purple: #8b1368;
+      --light-card-bg: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --grid-bg: #f8fafc;
+      --green-badge: #10b981;
+      --danger-badge: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #0c111a; color: #fff; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 90px; }
     
-    .section-box { background: #101724; border: 1px solid #1f2d44; border-radius: 10px; padding: 12px; margin-bottom: 16px; }
-    .section-box h3 { font-size: 14px; color: #f59e0b; margin-bottom: 10px; }
+    .app-shell { width: 100%; max-width: 440px; background: #0b0f17; min-height: 100vh; position: relative; overflow-x: hidden; }
+
+    /* Top App Bar */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; font-size: 13px; color: #94a3b8; }
+    .status-left { font-weight: 600; color: #f1f5f9; font-size: 14px; }
+    .status-right i { margin-left: 8px; font-size: 12px; }
+
+    /* Main Balance Card */
+    .vault-card {
+      background: var(--card-gradient);
+      border-radius: 26px;
+      margin: 0 16px 14px 16px;
+      padding: 22px 20px;
+      box-shadow: 0 12px 30px rgba(139, 19, 104, 0.25);
+      position: relative;
+      border: 1px solid rgba(201, 24, 110, 0.2);
+    }
+    .vault-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .vault-label { font-size: 12px; color: #cbd5e1; opacity: 0.85; margin-bottom: 4px; }
+    .vault-amount { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .vault-amount span { font-size: 18px; font-weight: 500; margin-right: 4px; color: #f472b6; }
     
+    .vault-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    .btn-action-primary {
+      background: linear-gradient(90deg, #d91b75, #a21262);
+      border: none;
+      color: #fff;
+      padding: 9px 24px;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(217, 27, 117, 0.4);
+    }
+    .btn-action-secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .vault-sync { font-size: 10px; color: #cbd5e1; opacity: 0.7; margin-top: 14px; display: flex; align-items: center; gap: 6px; }
+    .vault-sync i { cursor: pointer; }
+
+    /* 3-Metrics Row (Data / Mins / SMS look) */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 0 16px 14px 16px;
+    }
+    .metric-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 12px 10px;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 96px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .metric-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; color: #475569; }
+    .metric-header i { font-size: 12px; color: #94a3b8; }
+    .metric-val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
+    .metric-sub { font-size: 10px; color: #64748b; }
+
+    /* View All Button Pill */
+    .pill-center { display: flex; justify-content: center; margin-bottom: 14px; }
+    .view-all-pill {
+      background: linear-gradient(90deg, #dcfce7, #ccfbf1);
+      color: #0f766e;
+      border: none;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Promo Chips Row */
+    .promo-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 0 16px 14px 16px;
+      scrollbar-width: none;
+    }
+    .promo-scroll::-webkit-scrollbar { display: none; }
+    .promo-chip {
+      background: #fdf2f8;
+      color: #9d174d;
+      border: 1px solid #fbcfe8;
+      padding: 8px 14px;
+      border-radius: 24px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 8-Grid Quick Actions */
+    .action-grid-box {
+      background: #ffffff;
+      border-radius: 24px;
+      margin: 0 16px 18px 16px;
+      padding: 16px 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      row-gap: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .grid-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .grid-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      font-size: 16px;
+      margin-bottom: 6px;
+      transition: transform 0.2s;
+    }
+    .grid-btn:active .grid-icon-circle { transform: scale(0.92); }
+    .grid-label { font-size: 10px; font-weight: 600; color: #334155; line-height: 1.2; width: 68px; }
+    .grid-badge {
+      position: absolute;
+      top: -4px;
+      right: 12px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      padding: 2px 5px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    /* Sections Container */
+    .content-area { padding: 0 16px; margin-bottom: 20px; }
+    .section-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    
+    /* Pending Cards */
+    .req-card {
+      background: #131b28;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .req-card-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px; }
+    .req-details { font-size: 11px; color: #cbd5e1; line-height: 1.6; margin-bottom: 10px; }
+    .req-ss-holder { text-align: center; margin: 8px 0; background: #000; border-radius: 10px; padding: 4px; border: 1px dashed #334155; }
+    .req-ss-holder img { max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain; }
+    .req-btn-row { display: flex; gap: 8px; margin-top: 8px; }
+    .btn-approve { flex: 1; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+    /* Modal Sheet for Creating Match */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-sheet {
+      background: #0f172a;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 24px 24px 0 0;
+      padding: 20px;
+      border-top: 1px solid #334155;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
-    .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
-    .form-group input { width: 100%; padding: 8px 10px; background: #080d15; border: 1px solid #1a2538; color: #fff; border-radius: 6px; font-size: 13px; }
-    
-    .btn-create { width: 100%; background: #10b981; color: #06090e; font-weight: bold; padding: 10px; border: none; border-radius: 6px; cursor: pointer; margin-top: 6px; }
-    
-    /* Requests Table */
-    .req-card { background: #080d15; border: 1px solid #1a2538; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
-    .req-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #10b981; }
-    .req-info { font-size: 11px; color: #cbd5e1; margin-bottom: 6px; line-height: 1.5; }
-    .req-ss { width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; border: 1px solid #23334d; margin: 6px 0; background: #000; }
-    
-    .btn-row { display: flex; gap: 8px; margin-top: 6px; }
-    .btn-app { flex: 1; background: #10b981; color: #000; border: none; padding: 7px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
-    .btn-rej { flex: 1; background: #ef4444; color: #fff; border: none; padding: 7px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
-    .badge-approved { background: rgba(16,185,129,0.2); color: #10b981; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; }
+    .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 12px;
+    }
+    .btn-submit-modal {
+      width: 100%;
+      background: linear-gradient(90deg, #d91b75, #a21262);
+      border: none;
+      color: #fff;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    /* Bottom Curved Navigation */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 440px;
+      height: 68px;
+      background: #e2f4ea;
+      border-radius: 28px 28px 0 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 10px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+      z-index: 99;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #1e293b;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .nav-item.active-pill {
+      background: #0f172a;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 25px;
+      flex-direction: row;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .nav-item i { font-size: 16px; margin-bottom: 2px; }
+    .nav-item.active-pill i { margin-bottom: 0; font-size: 13px; }
   </style>
 </head>
 <body>
 
-  <div class="panel-box">
-    <h2>⚙️ Multani.ff Admin Panel</h2>
-
-    <!-- Create Tournament Form -->
-    <div class="section-box">
-      <h3>+ نیا ٹورنامنٹ باکس بنائیں</h3>
-      <div class="form-group">
-        <label>ٹورنامنٹ ٹائٹل</label>
-        <input type="text" id="admTitle" placeholder="MATCH #2 (DUO BATTLE)">
+  <div class="app-shell">
+    
+    <!-- Top System Header -->
+    <div class="top-bar">
+      <div class="status-left"><i class="fa-solid fa-fire text-danger" style="color:#ef4444; margin-right:5px;"></i>Multani.ff Admin</div>
+      <div class="status-right">
+        <i class="fa-solid fa-wifi"></i>
+        <i class="fa-solid fa-bolt"></i>
+        <span>100%</span>
       </div>
-      <div class="form-group">
-        <label>ٹائم</label>
-        <input type="text" id="admTime" placeholder="Tonight 09:30 PM">
-      </div>
-      <div class="form-group">
-        <label>انٹری فیس (روپے)</label>
-        <input type="number" id="admFee" placeholder="50">
-      </div>
-      <div class="form-group">
-        <label>بویاہ پرائز (روپے)</label>
-        <input type="number" id="admPrize" placeholder="400">
-      </div>
-      <div class="form-group">
-        <label>ٹوٹل سلاٹس (پلیئرز لمٹ)</label>
-        <input type="number" id="admSlots" value="12">
-      </div>
-      <div class="form-group">
-        <label>رولز</label>
-        <input type="text" id="admRules" placeholder="Solo - Shotgun Only">
-      </div>
-      <button class="btn-create" onclick="addNewMatch()">Add Tournament</button>
     </div>
 
-    <!-- Payment Verification Section -->
-    <div class="section-box">
-      <h3>📩 پینڈنگ پیمنٹ ریکویسٹس (Approve / Reject)</h3>
-      <div id="pendingList"></div>
+    <!-- Main Jazz World Style Vault Card -->
+    <div class="vault-card">
+      <div class="vault-top">
+        <div>
+          <div class="vault-label">Total Match Revenue</div>
+          <div class="vault-amount"><span>Rs</span><span id="vaultRevenue">0</span></div>
+        </div>
+        <div class="vault-actions">
+          <button class="btn-action-primary" onclick="openModal()">+ MATCH</button>
+          <button class="btn-action-secondary" onclick="exportData()">BACKUP DATA</button>
+        </div>
+      </div>
+      <div class="vault-sync">
+        <span id="liveClock">--:--:--</span> • Free Fire Tournament Admin
+        <i class="fa-solid fa-rotate-right" onclick="renderAll()"></i>
+      </div>
+    </div>
+
+    <!-- 3 Metrics Row -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-header">
+          <span>Active</span>
+          <i class="fa-solid fa-gamepad"></i>
+        </div>
+        <div class="metric-val" id="metricMatches">0</div>
+        <div class="metric-sub">Live Matches</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span>Players</span>
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="metric-val" id="metricPlayers">0</div>
+        <div class="metric-sub">Approved Slots</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span>Requests</span>
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <div class="metric-val" id="metricPending">0</div>
+        <div class="metric-sub">Needs Approval</div>
+      </div>
+    </div>
+
+    <!-- Center View All Pill -->
+    <div class="pill-center">
+      <button class="view-all-pill" onclick="showSection('matchesSection')">
+        View All Tournaments <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Horizontal Quick Tags -->
+    <div class="promo-scroll">
+      <div class="promo-chip"><i class="fa-solid fa-bell"></i> Instant Push Room ID</div>
+      <div class="promo-chip"><i class="fa-solid fa-trophy"></i> Booyah Prize Automation</div>
+      <div class="promo-chip"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Ban Filter</div>
+    </div>
+
+    <!-- 8 Quick Action Grid (From Screenshot) -->
+    <div class="action-grid-box">
+      <button class="grid-btn" onclick="openModal()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-circle-plus"></i></div>
+        <span class="grid-label">Create Match</span>
+      </button>
+
+      <button class="grid-btn" onclick="promptRoomCreds()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-key"></i></div>
+        <span class="grid-label">Set Room ID/Pass</span>
+      </button>
+
+      <button class="grid-btn" onclick="showSection('pendingSection')">
+        <span class="grid-badge" id="badgePending">0</span>
+        <div class="grid-icon-circle"><i class="fa-solid fa-receipt"></i></div>
+        <span class="grid-label">Payment Approval</span>
+      </button>
+
+      <button class="grid-btn" onclick="banPlayerPrompt()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-user-slash"></i></div>
+        <span class="grid-label">Ban Player</span>
+      </button>
+
+      <button class="grid-btn" onclick="showSection('matchesSection')">
+        <div class="grid-icon-circle"><i class="fa-solid fa-list-check"></i></div>
+        <span class="grid-label">Match Manager</span>
+      </button>
+
+      <button class="grid-btn" onclick="showWinnerModal()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-award"></i></div>
+        <span class="grid-label">Booyah Winner</span>
+      </button>
+
+      <button class="grid-btn" onclick="clearCompletedMatches()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-trash-can"></i></div>
+        <span class="grid-label">Cleanup Old</span>
+      </button>
+
+      <button class="grid-btn" onclick="alert('Multani.ff Admin Support Active')">
+        <div class="grid-icon-circle"><i class="fa-solid fa-headset"></i></div>
+        <span class="grid-label">Help Desk</span>
+      </button>
+    </div>
+
+    <!-- Dynamic Section: Pending Approval -->
+    <div class="content-area" id="pendingSection">
+      <div class="section-title">
+        <span>Payment Approvals (Pending)</span>
+        <span style="color:#f59e0b;" id="countPending">0 Requests</span>
+      </div>
+      <div id="pendingCardsList"></div>
+    </div>
+
+    <!-- Dynamic Section: Tournaments List -->
+    <div class="content-area" id="matchesSection" style="display:none;">
+      <div class="section-title">
+        <span>Live & Upcoming Matches</span>
+        <span style="color:#10b981;" id="countMatches">0</span>
+      </div>
+      <div id="matchesList"></div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-bar">
+      <button class="nav-item active-pill" onclick="switchNav(this, 'all')">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this, 'matches')">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Matches</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this, 'pending')">
+        <i class="fa-solid fa-inbox"></i>
+        <span>Requests</span>
+      </button>
+      <button class="nav-item" onclick="openModal()">
+        <i class="fa-solid fa-gear"></i>
+        <span>New</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Create Match Bottom Modal -->
+  <div class="modal-overlay" id="matchModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span>+ Naya Tournament Banayein</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal()"></i>
+      </div>
+      <div class="form-group">
+        <label>Tournament Title</label>
+        <input type="text" id="newTitle" placeholder="MATCH #3 (CS 4V4)">
+      </div>
+      <div class="form-group">
+        <label>Match Type / Mode</label>
+        <select id="newMode">
+          <option value="Solo (Battle Royale)">Solo (Battle Royale)</option>
+          <option value="Duo (Battle Royale)">Duo (Battle Royale)</option>
+          <option value="Squad (Battle Royale)">Squad (Battle Royale)</option>
+          <option value="Clash Squad 4v4">Clash Squad 4v4</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Scheduled Time</label>
+        <input type="text" id="newTime" placeholder="Tonight 09:30 PM">
+      </div>
+      <div class="form-group">
+        <label>Entry Fee (Rs)</label>
+        <input type="number" id="newFee" placeholder="50">
+      </div>
+      <div class="form-group">
+        <label>Prize Pool (Rs)</label>
+        <input type="number" id="newPrize" placeholder="400">
+      </div>
+      <div class="form-group">
+        <label>Total Slots</label>
+        <input type="number" id="newSlots" value="12">
+      </div>
+      <button class="btn-submit-modal" onclick="submitMatch()">Publish Tournament</button>
     </div>
   </div>
 
   <script>
-    function loadAdmin() {
-      const tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      const container = document.getElementById('pendingList');
-      container.innerHTML = "";
+    // Live Clock Display
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('liveClock').innerText = now.toLocaleTimeString();
+    }, 1000);
 
-      let found = 0;
+    function getTournaments() {
+      return JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+    }
+
+    function saveTournaments(data) {
+      localStorage.setItem('mff_tournaments', JSON.stringify(data));
+      renderAll();
+    }
+
+    function renderAll() {
+      const tournaments = getTournaments();
+      let totalRevenue = 0;
+      let totalApprovedPlayers = 0;
+      let pendingList = [];
 
       tournaments.forEach(m => {
+        if (!m.players) m.players = [];
         m.players.forEach(p => {
-          if (p.status === "pending") {
-            found++;
-            const item = document.createElement('div');
-            item.className = "req-card";
-            item.innerHTML = `
-              <div class="req-header">
-                <span>${m.title}</span>
-                <span>${p.time || ''}</span>
-              </div>
-              <div class="req-info">
-                <strong>نام:</strong> ${p.name}<br>
-                <strong>UID:</strong> ${p.uid}<br>
-                <strong>نمبر:</strong> ${p.phone}
-              </div>
-              <div><strong>پیمنٹ اسکرین شاٹ:</strong></div>
-              <img src="${p.screenshot}" class="req-ss" alt="Payment Proof">
-              <div class="btn-row">
-                <button class="btn-app" onclick="actionPlayer('${m.id}', '${p.uid}', 'approved')">✔ Approve</button>
-                <button class="btn-rej" onclick="actionPlayer('${m.id}', '${p.uid}', 'rejected')">✖ Reject</button>
-              </div>
-            `;
-            container.appendChild(item);
+          if (p.status === 'approved') {
+            totalRevenue += Number(m.fee || 0);
+            totalApprovedPlayers++;
+          } else if (p.status === 'pending') {
+            pendingList.push({ match: m, player: p });
           }
         });
       });
 
-      if (found === 0) {
-        container.innerHTML = `<div style="font-size:12px; color:#64748b; text-align:center; padding:10px;">کوئی نئی پینڈنگ ریکویسٹ نہیں ہے۔</div>`;
+      // Update Top Metrics
+      document.getElementById('vaultRevenue').innerText = totalRevenue.toLocaleString();
+      document.getElementById('metricMatches').innerText = tournaments.length;
+      document.getElementById('metricPlayers').innerText = totalApprovedPlayers;
+      document.getElementById('metricPending').innerText = pendingList.length;
+      document.getElementById('countPending').innerText = `${pendingList.length} Requests`;
+      document.getElementById('badgePending').innerText = pendingList.length;
+      document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
+
+      // Render Pending Payment Requests
+      const reqContainer = document.getElementById('pendingCardsList');
+      reqContainer.innerHTML = '';
+
+      if (pendingList.length === 0) {
+        reqContainer.innerHTML = `
+          <div style="text-align:center; padding: 25px; color:#475569; font-size:12px; background:#131b28; border-radius:14px; border:1px dashed #1e293b;">
+            <i class="fa-solid fa-circle-check" style="font-size:24px; color:#10b981; margin-bottom:8px; display:block;"></i>
+            Koi pending verification request nahi hai!
+          </div>`;
+      } else {
+        pendingList.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'req-card';
+          card.innerHTML = `
+            <div class="req-card-top">
+              <span>${item.match.title}</span>
+              <span style="color:#f59e0b;">Fee: Rs ${item.match.fee}</span>
+            </div>
+            <div class="req-details">
+              <strong>Player Name:</strong> ${item.player.name}<br>
+              <strong>FF UID:</strong> <span style="color:#38bdf8;">${item.player.uid}</span><br>
+              <strong>Phone:</strong> ${item.player.phone || 'N/A'}<br>
+              <strong>Submitted:</strong> ${item.player.time || 'Just now'}
+            </div>
+            <div class="req-ss-holder">
+              <img src="${item.player.screenshot}" alt="Payment Screenshot" onerror="this.src='https://via.placeholder.com/300x120?text=No+Screenshot+Provided'">
+            </div>
+            <div class="req-btn-row">
+              <button class="btn-approve" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'approved')"><i class="fa-solid fa-check"></i> Approve Entry</button>
+              <button class="btn-reject" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+            </div>
+          `;
+          reqContainer.appendChild(card);
+        });
       }
+
+      // Render Tournaments List
+      const matchesContainer = document.getElementById('matchesList');
+      matchesContainer.innerHTML = '';
+
+      tournaments.forEach(m => {
+        const approvedCount = m.players.filter(p => p.status === 'approved').length;
+        const item = document.createElement('div');
+        item.className = 'req-card';
+        item.innerHTML = `
+          <div class="req-card-top">
+            <span>${m.title}</span>
+            <span style="color:#10b981;">Rs ${m.prize} Prize</span>
+          </div>
+          <div class="req-details">
+            <strong>Timing:</strong> ${m.time}<br>
+            <strong>Filled Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
+            <strong>Room ID:</strong> ${m.roomId || 'Not set'} | <strong>Pass:</strong> ${m.roomPass || 'Not set'}
+          </div>
+          <div class="req-btn-row">
+            <button class="btn-approve" style="background:#334155; color:#fff;" onclick="setSpecificRoom('${m.id}')"><i class="fa-solid fa-key"></i> Room Pass</button>
+            <button class="btn-reject" onclick="deleteMatch('${m.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        `;
+        matchesContainer.appendChild(item);
+      });
     }
 
-    function actionPlayer(matchId, uid, newStatus) {
-      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      const match = tournaments.find(m => m.id === matchId);
-      if (!match) return;
+    // Modal Handlers
+    function openModal() { document.getElementById('matchModal').classList.add('active'); }
+    function closeModal() { document.getElementById('matchModal').classList.remove('active'); }
 
-      if (newStatus === "approved") {
-        const player = match.players.find(p => p.uid === uid);
-        if (player) player.status = "approved";
-      } else if (newStatus === "rejected") {
-        match.players = match.players.filter(p => p.uid !== uid);
-      }
+    function submitMatch() {
+      const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
+      const mode = document.getElementById('newMode').value;
+      const time = document.getElementById('newTime').value.trim() || 'TONIGHT';
+      const fee = Number(document.getElementById('newFee').value) || 50;
+      const prize = Number(document.getElementById('newPrize').value) || 400;
+      const totalSlots = Number(document.getElementById('newSlots').value) || 12;
 
-      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
-      loadAdmin();
-      alert(newStatus === "approved" ? "پلیئر منظور ہو گیا اور لائیو لسٹ میں آ گیا!" : "درخواست مسترد کر دی گئی۔");
-    }
-
-    function addNewMatch() {
-      const title = document.getElementById('admTitle').value.trim() || "NEW TOURNAMENT";
-      const time = document.getElementById('admTime').value.trim() || "TONIGHT 9:00 PM";
-      const fee = parseInt(document.getElementById('admFee').value) || 50;
-      const prize = parseInt(document.getElementById('admPrize').value) || 400;
-      const totalSlots = parseInt(document.getElementById('admSlots').value) || 12;
-      const rules = document.getElementById('admRules').value.trim() || "Solo Match";
-
-      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      let tournaments = getTournaments();
       tournaments.unshift({
-        id: "m_" + Date.now(),
-        title,
+        id: 'm_' + Date.now(),
+        title: `${title} (${mode})`,
         time,
         fee,
         prize,
         totalSlots,
-        rules,
+        roomId: '',
+        roomPass: '',
         players: []
       });
 
-      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
-      alert("نیا ٹورنامنٹ ویب سائٹ پر لائیو ہو گیا!");
-      loadAdmin();
+      saveTournaments(tournaments);
+      closeModal();
+      alert('Tournament published successfully!');
     }
 
-    window.onload = loadAdmin;
+    function handlePlayerStatus(matchId, uid, action) {
+      let tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      if (action === 'approved') {
+        const player = match.players.find(p => p.uid === uid);
+        if (player) player.status = 'approved';
+      } else if (action === 'rejected') {
+        match.players = match.players.filter(p => p.uid !== uid);
+      }
+
+      saveTournaments(tournaments);
+    }
+
+    function setSpecificRoom(matchId) {
+      let tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      const rId = prompt('Custom Room ID darj karein:', match.roomId || '');
+      if (rId === null) return;
+      const rPass = prompt('Custom Room Password darj karein:', match.roomPass || '');
+      if (rPass === null) return;
+
+      match.roomId = rId;
+      match.roomPass = rPass;
+      saveTournaments(tournaments);
+      alert('Room credentials save ho gaye!');
+    }
+
+    function promptRoomCreds() {
+      const tournaments = getTournaments();
+      if (tournaments.length === 0) return alert('Pehle tournament banayein!');
+      setSpecificRoom(tournaments[0].id);
+    }
+
+    function deleteMatch(matchId) {
+      if (!confirm('Kya aap is tournament ko delete karna chahte hain?')) return;
+      let tournaments = getTournaments();
+      tournaments = tournaments.filter(m => m.id !== matchId);
+      saveTournaments(tournaments);
+    }
+
+    function banPlayerPrompt() {
+      const uid = prompt('Ban karne ke liye Player ki Free Fire UID likhein:');
+      if (!uid) return;
+      let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      bans.push(uid);
+      localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
+      alert(`UID ${uid} ko blacklist kar diya gaya hai!`);
+    }
+
+    function showSection(id) {
+      document.getElementById('pendingSection').style.display = (id === 'pendingSection') ? 'block' : 'none';
+      document.getElementById('matchesSection').style.display = (id === 'matchesSection') ? 'block' : 'none';
+    }
+
+    function switchNav(btn, view) {
+      document.querySelectorAll('.bottom-bar button').forEach(b => b.className = 'nav-item');
+      btn.className = 'nav-item active-pill';
+      if (view === 'all') {
+        document.getElementById('pendingSection').style.display = 'block';
+        document.getElementById('matchesSection').style.display = 'block';
+      } else if (view === 'matches') {
+        showSection('matchesSection');
+      } else if (view === 'pending') {
+        showSection('pendingSection');
+      }
+    }
+
+    function exportData() {
+      const data = localStorage.getItem('mff_tournaments');
+      navigator.clipboard.writeText(data || '[]');
+      alert('Mukammal data clipboard me copy ho chuka hai (Backup saved)!');
+    }
+
+    function clearCompletedMatches() {
+      if (confirm('Kya aap tamam empty/purane matches clear karna chahte hain?')) {
+        saveTournaments([]);
+      }
+    }
+
+    window.onload = renderAll;
   </script>
 </body>
 </html>
