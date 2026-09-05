@@ -340,6 +340,7 @@
       outline: none;
     }
     .form-ctrl input:focus, .form-ctrl textarea:focus { border-color: var(--ff-cyan); }
+    
     .btn-modal-action {
       width: 100%;
       background: linear-gradient(90deg, #ff4625, #ff7300);
@@ -364,39 +365,76 @@
     }
     .preview-box { width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; border: 1px dashed #334155; margin-top: 8px; display: none; }
 
-    /* Support Chat History in Modal */
+    /* REAL CHAT BOX UI (Top-to-Bottom Flow) */
     .chat-history-box {
-      background: #080b11;
+      background: #070a10;
       border: 1px solid #1b2537;
-      border-radius: 12px;
-      padding: 10px;
-      max-height: 220px;
+      border-radius: 14px;
+      padding: 12px;
+      height: 270px;
       overflow-y: auto;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      scroll-behavior: smooth;
     }
     .chat-bubble-user {
-      background: #1e293b;
-      border-radius: 10px 10px 0 10px;
-      padding: 8px 10px;
+      background: linear-gradient(135deg, #1e293b, #172033);
+      border: 1px solid #29384e;
+      border-radius: 14px 14px 2px 14px;
+      padding: 8px 12px;
       align-self: flex-end;
-      max-width: 85%;
+      max-width: 82%;
       font-size: 12px;
       color: #f1f5f9;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     .chat-bubble-admin {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.12);
       border: 1px solid #10b981;
-      border-radius: 10px 10px 10px 0;
-      padding: 8px 10px;
+      border-radius: 14px 14px 14px 2px;
+      padding: 8px 12px;
       align-self: flex-start;
-      max-width: 85%;
+      max-width: 82%;
       font-size: 12px;
       color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
-    .bubble-tag { font-size: 9px; font-weight: 800; color: #10b981; display: block; margin-bottom: 3px; }
+    .bubble-tag { font-size: 10px; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+    .bubble-time { font-size: 9px; color: #94a3b8; margin-top: 4px; text-align: right; display: block; }
+
+    /* Bottom Input Row like WhatsApp */
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .chat-input-row input {
+      flex: 1;
+      background: #080b11;
+      border: 1px solid #1b2537;
+      border-radius: 20px;
+      padding: 10px 16px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    .chat-send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff4625, #ff7300);
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -445,7 +483,6 @@
 
     <div class="matches-list" id="matchesContainer"></div>
 
-    <!-- Bottom Navigation Bar with Live Notification Badge -->
     <div class="bottom-nav">
       <button class="nav-link active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <i class="fa-solid fa-gamepad"></i>
@@ -464,35 +501,27 @@
 
   </div>
 
-  <!-- Help with Owner / Live Inbox Modal -->
+  <!-- Real-Style Support / Chat Modal -->
   <div class="modal-backdrop" id="supportModal">
     <div class="modal-dialog">
       <div class="modal-title">
-        <span>💬 Help with Owner (Inbox)</span>
+        <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Help with Owner</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('supportModal')"></i>
       </div>
       
-      <!-- Previous Chat & Admin Replies Display Area -->
+      <!-- Real-Time Chat Stream (Oldest Top, Newest Bottom) -->
       <div class="chat-history-box" id="playerChatHistory"></div>
 
-      <div class="form-ctrl">
-        <label>Player Name</label>
-        <input type="text" id="suppName" placeholder="Aapka Name">
+      <!-- Quick Message Type & Send Row -->
+      <div class="chat-input-row">
+        <input type="text" id="suppMsg" placeholder="Type your message here..." onkeypress="handleChatEnter(event)">
+        <button class="chat-send-btn" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
-      <div class="form-ctrl">
-        <label>Free Fire UID ya Phone Number</label>
-        <input type="text" id="suppContact" placeholder="UID ya Phone number">
-      </div>
-      <div class="form-ctrl">
-        <label>Naya Message Likhein</label>
-        <textarea id="suppMsg" rows="3" placeholder="Masla ya sawal yahan likhein..."></textarea>
-      </div>
-      <button class="btn-modal-action" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i> Send to Owner</button>
-      <button class="btn-modal-close" onclick="closeModal('supportModal')">Close</button>
+      <button class="btn-modal-close" onclick="closeModal('supportModal')">Close Chat</button>
     </div>
   </div>
 
-  <!-- Player Login / Account Modal -->
+  <!-- Player Login Modal -->
   <div class="modal-backdrop" id="loginModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -500,15 +529,15 @@
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('loginModal')"></i>
       </div>
       <div class="form-ctrl">
-        <label>Game Nickname (In-Game Name)</label>
+        <label>Game Nickname</label>
         <input type="text" id="logName" placeholder="e.g. MANDOOR_FF">
       </div>
       <div class="form-ctrl">
-        <label>Free Fire UID (Numbers only)</label>
+        <label>Free Fire UID</label>
         <input type="number" id="logUid" placeholder="e.g. 3239454397">
       </div>
       <div class="form-ctrl">
-        <label>WhatsApp / EasyPaisa Number</label>
+        <label>WhatsApp / Phone Number</label>
         <input type="text" id="logPhone" placeholder="03XXXXXXXXX">
       </div>
       <button class="btn-modal-action" onclick="saveLogin()">Save & Confirm</button>
@@ -523,15 +552,15 @@
         <span>📸 Submit Fee Screenshot</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
       </div>
-      <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5;">
-        Pehle EasyPaisa par fee transfer karein aur screenshot upload karein. Admin verification ke baad Room ID & Pass show hoga.
+      <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">
+        EasyPaisa par fee bhej kar screenshot upload karein. Admin verify karega.
       </p>
       <div class="form-ctrl">
-        <label>EasyPaisa Account Number</label>
+        <label>EasyPaisa Number</label>
         <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--ff-cyan); font-weight:bold;">
       </div>
       <div class="form-ctrl">
-        <label>Choose Screenshot File</label>
+        <label>Choose Screenshot</label>
         <input type="file" id="ssInput" accept="image/*" onchange="previewScreenshot(event)">
         <img id="ssPreview" class="preview-box" alt="Payment Proof">
       </div>
@@ -587,7 +616,7 @@
         container.innerHTML = `
           <div style="text-align:center; padding: 40px 20px; color:#475569; font-size:13px; background:#0c1017; border-radius:16px; border:1px dashed #1e293b;">
             <i class="fa-solid fa-gamepad" style="font-size:28px; color:var(--ff-orange); margin-bottom:8px; display:block;"></i>
-            Is Map par abhi koi live match nahi hai.
+            Is Map par koi match nahi hai.
           </div>`;
         return;
       }
@@ -632,7 +661,7 @@
                   <span><i class="fa-solid fa-clock"></i> ROOM ID & PASS</span>
                   <span>Awaiting Host</span>
                 </div>
-                <div style="font-size:11px; color:#cbd5e1;">Match start hone se pehle admin yahan credentials show karega.</div>
+                <div style="font-size:11px; color:#cbd5e1;">Admin match start hone se pehle Room ID & Password yahan show karega.</div>
               </div>
             `;
           }
@@ -694,17 +723,14 @@
       document.getElementById('loginModal').style.display = "flex";
     }
 
-    /* Support Chat Inbox & Live Replies Render */
     function checkAdminReplies() {
       const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
       const dot = document.getElementById('supportNotifyDot');
-      
       if (!currentUser) {
         dot.style.display = 'none';
         return;
       }
 
-      // Check if any message from this user has an admin reply
       const hasReply = supportMsgs.some(m => 
         (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name) && m.adminReply
       );
@@ -713,18 +739,18 @@
     }
 
     function openSupportModal() {
-      if (currentUser) {
-        document.getElementById('suppName').value = currentUser.name || "";
-        document.getElementById('suppContact').value = currentUser.uid ? `UID: ${currentUser.uid}` : (currentUser.phone || "");
-      }
-
       renderPlayerChatHistory();
       document.getElementById('supportModal').style.display = "flex";
+      setTimeout(() => {
+        const historyBox = document.getElementById('playerChatHistory');
+        historyBox.scrollTop = historyBox.scrollHeight;
+      }, 100);
     }
 
+    /* REAL CHAT RENDER (Oldest at TOP -> Newest at BOTTOM) */
     function renderPlayerChatHistory() {
       const historyBox = document.getElementById('playerChatHistory');
-      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
 
       let userMsgs = [];
       if (currentUser) {
@@ -732,63 +758,78 @@
           (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name)
         );
       } else {
-        userMsgs = supportMsgs.slice(0, 3);
+        userMsgs = supportMsgs;
       }
 
+      // Chronological sort: purane upar, naye neechay
+      userMsgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
       if (userMsgs.length === 0) {
-        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; padding:10px;">Aapki pehle koi conversation nahi hai. Naya message bhejein!</div>`;
+        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; margin:auto;">Welcome to Support! Type your message below to chat with Owner.</div>`;
         return;
       }
 
       historyBox.innerHTML = "";
       userMsgs.forEach(msg => {
-        // User's own message bubble
+        // Player's message bubble (Right side)
         const uBubble = document.createElement('div');
         uBubble.className = "chat-bubble-user";
-        uBubble.innerHTML = `<strong>Aap:</strong> ${msg.message}<br><span style="font-size:9px; opacity:0.6;">${msg.time || ''}</span>`;
+        uBubble.innerHTML = `
+          <div>${msg.message}</div>
+          <span class="bubble-time">${msg.time || ''}</span>
+        `;
         historyBox.appendChild(uBubble);
 
-        // Admin reply bubble (If replied)
+        // Admin Reply bubble (Left side)
         if (msg.adminReply) {
           const aBubble = document.createElement('div');
           aBubble.className = "chat-bubble-admin";
           aBubble.innerHTML = `
-            <span class="bubble-tag"><i class="fa-solid fa-crown"></i> Multani.ff Owner Reply:</span>
-            ${msg.adminReply}
+            <span class="bubble-tag"><i class="fa-solid fa-shield-halved"></i> Multani.ff Owner</span>
+            <div>${msg.adminReply}</div>
           `;
           historyBox.appendChild(aBubble);
         }
       });
 
+      // Auto scroll to bottom
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
-    function submitSupportMessage() {
-      const name = document.getElementById('suppName').value.trim();
-      const contact = document.getElementById('suppContact').value.trim();
-      const message = document.getElementById('suppMsg').value.trim();
+    function handleChatEnter(e) {
+      if (e.key === 'Enter') submitSupportMessage();
+    }
 
-      if (!message || !name) {
-        alert("Naam aur message likhna lazmi hai!");
+    function submitSupportMessage() {
+      const messageInput = document.getElementById('suppMsg');
+      const message = messageInput.value.trim();
+
+      if (!message) return;
+
+      if (!currentUser) {
+        alert("Pehle Player ID login karein taake Owner ko pata chale koun baat kar raha hai!");
+        closeModal('supportModal');
+        openLoginModal();
         return;
       }
 
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      supportMsgs.unshift({
+      supportMsgs.push({
         id: "msg_" + Date.now(),
-        uid: currentUser ? currentUser.uid : "",
-        name,
-        contact: contact || "Not specified",
-        message,
-        adminReply: "", // empty until admin answers
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date().toLocaleDateString()
+        timestamp: Date.now(),
+        uid: currentUser.uid,
+        name: currentUser.name,
+        contact: `UID: ${currentUser.uid} (${currentUser.phone})`,
+        message: message,
+        adminReply: "",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
       localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
-      document.getElementById('suppMsg').value = "";
+      messageInput.value = "";
+      
       renderPlayerChatHistory();
       checkAdminReplies();
-      alert("Aapka message Owner tak chala gaya hai! Owner ka jawab yahi Inbox me show hoga.");
     }
 
     function saveLogin() {
