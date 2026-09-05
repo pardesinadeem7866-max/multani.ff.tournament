@@ -3,81 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Control Panel</title>
+  <title>Admin Dashboard - Multani.ff</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background: #06090e; color: #fff; display: flex; justify-content: center; padding: 20px 12px; }
-    .box { background: #0d121d; border: 1px solid #10b981; border-radius: 14px; padding: 20px; width: 100%; max-width: 400px; }
-    h2 { color: #10b981; text-align: center; margin-bottom: 20px; font-size: 20px; }
-    .field { margin-bottom: 12px; }
-    label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
-    input { width: 100%; padding: 10px; background: #090e17; border: 1px solid #1e293b; color: #fff; border-radius: 8px; font-size: 14px; }
-    button { width: 100%; background: #10b981; color: #06090e; font-weight: bold; border: none; padding: 12px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-top: 10px; }
-    .msg { display: none; background: rgba(16,185,129,0.2); color: #10b981; padding: 10px; border-radius: 8px; text-align: center; margin-top: 10px; font-size: 13px; }
+    body { background: #06090e; color: #fff; display: flex; justify-content: center; padding: 16px 12px; }
+    .panel-box { width: 100%; max-width: 440px; background: #0d121d; border: 1px solid #162032; border-radius: 14px; padding: 16px; }
+    h2 { color: #10b981; font-size: 18px; margin-bottom: 15px; text-align: center; }
+    
+    .section-box { background: #101724; border: 1px solid #1f2d44; border-radius: 10px; padding: 12px; margin-bottom: 16px; }
+    .section-box h3 { font-size: 14px; color: #f59e0b; margin-bottom: 10px; }
+    
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+    .form-group input { width: 100%; padding: 8px 10px; background: #080d15; border: 1px solid #1a2538; color: #fff; border-radius: 6px; font-size: 13px; }
+    
+    .btn-create { width: 100%; background: #10b981; color: #06090e; font-weight: bold; padding: 10px; border: none; border-radius: 6px; cursor: pointer; margin-top: 6px; }
+    
+    /* Requests Table */
+    .req-card { background: #080d15; border: 1px solid #1a2538; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+    .req-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #10b981; }
+    .req-info { font-size: 11px; color: #cbd5e1; margin-bottom: 6px; line-height: 1.5; }
+    .req-ss { width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; border: 1px solid #23334d; margin: 6px 0; background: #000; }
+    
+    .btn-row { display: flex; gap: 8px; margin-top: 6px; }
+    .btn-app { flex: 1; background: #10b981; color: #000; border: none; padding: 7px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
+    .btn-rej { flex: 1; background: #ef4444; color: #fff; border: none; padding: 7px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
+    .badge-approved { background: rgba(16,185,129,0.2); color: #10b981; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; }
   </style>
 </head>
 <body>
 
-  <div class="box">
+  <div class="panel-box">
     <h2>⚙️ Multani.ff Admin Panel</h2>
-    
-    <div class="field">
-      <label>ٹورنامنٹ ٹائٹل</label>
-      <input type="text" id="title" placeholder="MATCH #1 (SOLO BATTLE)">
-    </div>
-    <div class="field">
-      <label>میچ کا وقت</label>
-      <input type="text" id="time" placeholder="DAILY 8:00 PM">
-    </div>
-    <div class="field">
-      <label>انٹری فیس (روپے)</label>
-      <input type="text" id="fee" placeholder="50">
-    </div>
-    <div class="field">
-      <label>بویاہ پرائز (روپے)</label>
-      <input type="text" id="prize" placeholder="400">
-    </div>
-    <div class="field">
-      <label>ایزی پیسہ نمبر</label>
-      <input type="text" id="phone" placeholder="03186815926">
+
+    <!-- Create Tournament Form -->
+    <div class="section-box">
+      <h3>+ نیا ٹورنامنٹ باکس بنائیں</h3>
+      <div class="form-group">
+        <label>ٹورنامنٹ ٹائٹل</label>
+        <input type="text" id="admTitle" placeholder="MATCH #2 (DUO BATTLE)">
+      </div>
+      <div class="form-group">
+        <label>ٹائم</label>
+        <input type="text" id="admTime" placeholder="Tonight 09:30 PM">
+      </div>
+      <div class="form-group">
+        <label>انٹری فیس (روپے)</label>
+        <input type="number" id="admFee" placeholder="50">
+      </div>
+      <div class="form-group">
+        <label>بویاہ پرائز (روپے)</label>
+        <input type="number" id="admPrize" placeholder="400">
+      </div>
+      <div class="form-group">
+        <label>ٹوٹل سلاٹس (پلیئرز لمٹ)</label>
+        <input type="number" id="admSlots" value="12">
+      </div>
+      <div class="form-group">
+        <label>رولز</label>
+        <input type="text" id="admRules" placeholder="Solo - Shotgun Only">
+      </div>
+      <button class="btn-create" onclick="addNewMatch()">Add Tournament</button>
     </div>
 
-    <button onclick="saveChanges()">Save & Update Site</button>
-    <div class="msg" id="alertBox">تبدیلیاں محفوظ ہو گئیں!</div>
+    <!-- Payment Verification Section -->
+    <div class="section-box">
+      <h3>📩 پینڈنگ پیمنٹ ریکویسٹس (Approve / Reject)</h3>
+      <div id="pendingList"></div>
+    </div>
   </div>
 
   <script>
-    function loadExisting() {
-      const data = JSON.parse(localStorage.getItem('multani_data')) || {
-        title: "MATCH #1 (SOLO BATTLE)",
-        time: "DAILY 8:00 PM",
-        fee: "50",
-        prize: "400",
-        phone: "03186815926"
-      };
-      document.getElementById('title').value = data.title;
-      document.getElementById('time').value = data.time;
-      document.getElementById('fee').value = data.fee;
-      document.getElementById('prize').value = data.prize;
-      document.getElementById('phone').value = data.phone;
+    function loadAdmin() {
+      const tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      const container = document.getElementById('pendingList');
+      container.innerHTML = "";
+
+      let found = 0;
+
+      tournaments.forEach(m => {
+        m.players.forEach(p => {
+          if (p.status === "pending") {
+            found++;
+            const item = document.createElement('div');
+            item.className = "req-card";
+            item.innerHTML = `
+              <div class="req-header">
+                <span>${m.title}</span>
+                <span>${p.time || ''}</span>
+              </div>
+              <div class="req-info">
+                <strong>نام:</strong> ${p.name}<br>
+                <strong>UID:</strong> ${p.uid}<br>
+                <strong>نمبر:</strong> ${p.phone}
+              </div>
+              <div><strong>پیمنٹ اسکرین شاٹ:</strong></div>
+              <img src="${p.screenshot}" class="req-ss" alt="Payment Proof">
+              <div class="btn-row">
+                <button class="btn-app" onclick="actionPlayer('${m.id}', '${p.uid}', 'approved')">✔ Approve</button>
+                <button class="btn-rej" onclick="actionPlayer('${m.id}', '${p.uid}', 'rejected')">✖ Reject</button>
+              </div>
+            `;
+            container.appendChild(item);
+          }
+        });
+      });
+
+      if (found === 0) {
+        container.innerHTML = `<div style="font-size:12px; color:#64748b; text-align:center; padding:10px;">کوئی نئی پینڈنگ ریکویسٹ نہیں ہے۔</div>`;
+      }
     }
 
-    function saveChanges() {
-      const data = {
-        title: document.getElementById('title').value,
-        time: document.getElementById('time').value,
-        fee: document.getElementById('fee').value,
-        prize: document.getElementById('prize').value,
-        phone: document.getElementById('phone').value
-      };
-      localStorage.setItem('multani_data', JSON.stringify(data));
-      const box = document.getElementById('alertBox');
-      box.style.display = "block";
-      setTimeout(() => { box.style.display = "none"; }, 2500);
+    function actionPlayer(matchId, uid, newStatus) {
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      if (newStatus === "approved") {
+        const player = match.players.find(p => p.uid === uid);
+        if (player) player.status = "approved";
+      } else if (newStatus === "rejected") {
+        match.players = match.players.filter(p => p.uid !== uid);
+      }
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+      loadAdmin();
+      alert(newStatus === "approved" ? "پلیئر منظور ہو گیا اور لائیو لسٹ میں آ گیا!" : "درخواست مسترد کر دی گئی۔");
     }
 
-    window.onload = loadExisting;
+    function addNewMatch() {
+      const title = document.getElementById('admTitle').value.trim() || "NEW TOURNAMENT";
+      const time = document.getElementById('admTime').value.trim() || "TONIGHT 9:00 PM";
+      const fee = parseInt(document.getElementById('admFee').value) || 50;
+      const prize = parseInt(document.getElementById('admPrize').value) || 400;
+      const totalSlots = parseInt(document.getElementById('admSlots').value) || 12;
+      const rules = document.getElementById('admRules').value.trim() || "Solo Match";
+
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      tournaments.unshift({
+        id: "m_" + Date.now(),
+        title,
+        time,
+        fee,
+        prize,
+        totalSlots,
+        rules,
+        players: []
+      });
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+      alert("نیا ٹورنامنٹ ویب سائٹ پر لائیو ہو گیا!");
+      loadAdmin();
+    }
+
+    window.onload = loadAdmin;
   </script>
 </body>
 </html>
-
