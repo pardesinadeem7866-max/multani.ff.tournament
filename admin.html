@@ -128,9 +128,11 @@
     .req-details { font-size: 11px; color: #cbd5e1; line-height: 1.6; margin-bottom: 10px; }
     .req-ss-holder { text-align: center; margin: 8px 0; background: #000; border-radius: 10px; padding: 4px; border: 1px dashed #334155; }
     .req-ss-holder img { max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain; }
-    .req-btn-row { display: flex; gap: 8px; margin-top: 8px; }
-    .btn-approve { flex: 1; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .req-btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .btn-approve { flex: 1; min-width: 90px; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-reject { flex: 1; min-width: 90px; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-edit-act { flex: 1; min-width: 90px; background: #3b82f6; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-proofs-act { width: 100%; background: #1e293b; border: 1px solid #334155; color: #38bdf8; padding: 7px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 4px; }
 
     .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
     .map-badge { padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 10px; font-weight: 700; }
@@ -280,7 +282,7 @@
       max-height: 88vh;
       overflow-y: auto;
     }
-    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
     .form-group input, .form-group select, .form-group textarea {
@@ -404,7 +406,6 @@
         <span class="grid-label">Create Match</span>
       </button>
 
-      <!-- Giveaways Button -->
       <button class="grid-btn" onclick="openAdminGiveawayModal()">
         <div class="grid-icon-circle"><i class="fa-solid fa-gift" style="color:#ef4444;"></i></div>
         <span class="grid-label">Giveaways</span>
@@ -416,7 +417,6 @@
         <span class="grid-label">Payment Approval</span>
       </button>
 
-      <!-- Ban Player Modal Trigger -->
       <button class="grid-btn" onclick="openBanModal()">
         <div class="grid-icon-circle"><i class="fa-solid fa-user-slash" style="color:#ef4444;"></i></div>
         <span class="grid-label">Ban Player</span>
@@ -463,7 +463,7 @@
     </div>
 
     <!-- Section 3: Tournaments List -->
-    <div class="content-area" id="matchesSection" style="display:none;">
+    <div class="content-area" id="matchesSection">
       <div class="section-title">
         <span>Live & Upcoming Matches</span>
         <span style="color:#10b981;" id="countMatches">0</span>
@@ -562,10 +562,58 @@
         <input type="number" id="newPrize" placeholder="400">
       </div>
       <div class="form-group">
-        <label>Total Slots</label>
+        <label>Total Slots (Sitting)</label>
         <input type="number" id="newSlots" value="12">
       </div>
       <button class="btn-submit-modal" onclick="submitMatch()">Publish Tournament</button>
+    </div>
+  </div>
+
+  <!-- Edit Match & Time Table Modal -->
+  <div class="modal-overlay" id="editMatchModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span style="color:#38bdf8;"><i class="fa-solid fa-sliders"></i> Edit Match Settings & Timing</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('editMatchModal')"></i>
+      </div>
+      <input type="hidden" id="editMatchId">
+      <div class="form-group">
+        <label>Match Title</label>
+        <input type="text" id="editTitle">
+      </div>
+      <div class="form-group">
+        <label>Time Table / Scheduled Timing</label>
+        <input type="text" id="editTime" placeholder="e.g. Hfte din 1 bje ya 05:00 PM">
+      </div>
+      <div class="form-group">
+        <label>Total Slots / Sitting Limit</label>
+        <input type="number" id="editSlots" placeholder="e.g. 12, 24, 48">
+      </div>
+      <div class="form-group">
+        <label>Entry Fee (Rs)</label>
+        <input type="number" id="editFee">
+      </div>
+      <div class="form-group">
+        <label>Win Prize (Rs)</label>
+        <input type="number" id="editPrize">
+      </div>
+      <div class="form-group">
+        <label>Rules / Subtitle</label>
+        <input type="text" id="editRules">
+      </div>
+      <button class="btn-submit-modal" onclick="saveEditedMatch()" style="background:linear-gradient(90deg, #0284c7, #0284c7);">Save & Update Match</button>
+    </div>
+  </div>
+
+  <!-- Approved Payments / Proofs Archive Modal -->
+  <div class="modal-overlay" id="proofsArchiveModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span style="color:#10b981;"><i class="fa-solid fa-images"></i> Saved Payment Screenshots</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('proofsArchiveModal')"></i>
+      </div>
+      <div id="proofsArchiveContent" style="display:flex; flex-direction:column; gap:12px;"></div>
+      <button onclick="closeModal('proofsArchiveModal')" style="width:100%; background:transparent; border:none; color:#94a3b8; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
     </div>
   </div>
 
@@ -608,8 +656,6 @@
         <span style="color:#ef4444;"><i class="fa-solid fa-user-slash" style="margin-right:6px;"></i>Ban & Blacklist Manager</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeBanModal()"></i>
       </div>
-
-      <!-- Add New Ban Form -->
       <div class="form-group">
         <label>Free Fire Player UID</label>
         <input type="text" id="banUidInput" placeholder="e.g. 3239454397">
@@ -618,7 +664,6 @@
         <i class="fa-solid fa-ban"></i> Ban This UID
       </button>
 
-      <!-- Banned Players List with Unban Option -->
       <div style="margin-top:18px; border-top:1px solid #334155; padding-top:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
           <span style="font-size:12px; font-weight:700; color:#cbd5e1;">Banned Players List:</span>
@@ -626,7 +671,6 @@
         </div>
         <div id="bannedPlayersListContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
       </div>
-
       <button onclick="closeBanModal()" style="width:100%; background:transparent; border:none; color:#64748b; font-size:11px; padding:10px; cursor:pointer; margin-top:8px;">Close</button>
     </div>
   </div>
@@ -678,6 +722,7 @@
 
       renderInboxUsers();
 
+      // Render Pending Payment Requests
       const reqContainer = document.getElementById('pendingCardsList');
       reqContainer.innerHTML = '';
 
@@ -718,6 +763,7 @@
         });
       }
 
+      // Render Matches List
       const matchesContainer = document.getElementById('matchesList');
       matchesContainer.innerHTML = '';
 
@@ -726,7 +772,7 @@
         : tournaments.filter(m => (m.map || "Bermuda").toLowerCase() === activeMapFilter.toLowerCase());
 
       filteredMatches.forEach(m => {
-        const approvedCount = m.players.filter(p => p.status === 'approved').length;
+        const approvedCount = (m.players || []).filter(p => p.status === 'approved').length;
         const item = document.createElement('div');
         item.className = 'req-card';
         item.innerHTML = `
@@ -740,16 +786,87 @@
           </div>
           <div class="req-details">
             <strong>Timing:</strong> ${m.time}<br>
-            <strong>Filled Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
+            <strong>Sitting / Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
             <strong>Room ID:</strong> ${m.roomId || 'Not set'} | <strong>Pass:</strong> ${m.roomPass || 'Not set'}
           </div>
           <div class="req-btn-row">
             <button class="btn-approve" style="background:#334155; color:#fff;" onclick="setSpecificRoom('${m.id}')"><i class="fa-solid fa-key"></i> Room Pass</button>
+            <button class="btn-edit-act" onclick="openEditMatchModal('${m.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit Match</button>
             <button class="btn-reject" onclick="deleteMatch('${m.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
           </div>
+          <button class="btn-proofs-act" onclick="viewMatchProofs('${m.id}')"><i class="fa-solid fa-receipt"></i> View Paid Screenshots (${approvedCount})</button>
         `;
         matchesContainer.appendChild(item);
       });
+    }
+
+    /* Edit Match & Timetable Functions */
+    function openEditMatchModal(matchId) {
+      const tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      document.getElementById('editMatchId').value = match.id;
+      document.getElementById('editTitle').value = match.title || "";
+      document.getElementById('editTime').value = match.time || "";
+      document.getElementById('editSlots').value = match.totalSlots || 12;
+      document.getElementById('editFee').value = match.fee || 0;
+      document.getElementById('editPrize').value = match.prize || 0;
+      document.getElementById('editRules').value = match.rules || match.subtitle || "";
+
+      document.getElementById('editMatchModal').classList.add('active');
+    }
+
+    function saveEditedMatch() {
+      const id = document.getElementById('editMatchId').value;
+      let tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === id);
+      if (!match) return;
+
+      match.title = document.getElementById('editTitle').value.trim();
+      match.time = document.getElementById('editTime').value.trim();
+      match.totalSlots = Number(document.getElementById('editSlots').value) || match.totalSlots;
+      match.fee = Number(document.getElementById('editFee').value) || match.fee;
+      match.prize = Number(document.getElementById('editPrize').value) || match.prize;
+      match.rules = document.getElementById('editRules').value.trim();
+
+      saveTournaments(tournaments);
+      closeModal('editMatchModal');
+      alert("✅ Match details, time table aur slots update ho chuke hain!");
+    }
+
+    /* View Saved Screenshot Proofs */
+    function viewMatchProofs(matchId) {
+      const tournaments = getTournaments();
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      const container = document.getElementById('proofsArchiveContent');
+      container.innerHTML = "";
+
+      const approvedPlayers = (match.players || []).filter(p => p.status === 'approved' && p.screenshot);
+
+      if (approvedPlayers.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12px;">Is match me abhi tak koi verified payment proof save nahi hai.</div>`;
+      } else {
+        approvedPlayers.forEach(p => {
+          const item = document.createElement('div');
+          item.style = "background:#090e17; border:1px solid #1e293b; border-radius:12px; padding:10px;";
+          item.innerHTML = `
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
+              <b style="color:#38bdf8;">${p.name} (UID: ${p.uid})</b>
+              <span style="color:#10b981;">Verified ✔</span>
+            </div>
+            <div style="font-size:10px; color:#94a3b8; margin-bottom:6px;">Phone: ${p.phone || 'N/A'} | Time: ${p.time || ''}</div>
+            <div style="text-align:center; background:#000; padding:4px; border-radius:8px;">
+              <img src="${p.screenshot}" style="max-width:100%; max-height:220px; object-fit:contain; border-radius:6px;">
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      document.getElementById('proofsArchiveModal').classList.add('active');
     }
 
     function renderInboxUsers() {
@@ -1074,7 +1191,9 @@
 
       if (action === 'approved') {
         const player = match.players.find(p => p.uid === uid);
-        if (player) player.status = 'approved';
+        if (player) {
+          player.status = 'approved';
+        }
       } else if (action === 'rejected') {
         match.players = match.players.filter(p => p.uid !== uid);
       }
