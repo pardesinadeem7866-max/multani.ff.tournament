@@ -286,9 +286,23 @@
       align-items: center;
       gap: 4px;
       cursor: pointer;
+      position: relative;
     }
     .nav-link.active { color: var(--ff-cyan); }
     .nav-link i { font-size: 16px; }
+
+    .nav-badge-dot {
+      position: absolute;
+      top: -2px;
+      right: 10px;
+      background: #10b981;
+      color: #000;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 1px 5px;
+      border-radius: 10px;
+      border: 1px solid #000;
+    }
 
     .modal-backdrop {
       display: none;
@@ -349,6 +363,40 @@
       margin-top: 4px;
     }
     .preview-box { width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; border: 1px dashed #334155; margin-top: 8px; display: none; }
+
+    /* Support Chat History in Modal */
+    .chat-history-box {
+      background: #080b11;
+      border: 1px solid #1b2537;
+      border-radius: 12px;
+      padding: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-bubble-user {
+      background: #1e293b;
+      border-radius: 10px 10px 0 10px;
+      padding: 8px 10px;
+      align-self: flex-end;
+      max-width: 85%;
+      font-size: 12px;
+      color: #f1f5f9;
+    }
+    .chat-bubble-admin {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      border-radius: 10px 10px 10px 0;
+      padding: 8px 10px;
+      align-self: flex-start;
+      max-width: 85%;
+      font-size: 12px;
+      color: #fff;
+    }
+    .bubble-tag { font-size: 9px; font-weight: 800; color: #10b981; display: block; margin-bottom: 3px; }
   </style>
 </head>
 <body>
@@ -397,7 +445,7 @@
 
     <div class="matches-list" id="matchesContainer"></div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar with Live Notification Badge -->
     <div class="bottom-nav">
       <button class="nav-link active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <i class="fa-solid fa-gamepad"></i>
@@ -407,8 +455,8 @@
         <i class="fa-solid fa-user-gear"></i>
         <span>Player ID</span>
       </button>
-      <!-- Click opens in-app support modal -->
       <button class="nav-link" onclick="openSupportModal()">
+        <span class="nav-badge-dot" id="supportNotifyDot" style="display:none;">1</span>
         <i class="fa-solid fa-headset" style="color:#25d366;"></i>
         <span>Support</span>
       </button>
@@ -416,16 +464,17 @@
 
   </div>
 
-  <!-- Help With Owner Support Modal -->
+  <!-- Help with Owner / Live Inbox Modal -->
   <div class="modal-backdrop" id="supportModal">
     <div class="modal-dialog">
       <div class="modal-title">
-        <span>💬 Help with Owner</span>
+        <span>💬 Help with Owner (Inbox)</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('supportModal')"></i>
       </div>
-      <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">
-        Apna masla ya sawaal yahan likhein. Yeh seedha Owner / Admin Dashboard par bhej diya jayega.
-      </p>
+      
+      <!-- Previous Chat & Admin Replies Display Area -->
+      <div class="chat-history-box" id="playerChatHistory"></div>
+
       <div class="form-ctrl">
         <label>Player Name</label>
         <input type="text" id="suppName" placeholder="Aapka Name">
@@ -435,11 +484,11 @@
         <input type="text" id="suppContact" placeholder="UID ya Phone number">
       </div>
       <div class="form-ctrl">
-        <label>Apna Masla / Message Likhein</label>
-        <textarea id="suppMsg" rows="4" placeholder="Masla tafseel se likhein (e.g. Room password nahi mila, fee sent proof verification, etc.)..."></textarea>
+        <label>Naya Message Likhein</label>
+        <textarea id="suppMsg" rows="3" placeholder="Masla ya sawal yahan likhein..."></textarea>
       </div>
       <button class="btn-modal-action" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i> Send to Owner</button>
-      <button class="btn-modal-close" onclick="closeModal('supportModal')">Cancel</button>
+      <button class="btn-modal-close" onclick="closeModal('supportModal')">Close</button>
     </div>
   </div>
 
@@ -624,6 +673,8 @@
         `;
         container.appendChild(card);
       });
+
+      checkAdminReplies();
     }
 
     function updateNavProfile() {
@@ -643,12 +694,73 @@
       document.getElementById('loginModal').style.display = "flex";
     }
 
+    /* Support Chat Inbox & Live Replies Render */
+    function checkAdminReplies() {
+      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      const dot = document.getElementById('supportNotifyDot');
+      
+      if (!currentUser) {
+        dot.style.display = 'none';
+        return;
+      }
+
+      // Check if any message from this user has an admin reply
+      const hasReply = supportMsgs.some(m => 
+        (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name) && m.adminReply
+      );
+
+      dot.style.display = hasReply ? 'block' : 'none';
+    }
+
     function openSupportModal() {
       if (currentUser) {
         document.getElementById('suppName').value = currentUser.name || "";
         document.getElementById('suppContact').value = currentUser.uid ? `UID: ${currentUser.uid}` : (currentUser.phone || "");
       }
+
+      renderPlayerChatHistory();
       document.getElementById('supportModal').style.display = "flex";
+    }
+
+    function renderPlayerChatHistory() {
+      const historyBox = document.getElementById('playerChatHistory');
+      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+
+      let userMsgs = [];
+      if (currentUser) {
+        userMsgs = supportMsgs.filter(m => 
+          (m.uid === currentUser.uid || m.contact.includes(currentUser.uid) || m.name === currentUser.name)
+        );
+      } else {
+        userMsgs = supportMsgs.slice(0, 3);
+      }
+
+      if (userMsgs.length === 0) {
+        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; padding:10px;">Aapki pehle koi conversation nahi hai. Naya message bhejein!</div>`;
+        return;
+      }
+
+      historyBox.innerHTML = "";
+      userMsgs.forEach(msg => {
+        // User's own message bubble
+        const uBubble = document.createElement('div');
+        uBubble.className = "chat-bubble-user";
+        uBubble.innerHTML = `<strong>Aap:</strong> ${msg.message}<br><span style="font-size:9px; opacity:0.6;">${msg.time || ''}</span>`;
+        historyBox.appendChild(uBubble);
+
+        // Admin reply bubble (If replied)
+        if (msg.adminReply) {
+          const aBubble = document.createElement('div');
+          aBubble.className = "chat-bubble-admin";
+          aBubble.innerHTML = `
+            <span class="bubble-tag"><i class="fa-solid fa-crown"></i> Multani.ff Owner Reply:</span>
+            ${msg.adminReply}
+          `;
+          historyBox.appendChild(aBubble);
+        }
+      });
+
+      historyBox.scrollTop = historyBox.scrollHeight;
     }
 
     function submitSupportMessage() {
@@ -661,19 +773,22 @@
         return;
       }
 
-      let supportMessages = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      supportMessages.unshift({
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      supportMsgs.unshift({
         id: "msg_" + Date.now(),
+        uid: currentUser ? currentUser.uid : "",
         name,
         contact: contact || "Not specified",
         message,
+        adminReply: "", // empty until admin answers
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date().toLocaleDateString()
       });
 
-      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMessages));
+      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
       document.getElementById('suppMsg').value = "";
-      closeModal('supportModal');
-      alert("Aapka message Owner/Admin tak pohanch gaya hai! Jald reply milega.");
+      renderPlayerChatHistory();
+      checkAdminReplies();
+      alert("Aapka message Owner tak chala gaya hai! Owner ka jawab yahi Inbox me show hoga.");
     }
 
     function saveLogin() {
