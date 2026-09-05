@@ -391,6 +391,7 @@
       cursor: pointer;
       margin-top: 6px;
     }
+    .btn-green-action:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-wallet-pay {
       width: 100%;
       background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -510,18 +511,6 @@
       padding-bottom: 4px;
       border-bottom: 1px solid #252c3d;
     }
-    .team-slot-heading {
-      font-size: 9.5px;
-      font-weight: 900;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-top: 4px;
-      margin-bottom: 2px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .team-heading-1 { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border-left: 3px solid #38bdf8; }
-    .team-heading-2 { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-left: 3px solid #ef4444; }
 
     .ff-slot-bar {
       background: var(--ff-slot-bg);
@@ -609,22 +598,6 @@
     .event-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; margin-bottom: 8px; }
     .event-reward-tag { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); color: var(--mint-primary); font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
 
-    .profile-rules-btn {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(255, 183, 3, 0.15));
-      border: 1px solid rgba(255, 183, 3, 0.4);
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 14px;
-      cursor: pointer;
-    }
-    .profile-rules-left { display: flex; align-items: center; gap: 10px; }
-    .profile-rules-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(255, 183, 3, 0.2); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 15px; }
-    .rule-item-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.15); border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
-    .rule-bullet-num { background: rgba(0, 230, 118, 0.2); color: var(--mint-primary); width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
     .chat-history-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 14px; padding: 12px; height: 260px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .chat-bubble-user { background: #113622; border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 14px 14px 2px 14px; padding: 8px 12px; align-self: flex-end; max-width: 82%; font-size: 12px; color: #fff; }
     .chat-bubble-admin { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); border-radius: 14px 14px 14px 2px; padding: 8px 12px; align-self: flex-start; max-width: 82%; font-size: 12px; color: #fff; }
@@ -659,12 +632,6 @@
       <div class="top-search-btn" onclick="openProfileManageModal()">
         <i class="fa-solid fa-gear"></i>
       </div>
-    </div>
-
-    <!-- Live Broadcast Pop-up Alert -->
-    <div class="broadcast-toast" id="broadcastToastBar" style="display:none;">
-      <i class="fa-solid fa-bell"></i>
-      <span id="broadcastMsgText">🔔 Room ID & Pass is out! Join fast!</span>
     </div>
 
     <!-- Hero Card -->
@@ -850,10 +817,6 @@
       <div class="modal-title">
         <span>🎮 Player Profile & Settings</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('profileModal')"></i>
-      </div>
-
-      <div id="profileWarningBox" style="display:none; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; padding:8px 10px; border-radius:8px; font-size:11px; margin-bottom:12px;">
-        <i class="fa-solid fa-triangle-exclamation"></i> <b>Warning Issued:</b> Fair Play Alert on this UID!
       </div>
 
       <div style="background:#04130b; border:1px solid rgba(0,230,118,0.25); border-radius:10px; padding:12px; margin-bottom:14px;">
@@ -1106,10 +1069,6 @@
         document.getElementById('profDispUid').innerText = `UID: ${currentUser.uid}`;
         document.getElementById('profDispEmail').innerText = `Gmail: ${currentUser.email || 'Not Linked'}`;
         document.getElementById('profDispPhone').innerText = `WhatsApp: ${currentUser.phone || 'N/A'}`;
-        
-        const warnings = JSON.parse(localStorage.getItem('mff_warned_uids')) || [];
-        document.getElementById('profileWarningBox').style.display = warnings.includes(currentUser.uid) ? 'block' : 'none';
-
         document.getElementById('profileModal').style.display = 'flex';
       }
     }
@@ -1167,7 +1126,7 @@
       const matched = users.find(u => u.email === email && u.password === pass);
 
       if (!matched) {
-        alert("❌ Galat Gmail ya Password!");
+        alert("❌ Galat Gmail ya Password! Agar password bhool gaye hain toh 'Forgot Password' dabayein.");
         return;
       }
 
@@ -1191,7 +1150,7 @@
       let users = getAllRegisteredUsers();
       const exists = users.find(u => u.email === email);
       if (!exists) {
-        alert("❌ Yeh Gmail registered nahi hai!");
+        alert("❌ Yeh Gmail registered nahi hai! Pehle Sign Up karein.");
         return;
       }
 
@@ -1200,19 +1159,36 @@
       otpTargetEmail = email;
 
       const sendBtn = document.getElementById('btnSendOtp');
+      const originalText = sendBtn.innerHTML;
       sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending Code...`;
+      sendBtn.disabled = true;
 
-      emailjs.send("service_eqsd3p8", "template_fcwtgdh", {
+      const templateParams = {
+        to_email: email,
         email: email,
-        to_name: exists.name,
-        passcode: otp
-      }).then(() => {
-        alert(`✅ Verification code aapke Gmail (${email}) par bhej diya gaya hai! Inbox check karein.`);
-        proceedToOtpInput(email);
-      }).catch((err) => {
-        alert("Email send karne me error aaya: " + JSON.stringify(err));
-        sendBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Verification Code`;
-      });
+        to_name: exists.name || "Player",
+        name: exists.name || "Player",
+        passcode: otp,
+        otp_code: otp,
+        message: `Aapka Multani.ff password verification code: ${otp}`
+      };
+
+      emailjs.send("service_eqsd3p8", "template_fcwtgdh", templateParams)
+        .then(function(res) {
+          console.log("EmailJS Sent Successfully:", res);
+          alert(`✅ Verification code aapke Gmail (${email}) par send kar diya gaya hai!\n\n(Inbox aur SPAM/JUNK folder lazmi check karein)`);
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalText;
+          proceedToOtpInput(email);
+        })
+        .catch(function(err) {
+          console.error("EmailJS Error:", err);
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalText;
+          
+          let errMsg = err?.text || JSON.stringify(err);
+          alert(`❌ Code nahi bheja ja saka!\n\nDetails: ${errMsg}\n\nCheck karein: EmailJS dashboard mein Service 'service_eqsd3p8' active hai ya nahi.`);
+        });
     }
 
     function proceedToOtpInput(email) {
@@ -1231,7 +1207,7 @@
       }
 
       if (enteredOtp !== currentGeneratedOtp) {
-        alert("❌ Galat Confirmation Code! Gmail wala code check karein.");
+        alert("❌ Galat Confirmation Code! Gmail par aaya hua 6-digit code dobara dekh kar enter karein.");
         return;
       }
 
@@ -1252,7 +1228,7 @@
       document.getElementById('otpCodeInput').value = "";
       document.getElementById('otpNewPasswordInput').value = "";
 
-      alert("🎉 Code verified! Password successfully update ho gaya. Ab Login karein.");
+      alert("🎉 Code verified! Naya Password set ho gaya. Ab login karein.");
       switchAuthView('login');
     }
 
