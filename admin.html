@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Control Panel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: #06090e; color: #fff; display: flex; justify-content: center; padding: 20px 12px; }
+    .box { background: #0d121d; border: 1px solid #10b981; border-radius: 14px; padding: 20px; width: 100%; max-width: 400px; }
+    h2 { color: #10b981; text-align: center; margin-bottom: 20px; font-size: 20px; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+    input { width: 100%; padding: 10px; background: #090e17; border: 1px solid #1e293b; color: #fff; border-radius: 8px; font-size: 14px; }
+    button { width: 100%; background: #10b981; color: #06090e; font-weight: bold; border: none; padding: 12px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-top: 10px; }
+    .msg { display: none; background: rgba(16,185,129,0.2); color: #10b981; padding: 10px; border-radius: 8px; text-align: center; margin-top: 10px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>⚙️ Multani.ff Admin Panel</h2>
+    
+    <div class="field">
+      <label>ٹورنامنٹ ٹائٹل</label>
+      <input type="text" id="title" placeholder="MATCH #1 (SOLO BATTLE)">
+    </div>
+    <div class="field">
+      <label>میچ کا وقت</label>
+      <input type="text" id="time" placeholder="DAILY 8:00 PM">
+    </div>
+    <div class="field">
+      <label>انٹری فیس (روپے)</label>
+      <input type="text" id="fee" placeholder="50">
+    </div>
+    <div class="field">
+      <label>بویاہ پرائز (روپے)</label>
+      <input type="text" id="prize" placeholder="400">
+    </div>
+    <div class="field">
+      <label>ایزی پیسہ نمبر</label>
+      <input type="text" id="phone" placeholder="03186815926">
+    </div>
+
+    <button onclick="saveChanges()">Save & Update Site</button>
+    <div class="msg" id="alertBox">تبدیلیاں محفوظ ہو گئیں!</div>
+  </div>
+
+  <script>
+    function loadExisting() {
+      const data = JSON.parse(localStorage.getItem('multani_data')) || {
+        title: "MATCH #1 (SOLO BATTLE)",
+        time: "DAILY 8:00 PM",
+        fee: "50",
+        prize: "400",
+        phone: "03186815926"
+      };
+      document.getElementById('title').value = data.title;
+      document.getElementById('time').value = data.time;
+      document.getElementById('fee').value = data.fee;
+      document.getElementById('prize').value = data.prize;
+      document.getElementById('phone').value = data.phone;
+    }
+
+    function saveChanges() {
+      const data = {
+        title: document.getElementById('title').value,
+        time: document.getElementById('time').value,
+        fee: document.getElementById('fee').value,
+        prize: document.getElementById('prize').value,
+        phone: document.getElementById('phone').value
+      };
+      localStorage.setItem('multani_data', JSON.stringify(data));
+      const box = document.getElementById('alertBox');
+      box.style.display = "block";
+      setTimeout(() => { box.style.display = "none"; }, 2500);
+    }
+
+    window.onload = loadExisting;
+  </script>
+</body>
+</html>
+
