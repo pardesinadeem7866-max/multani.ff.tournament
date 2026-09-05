@@ -33,7 +33,7 @@
       box-shadow: 0 0 40px rgba(0,0,0,0.8);
     }
 
-    /* Top Hero Header Box (Exact match with screenshot) */
+    /* Top Hero Header Box */
     .hero-top-box {
       background: radial-gradient(circle at 50% 0%, #20132b 0%, #0d1626 70%);
       border-bottom: 1px solid var(--card-border);
@@ -109,7 +109,7 @@
       gap: 6px;
     }
 
-    /* Action Shortcuts Grid (Exact Screenshot Layout) */
+    /* Action Shortcuts Grid */
     .action-grid-card {
       background: #ffffff;
       border-radius: 16px;
@@ -212,6 +212,33 @@
       text-decoration: none;
     }
 
+    /* Chat Box Styling */
+    .chat-user-row {
+      background: #050b14;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .chat-thread-box {
+      background: #050b14;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .bubble-user { background: #113622; border: 1px solid rgba(0,230,118,0.3); padding: 8px; border-radius: 10px 10px 2px 10px; align-self: flex-start; max-width: 80%; font-size: 11.5px; }
+    .bubble-admin { background: #1e293b; border: 1px solid var(--card-border); padding: 8px; border-radius: 10px 10px 10px 2px; align-self: flex-end; max-width: 80%; font-size: 11.5px; color: var(--mint); }
+
     /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed;
@@ -248,7 +275,7 @@
 
   <div class="app-viewport">
     
-    <!-- Top Hero Header (Matched with screenshot style) -->
+    <!-- Top Hero Header -->
     <div class="hero-top-box">
       <div class="hero-top-row">
         <div>
@@ -261,7 +288,7 @@
           <button class="btn-outline-backup" onclick="alert('Data is safely synced in local storage.')">BACKUP DATA</button>
         </div>
       </div>
-      <div class="hero-sub-time" id="liveClockStamp">
+      <div class="hero-sub-time">
         <i class="fa-solid fa-rotate"></i> Free Fire Tournament Admin Panel
       </div>
     </div>
@@ -289,7 +316,7 @@
       <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> View All Tournaments & Member Lists</button>
     </div>
 
-    <!-- Action Shortcuts Grid (Exact Screenshot Layout) -->
+    <!-- Action Shortcuts Grid -->
     <div class="action-grid-card">
       <button class="action-icon-item" onclick="switchAdminTab('matches')">
         <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
@@ -306,7 +333,7 @@
         </div>
         <span>Payment Approval</span>
       </button>
-      <button class="action-icon-item" onclick="switchAdminTab('users')">
+      <button class="action-icon-item" onclick="switchAdminTab('banned')">
         <div class="action-circle"><i class="fa-solid fa-user-xmark" style="color:var(--red);"></i></div>
         <span>Ban Player</span>
       </button>
@@ -367,20 +394,20 @@
         <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-plus"></i> Publish Match Room</button>
 
         <div style="margin-top:16px; border-top:1px solid var(--card-border); padding-top:12px;">
-          <div class="section-header-row"><span>Click Any Match to Edit & View Members</span></div>
+          <div class="section-header-row"><span>Active Tournaments & Member Lists</span></div>
           <div id="activeMatchesList"></div>
         </div>
       </div>
 
-      <!-- 3. USERS VIEW -->
-      <div id="sectionUsers" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-users"></i> Registered Player Accounts</span></div>
-        <div id="usersListContainer"></div>
+      <!-- 3. BANNED PLAYERS VIEW -->
+      <div id="sectionBanned" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List</span></div>
+        <div id="bannedPlayersListContainer"></div>
       </div>
 
-      <!-- 4. SUPPORT CHATS VIEW -->
+      <!-- 4. SUPPORT CHATS VIEW (Real Chat Box Style) -->
       <div id="sectionSupport" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Replies</span></div>
+        <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
         <div id="supportChatsContainer"></div>
       </div>
 
@@ -405,9 +432,9 @@
         <i class="fa-solid fa-gamepad"></i>
         <span>Matches</span>
       </button>
-      <button class="bot-tab" id="navBtnUsers" onclick="switchAdminTab('users')">
-        <i class="fa-solid fa-users-gear"></i>
-        <span>Requests</span>
+      <button class="bot-tab" id="navBtnBanned" onclick="switchAdminTab('banned')">
+        <i class="fa-solid fa-user-slash"></i>
+        <span>Banned</span>
       </button>
       <button class="bot-tab" id="navBtnSupport" onclick="switchAdminTab('support')">
         <i class="fa-solid fa-comments"></i>
@@ -445,7 +472,7 @@
       document.querySelectorAll('.bot-tab').forEach(b => b.classList.remove('active'));
       document.getElementById('sectionDeposits').style.display = (tabName === 'deposits') ? 'block' : 'none';
       document.getElementById('sectionMatches').style.display = (tabName === 'matches') ? 'block' : 'none';
-      document.getElementById('sectionUsers').style.display = (tabName === 'users') ? 'block' : 'none';
+      document.getElementById('sectionBanned').style.display = (tabName === 'banned') ? 'block' : 'none';
       document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
       document.getElementById('sectionGiveaways').style.display = (tabName === 'giveaways') ? 'block' : 'none';
 
@@ -455,9 +482,9 @@
       } else if (tabName === 'matches') {
         document.getElementById('navBtnMatches').classList.add('active');
         renderAdminMatches();
-      } else if (tabName === 'users') {
-        document.getElementById('navBtnUsers').classList.add('active');
-        renderAdminUsers();
+      } else if (tabName === 'banned') {
+        document.getElementById('navBtnBanned').classList.add('active');
+        renderBannedPlayers();
       } else if (tabName === 'support') {
         document.getElementById('navBtnSupport').classList.add('active');
         renderAdminSupport();
@@ -587,9 +614,12 @@
                   <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
                   <div style="font-size:9.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${p.phone || 'N/A'}</div>
                 </div>
-                <a href="${waLink}" target="_blank" class="btn-whatsapp-winner">
-                  <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner Announcement
-                </a>
+                <div style="display:flex; gap:4px;">
+                  <a href="${waLink}" target="_blank" class="btn-whatsapp-winner">
+                    <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner
+                  </a>
+                  <button class="btn-action btn-danger" style="padding:4px 8px; font-size:9.5px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban</button>
+                </div>
               </div>
             `;
           });
@@ -639,70 +669,114 @@
       updateHeaderStats();
     }
 
-    /* 3. Users Render */
-    function renderAdminUsers() {
-      const container = document.getElementById('usersListContainer');
-      container.innerHTML = "";
-      const users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+    function banPlayerByUid(uid, name, phone) {
+      if (!confirm(`Kya aap ${name} (UID: ${uid}) ko ban karna chahte hain?`)) return;
+      let bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+      if (!bannedList.some(b => b.uid === uid)) {
+        bannedList.push({ uid, name, phone, time: new Date().toLocaleTimeString() });
+        localStorage.setItem('mff_banned_players', JSON.stringify(bannedList));
+      }
+      alert("🚫 Player ban kar diya gaya hai!");
+      renderAdminMatches();
+    }
 
-      if (users.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Koi registered user nahi hai.</div>`;
+    /* 3. Banned Players List View & Unban */
+    function renderBannedPlayers() {
+      const container = document.getElementById('bannedPlayersListContainer');
+      container.innerHTML = "";
+      const bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+
+      if (bannedList.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi player ban nahi hai.</div>`;
         return;
       }
 
-      users.forEach((u, idx) => {
+      bannedList.forEach((b, idx) => {
         const div = document.createElement('div');
         div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
         div.innerHTML = `
           <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${u.name} <span style="color:var(--blue); font-size:10px;">(${u.uid})</span></div>
-            <div style="font-size:10px; color:var(--text-muted);">${u.email} | WhatsApp: ${u.phone || 'N/A'}</div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">${b.name} <span style="color:var(--red); font-size:10px;">(UID: ${b.uid})</span></div>
+            <div style="font-size:10px; color:var(--text-muted);">WhatsApp: ${b.phone || 'N/A'} | Banned at: ${b.time || '--'}</div>
           </div>
-          <button class="btn-action btn-danger" style="width:auto; padding:6px 10px; font-size:11px;" onclick="banUser(${idx})">Ban</button>
+          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="unbanPlayer(${idx})">Unban</button>
         `;
         container.appendChild(div);
       });
     }
 
-    function banUser(idx) {
-      if (!confirm("Is user ko ban karna chahte hain?")) return;
-      let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-      users.splice(idx, 1);
-      localStorage.setItem('mff_accounts_db', JSON.stringify(users));
-      renderAdminUsers();
-      alert("✅ Player ban kar diya gaya hai.");
+    function unbanPlayer(idx) {
+      let bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+      bannedList.splice(idx, 1);
+      localStorage.setItem('mff_banned_players', JSON.stringify(bannedList));
+      renderBannedPlayers();
+      alert("✅ Player unban kar diya gaya hai!");
     }
 
-    /* 4. Support Chats Render */
+    /* 4. Support Chats Render (Real Chat Box Style) */
     function renderAdminSupport() {
       const container = document.getElementById('supportChatsContainer');
       container.innerHTML = "";
-      const msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
 
       if (msgs.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Koi message nahi hai.</div>`;
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi support chat mojud nahi hai.</div>`;
         return;
       }
 
-      msgs.forEach((m, idx) => {
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px;";
-        div.innerHTML = `
-          <div style="font-size:11px; font-weight:800; color:var(--blue); margin-bottom:2px;">${m.name} (${m.contact})</div>
-          <div style="font-size:11.5px; color:#fff; margin-bottom:6px;">${m.message}</div>
-          <div style="display:flex; gap:6px;">
-            <input type="text" id="adminReply_${idx}" value="${m.adminReply || ''}" placeholder="Type reply..." style="flex:1; background:#09101d; border:1px solid var(--card-border); color:#fff; padding:6px; border-radius:4px; font-size:11px;">
-            <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="sendReplyAdmin(${idx})">Reply</button>
+      // Group messages by user email or uid
+      let grouped = {};
+      msgs.forEach(m => {
+        let key = m.email || m.uid || 'unknown';
+        if (!grouped[key]) {
+          grouped[key] = { name: m.name, contact: m.contact, items: [] };
+        }
+        grouped[key].items.push(m);
+      });
+
+      Object.keys(grouped).forEach(key => {
+        let group = grouped[key];
+        let threadBox = document.createElement('div');
+        threadBox.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:12px;";
+        
+        let headerHtml = `<div style="font-size:11.5px; font-weight:800; color:var(--blue); margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:4px;"><i class="fa-solid fa-user"></i> ${group.name} (${group.contact})</div>`;
+        
+        let msgsHtml = `<div class="chat-thread-box">`;
+        group.items.forEach(item => {
+          msgsHtml += `<div class="bubble-user"><b>Player:</b> ${item.message} <span style="font-size:8.5px; color:var(--text-muted); display:block; text-align:right;">${item.time || ''}</span></div>`;
+          if (item.adminReply) {
+            msgsHtml += `<div class="bubble-admin"><b>Owner:</b> ${item.adminReply}</div>`;
+          }
+        });
+        msgsHtml += `</div>`;
+
+        let replyHtml = `
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <input type="text" id="chatReplyInput_${key}" placeholder="Type a message..." style="flex:1; background:#09101d; border:1px solid var(--card-border); color:#fff; padding:7px; border-radius:6px; font-size:11px;">
+            <button class="btn-action" style="width:auto; padding:6px 12px; font-size:11px;" onclick="sendGroupReply('${key}')">Send</button>
           </div>
         `;
-        container.appendChild(div);
+
+        threadBox.innerHTML = headerHtml + msgsHtml + replyHtml;
+        container.appendChild(threadBox);
       });
     }
 
-    function sendReplyAdmin(idx) {
+    function sendGroupReply(key) {
+      let inputVal = document.getElementById(`chatReplyInput_${key}`).value.trim();
+      if (!inputVal) return;
+
       let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      msgs[idx].adminReply = document.getElementById(`adminReply_${idx}`).value.trim();
+      // Update the latest message or add reply to matching user
+      for (let i = msgs.length - 1; i >= 0; i--) {
+        if ((msgs[i].email && msgs[i].email === key) || (msgs[i].uid && msgs[i].uid === key)) {
+          msgs[i].adminReply = inputVal;
+          break;
+        }
+      }
+
       localStorage.setItem('mff_support_msgs', JSON.stringify(msgs));
+      renderAdminSupport();
       alert("✅ Reply bhej diya gaya!");
     }
 
