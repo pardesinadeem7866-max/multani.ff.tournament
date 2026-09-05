@@ -1,4 +1,3 @@
-EventsModal()">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +11,7 @@ EventsModal()">
       --bg-gradient: radial-gradient(circle at 50% 0%, #08482c 0%, #032316 45%, #01130a 100%);
       --mint-primary: #00e676;
       --mint-accent: #2de28d;
+      --mint-glass: rgba(0, 230, 118, 0.15);
       --card-white: #ffffff;
       --text-dark: #0a291b;
       --text-muted: #64748b;
@@ -19,7 +19,7 @@ EventsModal()">
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: #010d07; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
+    body { background: #010d07; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
     .app-viewport {
       width: 100%;
@@ -251,7 +251,7 @@ EventsModal()">
     .fee-badge { color: #059669; }
     .prize-badge { color: #d97706; }
 
-    /* Bottom Navigation Bar */
+    /* Bottom Navigation */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -313,7 +313,7 @@ EventsModal()">
       border: 1.5px solid #012213;
     }
 
-    /* Modals Setup */
+    /* Modals */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -392,7 +392,7 @@ EventsModal()">
     .event-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; margin-bottom: 8px; }
     .event-reward-tag { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); color: var(--mint-primary); font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
 
-    /* Rules Button in Profile */
+    /* Rules inside Profile */
     .profile-rules-btn {
       background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(255, 183, 3, 0.15));
       border: 1px solid rgba(255, 183, 3, 0.4);
@@ -409,7 +409,7 @@ EventsModal()">
     .rule-item-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.15); border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
     .rule-bullet-num { background: rgba(0, 230, 118, 0.2); color: var(--mint-primary); width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* Chat Styling */
+    /* Support Chat */
     .chat-history-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 14px; padding: 12px; height: 260px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .chat-bubble-user { background: #113622; border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 14px 14px 2px 14px; padding: 8px 12px; align-self: flex-end; max-width: 82%; font-size: 12px; color: #fff; }
     .chat-bubble-admin { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); border-radius: 14px 14px 14px 2px; padding: 8px 12px; align-self: flex-start; max-width: 82%; font-size: 12px; color: #fff; }
@@ -440,7 +440,7 @@ EventsModal()">
       </div>
     </div>
 
-    <!-- Top Banner Card -->
+    <!-- Top Hero Card -->
     <div class="hero-banner-container">
       <div class="hero-glass-card">
         <div class="mine-ribbon">Mine</div>
@@ -456,7 +456,7 @@ EventsModal()">
       </div>
     </div>
 
-    <!-- Map Filter Bar -->
+    <!-- Map Filter -->
     <div class="filter-track">
       <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
       <div class="filter-item" onclick="setMapFilter('Bermuda', this)">Bermuda</div>
@@ -467,7 +467,7 @@ EventsModal()">
     <!-- Matches Grid -->
     <div class="grid-container" id="matchesContainer"></div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Nav -->
     <div class="bottom-bar">
       <button class="bot-item" onclick="openEventsModal()">
         <div class="bot-icon-circle">
@@ -497,7 +497,7 @@ EventsModal()">
 
   </div>
 
-  <!-- Events / Giveaway Modal -->
+  <!-- Events Modal -->
   <div class="modal-backdrop" id="eventsModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -509,7 +509,7 @@ EventsModal()">
     </div>
   </div>
 
-  <!-- Player Profile Modal -->
+  <!-- Profile Modal -->
   <div class="modal-backdrop" id="loginModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -530,13 +530,12 @@ EventsModal()">
       </div>
       <button class="btn-green-action" onclick="saveLogin()">Save Profile</button>
 
-      <!-- Rules Trigger -->
       <div class="profile-rules-btn" onclick="openRulesModal()">
         <div class="profile-rules-left">
           <div class="profile-rules-icon"><i class="fa-solid fa-scale-balanced"></i></div>
           <div>
             <div style="font-size:12px; font-weight:800; color:#fff;">Tournament Fair Play Rules</div>
-            <div style="font-size:10px; color:#a7f3d0;">Rules na manne par prize nahi milega</div>
+            <div style="font-size:10px; color:#a7f3d0;">Must read before joining matches</div>
           </div>
         </div>
         <i class="fa-solid fa-chevron-right" style="color:var(--gold); font-size:12px;"></i>
@@ -594,7 +593,7 @@ EventsModal()">
     </div>
   </div>
 
-  <!-- Tournament Action / Fee Screenshot Modal -->
+  <!-- Join Modal -->
   <div class="modal-backdrop" id="joinModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -624,7 +623,7 @@ EventsModal()">
     </div>
   </div>
 
-  <!-- Support Chat Modal -->
+  <!-- Chat Modal -->
   <div class="modal-backdrop" id="supportModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -679,12 +678,6 @@ EventsModal()">
       }
     ];
 
-    let tournaments = JSON.parse(localStorage.getItem('mff_tournaments'));
-    if (!tournaments || tournaments.length === 0) {
-      tournaments = defaultMatches;
-      localStorage.setItem('mff_tournaments', JSON.stringify(defaultMatches));
-    }
-
     let currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
     let selectedMatchId = null;
     let uploadedScreenshotBase64 = "";
@@ -698,7 +691,12 @@ EventsModal()">
     }
 
     function renderMatches() {
-      tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments'));
+      if (!tournaments || tournaments.length === 0) {
+        tournaments = defaultMatches;
+        localStorage.setItem('mff_tournaments', JSON.stringify(defaultMatches));
+      }
+
       const container = document.getElementById('matchesContainer');
       container.innerHTML = "";
 
@@ -767,6 +765,7 @@ EventsModal()">
       }
 
       selectedMatchId = matchId;
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
       const match = tournaments.find(m => m.id === matchId);
       if (!match) return;
 
@@ -788,7 +787,7 @@ EventsModal()">
         } else {
           credsBox.innerHTML = `
             <div style="background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000;">
-              Slot confirm hai! Match start hone se pehle Admin ID Pass yahan update karega.
+              Slot confirm hai! Match start hone se pehle Admin ID Pass update karega.
             </div>`;
         }
       } else if (userRecord && userRecord.status === "pending") {
@@ -848,7 +847,6 @@ EventsModal()">
       document.getElementById('rulesModal').style.display = 'flex';
     }
 
-    /* Events / Giveaways System */
     function openEventsModal() {
       const gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
       const container = document.getElementById('eventsListContainer');
@@ -884,7 +882,6 @@ EventsModal()">
       document.getElementById('eventsBadgeCount').innerText = gList.length;
     }
 
-    /* Proof Submission */
     function previewScreenshot(e) {
       const file = e.target.files[0];
       if (file) {
@@ -923,10 +920,9 @@ EventsModal()">
       localStorage.setItem('mff_tournaments', JSON.stringify(allTournaments));
       closeModal('joinModal');
       renderMatches();
-      alert("Screenshot submit ho gaya! Admin verify karke ID Pass dega.");
+      alert("Screenshot submit ho gaya! Admin verify karega.");
     }
 
-    /* Support Chat */
     function openSupportModal() {
       renderPlayerChatHistory();
       document.getElementById('supportModal').style.display = "flex";
@@ -978,7 +974,7 @@ EventsModal()">
       if (!msg) return;
 
       if (!currentUser) {
-        alert("Pehle profile set karein!");
+        alert("Pehle login karein!");
         closeModal('supportModal');
         openLoginModal();
         return;
