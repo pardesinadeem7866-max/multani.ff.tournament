@@ -71,7 +71,7 @@
     .vault-sync { font-size: 10px; color: #cbd5e1; opacity: 0.7; margin-top: 14px; display: flex; align-items: center; gap: 6px; }
     .vault-sync i { cursor: pointer; }
 
-    /* 3-Metrics Row (Data / Mins / SMS look) */
+    /* 3-Metrics Row */
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -94,7 +94,7 @@
     .metric-val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
     .metric-sub { font-size: 10px; color: #64748b; }
 
-    /* View All Button Pill */
+    /* View All Pill */
     .pill-center { display: flex; justify-content: center; margin-bottom: 14px; }
     .view-all-pill {
       background: linear-gradient(90deg, #dcfce7, #ccfbf1);
@@ -110,7 +110,7 @@
       gap: 6px;
     }
 
-    /* Promo Chips Row */
+    /* Horizontal Quick Tags */
     .promo-scroll {
       display: flex;
       gap: 8px;
@@ -185,7 +185,7 @@
     .content-area { padding: 0 16px; margin-bottom: 20px; }
     .section-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     
-    /* Pending Cards */
+    /* Pending & Match Cards */
     .req-card {
       background: #131b28;
       border: 1px solid #1e293b;
@@ -201,7 +201,19 @@
     .btn-approve { flex: 1; background: #10b981; color: #022c22; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
-    /* Modal Sheet for Creating Match */
+    .map-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    /* Modal Sheet */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -220,7 +232,7 @@
       border-radius: 24px 24px 0 0;
       padding: 20px;
       border-top: 1px solid #334155;
-      max-height: 85vh;
+      max-height: 88vh;
       overflow-y: auto;
     }
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
@@ -234,6 +246,7 @@
       padding: 9px 12px;
       color: #fff;
       font-size: 12px;
+      outline: none;
     }
     .btn-submit-modal {
       width: 100%;
@@ -248,7 +261,7 @@
       cursor: pointer;
     }
 
-    /* Bottom Curved Navigation */
+    /* Bottom Navigation */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -296,7 +309,7 @@
     
     <!-- Top System Header -->
     <div class="top-bar">
-      <div class="status-left"><i class="fa-solid fa-fire text-danger" style="color:#ef4444; margin-right:5px;"></i>Multani.ff Admin</div>
+      <div class="status-left"><i class="fa-solid fa-fire" style="color:#ef4444; margin-right:5px;"></i>Multani.ff Admin</div>
       <div class="status-right">
         <i class="fa-solid fa-wifi"></i>
         <i class="fa-solid fa-bolt"></i>
@@ -304,7 +317,7 @@
       </div>
     </div>
 
-    <!-- Main Jazz World Style Vault Card -->
+    <!-- Vault Card -->
     <div class="vault-card">
       <div class="vault-top">
         <div>
@@ -359,14 +372,14 @@
       </button>
     </div>
 
-    <!-- Horizontal Quick Tags -->
+    <!-- Quick Tags -->
     <div class="promo-scroll">
       <div class="promo-chip"><i class="fa-solid fa-bell"></i> Instant Push Room ID</div>
       <div class="promo-chip"><i class="fa-solid fa-trophy"></i> Booyah Prize Automation</div>
-      <div class="promo-chip"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Ban Filter</div>
+      <div class="promo-chip"><i class="fa-solid fa-map-location-dot"></i> Maps: Bermuda, Purgatory</div>
     </div>
 
-    <!-- 8 Quick Action Grid (From Screenshot) -->
+    <!-- 8 Quick Action Grid -->
     <div class="action-grid-box">
       <button class="grid-btn" onclick="openModal()">
         <div class="grid-icon-circle"><i class="fa-solid fa-circle-plus"></i></div>
@@ -394,9 +407,9 @@
         <span class="grid-label">Match Manager</span>
       </button>
 
-      <button class="grid-btn" onclick="showWinnerModal()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-award"></i></div>
-        <span class="grid-label">Booyah Winner</span>
+      <button class="grid-btn" onclick="filterByMapPrompt()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-map-location-dot"></i></div>
+        <span class="grid-label">Filter Map</span>
       </button>
 
       <button class="grid-btn" onclick="clearCompletedMatches()">
@@ -450,17 +463,19 @@
 
   </div>
 
-  <!-- Create Match Bottom Modal -->
+  <!-- Create Match Bottom Modal (Updated With Map Filter) -->
   <div class="modal-overlay" id="matchModal">
     <div class="modal-sheet">
       <div class="modal-title">
         <span>+ Naya Tournament Banayein</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal()"></i>
       </div>
+      
       <div class="form-group">
         <label>Tournament Title</label>
         <input type="text" id="newTitle" placeholder="MATCH #3 (CS 4V4)">
       </div>
+
       <div class="form-group">
         <label>Match Type / Mode</label>
         <select id="newMode">
@@ -470,28 +485,45 @@
           <option value="Clash Squad 4v4">Clash Squad 4v4</option>
         </select>
       </div>
+
+      <!-- FREE FIRE MAP SELECTOR -->
+      <div class="form-group">
+        <label><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Select Map (Free Fire)</label>
+        <select id="newMap">
+          <option value="Bermuda">Bermuda (Classic / Ranked)</option>
+          <option value="Purgatory">Purgatory</option>
+          <option value="Kalahari">Kalahari (Desert)</option>
+          <option value="Alpine">Alpine (Snow)</option>
+          <option value="NexTerra">NexTerra (Sci-Fi)</option>
+          <option value="Clash Squad Arena">Clash Squad Arena</option>
+        </select>
+      </div>
+
       <div class="form-group">
         <label>Scheduled Time</label>
         <input type="text" id="newTime" placeholder="Tonight 09:30 PM">
       </div>
+
       <div class="form-group">
         <label>Entry Fee (Rs)</label>
         <input type="number" id="newFee" placeholder="50">
       </div>
+
       <div class="form-group">
         <label>Prize Pool (Rs)</label>
         <input type="number" id="newPrize" placeholder="400">
       </div>
+
       <div class="form-group">
         <label>Total Slots</label>
         <input type="number" id="newSlots" value="12">
       </div>
+
       <button class="btn-submit-modal" onclick="submitMatch()">Publish Tournament</button>
     </div>
   </div>
 
   <script>
-    // Live Clock Display
     setInterval(() => {
       const now = new Date();
       document.getElementById('liveClock').innerText = now.toLocaleTimeString();
@@ -505,6 +537,8 @@
       localStorage.setItem('mff_tournaments', JSON.stringify(data));
       renderAll();
     }
+
+    let activeMapFilter = "All";
 
     function renderAll() {
       const tournaments = getTournaments();
@@ -524,7 +558,7 @@
         });
       });
 
-      // Update Top Metrics
+      // Update Header Stats
       document.getElementById('vaultRevenue').innerText = totalRevenue.toLocaleString();
       document.getElementById('metricMatches').innerText = tournaments.length;
       document.getElementById('metricPlayers').innerText = totalApprovedPlayers;
@@ -533,7 +567,7 @@
       document.getElementById('badgePending').innerText = pendingList.length;
       document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
 
-      // Render Pending Payment Requests
+      // Render Pending Verification Cards
       const reqContainer = document.getElementById('pendingCardsList');
       reqContainer.innerHTML = '';
 
@@ -552,6 +586,7 @@
               <span>${item.match.title}</span>
               <span style="color:#f59e0b;">Fee: Rs ${item.match.fee}</span>
             </div>
+            <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${item.match.map || 'Bermuda'}</span>
             <div class="req-details">
               <strong>Player Name:</strong> ${item.player.name}<br>
               <strong>FF UID:</strong> <span style="color:#38bdf8;">${item.player.uid}</span><br>
@@ -562,7 +597,7 @@
               <img src="${item.player.screenshot}" alt="Payment Screenshot" onerror="this.src='https://via.placeholder.com/300x120?text=No+Screenshot+Provided'">
             </div>
             <div class="req-btn-row">
-              <button class="btn-approve" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'approved')"><i class="fa-solid fa-check"></i> Approve Entry</button>
+              <button class="btn-approve" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'approved')"><i class="fa-solid fa-check"></i> Approve</button>
               <button class="btn-reject" onclick="handlePlayerStatus('${item.match.id}', '${item.player.uid}', 'rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
             </div>
           `;
@@ -570,11 +605,15 @@
         });
       }
 
-      // Render Tournaments List
+      // Render Matches List (Filtered by Map if selected)
       const matchesContainer = document.getElementById('matchesList');
       matchesContainer.innerHTML = '';
 
-      tournaments.forEach(m => {
+      const filteredMatches = activeMapFilter === "All" 
+        ? tournaments 
+        : tournaments.filter(m => (m.map || "Bermuda").toLowerCase() === activeMapFilter.toLowerCase());
+
+      filteredMatches.forEach(m => {
         const approvedCount = m.players.filter(p => p.status === 'approved').length;
         const item = document.createElement('div');
         item.className = 'req-card';
@@ -583,6 +622,7 @@
             <span>${m.title}</span>
             <span style="color:#10b981;">Rs ${m.prize} Prize</span>
           </div>
+          <span class="map-badge"><i class="fa-solid fa-map-pin"></i> ${m.map || 'Bermuda'}</span>
           <div class="req-details">
             <strong>Timing:</strong> ${m.time}<br>
             <strong>Filled Slots:</strong> ${approvedCount} / ${m.totalSlots}<br>
@@ -597,13 +637,13 @@
       });
     }
 
-    // Modal Handlers
     function openModal() { document.getElementById('matchModal').classList.add('active'); }
     function closeModal() { document.getElementById('matchModal').classList.remove('active'); }
 
     function submitMatch() {
       const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
       const mode = document.getElementById('newMode').value;
+      const map = document.getElementById('newMap').value;
       const time = document.getElementById('newTime').value.trim() || 'TONIGHT';
       const fee = Number(document.getElementById('newFee').value) || 50;
       const prize = Number(document.getElementById('newPrize').value) || 400;
@@ -613,6 +653,7 @@
       tournaments.unshift({
         id: 'm_' + Date.now(),
         title: `${title} (${mode})`,
+        map: map,
         time,
         fee,
         prize,
@@ -624,7 +665,16 @@
 
       saveTournaments(tournaments);
       closeModal();
-      alert('Tournament published successfully!');
+      alert('Tournament ' + map + ' map ke sath publish ho gaya!');
+    }
+
+    function filterByMapPrompt() {
+      const choice = prompt('Kounsa Map Filter karna hai? (Bermuda, Purgatory, Kalahari, Alpine, ya All):', activeMapFilter);
+      if (choice !== null) {
+        activeMapFilter = choice.trim();
+        showSection('matchesSection');
+        renderAll();
+      }
     }
 
     function handlePlayerStatus(matchId, uid, action) {
@@ -701,7 +751,7 @@
     function exportData() {
       const data = localStorage.getItem('mff_tournaments');
       navigator.clipboard.writeText(data || '[]');
-      alert('Mukammal data clipboard me copy ho chuka hai (Backup saved)!');
+      alert('Mukammal data backup ho chuka hai!');
     }
 
     function clearCompletedMatches() {
