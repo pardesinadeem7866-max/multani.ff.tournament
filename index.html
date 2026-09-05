@@ -11,12 +11,11 @@
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- EmailJS Library for Real Gmail OTP -->
+  <!-- EmailJS Library with your live keys -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function(){
-      // Apni EmailJS Public Key yahan enter karein (Optional, test mode bhi active hai)
-      emailjs.init("YOUR_PUBLIC_KEY");
+      emailjs.init("LGmXrOVehjJmHs_3y");
     })();
   </script>
 
@@ -116,7 +115,7 @@
       border-radius: 2px;
     }
 
-    /* Top Hero Card */
+    /* Hero Card */
     .hero-banner-container { padding: 12px 16px; }
     .hero-glass-card {
       background: rgba(255, 255, 255, 0.95);
@@ -420,7 +419,7 @@
     }
     .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
 
-    /* Free Fire Lobby Styles */
+    /* Free Fire Lobby */
     .ff-lobby-container { display: flex; flex-direction: column; gap: 10px; }
     .ff-notice-strip {
       background: rgba(255, 183, 3, 0.08);
@@ -663,12 +662,12 @@
     </div>
 
     <!-- Live Broadcast Pop-up Alert -->
-    <div class="broadcast-toast" id="broadcastToastBar">
+    <div class="broadcast-toast" id="broadcastToastBar" style="display:none;">
       <i class="fa-solid fa-bell"></i>
       <span id="broadcastMsgText">🔔 Room ID & Pass is out! Join fast!</span>
     </div>
 
-    <!-- Top Hero Card -->
+    <!-- Hero Card -->
     <div class="hero-banner-container">
       <div class="hero-glass-card">
         <div class="mine-ribbon">Mine</div>
@@ -684,7 +683,7 @@
       </div>
     </div>
 
-    <!-- Section 1: Matches Section -->
+    <!-- Matches Section -->
     <div id="matchesMainView">
       <div class="filter-track">
         <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
@@ -696,22 +695,12 @@
       <div class="grid-container" id="matchesContainer"></div>
     </div>
 
-    <!-- Section 2: Winners / Hall of Fame Section -->
+    <!-- Winners Section -->
     <div id="winnersMainView" style="display: none; padding: 0 16px 20px;">
       <div style="font-size:13px; font-weight:900; color:var(--gold); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
         <i class="fa-solid fa-trophy"></i> Hall of Fame (Recent Tournament Winners)
       </div>
       <div id="winnersListContainer"></div>
-    </div>
-
-    <!-- SEO Rich Information Footer -->
-    <div style="margin: 22px 16px 12px; padding: 14px; background: rgba(0, 230, 118, 0.05); border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 12px; font-size: 11px; color: #94a3b8; line-height: 1.6;">
-      <h3 style="color: var(--mint-primary); font-size: 12px; margin-bottom: 6px; font-weight: 800;">
-        🇵🇰 Multani.ff - Pakistan's Trusted Esports Tournament Arena
-      </h3>
-      <p>
-        Welcome to <b>Multani.ff Arena</b>. Hum provide karte hain rozana Free Fire Solo, Duo, aur CS Battle Royale tournaments. Sabhi players ke liye 100% Fair Play, Anti-Cheat monitoring aur instant EasyPaisa / JazzCash winning prize cash payouts.
-      </p>
     </div>
 
     <!-- Bottom Nav -->
@@ -742,13 +731,11 @@
 
   </div>
 
-  <!-- ==========================================================
-       LOGIN & SIGN UP GATE MODAL (WITH GMAIL OTP CONFIRMATION)
-       ========================================================== -->
+  <!-- Authentication Gate Modal -->
   <div class="modal-backdrop" id="authGateModal">
     <div class="modal-dialog">
       
-      <!-- Screen 1: Login -->
+      <!-- Login View -->
       <div id="authLoginBlock">
         <div class="modal-title">
           <span>🎮 Multani.ff Login</span>
@@ -772,7 +759,7 @@
         </div>
       </div>
 
-      <!-- Screen 2: Sign Up -->
+      <!-- Signup View -->
       <div id="authSignupBlock" style="display:none;">
         <div class="modal-title">
           <span>📝 Create Account</span>
@@ -805,14 +792,14 @@
         </div>
       </div>
 
-      <!-- Screen 3: Forgot Password (Step 1: Request OTP) -->
+      <!-- Step 1: Send OTP -->
       <div id="authForgotStep1Block" style="display:none;">
         <div class="modal-title">
           <span style="color:#ffd000;"><i class="fa-solid fa-envelope"></i> Verify Your Gmail</span>
           <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
         </div>
         <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">
-          Apna registered Gmail likhein. Confirmation ke liye aapke Gmail par <b>6-digit verification code</b> bheja jayega:
+          Apna registered Gmail likhein. Aapke Gmail inbox me <b>6-digit confirmation code</b> aayega:
         </p>
         <div class="form-ctrl">
           <label>Registered Gmail</label>
@@ -823,11 +810,11 @@
         </button>
 
         <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
-          Wapis Login par jayein: <b style="color:#38bdf8; cursor:pointer;" onclick="switchAuthView('login')">Login Screen</b>
+          Wapis Login: <b style="color:#38bdf8; cursor:pointer;" onclick="switchAuthView('login')">Login Screen</b>
         </div>
       </div>
 
-      <!-- Screen 4: Forgot Password (Step 2: Enter Code & New Password) -->
+      <!-- Step 2: Enter OTP -->
       <div id="authForgotStep2Block" style="display:none;">
         <div class="modal-title">
           <span style="color:var(--mint-primary);"><i class="fa-solid fa-shield-check"></i> Enter Gmail Code</span>
@@ -876,7 +863,6 @@
         <div style="font-size:11px; color:#34d399; margin-top:2px;" id="profDispPhone">WhatsApp: --</div>
       </div>
 
-      <!-- Change Password inside Profile -->
       <div style="background:#080d14; border:1px solid #233148; border-radius:10px; padding:12px; margin-bottom:12px;">
         <div style="font-size:11.5px; font-weight:800; color:var(--gold); margin-bottom:8px;">
           <i class="fa-solid fa-lock"></i> Change Password
@@ -890,17 +876,6 @@
           <input type="password" id="newPasswordInput" placeholder="Naya Password">
         </div>
         <button class="btn-green-action" style="padding:8px;" onclick="handleChangePassword()">Update Password</button>
-      </div>
-
-      <div class="profile-rules-btn" onclick="openRulesModal()">
-        <div class="profile-rules-left">
-          <div class="profile-rules-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">Tournament Fair Play Rules</div>
-            <div style="font-size:10px; color:#a7f3d0;">Must read before joining matches</div>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right" style="color:var(--gold); font-size:12px;"></i>
       </div>
 
       <button onclick="handleLogout()" style="width:100%; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#ef4444; padding:10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; margin-top:12px;">
@@ -956,39 +931,7 @@
     </div>
   </div>
 
-  <!-- Rules Modal -->
-  <div class="modal-backdrop" id="rulesModal">
-    <div class="modal-dialog">
-      <div class="modal-title">
-        <span style="color:#ffb703;"><i class="fa-solid fa-shield-halved"></i> Fair Play Rules</span>
-        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('rulesModal')"></i>
-      </div>
-      <div class="rule-item-box">
-        <div class="rule-bullet-num">1</div>
-        <div>
-          <div style="font-size:12px; font-weight:800; color:#fff;">Level 50+ Real ID Only</div>
-          <div style="font-size:10.5px; color:#94a3b8;">50 level se kam ID match se kick hogi aur fee refund nahi hogi.</div>
-        </div>
-      </div>
-      <div class="rule-item-box">
-        <div class="rule-bullet-num">2</div>
-        <div>
-          <div style="font-size:12px; font-weight:800; color:#fff;">No Hack / Config / Injector</div>
-          <div style="font-size:10.5px; color:#94a3b8;">Auto-headshot, files, injectors use karne par prize cancel hoga.</div>
-        </div>
-      </div>
-      <div class="rule-item-box">
-        <div class="rule-bullet-num">3</div>
-        <div>
-          <div style="font-size:12px; font-weight:800; color:#fff;">No Panel / Emulator</div>
-          <div style="font-size:10.5px; color:#94a3b8;">PC/Emulator aur Panel bilkul ban hain. Pure mobile touch allowed hai.</div>
-        </div>
-      </div>
-      <button class="btn-green-action" style="margin-top:10px;" onclick="closeModal('rulesModal')">I Agree</button>
-    </div>
-  </div>
-
-  <!-- Match View / Lobby Modal -->
+  <!-- Match Lobby Modal -->
   <div class="modal-backdrop" id="joinModal">
     <div class="modal-dialog">
       <div class="modal-title">
@@ -998,10 +941,9 @@
       
       <div id="joinedDetailsContainer" style="display: none;">
         <div class="ff-lobby-container">
-          
           <div class="ff-notice-strip">
             <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold); margin-right:4px;"></i>
-            Har banda apna <b>Real Name, Game UID</b> aur <b>WhatsApp Number</b> theek add kare. Take win prize ke waqt WhatsApp par rabta kiya ja sake.
+            Real Name, Game UID aur WhatsApp theek enter karein prize claim karne ke liye.
           </div>
 
           <div class="ff-lobby-grid">
@@ -1023,7 +965,7 @@
                 <span id="lobbyFeeVal" style="color:var(--mint-primary);">Rs. 0</span>
               </div>
               <div class="ff-room-spec-row">
-                <span>Booyah (Win):</span>
+                <span>Booyah:</span>
                 <span id="lobbyPrizeVal" style="color:var(--gold); font-weight:800;">Rs. 0</span>
               </div>
               <div class="ff-creds-badge-box" id="lobbyCredsBox"></div>
@@ -1037,12 +979,11 @@
               <div id="ffSlotsContainer" style="display:flex; flex-direction:column; gap:5px; margin-top:4px;"></div>
             </div>
           </div>
-
         </div>
       </div>
 
       <div id="pendingNoticeBox" style="display: none; background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000; margin-bottom: 12px;">
-        <i class="fa-solid fa-hourglass-half"></i> Aapka payment screenshot review me hai. Admin verify karega to slot aur room details unlock ho jaengi.
+        <i class="fa-solid fa-hourglass-half"></i> Aapka payment screenshot review me hai. Admin verify karega to slot aur room unlock ho jaenge.
       </div>
 
       <div id="paymentFormBlock" style="display: none;">
@@ -1133,7 +1074,6 @@
     let uploadedWalletProofBase64 = "";
     let activeFilter = "All";
 
-    // OTP Temporary Store
     let currentGeneratedOtp = null;
     let otpTargetEmail = null;
 
@@ -1199,7 +1139,7 @@
         name: name,
         uid: uid,
         phone: phone,
-        walletBalance: 0 // New wallet for new Gmail
+        walletBalance: 0
       };
 
       users.push(newUser);
@@ -1211,7 +1151,7 @@
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`🎉 Welcome ${name}! Naya account ban gaya aur alag wallet create ho gaya.`);
+      alert(`🎉 Welcome ${name}! Naya account ban gaya.`);
     }
 
     function handleUserLogin() {
@@ -1227,7 +1167,7 @@
       const matched = users.find(u => u.email === email && u.password === pass);
 
       if (!matched) {
-        alert("❌ Galat Gmail ya Password! Agar password bhool gaye hain to 'Forgot Password?' par click karein.");
+        alert("❌ Galat Gmail ya Password!");
         return;
       }
 
@@ -1237,12 +1177,10 @@
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`✅ Welcome Back, ${currentUser.name}! Wallet: Rs. ${currentUser.walletBalance || 0}`);
+      alert(`✅ Welcome Back, ${currentUser.name}!`);
     }
 
-    /* ==========================================================
-       GMAIL CONFIRMATION CODE (OTP) SYSTEM
-       ========================================================== */
+    /* Live OTP via connected EmailJS template */
     function sendGmailOtpCode() {
       const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
       if (!email) {
@@ -1253,11 +1191,10 @@
       let users = getAllRegisteredUsers();
       const exists = users.find(u => u.email === email);
       if (!exists) {
-        alert("❌ Yeh Gmail registered nahi hai! Apna theek Gmail check karein.");
+        alert("❌ Yeh Gmail registered nahi hai!");
         return;
       }
 
-      // Generate 6-digit OTP code
       const otp = Math.floor(100000 + Math.random() * 900000);
       currentGeneratedOtp = String(otp);
       otpTargetEmail = email;
@@ -1265,23 +1202,17 @@
       const sendBtn = document.getElementById('btnSendOtp');
       sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending Code...`;
 
-      // EmailJS send email trigger
-      if (typeof emailjs !== 'undefined' && emailjs.send) {
-        emailjs.send("service_id", "template_id", {
-          to_email: email,
-          to_name: exists.name,
-          otp_code: otp
-        }).then(() => {
-          proceedToOtpInput(email);
-        }).catch((err) => {
-          // If EmailJS keys not configured yet, fallback alert so you can still test
-          alert(`🔔 Confirmation Code generated: ${otp}\n(EmailJS setup hone par yeh code direct Gmail par jayega)`);
-          proceedToOtpInput(email);
-        });
-      } else {
-        alert(`🔔 Confirmation Code generated: ${otp}`);
+      emailjs.send("service_eqsd3p8", "Template_fcwtgdh", {
+        email: email,
+        to_name: exists.name,
+        passcode: otp
+      }).then(() => {
+        alert(`✅ Verification code aapke Gmail (${email}) par bhej diya gaya hai! Inbox check karein.`);
         proceedToOtpInput(email);
-      }
+      }).catch((err) => {
+        alert("Email send karne me error aaya: " + JSON.stringify(err));
+        sendBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Verification Code`;
+      });
     }
 
     function proceedToOtpInput(email) {
@@ -1294,21 +1225,16 @@
       const enteredOtp = document.getElementById('otpCodeInput').value.trim();
       const newPass = document.getElementById('otpNewPasswordInput').value.trim();
 
-      if (!enteredOtp) {
-        alert("Gmail par aya hua 6-digit confirmation code likhein!");
-        return;
-      }
-      if (!newPass) {
-        alert("Naya password likhein!");
+      if (!enteredOtp || !newPass) {
+        alert("Code aur naya password dono likhein!");
         return;
       }
 
       if (enteredOtp !== currentGeneratedOtp) {
-        alert("❌ Galat Confirmation Code! Gmail par aya hua 6-digit code check karein.");
+        alert("❌ Galat Confirmation Code! Gmail wala code check karein.");
         return;
       }
 
-      // OTP Verified successfully -> Update password
       let users = getAllRegisteredUsers();
       let user = users.find(u => u.email === otpTargetEmail);
       if (user) {
@@ -1326,7 +1252,7 @@
       document.getElementById('otpCodeInput').value = "";
       document.getElementById('otpNewPasswordInput').value = "";
 
-      alert("🎉 Code Verify Ho Gaya! Naya password kamyabi se set ho chuka hai. Ab Login karein.");
+      alert("🎉 Code verified! Password successfully update ho gaya. Ab Login karein.");
       switchAuthView('login');
     }
 
@@ -1356,17 +1282,16 @@
 
       document.getElementById('curPasswordInput').value = "";
       document.getElementById('newPasswordInput').value = "";
-      alert("✅ Password kamyabi se badal diya gaya hai!");
+      alert("✅ Password update ho gaya!");
     }
 
     function handleLogout() {
-      if (!confirm("Kya aap logout karna chahte hain?")) return;
+      if (!confirm("Logout karna chahte hain?")) return;
       currentUser = null;
       localStorage.removeItem('mff_user');
       closeModal('profileModal');
       updateNavProfile();
       renderMatches();
-      alert("Account logged out!");
     }
 
     function updateNavProfile() {
@@ -1425,15 +1350,9 @@
         : tournaments.filter(m => (m.map || "Bermuda").toLowerCase().includes(activeFilter.toLowerCase()));
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div style="grid-column: span 2; text-align:center; padding: 40px 10px; color:#a7f3d0; font-size:12px;">
-            <i class="fa-solid fa-gamepad" style="font-size:24px; color:var(--mint-primary); margin-bottom:8px; display:block;"></i>
-            Is Map par koi match available nahi hai.
-          </div>`;
+        container.innerHTML = `<div style="grid-column: span 2; text-align:center; padding: 40px 10px; color:#a7f3d0; font-size:12px;">Is Map par koi match available nahi hai.</div>`;
         return;
       }
-
-      let activeRoomReleased = false;
 
       filtered.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === "approved");
@@ -1444,9 +1363,6 @@
         let userRecord = currentUser ? (m.players || []).find(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid) : null;
         if (userRecord) {
           statusText = userRecord.status === "approved" ? "✔ CONFIRMED" : "⌛ PENDING";
-          if (userRecord.status === "approved" && m.roomId) {
-            activeRoomReleased = true;
-          }
         } else if (joinedCount >= m.totalSlots) {
           statusText = "FULL";
         }
@@ -1462,10 +1378,7 @@
             <div class="card-thumb-text"><i class="fa-solid fa-clock"></i> ${m.time} | ${m.map}</div>
           </div>
           <div class="card-body">
-            <div class="card-room-title">
-              <span>🇵🇰</span>
-              <span>${m.title}</span>
-            </div>
+            <div class="card-room-title"><span>🇵🇰</span><span>${m.title}</span></div>
             <div class="card-room-desc">${m.subtitle || m.rules}</div>
             <div class="card-footer-info">
               <span class="fee-badge">Fee: Rs.${m.fee}</span>
@@ -1478,16 +1391,11 @@
         `;
         container.appendChild(card);
       });
-
-      const toast = document.getElementById('broadcastToastBar');
-      toast.style.display = activeRoomReleased ? 'flex' : 'none';
-
-      checkAdminReplies();
     }
 
     function handleCardClick(matchId) {
       if (!currentUser) {
-        alert("Pehle apna Account Login karein ya Register karein!");
+        alert("Pehle Login karein!");
         openProfileManageModal();
         return;
       }
@@ -1498,7 +1406,6 @@
       if (!match) return;
 
       document.getElementById('modalMatchName').innerText = match.title;
-      
       const joinedContainer = document.getElementById('joinedDetailsContainer');
       const pendingNoticeBox = document.getElementById('pendingNoticeBox');
       const paymentFormBlock = document.getElementById('paymentFormBlock');
@@ -1512,9 +1419,7 @@
 
       if (userRecord && userRecord.status === "approved") {
         joinedContainer.style.display = "block";
-
-        const fallbackDp = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80";
-        document.getElementById('lobbyCoverImg').src = match.coverImage || fallbackDp;
+        document.getElementById('lobbyCoverImg').src = match.coverImage || matchThumbnails[0];
         document.getElementById('lobbyMapBadge').innerText = (match.map || "BERMUDA").toUpperCase();
         document.getElementById('lobbyModeVal').innerText = match.subtitle || "Battle";
         document.getElementById('lobbyTimeVal').innerText = match.time || "--";
@@ -1524,7 +1429,7 @@
         const credsBox = document.getElementById('lobbyCredsBox');
         if (match.roomId && match.roomPass) {
           credsBox.innerHTML = `
-            <div style="color:var(--mint-primary); font-weight:800; font-size:9px; margin-bottom:4px;"><i class="fa-solid fa-key"></i> ROOM DETAILS UNLOCKED</div>
+            <div style="color:var(--mint-primary); font-weight:800; font-size:9px; margin-bottom:4px;"><i class="fa-solid fa-key"></i> UNLOCKED</div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
               <span>ID: <b style="color:#00f0ff;">${match.roomId}</b></span>
               <button class="copy-btn-chip" onclick="copyToClipboard('${match.roomId}', 'Room ID')"><i class="fa-solid fa-copy"></i> Copy</button>
@@ -1535,56 +1440,33 @@
             </div>
           `;
         } else {
-          credsBox.innerHTML = `
-            <div style="color:#ffd000; font-size:9px; line-height:1.2;">
-              <i class="fa-solid fa-lock"></i> Match se thori der pehle ID & PW update hoga.
-            </div>
-          `;
+          credsBox.innerHTML = `<div style="color:#ffd000; font-size:9px;"><i class="fa-solid fa-lock"></i> Match se thori der pehle ID & PW update hoga.</div>`;
         }
 
         const totalSlots = match.totalSlots || 12;
         document.getElementById('lobbySlotsFraction').innerText = `${approvedPlayers.length}/${totalSlots}`;
-        
         const slotsContainer = document.getElementById('ffSlotsContainer');
         slotsContainer.innerHTML = "";
 
-        const isCS = (match.subtitle || match.title || "").toLowerCase().includes("clash squad") || (match.subtitle || "").includes("4v4");
-
         for (let i = 0; i < totalSlots; i++) {
-          if (isCS && i === 0) {
-            slotsContainer.innerHTML += `<div class="team-slot-heading team-heading-1">Team 1 (Slots 1-4)</div>`;
-          } else if (isCS && i === 4) {
-            slotsContainer.innerHTML += `<div class="team-slot-heading team-heading-2">Team 2 (Slots 5-8)</div>`;
-          }
-
           const player = approvedPlayers[i];
           const slotRow = document.createElement('div');
-          
           if (player) {
             const isMe = (player.email && player.email === currentUser.email) || player.uid === currentUser.uid;
             slotRow.className = "ff-slot-bar occupied";
             slotRow.innerHTML = `
               <div class="ff-slot-num">${i + 1}</div>
               <div class="ff-player-details">
-                <div class="ff-player-name">
-                  <i class="fa-solid fa-user-ninja" style="font-size:10px; color:var(--gold);"></i>
-                  ${player.name} ${isMe ? '<span style="color:var(--mint-primary); font-size:9px;">(You)</span>' : ''}
-                </div>
-                <div class="ff-player-uid">
-                  <i class="fa-solid fa-id-card" style="font-size:8.5px;"></i> UID: ${player.uid}
-                </div>
+                <div class="ff-player-name"><i class="fa-solid fa-user-ninja" style="font-size:10px; color:var(--gold);"></i> ${player.name} ${isMe ? '<span style="color:var(--mint-primary); font-size:9px;">(You)</span>' : ''}</div>
+                <div class="ff-player-uid">UID: ${player.uid}</div>
               </div>
             `;
           } else {
             slotRow.className = "ff-slot-bar";
-            slotRow.innerHTML = `
-              <div class="ff-slot-num">${i + 1}</div>
-              <div class="ff-slot-empty">Empty Slot</div>
-            `;
+            slotRow.innerHTML = `<div class="ff-slot-num">${i + 1}</div><div class="ff-slot-empty">Empty Slot</div>`;
           }
           slotsContainer.appendChild(slotRow);
         }
-
       } else if (userRecord && userRecord.status === "pending") {
         pendingNoticeBox.style.display = "block";
       } else {
@@ -1592,9 +1474,8 @@
         uploadedScreenshotBase64 = "";
         document.getElementById('ssInput').value = "";
         document.getElementById('ssPreview').style.display = "none";
-
         const userBal = currentUser?.walletBalance || 0;
-        document.getElementById('btnPayWallet').innerText = `⚡ Pay via Wallet Balance (Rs. ${match.fee} | Bal: Rs. ${userBal})`;
+        document.getElementById('btnPayWallet').innerText = `⚡ Pay via Wallet (Rs. ${match.fee} | Bal: Rs. ${userBal})`;
       }
 
       document.getElementById('joinModal').style.display = "flex";
@@ -1603,8 +1484,6 @@
     function copyToClipboard(text, label) {
       navigator.clipboard.writeText(text).then(() => {
         alert(`✅ ${label} Copied: ${text}`);
-      }).catch(() => {
-        alert(`Copied: ${text}`);
       });
     }
 
@@ -1615,8 +1494,7 @@
         return;
       }
       updateNavProfile();
-      const bal = currentUser.walletBalance || 0;
-      document.getElementById('modalWalletBal').innerText = bal;
+      document.getElementById('modalWalletBal').innerText = currentUser.walletBalance || 0;
       document.getElementById('walletModal').style.display = 'flex';
     }
 
@@ -1636,12 +1514,8 @@
 
     function submitWalletDepositProof() {
       const amount = Number(document.getElementById('walletDepositAmount').value);
-      if (!amount || amount <= 0) {
-        alert("Sahi Deposit amount likhein!");
-        return;
-      }
-      if (!uploadedWalletProofBase64) {
-        alert("Payment screenshot attach karein!");
+      if (!amount || amount <= 0 || !uploadedWalletProofBase64) {
+        alert("Amount aur payment proof screenshot select karein!");
         return;
       }
 
@@ -1663,7 +1537,7 @@
       document.getElementById('walletDepositAmount').value = "";
       document.getElementById('walletSsInput').value = "";
       document.getElementById('walletSsPreview').style.display = "none";
-      alert("✅ Deposit proof submit ho gaya! Admin verify karte hi is Gmail me coins transfer ho jayenge.");
+      alert("✅ Deposit proof submit ho gaya!");
     }
 
     function payViaWalletAction() {
@@ -1677,7 +1551,7 @@
       const matchFee = Number(match.fee || 0);
 
       if (userBal < matchFee) {
-        alert(`❌ Is Gmail account me balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}.`);
+        alert(`❌ Wallet balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}.`);
         return;
       }
 
@@ -1707,71 +1581,50 @@
       closeModal('joinModal');
       updateNavProfile();
       renderMatches();
-      alert("🎉 Slot successfully confirm ho gaya! Room Lobby open kar sakte hain.");
+      alert("🎉 Slot confirm ho gaya!");
     }
 
     function renderWinners() {
       const winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [
-        { name: "MANDOOR_FF", uid: "3239454397", match: "Friday Match Room (CS)", prize: "Rs. 500", date: "Recent" },
-        { name: "Prince_Multani", uid: "1874920193", match: "Kalahari Solo Battle", prize: "Rs. 300", date: "Recent" }
+        { name: "MANDOOR_FF", uid: "3239454397", match: "Friday Match Room (CS)", prize: "Rs. 500" }
       ];
 
       const container = document.getElementById('winnersListContainer');
       container.innerHTML = "";
-
-      if (winners.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">Abhi koi winner announce nahi hua hai.</div>`;
-        return;
-      }
-
       winners.forEach(w => {
         const card = document.createElement('div');
         card.className = "winner-card";
         card.innerHTML = `
           <div class="winner-badge-circle"><i class="fa-solid fa-crown"></i></div>
-          <div style="flex:1;">
+          <div>
             <div style="font-size:13px; font-weight:900; color:#fff;">${w.name}</div>
-            <div style="font-size:10px; color:#38bdf8; font-family:monospace;"><i class="fa-solid fa-id-badge"></i> UID: ${w.uid}</div>
-            <div style="font-size:10.5px; color:#cbd5e1; margin-top:2px;">${w.match}</div>
-            <div style="font-size:11px; font-weight:800; color:var(--gold); margin-top:3px;"><i class="fa-solid fa-award"></i> Won: ${w.prize}</div>
+            <div style="font-size:10px; color:#38bdf8;">UID: ${w.uid}</div>
+            <div style="font-size:10.5px; color:#cbd5e1;">${w.match}</div>
+            <div style="font-size:11px; font-weight:800; color:var(--gold);"><i class="fa-solid fa-award"></i> Won: ${w.prize}</div>
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    function openRulesModal() {
-      closeModal('profileModal');
-      document.getElementById('rulesModal').style.display = 'flex';
-    }
-
     function openEventsModal() {
       const gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
       const container = document.getElementById('eventsListContainer');
       container.innerHTML = "";
-
       if (gList.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding: 25px; color:#94a3b8; font-size:12px;">
-            <i class="fa-solid fa-gift" style="font-size:28px; color:#64748b; margin-bottom:8px; display:block;"></i>
-            Filhal koi active giveaway nahi hai.
-          </div>`;
+        container.innerHTML = `<div style="text-align:center; padding: 25px; color:#94a3b8; font-size:12px;">Koi active giveaway nahi hai.</div>`;
       } else {
         gList.forEach(ev => {
           const card = document.createElement('div');
           card.className = "event-card";
           card.innerHTML = `
-            <div class="event-card-header">
-              <span class="event-card-title">${ev.title}</span>
-              <span class="event-badge"><i class="fa-solid fa-clock"></i> ${ev.endDate}</span>
-            </div>
+            <div class="event-card-header"><span class="event-card-title">${ev.title}</span><span class="event-badge">${ev.endDate}</span></div>
             <div class="event-desc">${ev.desc}</div>
-            <div class="event-reward-tag"><i class="fa-solid fa-trophy"></i> Reward: ${ev.reward}</div>
+            <div class="event-reward-tag">Reward: ${ev.reward}</div>
           `;
           container.appendChild(card);
         });
       }
-
       document.getElementById('eventsModal').style.display = 'flex';
     }
 
@@ -1796,16 +1649,14 @@
 
     function submitJoinWithSS() {
       if (!uploadedScreenshotBase64) {
-        alert("Payment screenshot select karein!");
+        alert("Screenshot select karein!");
         return;
       }
-
       let allTournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
       const match = allTournaments.find(m => m.id === selectedMatchId);
       if (!match) return;
 
       if (!match.players) match.players = [];
-
       match.players.push({
         name: currentUser.name,
         email: currentUser.email,
@@ -1819,7 +1670,7 @@
       localStorage.setItem('mff_tournaments', JSON.stringify(allTournaments));
       closeModal('joinModal');
       renderMatches();
-      alert("Screenshot submit ho gaya! Admin verify karega.");
+      alert("Screenshot submit ho gaya!");
     }
 
     function openSupportModal() {
@@ -1834,15 +1685,11 @@
     function renderPlayerChatHistory() {
       const historyBox = document.getElementById('playerChatHistory');
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-
-      let userMsgs = currentUser 
-        ? supportMsgs.filter(m => (m.email && m.email === currentUser.email) || m.uid === currentUser.uid || (m.contact && m.contact.includes(currentUser.uid)) || m.name === currentUser.name)
-        : [];
-
+      let userMsgs = currentUser ? supportMsgs.filter(m => (m.email && m.email === currentUser.email) || m.uid === currentUser.uid) : [];
       userMsgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
       if (userMsgs.length === 0) {
-        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; margin:auto;">Owner se rabta karne ke liye yahan message type karein.</div>`;
+        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; margin:auto;">Owner se rabta karne ke liye yahan message likhein.</div>`;
         return;
       }
 
@@ -1856,7 +1703,7 @@
         if (msg.adminReply) {
           const aBubble = document.createElement('div');
           aBubble.className = "chat-bubble-admin";
-          aBubble.innerHTML = `<div style="font-size:10px; font-weight:800; color:var(--mint-primary); margin-bottom:3px;"><i class="fa-solid fa-crown"></i> Owner Reply</div><div>${msg.adminReply}</div>`;
+          aBubble.innerHTML = `<div style="font-size:10px; font-weight:800; color:var(--mint-primary);"><i class="fa-solid fa-crown"></i> Owner Reply</div><div>${msg.adminReply}</div>`;
           historyBox.appendChild(aBubble);
         }
       });
@@ -1870,14 +1717,7 @@
     function submitSupportMessage() {
       const input = document.getElementById('suppMsg');
       const msg = input.value.trim();
-      if (!msg) return;
-
-      if (!currentUser) {
-        alert("Pehle login karein!");
-        closeModal('supportModal');
-        openProfileManageModal();
-        return;
-      }
+      if (!msg || !currentUser) return;
 
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
       supportMsgs.push({
@@ -1895,20 +1735,6 @@
       localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
       input.value = "";
       renderPlayerChatHistory();
-      checkAdminReplies();
-    }
-
-    function checkAdminReplies() {
-      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      const dot = document.getElementById('supportNotifyDot');
-      if (!currentUser) {
-        dot.style.display = 'none';
-        return;
-      }
-      const hasReply = supportMsgs.some(m => 
-        ((m.email && m.email === currentUser.email) || m.uid === currentUser.uid || (m.contact && m.contact.includes(currentUser.uid)) || m.name === currentUser.name) && m.adminReply
-      );
-      dot.style.display = hasReply ? 'flex' : 'none';
     }
 
     function closeModal(id) {
