@@ -14,22 +14,16 @@
       --light-card-bg: #ffffff;
       --text-dark: #1e293b;
       --text-muted: #64748b;
-      --grid-bg: #f8fafc;
-      --green-badge: #10b981;
-      --danger-badge: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background: #0c111a; color: #fff; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 90px; }
-    
-    .app-shell { width: 100%; max-width: 440px; background: #0b0f17; min-height: 100vh; position: relative; overflow-x: hidden; }
+    .app-shell { width: 100%; max-width: 440px; background: #0b0f17; min-height: 100vh; position: relative; }
 
-    /* Top App Bar */
     .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; font-size: 13px; color: #94a3b8; }
     .status-left { font-weight: 600; color: #f1f5f9; font-size: 14px; }
     .status-right i { margin-left: 8px; font-size: 12px; }
 
-    /* Main Balance Card */
     .vault-card {
       background: var(--card-gradient);
       border-radius: 26px;
@@ -41,7 +35,7 @@
     }
     .vault-top { display: flex; justify-content: space-between; align-items: flex-start; }
     .vault-label { font-size: 12px; color: #cbd5e1; opacity: 0.85; margin-bottom: 4px; }
-    .vault-amount { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .vault-amount { font-size: 32px; font-weight: 800; color: #fff; }
     .vault-amount span { font-size: 18px; font-weight: 500; margin-right: 4px; color: #f472b6; }
     
     .vault-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
@@ -54,9 +48,6 @@
       font-weight: 700;
       font-size: 12px;
       cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 12px rgba(217, 27, 117, 0.4);
     }
     .btn-action-secondary {
       background: transparent;
@@ -69,15 +60,8 @@
       cursor: pointer;
     }
     .vault-sync { font-size: 10px; color: #cbd5e1; opacity: 0.7; margin-top: 14px; display: flex; align-items: center; gap: 6px; }
-    .vault-sync i { cursor: pointer; }
 
-    /* 3-Metrics Row */
-    .metrics-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin: 0 16px 14px 16px;
-    }
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 16px 14px 16px; }
     .metric-card {
       background: #ffffff;
       border-radius: 18px;
@@ -87,14 +71,11 @@
       flex-direction: column;
       justify-content: space-between;
       min-height: 96px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .metric-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; color: #475569; }
-    .metric-header i { font-size: 12px; color: #94a3b8; }
     .metric-val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
     .metric-sub { font-size: 10px; color: #64748b; }
 
-    /* View All Pill */
     .pill-center { display: flex; justify-content: center; margin-bottom: 14px; }
     .view-all-pill {
       background: linear-gradient(90deg, #dcfce7, #ccfbf1);
@@ -110,30 +91,6 @@
       gap: 6px;
     }
 
-    /* Horizontal Quick Tags */
-    .promo-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 0 16px 14px 16px;
-      scrollbar-width: none;
-    }
-    .promo-scroll::-webkit-scrollbar { display: none; }
-    .promo-chip {
-      background: #fdf2f8;
-      color: #9d174d;
-      border: 1px solid #fbcfe8;
-      padding: 8px 14px;
-      border-radius: 24px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* 8-Grid Quick Actions */
     .action-grid-box {
       background: #ffffff;
       border-radius: 24px;
@@ -142,18 +99,8 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       row-gap: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    .grid-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      position: relative;
-    }
+    .grid-btn { display: flex; flex-direction: column; align-items: center; background: transparent; border: none; cursor: pointer; position: relative; }
     .grid-icon-circle {
       width: 44px;
       height: 44px;
@@ -165,27 +112,13 @@
       color: #0f172a;
       font-size: 16px;
       margin-bottom: 6px;
-      transition: transform 0.2s;
     }
-    .grid-btn:active .grid-icon-circle { transform: scale(0.92); }
-    .grid-label { font-size: 10px; font-weight: 600; color: #334155; line-height: 1.2; width: 68px; }
-    .grid-badge {
-      position: absolute;
-      top: -4px;
-      right: 12px;
-      background: #ef4444;
-      color: #fff;
-      font-size: 8px;
-      padding: 2px 5px;
-      border-radius: 10px;
-      font-weight: bold;
-    }
+    .grid-label { font-size: 10px; font-weight: 600; color: #334155; line-height: 1.2; width: 68px; text-align: center; }
+    .grid-badge { position: absolute; top: -4px; right: 12px; background: #ef4444; color: #fff; font-size: 8px; padding: 2px 5px; border-radius: 10px; font-weight: bold; }
 
-    /* Sections Container */
     .content-area { padding: 0 16px; margin-bottom: 20px; }
     .section-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     
-    /* Cards UI */
     .req-card {
       background: #131b28;
       border: 1px solid #1e293b;
@@ -202,28 +135,9 @@
     .btn-reject { flex: 1; background: #ef4444; color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
     .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-    .map-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      background: rgba(245, 158, 11, 0.15);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 700;
-    }
-    .rules-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 600;
-    }
+    .map-badge { padding: 2px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 10px; font-weight: 700; }
+    .rules-badge { padding: 2px 8px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; font-size: 10px; font-weight: 600; }
 
-    /* Modal Sheet */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -248,7 +162,7 @@
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea {
+    .form-group input, .form-group select {
       width: 100%;
       background: #1e293b;
       border: 1px solid #334155;
@@ -271,7 +185,6 @@
       cursor: pointer;
     }
 
-    /* Bottom Navigation */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -293,11 +206,10 @@
       align-items: center;
       justify-content: center;
       color: #1e293b;
-      text-decoration: none;
-      font-size: 10px;
-      font-weight: 700;
       background: transparent;
       border: none;
+      font-size: 10px;
+      font-weight: 700;
       cursor: pointer;
     }
     .nav-item.active-pill {
@@ -307,17 +219,13 @@
       border-radius: 25px;
       flex-direction: row;
       gap: 6px;
-      font-size: 11px;
     }
-    .nav-item i { font-size: 16px; margin-bottom: 2px; }
-    .nav-item.active-pill i { margin-bottom: 0; font-size: 13px; }
   </style>
 </head>
 <body>
 
   <div class="app-shell">
     
-    <!-- Top System Header -->
     <div class="top-bar">
       <div class="status-left"><i class="fa-solid fa-fire" style="color:#ef4444; margin-right:5px;"></i>Multani.ff Admin</div>
       <div class="status-right">
@@ -327,7 +235,6 @@
       </div>
     </div>
 
-    <!-- Vault Card -->
     <div class="vault-card">
       <div class="vault-top">
         <div>
@@ -345,51 +252,31 @@
       </div>
     </div>
 
-    <!-- 3 Metrics Row -->
     <div class="metrics-row">
       <div class="metric-card">
-        <div class="metric-header">
-          <span>Active</span>
-          <i class="fa-solid fa-gamepad"></i>
-        </div>
+        <div class="metric-header"><span>Active</span><i class="fa-solid fa-gamepad"></i></div>
         <div class="metric-val" id="metricMatches">0</div>
         <div class="metric-sub">Live Matches</div>
       </div>
-
       <div class="metric-card">
-        <div class="metric-header">
-          <span>Players</span>
-          <i class="fa-solid fa-users"></i>
-        </div>
+        <div class="metric-header"><span>Players</span><i class="fa-solid fa-users"></i></div>
         <div class="metric-val" id="metricPlayers">0</div>
         <div class="metric-sub">Approved Slots</div>
       </div>
-
       <div class="metric-card">
-        <div class="metric-header">
-          <span>Requests</span>
-          <i class="fa-solid fa-clock-rotate-left"></i>
-        </div>
+        <div class="metric-header"><span>Requests</span><i class="fa-solid fa-clock-rotate-left"></i></div>
         <div class="metric-val" id="metricPending">0</div>
         <div class="metric-sub">Needs Approval</div>
       </div>
     </div>
 
-    <!-- Center View All Pill -->
     <div class="pill-center">
       <button class="view-all-pill" onclick="showSection('matchesSection')">
         View All Tournaments <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
 
-    <!-- Horizontal Quick Tags -->
-    <div class="promo-scroll">
-      <div class="promo-chip"><i class="fa-solid fa-bell"></i> Instant Push Room ID</div>
-      <div class="promo-chip"><i class="fa-solid fa-trophy"></i> Booyah Prize Automation</div>
-      <div class="promo-chip"><i class="fa-solid fa-map-location-dot"></i> Maps & Rules Active</div>
-    </div>
-
-    <!-- 8 Quick Action Grid -->
+    <!-- Quick Action Grid -->
     <div class="action-grid-box">
       <button class="grid-btn" onclick="openModal()">
         <div class="grid-icon-circle"><i class="fa-solid fa-circle-plus"></i></div>
@@ -422,18 +309,29 @@
         <span class="grid-label">Filter Map</span>
       </button>
 
+      <!-- HELP DESK WITH NOTIFICATION BADGE -->
+      <button class="grid-btn" onclick="showSection('supportSection')">
+        <span class="grid-badge" id="badgeSupport" style="display:none; background:#25d366;">0</span>
+        <div class="grid-icon-circle"><i class="fa-solid fa-headset" style="color:#25d366;"></i></div>
+        <span class="grid-label">Help Messages</span>
+      </button>
+
       <button class="grid-btn" onclick="clearCompletedMatches()">
         <div class="grid-icon-circle"><i class="fa-solid fa-trash-can"></i></div>
         <span class="grid-label">Cleanup Old</span>
       </button>
-
-      <button class="grid-btn" onclick="alert('Multani.ff Admin Support Active')">
-        <div class="grid-icon-circle"><i class="fa-solid fa-headset"></i></div>
-        <span class="grid-label">Help Desk</span>
-      </button>
     </div>
 
-    <!-- Dynamic Section: Pending Approval -->
+    <!-- Section 1: Support / Help with Owner Messages -->
+    <div class="content-area" id="supportSection" style="display:none;">
+      <div class="section-title">
+        <span><i class="fa-solid fa-comments" style="color:#25d366; margin-right:6px;"></i>Player Support Messages</span>
+        <button onclick="clearAllSupportMsgs()" style="background:#ef4444; border:none; color:#fff; font-size:10px; padding:3px 8px; border-radius:4px; cursor:pointer;">Clear All</button>
+      </div>
+      <div id="supportCardsList"></div>
+    </div>
+
+    <!-- Section 2: Pending Approval -->
     <div class="content-area" id="pendingSection">
       <div class="section-title">
         <span>Payment Approvals (Pending)</span>
@@ -442,7 +340,7 @@
       <div id="pendingCardsList"></div>
     </div>
 
-    <!-- Dynamic Section: Tournaments List -->
+    <!-- Section 3: Tournaments List -->
     <div class="content-area" id="matchesSection" style="display:none;">
       <div class="section-title">
         <span>Live & Upcoming Matches</span>
@@ -451,7 +349,7 @@
       <div id="matchesList"></div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Bar -->
     <div class="bottom-bar">
       <button class="nav-item active-pill" onclick="switchNav(this, 'all')">
         <i class="fa-solid fa-house"></i>
@@ -465,27 +363,25 @@
         <i class="fa-solid fa-inbox"></i>
         <span>Requests</span>
       </button>
-      <button class="nav-item" onclick="openModal()">
-        <i class="fa-solid fa-gear"></i>
-        <span>New</span>
+      <button class="nav-item" onclick="switchNav(this, 'support')">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Help Msgs</span>
       </button>
     </div>
 
   </div>
 
-  <!-- Create Match Bottom Modal -->
+  <!-- Create Match Modal -->
   <div class="modal-overlay" id="matchModal">
     <div class="modal-sheet">
       <div class="modal-title">
         <span>+ Naya Tournament Banayein</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal()"></i>
       </div>
-      
       <div class="form-group">
         <label>Tournament Title</label>
         <input type="text" id="newTitle" placeholder="MATCH #3 (CS 4V4)">
       </div>
-
       <div class="form-group">
         <label>Match Type / Mode</label>
         <select id="newMode">
@@ -495,8 +391,6 @@
           <option value="Clash Squad 4v4">Clash Squad 4v4</option>
         </select>
       </div>
-
-      <!-- Map Selection -->
       <div class="form-group">
         <label><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Select Map (Free Fire)</label>
         <select id="newMap">
@@ -508,33 +402,26 @@
           <option value="Clash Squad Arena">Clash Squad Arena</option>
         </select>
       </div>
-
-      <!-- Rules & Instructions Field -->
       <div class="form-group">
-        <label><i class="fa-solid fa-scroll" style="color:#38bdf8;"></i> Tournament Rules & Instructions</label>
-        <input type="text" id="newRules" placeholder="e.g. Gun Attributes Off, No Grenade, Solo Only" value="Gun Attributes Off | Headshot Only">
+        <label><i class="fa-solid fa-scroll" style="color:#38bdf8;"></i> Tournament Rules</label>
+        <input type="text" id="newRules" placeholder="e.g. Gun Attributes Off, No Grenade" value="Gun Attributes Off | Headshot Only">
       </div>
-
       <div class="form-group">
         <label>Scheduled Time</label>
         <input type="text" id="newTime" placeholder="Tonight 09:30 PM">
       </div>
-
       <div class="form-group">
         <label>Entry Fee (Rs)</label>
         <input type="number" id="newFee" placeholder="50">
       </div>
-
       <div class="form-group">
         <label>Prize Pool (Rs)</label>
         <input type="number" id="newPrize" placeholder="400">
       </div>
-
       <div class="form-group">
         <label>Total Slots</label>
         <input type="number" id="newSlots" value="12">
       </div>
-
       <button class="btn-submit-modal" onclick="submitMatch()">Publish Tournament</button>
     </div>
   </div>
@@ -574,7 +461,6 @@
         });
       });
 
-      // Update Header Stats
       document.getElementById('vaultRevenue').innerText = totalRevenue.toLocaleString();
       document.getElementById('metricMatches').innerText = tournaments.length;
       document.getElementById('metricPlayers').innerText = totalApprovedPlayers;
@@ -582,6 +468,40 @@
       document.getElementById('countPending').innerText = `${pendingList.length} Requests`;
       document.getElementById('badgePending').innerText = pendingList.length;
       document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
+
+      // Render Help Messages
+      const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      const supportContainer = document.getElementById('supportCardsList');
+      const badgeSupport = document.getElementById('badgeSupport');
+      
+      if (supportMsgs.length > 0) {
+        badgeSupport.style.display = 'block';
+        badgeSupport.innerText = supportMsgs.length;
+      } else {
+        badgeSupport.style.display = 'none';
+      }
+
+      supportContainer.innerHTML = '';
+      if (supportMsgs.length === 0) {
+        supportContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b; font-size:12px; background:#131b28; border-radius:14px;">Koi naya help message nahi hai.</div>`;
+      } else {
+        supportMsgs.forEach((msg, idx) => {
+          const mCard = document.createElement('div');
+          mCard.className = 'req-card';
+          mCard.innerHTML = `
+            <div class="req-card-top" style="color:#25d366;">
+              <span><i class="fa-solid fa-user"></i> ${msg.name}</span>
+              <span style="font-size:10px; color:#94a3b8;">${msg.time}</span>
+            </div>
+            <div class="req-details">
+              <strong>Contact:</strong> ${msg.contact}<br>
+              <strong>Message:</strong> <div style="background:#090d14; padding:8px; border-radius:6px; margin-top:4px; color:#fff; border-left:2px solid #25d366;">${msg.message}</div>
+            </div>
+            <button class="btn-reject" style="width:100%;" onclick="deleteSupportMsg(${idx})"><i class="fa-solid fa-check"></i> Mark Resolved / Delete</button>
+          `;
+          supportContainer.appendChild(mCard);
+        });
+      }
 
       // Render Pending Verification Cards
       const reqContainer = document.getElementById('pendingCardsList');
@@ -659,6 +579,20 @@
       });
     }
 
+    function deleteSupportMsg(idx) {
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      supportMsgs.splice(idx, 1);
+      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
+      renderAll();
+    }
+
+    function clearAllSupportMsgs() {
+      if (confirm('Tamam messages clear karne hain?')) {
+        localStorage.removeItem('mff_support_msgs');
+        renderAll();
+      }
+    }
+
     function openModal() { document.getElementById('matchModal').classList.add('active'); }
     function closeModal() { document.getElementById('matchModal').classList.remove('active'); }
 
@@ -666,7 +600,7 @@
       const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
       const mode = document.getElementById('newMode').value;
       const map = document.getElementById('newMap').value;
-      const rules = document.getElementById('newRules').value.trim() || 'Standard FF Rules';
+      const rules = document.getElementById('newRules').value.trim() || 'Standard Rules';
       const time = document.getElementById('newTime').value.trim() || 'TONIGHT';
       const fee = Number(document.getElementById('newFee').value) || 50;
       const prize = Number(document.getElementById('newPrize').value) || 400;
@@ -689,7 +623,7 @@
 
       saveTournaments(tournaments);
       closeModal();
-      alert('Tournament publish ho gaya Rules aur Map ke sath!');
+      alert('Tournament publish ho gaya!');
     }
 
     function filterByMapPrompt() {
@@ -721,9 +655,9 @@
       const match = tournaments.find(m => m.id === matchId);
       if (!match) return;
 
-      const rId = prompt('Custom Room ID darj karein:', match.roomId || '');
+      const rId = prompt('Room ID darj karein:', match.roomId || '');
       if (rId === null) return;
-      const rPass = prompt('Custom Room Password darj karein:', match.roomPass || '');
+      const rPass = prompt('Room Password darj karein:', match.roomPass || '');
       if (rPass === null) return;
 
       match.roomId = rId;
@@ -746,17 +680,18 @@
     }
 
     function banPlayerPrompt() {
-      const uid = prompt('Ban karne ke liye Player ki Free Fire UID likhein:');
+      const uid = prompt('Player ki Free Fire UID likhein:');
       if (!uid) return;
       let bans = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
       bans.push(uid);
       localStorage.setItem('mff_banned_uids', JSON.stringify(bans));
-      alert(`UID ${uid} ko blacklist kar diya gaya hai!`);
+      alert(`UID ${uid} ban ho chuki hai!`);
     }
 
     function showSection(id) {
       document.getElementById('pendingSection').style.display = (id === 'pendingSection') ? 'block' : 'none';
       document.getElementById('matchesSection').style.display = (id === 'matchesSection') ? 'block' : 'none';
+      document.getElementById('supportSection').style.display = (id === 'supportSection') ? 'block' : 'none';
     }
 
     function switchNav(btn, view) {
@@ -765,21 +700,24 @@
       if (view === 'all') {
         document.getElementById('pendingSection').style.display = 'block';
         document.getElementById('matchesSection').style.display = 'block';
+        document.getElementById('supportSection').style.display = 'none';
       } else if (view === 'matches') {
         showSection('matchesSection');
       } else if (view === 'pending') {
         showSection('pendingSection');
+      } else if (view === 'support') {
+        showSection('supportSection');
       }
     }
 
     function exportData() {
       const data = localStorage.getItem('mff_tournaments');
       navigator.clipboard.writeText(data || '[]');
-      alert('Mukammal data backup ho chuka hai!');
+      alert('Backup copied!');
     }
 
     function clearCompletedMatches() {
-      if (confirm('Kya aap tamam empty/purane matches clear karna chahte hain?')) {
+      if (confirm('Matches clear karne hain?')) {
         saveTournaments([]);
       }
     }
