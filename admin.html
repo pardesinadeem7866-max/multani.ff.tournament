@@ -168,7 +168,7 @@
     .user-title { font-size: 13px; font-weight: 700; color: #f8fafc; display: flex; justify-content: space-between; }
     .user-lastmsg { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
 
-    /* FULLSCREEN CHAT MODAL (WHATSAPP STYLE) */
+    /* FULLSCREEN CHAT MODAL */
     .chat-modal-overlay {
       position: fixed;
       inset: 0;
@@ -283,7 +283,7 @@
     .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #f8fafc; display: flex; justify-content: space-between; }
     .form-group { margin-bottom: 10px; }
     .form-group label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       background: #1e293b;
       border: 1px solid #334155;
@@ -404,9 +404,10 @@
         <span class="grid-label">Create Match</span>
       </button>
 
-      <button class="grid-btn" onclick="promptRoomCreds()">
-        <div class="grid-icon-circle"><i class="fa-solid fa-key"></i></div>
-        <span class="grid-label">Set Room ID/Pass</span>
+      <!-- Replaced with Giveaways Button -->
+      <button class="grid-btn" onclick="openAdminGiveawayModal()">
+        <div class="grid-icon-circle"><i class="fa-solid fa-gift" style="color:#ef4444;"></i></div>
+        <span class="grid-label">Giveaways</span>
       </button>
 
       <button class="grid-btn" onclick="showSection('pendingSection')">
@@ -572,6 +573,38 @@
     </div>
   </div>
 
+  <!-- Giveaways Manager Modal -->
+  <div class="modal-overlay" id="adminGiveawayModal">
+    <div class="modal-sheet">
+      <div class="modal-title">
+        <span style="color:#ef4444;"><i class="fa-solid fa-gift" style="margin-right:6px;"></i>Manage Giveaways</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAdminGiveawayModal()"></i>
+      </div>
+      <div class="form-group">
+        <label>Giveaway Title</label>
+        <input type="text" id="admGiveawayTitle" placeholder="e.g. Weekly 1000 Diamonds Giveaway">
+      </div>
+      <div class="form-group">
+        <label>Reward / Prize</label>
+        <input type="text" id="admGiveawayReward" placeholder="e.g. 1,000 Diamonds ya Rs. 1,000">
+      </div>
+      <div class="form-group">
+        <label>End Time / Expiry</label>
+        <input type="text" id="admGiveawayTime" placeholder="e.g. Sunday 10:00 PM">
+      </div>
+      <div class="form-group">
+        <label>Rules / Winner Details</label>
+        <textarea id="admGiveawayDesc" placeholder="e.g. Top 3 Fraggers ko giveaway reward transfer hoga." style="height:60px;"></textarea>
+      </div>
+      <button class="btn-submit-modal" onclick="saveAdminGiveaway()" style="background:linear-gradient(90deg, #10b981, #059669); color:#022c22;">Publish Giveaway</button>
+
+      <div style="margin-top:16px; border-top:1px solid #334155; padding-top:12px;">
+        <div style="font-size:12px; font-weight:700; color:#f59e0b; margin-bottom:8px;">Live Giveaways:</div>
+        <div id="admGiveawayActiveContainer"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let activePlayerUid = null;
 
@@ -617,10 +650,8 @@
       document.getElementById('badgePending').innerText = pendingList.length;
       document.getElementById('countMatches').innerText = `${tournaments.length} Active`;
 
-      // Group Messages by Player/UID
       renderInboxUsers();
 
-      // Render Pending Verification Cards
       const reqContainer = document.getElementById('pendingCardsList');
       reqContainer.innerHTML = '';
 
@@ -661,7 +692,6 @@
         });
       }
 
-      // Render Matches List
       const matchesContainer = document.getElementById('matchesList');
       matchesContainer.innerHTML = '';
 
@@ -696,7 +726,6 @@
       });
     }
 
-    /* RENDER UNIQUE MEMBERS IN INBOX LIST */
     function renderInboxUsers() {
       const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
       const inboxContainer = document.getElementById('inboxUsersList');
@@ -715,7 +744,6 @@
         return;
       }
 
-      // Group by UID or Name
       const usersMap = {};
       supportMsgs.forEach(m => {
         const key = m.uid || m.name;
@@ -753,7 +781,6 @@
       });
     }
 
-    /* OPEN DEDICATED PLAYER CHAT ROOM */
     function openChatRoom(uData) {
       activePlayerUid = uData.uid;
       document.getElementById('activeChatName').innerText = uData.name;
@@ -774,19 +801,16 @@
       const stream = document.getElementById('chatBodyStream');
       const supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
 
-      // Filter messages belonging to this player
       const playerMessages = supportMsgs.filter(m => (m.uid === activePlayerUid || m.contact.includes(activePlayerUid) || m.name === activePlayerUid));
       playerMessages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
       stream.innerHTML = '';
       playerMessages.forEach(m => {
-        // Player's Message
         const pBubble = document.createElement('div');
         pBubble.className = 'bubble-player';
         pBubble.innerHTML = `<div>${m.message}</div><span style="font-size:9px; color:#94a3b8; display:block; margin-top:3px; text-align:right;">${m.time || ''}</span>`;
         stream.appendChild(pBubble);
 
-        // Admin's Answer / Reply
         if (m.adminReply) {
           const aBubble = document.createElement('div');
           aBubble.className = 'bubble-admin';
@@ -808,8 +832,6 @@
       if (!reply) return;
 
       let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      
-      // Find the last message of this player and set reply
       const msgObj = supportMsgs.slice().reverse().find(m => (m.uid === activePlayerUid || m.contact.includes(activePlayerUid) || m.name === activePlayerUid));
       
       if (msgObj) {
@@ -829,6 +851,81 @@
 
     function openModal() { document.getElementById('matchModal').classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    /* Giveaways Manager Functions */
+    function openAdminGiveawayModal() {
+      renderAdminGiveawaysList();
+      document.getElementById('adminGiveawayModal').classList.add('active');
+    }
+
+    function closeAdminGiveawayModal() {
+      document.getElementById('adminGiveawayModal').classList.remove('active');
+    }
+
+    function saveAdminGiveaway() {
+      const title = document.getElementById('admGiveawayTitle').value.trim();
+      const reward = document.getElementById('admGiveawayReward').value.trim();
+      const time = document.getElementById('admGiveawayTime').value.trim();
+      const desc = document.getElementById('admGiveawayDesc').value.trim();
+
+      if (!title || !reward) {
+        alert("Giveaway Title aur Reward likhna lazmi hai!");
+        return;
+      }
+
+      let giveaways = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      giveaways.push({
+        id: "ev_" + Date.now(),
+        title: title,
+        reward: reward,
+        endDate: time || "Active Now",
+        desc: desc || "Top players and active members are eligible."
+      });
+
+      localStorage.setItem('mff_giveaways', JSON.stringify(giveaways));
+
+      document.getElementById('admGiveawayTitle').value = "";
+      document.getElementById('admGiveawayReward').value = "";
+      document.getElementById('admGiveawayTime').value = "";
+      document.getElementById('admGiveawayDesc').value = "";
+
+      renderAdminGiveawaysList();
+      alert("✅ Giveaway kamyabi se publish ho gaya! Website par show ho chuka hai.");
+    }
+
+    function removeAdminGiveaway(id) {
+      if (!confirm("Kya aap is giveaway ko delete karna chahte hain?")) return;
+      let giveaways = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      giveaways = giveaways.filter(g => g.id !== id);
+      localStorage.setItem('mff_giveaways', JSON.stringify(giveaways));
+      renderAdminGiveawaysList();
+    }
+
+    function renderAdminGiveawaysList() {
+      const list = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      const container = document.getElementById('admGiveawayActiveContainer');
+      container.innerHTML = "";
+
+      if (list.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:#64748b; text-align:center; padding:10px;">Koi giveaway active nahi hai.</div>`;
+        return;
+      }
+
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.style = "background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        card.innerHTML = `
+          <div>
+            <div style="font-size:11px; font-weight:800; color:#fff;">${item.title}</div>
+            <div style="font-size:10px; color:#10b981; font-weight:700;">Prize: ${item.reward} | Time: ${item.endDate}</div>
+          </div>
+          <button onclick="removeAdminGiveaway('${item.id}')" style="background:#ef4444; border:none; color:#fff; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer;">
+            Delete
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
 
     function submitMatch() {
       const title = document.getElementById('newTitle').value.trim() || 'NEW TOURNAMENT';
@@ -898,12 +995,6 @@
       match.roomPass = rPass;
       saveTournaments(tournaments);
       alert('Room credentials save ho gaye!');
-    }
-
-    function promptRoomCreds() {
-      const tournaments = getTournaments();
-      if (tournaments.length === 0) return alert('Pehle tournament banayein!');
-      setSpecificRoom(tournaments[0].id);
     }
 
     function deleteMatch(matchId) {
