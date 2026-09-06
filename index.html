@@ -649,7 +649,7 @@
           <i class="fa-solid fa-share-nodes"></i>
         </div>
 
-        <!-- Wallet Balance Display (Shows balance only) -->
+        <!-- Wallet Balance Display (Shows balance correctly on load & login) -->
         <div class="wallet-header-badge">
           <i class="fa-solid fa-coins"></i>
           <span>Rs. <b id="navWalletBal">0</b></span>
@@ -1339,15 +1339,17 @@
     }
 
     function updateNavProfile() {
+      currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
       if (currentUser) {
         let users = getAllRegisteredUsers();
         let freshUser = users.find(u => u.email === currentUser.email);
-        if (freshUser) currentUser.walletBalance = freshUser.walletBalance;
+        if (freshUser) {
+          currentUser.walletBalance = freshUser.walletBalance;
+          localStorage.setItem('mff_user', JSON.stringify(currentUser));
+        }
 
-        document.getElementById('navUserBadge').innerText = currentUser.name;
         document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
       } else {
-        document.getElementById('navUserBadge').innerText = "LOGIN";
         document.getElementById('navWalletBal').innerText = "0";
       }
     }
