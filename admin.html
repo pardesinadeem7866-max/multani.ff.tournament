@@ -391,7 +391,7 @@
 
       <!-- 3. BANNED PLAYERS VIEW -->
       <div id="sectionBanned" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List</span></div>
+        <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List (Room Join Restricted)</span></div>
         <div id="bannedPlayersListContainer"></div>
       </div>
 
@@ -485,7 +485,7 @@
         </div>
         <div style="font-size: 16px; font-weight: 900; color: var(--gold); margin-bottom: 10px;"><i class="fa-solid fa-triangle-exclamation"></i> Unban Player</div>
         <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 16px;" id="unbanModalText">Kya aap is player ko unban karna chahte hain?</div>
-        <input type="hidden" id="unbanTargetIdx">
+        <input type="hidden" id="unbanTargetUid">
         <div style="display: flex; gap: 10px;">
           <button class="btn-action btn-danger" style="flex:1;" onclick="closeUnbanModal()">No</button>
           <button class="btn-action" style="flex:1;" onclick="confirmUnban()">Yes</button>
@@ -582,7 +582,7 @@
       w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
-    /* Combined Deposits & Pending Match Requests Render with Approve/Reject */
+    /* Combined Deposits & Pending Match Requests Render */
     function renderDeposits() {
       const container = document.getElementById('depositsContainer');
       container.innerHTML = "";
@@ -610,7 +610,6 @@
         return;
       }
 
-      // Render Wallet Deposits
       pendingDeps.forEach((dep) => {
         const globalIdx = deposits.findIndex(d => d.id === dep.id);
         const card = document.createElement('div');
@@ -633,7 +632,6 @@
         container.appendChild(card);
       });
 
-      // Render Match Join Requests
       pendingMatchPlayers.forEach((item) => {
         const card = document.createElement('div');
         card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
@@ -790,7 +788,7 @@
                   <a href="${waLink}" target="_blank" class="btn-whatsapp-winner">
                     <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner
                   </a>
-                  <button class="btn-action btn-danger" style="padding:4px 8px; font-size:9.5px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban</button>
+                  <button class="btn-action btn-danger" style="padding:4px 8px; font-size:9.5px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban Room</button>
                 </div>
               </div>
             `;
@@ -874,13 +872,18 @@
     }
 
     function banPlayerByUid(uid, name, phone) {
-      if (!confirm(`Kya aap ${name} (UID: ${uid}) ko ban karna chahte hain?`)) return;
-      let bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-      if (!bannedList.some(b => b.uid === uid)) {
-        bannedList.push({ uid, name, phone, time: new Date().toLocaleTimeString() });
-        localStorage.setItem('mff_banned_players', JSON.stringify(bannedList));
+      if (!confirm(`Kya aap ${name} (UID: ${uid}) ko room join karne se ban karna chahte hain?`)) return;
+      let bannedList = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (!bannedList.includes(uid)) {
+        bannedList.push(uid);
+        localStorage.setItem('mff_banned_uids', JSON.stringify(bannedList));
       }
-      alert("🚫 Player ban kar diya gaya hai!");
+      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+      if (!bannedDetails.some(b => b.uid === uid)) {
+        bannedDetails.push({ uid, name, phone, time: new Date().toLocaleTimeString() });
+        localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
+      }
+      alert("🚫 Player ko room join karne se restrict kar diya gaya hai!");
       renderAdminMatches();
     }
 
@@ -891,26 +894,26 @@
       const bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
 
       if (bannedList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi player ban nahi hai.</div>`;
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi restricted player nahi hai.</div>`;
         return;
       }
 
-      bannedList.forEach((b, idx) => {
+      bannedList.forEach((b) => {
         const div = document.createElement('div');
         div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
         div.innerHTML = `
           <div>
             <div style="font-size:12px; font-weight:800; color:#fff;">${b.name} <span style="color:var(--red); font-size:10px;">(UID: ${b.uid})</span></div>
-            <div style="font-size:10px; color:var(--text-muted);">WhatsApp: ${b.phone || 'N/A'} | Banned at: ${b.time || '--'}</div>
+            <div style="font-size:10px; color:var(--text-muted);">WhatsApp: ${b.phone || 'N/A'} | Restricted at: ${b.time || '--'}</div>
           </div>
-          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="promptUnban(${idx}, '${b.name}')">Unban</button>
+          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="promptUnban('${b.uid}', '${b.name}')">Unban</button>
         `;
         container.appendChild(div);
       });
     }
 
-    function promptUnban(idx, name) {
-      document.getElementById('unbanTargetIdx').value = idx;
+    function promptUnban(uid, name) {
+      document.getElementById('unbanTargetUid').value = uid;
       document.getElementById('unbanModalText').innerText = `Kya aap ${name} ko unban karna chahte hain?`;
       document.getElementById('unbanModal').style.display = 'flex';
     }
@@ -920,13 +923,21 @@
     }
 
     function confirmUnban() {
-      let idx = document.getElementById('unbanTargetIdx').value;
-      let bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-      bannedList.splice(idx, 1);
-      localStorage.setItem('mff_banned_players', JSON.stringify(bannedList));
+      let targetUid = document.getElementById('unbanTargetUid').value;
+      
+      // Remove from banned UIDs array used by player website
+      let bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      bannedUids = bannedUids.filter(u => u !== targetUid);
+      localStorage.setItem('mff_banned_uids', JSON.stringify(bannedUids));
+
+      // Remove from admin details list
+      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+      bannedDetails = bannedDetails.filter(b => b.uid !== targetUid);
+      localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
+
       closeUnbanModal();
       renderBannedPlayers();
-      alert("✅ Player unban kar diya gaya hai!");
+      alert("✅ Player unban ho gaya hai, ab wo dobara match join kar sakega!");
     }
 
     /* 4. Support Chats Render */
