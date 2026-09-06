@@ -3,634 +3,1602 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani.ff - Admin Dashboard</title>
+
+  <title>Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
+  <meta name="title" content="Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash">
+  <meta name="description" content="Pakistan ka No.1 Free Fire Esports Arena. Daily Solo, Duo, CS 4v4 Custom Rooms khele aur jeetein real cash prize.">
+  <meta name="keywords" content="Free Fire Pakistan, Free Fire Tournament Pakistan, Multani ff, Paid Custom Room Free Fire">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- EmailJS Library -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function(){
+      emailjs.init("LGmXrOVehjJmHs_3y");
+    })();
+  </script>
+
   <style>
     :root {
-      --admin-bg: #050b14;
-      --card-bg: #0d1626;
-      --card-border: #1c2b42;
-      --mint: #00e676;
+      --bg-dark: #022013;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #08482c 0%, #032316 45%, #01130a 100%);
+      --mint-primary: #00e676;
+      --mint-accent: #2de28d;
+      --card-white: #ffffff;
+      --text-dark: #0a291b;
       --gold: #ffb703;
-      --blue: #38bdf8;
-      --red: #ef4444;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --ff-slot-bg: #1c1f26;
+      --ff-slot-border: #2e3544;
+      --ff-active-slot: linear-gradient(90deg, #604620, #2c2518);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--admin-bg); color: var(--text-main); min-height: 100vh; padding-bottom: 90px; display: flex; justify-content: center; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: #010d07; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
     .app-viewport {
       width: 100%;
       max-width: 440px;
-      background: #080e1a;
+      background: var(--bg-gradient);
       min-height: 100vh;
+      padding-bottom: 96px;
       position: relative;
-      border-left: 1px solid var(--card-border);
-      border-right: 1px solid var(--card-border);
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+      border-left: 1px solid rgba(0, 230, 118, 0.2);
+      border-right: 1px solid rgba(0, 230, 118, 0.2);
+      box-shadow: 0 0 50px rgba(0,0,0,0.9);
+      overflow-x: hidden;
     }
 
-    .hero-top-box {
-      background: radial-gradient(circle at 50% 0%, #20132b 0%, #0d1626 70%);
-      border-bottom: 1px solid var(--card-border);
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .hero-top-row {
+    /* Top Bar */
+    .top-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(2, 32, 19, 0.98);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .brand-title { font-size: 13px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px; }
-    .hero-rev-label { font-size: 10px; color: var(--text-muted); font-weight: 700; }
-    .hero-rev-val { font-size: 22px; font-weight: 900; color: var(--mint); margin-top: 2px; }
+    .top-left-group { display: flex; align-items: center; gap: 8px; }
     
-    .hero-btn-col { display: flex; flex-direction: column; gap: 6px; }
-    .btn-pink-match {
-      background: linear-gradient(135deg, #ec4899, #db2777);
-      color: #fff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 16px;
-      font-size: 11px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-    .btn-outline-backup {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--card-border);
-      color: #fff;
-      padding: 5px 12px;
-      border-radius: 16px;
-      font-size: 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .hero-sub-time { font-size: 9.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 0 16px 12px;
-    }
-    .stat-card {
-      background: #ffffff;
-      color: #0f172a;
-      border-radius: 14px;
-      padding: 12px 10px;
-      position: relative;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    .stat-card i { position: absolute; top: 12px; right: 10px; color: #64748b; font-size: 14px; }
-    .stat-num { font-size: 18px; font-weight: 900; margin-top: 4px; color: #020617; }
-    .stat-label { font-size: 10px; font-weight: 700; color: #64748b; margin-top: 2px; }
-
-    .section-btn-bar { padding: 0 16px 14px; }
-    .view-all-btn {
-      width: 100%;
-      background: rgba(0, 230, 118, 0.15);
-      border: 1px solid var(--mint);
-      color: var(--mint);
-      padding: 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .action-grid-card {
-      background: #ffffff;
-      border-radius: 16px;
-      margin: 0 16px 16px;
-      padding: 16px 10px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px 8px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-    }
-    .action-icon-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-    .action-circle {
-      width: 44px;
-      height: 44px;
+    .share-icon-btn {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
+      background: rgba(255, 183, 3, 0.15);
+      border: 1px solid var(--gold);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      color: #0f172a;
-      position: relative;
+      cursor: pointer;
+      color: var(--gold);
+      font-size: 13px;
     }
-    .action-icon-item span { font-size: 9px; font-weight: 800; color: #334155; text-align: center; }
-    .badge-dot {
+
+    .wallet-header-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 183, 3, 0.25);
+      border: 1px solid var(--gold);
+      padding: 5px 10px;
+      border-radius: 16px;
+      font-size: 11.5px;
+      font-weight: 900;
+      color: var(--gold);
+      cursor: default;
+    }
+
+    .nav-tabs { display: flex; gap: 10px; font-size: 12.5px; font-weight: 800; }
+    .nav-tab-item { color: rgba(255,255,255,0.6); cursor: pointer; position: relative; padding: 4px 0; }
+    .nav-tab-item.active { color: #fff; }
+    .nav-tab-item.active::after {
+      content: '';
       position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ef4444;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 3px;
+      background: var(--mint-primary);
+      border-radius: 2px;
+    }
+
+    /* Hero Card */
+    .hero-banner-container { padding: 12px 16px; }
+    .hero-glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 14px;
+      padding: 12px 14px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      color: var(--text-dark);
+    }
+    .mine-ribbon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
       color: #fff;
       font-size: 8px;
       font-weight: 900;
-      min-width: 15px;
-      height: 15px;
-      border-radius: 8px;
+      padding: 3px 12px;
+      border-bottom-right-radius: 8px;
+      border-top-left-radius: 14px;
+      letter-spacing: 0.5px;
+    }
+    .hero-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #022013;
+      border: 2px solid var(--mint-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #fff;
+      color: var(--mint-primary);
+      font-size: 20px;
+      flex-shrink: 0;
     }
-
-    .content-section { padding: 0 16px; }
-    .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; font-weight: 900; color: var(--gold); }
-    
-    .panel-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-
-    .form-ctrl { margin-bottom: 10px; }
-    .form-ctrl label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 3px; }
-    .form-ctrl input, .form-ctrl select {
-      width: 100%;
-      background: #050b14;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 8px 10px;
-      color: #fff;
-      font-size: 12px;
-      outline: none;
-    }
-    .form-ctrl input:focus { border-color: var(--mint); }
-
-    .btn-action {
-      background: var(--mint);
-      border: none;
-      color: #012817;
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
-    .btn-orange { background: rgba(245, 158, 11, 0.2); border: 1px solid var(--gold); color: var(--gold); }
-    .btn-whatsapp-winner {
-      background: #25d366;
-      color: #fff;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 6px;
+    .hero-details { flex: 1; margin-top: 4px; }
+    .hero-title-row { display: flex; align-items: center; justify-content: space-between; font-weight: 900; font-size: 13px; }
+    .hero-subtitle { font-size: 11px; color: #475569; margin-top: 2px; }
+    .easypaisa-tag {
+      display: inline-block;
+      margin-top: 5px;
+      background: #e8f5e9;
+      color: #1b5e20;
       font-size: 10px;
       font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid #a5d6a7;
+    }
+    .download-app-chip {
+      display: inline-block;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 6px;
       cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,114,255,0.3);
+    }
+
+    /* Filter Track */
+    .filter-track {
+      margin: 4px 16px 14px;
+      background: rgba(0, 48, 25, 0.6);
+      padding: 4px;
+      border-radius: 26px;
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+    .filter-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+    .filter-item.active {
+      background: linear-gradient(135deg, var(--mint-primary), #00b0ff);
+      color: #012817;
+      font-weight: 900;
+      box-shadow: 0 3px 10px rgba(0, 230, 118, 0.4);
+    }
+
+    /* Matches Grid */
+    .grid-container {
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .tournament-grid-card {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .tournament-grid-card:active { transform: scale(0.98); }
+    .card-thumb-wrap { position: relative; width: 100%; height: 125px; background: #0d1e15; }
+    .card-thumb { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); }
+    .card-live-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-size: 9px;
+      font-weight: 800;
+      color: #00f0ff;
       display: flex;
       align-items: center;
       gap: 4px;
-      text-decoration: none;
     }
-
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 999;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
+    .card-thumb-text {
+      position: absolute;
+      bottom: 6px;
+      left: 8px;
+      right: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
-    .modal-dialog {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      width: 100%;
-      max-width: 400px;
-      border-radius: 14px;
-      padding: 16px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .chat-thread-box {
-      background: #050b14;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 10px;
-      max-height: 300px;
-      overflow-y: auto;
+    .card-body {
+      padding: 9px 8px;
+      background: #ffffff;
+      color: var(--text-dark);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
     }
-    .bubble-user { background: #113622; border: 1px solid rgba(0,230,118,0.3); padding: 8px; border-radius: 10px 10px 2px 10px; align-self: flex-start; max-width: 80%; font-size: 11.5px; }
-    .bubble-admin { background: #1e293b; border: 1px solid var(--card-border); padding: 8px; border-radius: 10px 10px 10px 2px; align-self: flex-end; max-width: 80%; font-size: 11.5px; color: var(--mint); }
+    .card-room-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-room-desc { font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-footer-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed #e2e8f0;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .fee-badge { color: #059669; }
+    .prize-badge { color: #d97706; }
 
-    .bottom-nav {
+    /* Bottom Navigation */
+    .bottom-bar {
       position: fixed;
       bottom: 0;
       width: 100%;
       max-width: 440px;
-      height: 68px;
-      background: rgba(13, 22, 38, 0.95);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid var(--card-border);
+      height: 70px;
+      background: rgba(1, 22, 12, 0.95);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(0, 230, 118, 0.25);
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 100;
     }
-    .bot-tab {
+    .bot-item {
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: #94a3b8;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3px;
       cursor: pointer;
+      position: relative;
     }
-    .bot-tab.active { color: var(--mint); }
-    .bot-tab i { font-size: 15px; }
-    .bot-tab span { font-size: 10px; font-weight: 800; }
+    .bot-item.active { color: var(--mint-primary); }
+    .bot-icon-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .bot-item.active .bot-icon-circle {
+      background: linear-gradient(135deg, var(--mint-primary), #00796b);
+      color: #fff;
+      border-color: var(--mint-accent);
+      box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+    }
+    .bot-item span { font-size: 10px; font-weight: 800; }
+    .bot-badge-bubble {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #012213;
+    }
 
-    .ss-thumbnail { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--card-border); }
-    .preview-box { width: 100%; max-height: 130px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint); margin-top: 6px; display: none; }
+    .bot-add-fund-btn {
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      z-index: 120;
+    }
+    .bot-add-fund-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffb703, #f59e0b);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 900;
+      box-shadow: 0 4px 14px rgba(255, 183, 3, 0.5);
+      border: 2px solid #fff;
+    }
+    .bot-add-fund-btn span { font-size: 10px; font-weight: 800; color: #ffb703; }
+
+    /* Modals Base */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+    .modal-dialog {
+      background: #0d121a;
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      width: 100%;
+      max-width: 410px;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+      max-height: 94vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .form-ctrl { margin-bottom: 10px; }
+    .form-ctrl label { font-size: 11px; font-weight: 700; color: #a7f3d0; display: block; margin-bottom: 4px; }
+    .form-ctrl input {
+      width: 100%;
+      background: #06090e;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .form-ctrl input:focus { border-color: var(--mint-primary); }
+    .btn-green-action {
+      width: 100%;
+      background: linear-gradient(135deg, var(--mint-primary), #00b0ff);
+      border: none;
+      color: #012817;
+      padding: 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .btn-wallet-pay {
+      width: 100%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      color: #000;
+      padding: 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-modal-close {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #64748b;
+      padding: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .preview-box { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint-primary); margin-top: 8px; display: none; }
+
+    /* Free Fire Lobby */
+    .ff-lobby-container { display: flex; flex-direction: column; gap: 10px; }
+    .ff-notice-strip {
+      background: rgba(255, 183, 3, 0.08);
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 10.5px;
+      color: #fed7aa;
+      line-height: 1.35;
+    }
+    .ff-notice-strip b { color: var(--gold); }
+    .ff-lobby-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      background: #10141d;
+      border: 1px solid #252c3d;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .ff-left-panel { display: flex; flex-direction: column; gap: 6px; }
+    .ff-map-box {
+      position: relative;
+      width: 100%;
+      height: 85px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #333d52;
+      background: #000;
+    }
+    .ff-map-img { width: 100%; height: 100%; object-fit: cover; }
+    .ff-map-badge {
+      position: absolute;
+      bottom: 0;
+      inset-inline: 0;
+      background: rgba(0, 0, 0, 0.75);
+      text-align: center;
+      font-size: 9px;
+      font-weight: 900;
+      color: #fff;
+      padding: 2px 0;
+      letter-spacing: 0.5px;
+    }
+    .ff-room-spec-row {
+      font-size: 9.5px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #1a2233;
+      padding: 2px 0;
+    }
+    .ff-room-spec-row span:last-child { color: #fff; font-weight: 700; }
+    .ff-creds-badge-box {
+      background: #0a1b14;
+      border: 1px solid var(--mint-primary);
+      border-radius: 6px;
+      padding: 6px;
+      margin-top: 4px;
+      font-size: 10px;
+    }
+    .copy-btn-chip {
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-size: 8.5px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    .ff-right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .ff-lobby-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 800;
+      color: #cbd5e1;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #252c3d;
+    }
+
+    .ff-slot-bar {
+      background: var(--ff-slot-bg);
+      border: 1px solid var(--ff-slot-border);
+      border-radius: 4px;
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      min-height: 40px;
+    }
+    .ff-slot-bar.occupied {
+      background: var(--ff-active-slot);
+      border-color: #9a6f23;
+    }
+    .ff-slot-num {
+      font-size: 10px;
+      font-weight: 900;
+      color: #64748b;
+      width: 14px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .ff-slot-bar.occupied .ff-slot-num { color: var(--gold); }
+    .ff-player-details { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .ff-player-name {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ff-player-uid {
+      font-size: 9.5px;
+      font-family: monospace;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .ff-slot-empty { font-size: 10px; font-style: italic; color: #475569; }
+
+    .winner-card {
+      background: linear-gradient(135deg, rgba(255, 183, 3, 0.15), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(255, 183, 3, 0.35);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .winner-badge-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .event-card {
+      background: linear-gradient(135deg, rgba(2, 38, 20, 0.95), rgba(7, 49, 28, 0.8));
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .event-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--gold); }
+    .event-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .event-card-title { font-size: 13px; font-weight: 900; color: #fff; }
+    .event-badge { background: rgba(255, 183, 3, 0.15); border: 1px solid var(--gold); color: var(--gold); font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+    .event-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; margin-bottom: 8px; }
+    .event-reward-tag { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); color: var(--mint-primary); font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
+
+    .chat-history-box { background: #02110a; border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 14px; padding: 12px; height: 260px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-bubble-user { background: #113622; border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 14px 14px 2px 14px; padding: 8px 12px; align-self: flex-end; max-width: 82%; font-size: 12px; color: #fff; }
+    .chat-bubble-admin { background: rgba(0, 230, 118, 0.15); border: 1px solid var(--mint-primary); border-radius: 14px 14px 14px 2px; padding: 8px 12px; align-self: flex-start; max-width: 82%; font-size: 12px; color: #fff; }
+    .chat-input-row { display: flex; gap: 8px; align-items: center; }
+    .chat-input-row input { flex: 1; background: #02110a; border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 20px; padding: 9px 14px; color: #fff; font-size: 12px; outline: none; }
+    .chat-send-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--mint-primary); border: none; color: #012817; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   </style>
 </head>
 <body>
 
   <div class="app-viewport">
     
-    <div class="hero-top-box">
-      <div class="hero-top-row">
-        <div>
-          <div class="brand-title"><i class="fa-solid fa-shield-halved" style="color:var(--mint);"></i> Multani.ff Admin</div>
-          <div class="hero-rev-label" style="margin-top:6px;">Total Match Revenue</div>
-          <div class="hero-rev-val" id="totalRevVal">Rs 0</div>
+    <div class="top-header">
+      <div class="top-left-group">
+        <div class="share-icon-btn" onclick="shareWebsiteLink()" title="Share Website">
+          <i class="fa-solid fa-share-nodes"></i>
         </div>
-        <div class="hero-btn-col">
-          <button class="btn-pink-match" onclick="openCreateMatchModal()">+ MATCH</button>
-          <button class="btn-outline-backup" onclick="alert('Data synced.')">BACKUP DATA</button>
+
+        <div class="wallet-header-badge">
+          <i class="fa-solid fa-coins"></i>
+          <span>Rs. <b id="navWalletBal">0</b></span>
         </div>
       </div>
-      <div class="hero-sub-time">
-        <i class="fa-solid fa-rotate"></i> Free Fire Tournament Admin Panel
+
+      <div class="nav-tabs">
+        <span class="nav-tab-item active" id="tabMatchesBtn" onclick="switchMainTab('matches')">Matches</span>
+        <span class="nav-tab-item" id="tabWinnersBtn" onclick="switchMainTab('winners')">Winners</span>
+      </div>
+
+      <div class="top-menu-btn" onclick="openMenuModal()" style="cursor:pointer; padding:6px 8px; color:#fff; font-size:16px;">
+        <i class="fa-solid fa-bars"></i>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <i class="fa-solid fa-gamepad"></i>
-        <div class="stat-num" id="statMatches">0</div>
-        <div class="stat-label">Live Matches</div>
-      </div>
-      <div class="stat-card">
-        <i class="fa-solid fa-users"></i>
-        <div class="stat-num" id="statSlots">0</div>
-        <div class="stat-label">Approved Slots</div>
-      </div>
-      <div class="stat-card">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        <div class="stat-num" id="statRequests">0</div>
-        <div class="stat-label">Needs Approval</div>
-      </div>
-    </div>
-
-    <div class="section-btn-bar">
-      <button class="view-all-btn" onclick="switchAdminTab('deposits')"><i class="fa-solid fa-receipt"></i> Payment Approvals & Match Requests</button>
-    </div>
-
-    <div class="action-grid-card">
-      <button class="action-icon-item" onclick="openCreateMatchModal()">
-        <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
-        <span>Create Match</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('giveaways')">
-        <div class="action-circle"><i class="fa-solid fa-gift" style="color:#ff4625;"></i></div>
-        <span>Giveaways</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('deposits')">
-        <div class="action-circle">
-          <i class="fa-solid fa-receipt"></i>
-          <div class="badge-dot" id="pendingDepositBadge">0</div>
-        </div>
-        <span>Payment Approval</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('banned')">
-        <div class="action-circle"><i class="fa-solid fa-user-xmark" style="color:var(--red);"></i></div>
-        <span>Ban Player</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('matches')">
-        <div class="action-circle"><i class="fa-solid fa-list"></i></div>
-        <span>Match Manager</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('support')">
-        <div class="action-circle">
-          <i class="fa-solid fa-comments" style="color:var(--mint);"></i>
-          <div class="badge-dot" id="supportBadge">1</div>
-        </div>
-        <span>Help Chats</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('allusers')">
-        <div class="action-circle"><i class="fa-solid fa-address-book" style="color:var(--blue);"></i></div>
-        <span>Player List</span>
-      </button>
-      <button class="action-icon-item" onclick="switchAdminTab('winners')">
-        <div class="action-circle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i></div>
-        <span>Winner Announce</span>
-      </button>
-    </div>
-
-    <div class="content-section">
-      
-      <div id="sectionDeposits" class="panel-box">
-        <div class="section-header-row">
-          <span><i class="fa-solid fa-wallet"></i> Payment Approvals (Wallet & Matches)</span>
-          <span style="font-size:11px; color:var(--text-muted);" id="reqCountText">0 Requests</span>
-        </div>
-        <div id="depositsContainer"></div>
-      </div>
-
-      <div id="sectionMatches" class="panel-box" style="display:none;">
-        <div class="section-header-row">
-          <span><i class="fa-solid fa-gamepad"></i> Match Manager (Active Tournaments)</span>
-          <button class="btn-action" style="width:auto; padding:4px 10px; font-size:10px;" onclick="openCreateMatchModal()">+ Add Match</button>
-        </div>
-        <div id="activeMatchesList"></div>
-      </div>
-
-      <div id="sectionWinners" class="panel-box" style="display:none;">
-        <div class="section-header-row">
-          <span><i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner Announcements</span>
-          <button class="btn-action" style="width:auto; padding:4px 10px; font-size:10px;" onclick="openAddWinnerModal()">+ Add New</button>
-        </div>
-        <div id="adminWinnersListContainer"></div>
-      </div>
-
-      <div id="sectionBanned" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List (Room Join Restricted)</span></div>
-        <div id="bannedPlayersListContainer"></div>
-      </div>
-
-      <div id="sectionAllUsers" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-address-book" style="color:var(--blue);"></i> All Registered Website Players</span></div>
-        <div id="allRegisteredUsersContainer"></div>
-      </div>
-
-      <div id="sectionGiveaways" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
-        <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
-        <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
-        <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
-        <button class="btn-action" onclick="postGiveaway()"><i class="fa-solid fa-check"></i> Add Giveaway</button>
-      </div>
-
-      <div id="sectionSupport" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
-        <div id="supportChatsContainer"></div>
-      </div>
-
-    </div>
-
-    <div class="modal-backdrop" id="createMatchModal">
-      <div class="modal-dialog">
-        <div class="section-header-row" style="margin-bottom:12px;">
-          <span><i class="fa-solid fa-plus-circle"></i> Create Tournament Room</span>
-          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeCreateMatchModal()"></i>
-        </div>
-        <div class="form-ctrl"><label>Match Title</label><input type="text" id="mTitle" placeholder="e.g. Solo Night Cup"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-ctrl">
-            <label>Map</label>
-            <select id="mMap">
-              <option value="Bermuda">Bermuda</option>
-              <option value="Purgatory">Purgatory</option>
-              <option value="Kalahari">Kalahari</option>
-              <option value="Clash Squad">Clash Squad</option>
-            </select>
+    <div class="hero-banner-container">
+      <div class="hero-glass-card">
+        <div class="mine-ribbon">Mine</div>
+        <div class="hero-avatar"><i class="fa-solid fa-crown"></i></div>
+        <div class="hero-details">
+          <div class="hero-title-row">
+            <span><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Multani FF Official Tournament</span>
+            <span style="font-size: 10px; color:#00b0ff;"><i class="fa-solid fa-signal"></i> LIVE</span>
           </div>
-          <div class="form-ctrl"><label>Total Slots</label><input type="number" id="mSlots" value="12"></div>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-ctrl"><label>Entry Fee (Rs)</label><input type="number" id="mFee" value="30"></div>
-          <div class="form-ctrl"><label>Booyah Prize (Rs)</label><input type="number" id="mPrize" value="300"></div>
-        </div>
-        <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM Today"></div>
-        <div class="form-ctrl"><label>Cover Photo Image URL (Optional)</label><input type="text" id="mCoverImg" placeholder="https://image-link.com/photo.jpg"></div>
-        <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Publish Match Room</button>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="winnerModal">
-      <div class="modal-dialog">
-        <div class="section-header-row" style="margin-bottom:12px;">
-          <span id="winnerModalTitle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Add New Announcement</span>
-          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeWinnerModal()"></i>
-        </div>
-        <input type="hidden" id="editWinnerIndex" value="-1">
-        <div class="form-ctrl"><label>Winner Nickname</label><input type="text" id="winName" placeholder="Player Name"></div>
-        <div class="form-ctrl"><label>Free Fire UID</label><input type="text" id="winUid" placeholder="Free Fire UID"></div>
-        <div class="form-ctrl"><label>Match Room Title</label><input type="text" id="winMatch" placeholder="e.g. Solo Night Cup (Bermuda)"></div>
-        <div class="form-ctrl"><label>Prize Won</label><input type="text" id="winPrize" placeholder="e.g. Rs. 500"></div>
-        <div class="form-ctrl">
-          <label>Payment / Prize Proof Screenshot</label>
-          <input type="file" id="winSsInput" accept="image/*" onchange="previewWinnerScreenshot(event)">
-          <img id="winSsPreview" class="preview-box" alt="Winner Payment SS">
-        </div>
-        <button class="btn-action" onclick="saveWinnerAnnouncement()"><i class="fa-solid fa-award"></i> Save Announcement</button>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="editMatchModal">
-      <div class="modal-dialog">
-        <div class="section-header-row" style="margin-bottom:12px;">
-          <span><i class="fa-solid fa-pen-to-square"></i> Edit Match Settings</span>
-          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeEditModal()"></i>
-        </div>
-        <input type="hidden" id="editMatchIndex">
-        <div class="form-ctrl"><label>Match Title</label><input type="text" id="editTitle"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-ctrl">
-            <label>Map</label>
-            <select id="editMap">
-              <option value="Bermuda">Bermuda</option>
-              <option value="Purgatory">Purgatory</option>
-              <option value="Kalahari">Kalahari</option>
-              <option value="Clash Squad">Clash Squad</option>
-            </select>
+          <div class="hero-subtitle">🔥 Free Fire Esports Gaming Arena 🎮</div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:4px;">
+            <div class="easypaisa-tag">EasyPaisa: 03186815926 (m Nadeem)</div>
+            <a href="#" onclick="alert('Official App link jald update hoga!')" class="download-app-chip"><i class="fa-solid fa-download"></i> DOWNLOAD OFFICIAL APP</a>
           </div>
-          <div class="form-ctrl"><label>Slots</label><input type="number" id="editSlots"></div>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-ctrl"><label>Fee (Rs)</label><input type="number" id="editFee"></div>
-          <div class="form-ctrl"><label>Prize (Rs)</label><input type="number" id="editPrize"></div>
-        </div>
-        <div class="form-ctrl"><label>Timing</label><input type="text" id="editTime"></div>
-        <div class="form-ctrl"><label>Cover Photo Image URL</label><input type="text" id="editCoverImg" placeholder="Image URL"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-ctrl"><label>Room ID</label><input type="text" id="editRoomId" placeholder="Room ID"></div>
-          <div class="form-ctrl"><label>Room Password</label><input type="text" id="editRoomPass" placeholder="Password"></div>
-        </div>
-        <button class="btn-action" onclick="saveEditedMatch()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="unbanModal">
-      <div class="modal-dialog" style="max-width: 320px; text-align: center; padding: 20px;">
-        <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
-          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff; font-size: 16px;" onclick="closeUnbanModal()"></i>
-        </div>
-        <div style="font-size: 16px; font-weight: 900; color: var(--gold); margin-bottom: 10px;"><i class="fa-solid fa-triangle-exclamation"></i> Unban Player</div>
-        <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 16px;" id="unbanModalText">Kya aap is player ko unban karna chahte hain?</div>
-        <input type="hidden" id="unbanTargetUid">
-        <div style="display: flex; gap: 10px;">
-          <button class="btn-action btn-danger" style="flex:1;" onclick="closeUnbanModal()">No</button>
-          <button class="btn-action" style="flex:1;" onclick="confirmUnban()">Yes</button>
         </div>
       </div>
     </div>
 
-    <div class="bottom-nav">
-      <button class="bot-tab active" id="navBtnDeposits" onclick="switchAdminTab('deposits')">
-        <i class="fa-solid fa-house"></i>
-        <span>Home</span>
+    <div id="matchesMainView">
+      <div class="filter-track">
+        <div class="filter-item active" onclick="setMapFilter('All', this)">Recently</div>
+        <div class="filter-item" onclick="setMapFilter('Bermuda', this)">Bermuda</div>
+        <div class="filter-item" onclick="setMapFilter('Purgatory', this)">Purgatory</div>
+        <div class="filter-item" onclick="setMapFilter('Clash Squad', this)">CS Battle</div>
+      </div>
+
+      <div class="grid-container" id="matchesContainer"></div>
+    </div>
+
+    <div id="winnersMainView" style="display: none; padding: 0 16px 20px;">
+      <div style="font-size:13px; font-weight:900; color:var(--gold); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-trophy"></i> Hall of Fame (Recent Tournament Winners)
+      </div>
+      <div id="winnersListContainer"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="bot-item" onclick="openEventsModal()">
+        <div class="bot-icon-circle"><i class="fa-solid fa-gift" style="color:#ff4625;"></i></div>
+        <span class="bot-badge-bubble" id="eventsBadgeCount">0</span>
+        <span>Events</span>
       </button>
-      <button class="bot-tab" id="navBtnMatches" onclick="switchAdminTab('matches')">
-        <i class="fa-solid fa-gamepad"></i>
-        <span>Matches</span>
+
+      <button class="bot-item active" onclick="switchMainTab('matches')">
+        <div class="bot-icon-circle"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>Battle</span>
       </button>
-      <button class="bot-tab" id="navBtnBanned" onclick="switchAdminTab('banned')">
-        <i class="fa-solid fa-user-slash"></i>
-        <span>Banned</span>
+
+      <button class="bot-add-fund-btn" onclick="openWalletModal()">
+        <div class="bot-add-fund-circle"><i class="fa-solid fa-plus"></i></div>
+        <span>Add Fund</span>
       </button>
-      <button class="bot-tab" id="navBtnSupport" onclick="switchAdminTab('support')">
-        <i class="fa-solid fa-comments"></i>
-        <span>Chats</span>
+
+      <button class="bot-item" onclick="openSupportModal()">
+        <div class="bot-icon-circle"><i class="fa-solid fa-comments" style="color:var(--mint-primary);"></i></div>
+        <span class="bot-badge-bubble" id="supportNotifyDot" style="display:none;">1</span>
+        <span>Chat</span>
+      </button>
+
+      <button class="bot-item" onclick="openProfileManageModal()">
+        <div class="bot-icon-circle"><i class="fa-solid fa-users" style="color:#ffd000;"></i></div>
+        <span class="bot-badge-bubble">1</span>
+        <span>Profile</span>
       </button>
     </div>
 
   </div>
 
-  <script>
-    let uploadedWinnerProofBase64 = "";
-
-    function updateHeaderStats() {
-      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+  <div class="modal-backdrop" id="menuModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-bars" style="color:var(--mint-primary); margin-right:6px;"></i>Official Links & Socials</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('menuModal')"></i>
+      </div>
       
-      let totalSlots = 0;
-      let totalRev = 0;
-      let pendingMatchCount = 0;
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+        <a href="https://whatsapp.com/channel/0029Vb9CdLqHbFV9Q7mBEB1v" target="_blank" style="display: flex; align-items: center; gap: 10px; background: #0b2e1b; border: 1px solid #25d366; padding: 11px 14px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: 800; font-size: 12.5px;">
+          <i class="fa-brands fa-whatsapp" style="color: #25d366; font-size: 18px;"></i>
+          <span>WhatsApp Channel</span>
+        </a>
 
-      matches.forEach(m => {
-        if (m.players) {
-          const approved = m.players.filter(p => p.status === 'approved');
-          const pending = m.players.filter(p => p.status === 'pending');
-          totalSlots += approved.length;
-          totalRev += approved.length * Number(m.fee || 0);
-          pendingMatchCount += pending.length;
-        }
-      });
+        <a href="https://youtube.com/@multaniff-b2k?si=v7J0Ki5QUqmrWsr6" target="_blank" style="display: flex; align-items: center; gap: 10px; background: #2a0808; border: 1px solid #ef4444; padding: 11px 14px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: 800; font-size: 12.5px;">
+          <i class="fa-brands fa-youtube" style="color: #ef4444; font-size: 18px;"></i>
+          <span>YouTube Channel</span>
+        </a>
 
-      const pendingDepCount = deposits.filter(d => d.status === 'pending').length;
-      const totalPending = pendingDepCount + pendingMatchCount;
+        <a href="https://www.tiktok.com/@multaniffgaming" target="_blank" style="display: flex; align-items: center; gap: 10px; background: #111827; border: 1px solid #38bdf8; padding: 11px 14px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: 800; font-size: 12.5px;">
+          <i class="fa-brands fa-tiktok" style="color: #38bdf8; font-size: 18px;"></i>
+          <span>TikTok ID (@multaniffgaming)</span>
+        </a>
+      </div>
 
-      document.getElementById('totalRevVal').innerText = `Rs ${totalRev}`;
-      document.getElementById('statMatches').innerText = matches.length;
-      document.getElementById('statSlots').innerText = totalSlots;
-      document.getElementById('statRequests').innerText = totalPending;
-      document.getElementById('pendingDepositBadge').innerText = totalPending;
-    }
+      <button class="btn-modal-close" onclick="closeModal('menuModal')" style="margin-top: 14px;">Close</button>
+    </div>
+  </div>
 
-    function switchAdminTab(tabName) {
-      document.querySelectorAll('.bot-tab').forEach(b => b.classList.remove('active'));
-      document.getElementById('sectionDeposits').style.display = (tabName === 'deposits') ? 'block' : 'none';
-      document.getElementById('sectionMatches').style.display = (tabName === 'matches') ? 'block' : 'none';
-      document.getElementById('sectionWinners').style.display = (tabName === 'winners') ? 'block' : 'none';
-      document.getElementById('sectionBanned').style.display = (tabName === 'banned') ? 'block' : 'none';
-      document.getElementById('sectionAllUsers').style.display = (tabName === 'allusers') ? 'block' : 'none';
-      document.getElementById('sectionGiveaways').style.display = (tabName === 'giveaways') ? 'block' : 'none';
-      document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
+  <div class="modal-backdrop" id="authGateModal">
+    <div class="modal-dialog">
+      <div id="authLoginBlock">
+        <div class="modal-title">
+          <span>🎮 Multani.ff Login</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <div class="form-ctrl">
+          <label>Gmail Address</label>
+          <input type="email" id="loginEmail" placeholder="e.g. player@gmail.com">
+        </div>
+        <div class="form-ctrl">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="Enter Password">
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+          <span style="font-size:11px; color:#38bdf8; cursor:pointer; font-weight:700;" onclick="switchAuthView('forgotStep1')">Forgot Password?</span>
+        </div>
+        <button class="btn-green-action" onclick="handleUserLogin()">Login to Arena</button>
 
-      if (tabName === 'deposits') {
-        document.getElementById('navBtnDeposits').classList.add('active');
-        renderDeposits();
-      } else if (tabName === 'matches') {
-        document.getElementById('navBtnMatches').classList.add('active');
-        renderAdminMatches();
-      } else if (tabName === 'winners') {
-        document.getElementById('navBtnMatches').classList.add('active');
-        renderAdminWinners();
-      } else if (tabName === 'banned') {
-        document.getElementById('navBtnBanned').classList.add('active');
-        renderBannedPlayers();
-      } else if (tabName === 'allusers') {
-        renderAllRegisteredUsers();
-      } else if (tabName === 'giveaways') {
-        document.getElementById('navBtnMatches').classList.add('active');
-      } else if (tabName === 'support') {
-        document.getElementById('navBtnSupport').classList.add('active');
-        renderAdminSupport();
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Naya account banana hai? <b style="color:var(--mint-primary); cursor:pointer;" onclick="switchAuthView('signup')">Sign Up Karein</b>
+        </div>
+      </div>
+
+      <div id="authSignupBlock" style="display:none;">
+        <div class="modal-title">
+          <span>📝 Create Account</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <div class="form-ctrl">
+          <label>Gmail Address</label>
+          <input type="email" id="signEmail" placeholder="yourname@gmail.com">
+        </div>
+        <div class="form-ctrl">
+          <label>Create Password</label>
+          <input type="password" id="signPass" placeholder="Apni marzi ka password">
+        </div>
+        <div class="form-ctrl">
+          <label>Game Nickname</label>
+          <input type="text" id="signName" placeholder="e.g. MANDOOR_FF">
+        </div>
+        <div class="form-ctrl">
+          <label>Free Fire UID</label>
+          <input type="number" id="signUid" placeholder="e.g. 3239454397">
+        </div>
+        <div class="form-ctrl">
+          <label>WhatsApp Number</label>
+          <input type="text" id="signPhone" placeholder="03XXXXXXXXX">
+        </div>
+        <button class="btn-green-action" onclick="handleUserSignup()">Register & Save</button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Pehle se account hai? <b style="color:var(--mint-primary); cursor:pointer;" onclick="switchAuthView('login')">Login Karein</b>
+        </div>
+      </div>
+
+      <div id="authForgotStep1Block" style="display:none;">
+        <div class="modal-title">
+          <span style="color:#ffd000;"><i class="fa-solid fa-envelope"></i> Verify Your Gmail</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">
+          Apna registered Gmail likhein. Aapke Gmail inbox me <b>6-digit confirmation code</b> aayega:
+        </p>
+        <div class="form-ctrl">
+          <label>Registered Gmail</label>
+          <input type="email" id="forgotEmailInput" placeholder="Registered Gmail Address">
+        </div>
+        <button class="btn-green-action" id="btnSendOtp" onclick="sendGmailOtpCode()">
+          <i class="fa-solid fa-paper-plane"></i> Send Verification Code
+        </button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Wapis Login: <b style="color:#38bdf8; cursor:pointer;" onclick="switchAuthView('login')">Login Screen</b>
+        </div>
+      </div>
+
+      <div id="authForgotStep2Block" style="display:none;">
+        <div class="modal-title">
+          <span style="color:var(--mint-primary);"><i class="fa-solid fa-shield-check"></i> Enter Gmail Code</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('authGateModal')"></i>
+        </div>
+        <div style="background:#022013; border:1px solid var(--mint-primary); border-radius:8px; padding:8px 10px; font-size:11px; color:#a7f3d0; margin-bottom:10px;">
+          <i class="fa-solid fa-envelope-circle-check"></i> Code sent to: <b id="otpTargetGmailText" style="color:#fff;">--</b>
+        </div>
+
+        <div class="form-ctrl">
+          <label>6-Digit Confirmation Code</label>
+          <input type="number" id="otpCodeInput" placeholder="e.g. 849201" style="font-size:16px; letter-spacing:3px; text-align:center;">
+        </div>
+        <div class="form-ctrl">
+          <label>Set New Password</label>
+          <input type="password" id="otpNewPasswordInput" placeholder="Naya Password Enter Karein">
+        </div>
+        <button class="btn-green-action" onclick="verifyOtpAndChangePassword()">
+          <i class="fa-solid fa-check-double"></i> Verify & Reset Password
+        </button>
+
+        <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
+          Code nahi mila? <b style="color:#f59e0b; cursor:pointer;" onclick="switchAuthView('forgotStep1')">Resend Code</b>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="profileModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span>🎮 Player Profile & Rules</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('profileModal')"></i>
+      </div>
+
+      <div style="background:#04130b; border:1px solid rgba(0,230,118,0.25); border-radius:10px; padding:12px; margin-bottom:14px;">
+        <div style="font-size:13px; font-weight:800; color:#fff;" id="profDispName">--</div>
+        <div style="font-size:11px; color:#38bdf8; margin-top:2px;" id="profDispUid">UID: --</div>
+        <div style="font-size:11px; color:#94a3b8; margin-top:2px;" id="profDispEmail">Gmail: --</div>
+        <div style="font-size:11px; color:#34d399; margin-top:2px;" id="profDispPhone">WhatsApp: --</div>
+      </div>
+
+      <div style="background:#051910; border:1px solid rgba(255,183,3,0.3); border-radius:10px; padding:10px; margin-bottom:12px; font-size:10.5px; color:#fed7aa; line-height:1.4;">
+        <div style="font-weight:900; color:var(--gold); margin-bottom:4px;"><i class="fa-solid fa-circle-exclamation"></i> Tournament Rules:</div>
+        <div>1. Real Name, UID aur WhatsApp bilkul theek enter karein.</div>
+        <div>2. Add kiya gaya balance withdraw nahi hoga, sirf match join karne ke liye hai.</div>
+        <div>3. Prize sirf match win (Booyah) karne par milega.</div>
+        <div>4. Free Fire account kam az kam <b>Level 50</b> ka hona chahiye.</div>
+        <div>5. Hacking ya unfair gameplay par ban lag jayega.</div>
+        <div>6. Match leave karne par entry fee wallet mein wapis refund ho jayegi.</div>
+      </div>
+
+      <div style="background:#080d14; border:1px solid #233148; border-radius:10px; padding:12px; margin-bottom:12px;">
+        <div style="font-size:11.5px; font-weight:800; color:var(--gold); margin-bottom:8px;">
+          <i class="fa-solid fa-lock"></i> Change Password
+        </div>
+        <div class="form-ctrl">
+          <label>Current Password</label>
+          <input type="password" id="curPasswordInput" placeholder="Purana Password">
+        </div>
+        <div class="form-ctrl">
+          <label>New Password</label>
+          <input type="password" id="newPasswordInput" placeholder="Naya Password">
+        </div>
+        <button class="btn-green-action" style="padding:8px;" onclick="handleChangePassword()">Update Password</button>
+      </div>
+
+      <button onclick="handleLogout()" style="width:100%; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#ef4444; padding:10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; margin-top:12px;">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout Account
+      </button>
+
+      <button class="btn-modal-close" onclick="closeModal('profileModal')">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="walletModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span style="color:var(--gold);"><i class="fa-solid fa-wallet"></i> My Wallet Balance</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('walletModal')"></i>
+      </div>
+      <div style="background:#02150d; border:1px solid rgba(0,230,118,0.3); border-radius:12px; padding:14px; text-align:center; margin-bottom:14px;">
+        <div style="font-size:11px; color:#94a3b8;">Available Balance (This Gmail)</div>
+        <div style="font-size:26px; font-weight:900; color:#fff; margin-top:2px;">Rs. <span id="modalWalletBal" style="color:var(--gold);">0</span></div>
+      </div>
+
+      <div style="background: rgba(255, 183, 3, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; font-size: 11px; color: #fed7aa; margin-bottom: 10px; text-align: center; font-weight: 700;">
+        ⚠️ Soch samajh kar add karein iska withdraw nahi hoga, aapko price sirf win karne par milegi.
+      </div>
+
+      <p style="font-size:11px; color:#a7f3d0; margin-bottom:8px;">
+        EasyPaisa par payment bhej kar screenshot attach karein:
+      </p>
+      <div class="form-ctrl">
+        <label>EasyPaisa Account</label>
+        <input type="text" value="03186815926 (m Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
+      </div>
+      <div class="form-ctrl">
+        <label>Deposit Amount (Rs)</label>
+        <input type="number" id="walletDepositAmount" placeholder="e.g. 550">
+      </div>
+      <div class="form-ctrl">
+        <label>Payment Screenshot</label>
+        <input type="file" id="walletSsInput" accept="image/*" onchange="previewWalletScreenshot(event)">
+        <img id="walletSsPreview" class="preview-box" alt="Deposit Proof">
+      </div>
+      <button class="btn-green-action" onclick="submitWalletDepositProof()">Submit Deposit Proof</button>
+      <button class="btn-modal-close" onclick="closeModal('walletModal')">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="eventsModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span style="color:#ff4625;"><i class="fa-solid fa-gift"></i> Active Giveaways</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('eventsModal')"></i>
+      </div>
+      <div id="eventsListContainer"></div>
+      <button class="btn-modal-close" onclick="closeModal('eventsModal')">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="joinModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span id="modalMatchName">Match Lobby</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('joinModal')"></i>
+      </div>
+      
+      <div id="joinedDetailsContainer" style="display: none;">
+        <div class="ff-lobby-container">
+          <div class="ff-notice-strip">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold); margin-right:4px;"></i>
+            Real Name, Game UID aur WhatsApp theek enter karein prize claim karne ke liye.
+          </div>
+
+          <div class="ff-lobby-grid">
+            <div class="ff-left-panel">
+              <div class="ff-map-box">
+                <img id="lobbyCoverImg" class="ff-map-img" src="" alt="Gaming DP">
+                <div class="ff-map-badge" id="lobbyMapBadge">BERMUDA</div>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Mode:</span>
+                <span id="lobbyModeVal">Battle</span>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Time:</span>
+                <span id="lobbyTimeVal">--</span>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Fee:</span>
+                <span id="lobbyFeeVal" style="color:var(--mint-primary);">Rs. 0</span>
+              </div>
+              <div class="ff-room-spec-row">
+                <span>Booyah:</span>
+                <span id="lobbyPrizeVal" style="color:var(--gold); font-weight:800;">Rs. 0</span>
+              </div>
+              <div class="ff-creds-badge-box" id="lobbyCredsBox"></div>
+              
+              <button onclick="leaveCurrentMatch()" style="width:100%; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#ef4444; padding:7px; border-radius:6px; font-size:10.5px; font-weight:900; cursor:pointer; margin-top:6px;">
+                <i class="fa-solid fa-right-from-bracket"></i> Leave Room (Refund Fee)
+              </button>
+            </div>
+
+            <div class="ff-right-panel">
+              <div class="ff-lobby-top-bar">
+                <span><i class="fa-solid fa-users"></i> <span id="lobbySlotsFraction">0/12</span></span>
+                <span style="color:#ffd000; font-size:9px;">ROOM SLOTS</span>
+              </div>
+              <div id="ffSlotsContainer" style="display:flex; flex-direction:column; gap:5px; margin-top:4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="pendingNoticeBox" style="display: none; background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000; margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span><i class="fa-solid fa-hourglass-half"></i> Payment review me hai.</span>
+          <button onclick="leaveCurrentMatch()" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:800; cursor:pointer;">Leave & Refund</button>
+        </div>
+      </div>
+
+      <div id="paymentFormBlock" style="display: none;">
+        <button class="btn-wallet-pay" id="btnPayWallet" onclick="payViaWalletAction()">
+          <i class="fa-solid fa-bolt"></i> Pay via Wallet Balance (1-Click)
+        </button>
+
+        <div style="text-align:center; font-size:10px; color:#64748b; margin:8px 0;">-- YA PHIR EASYPAISA SE JOIN KAREIN --</div>
+
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 10px;">
+          EasyPaisa par entry fee bhej kar screenshot attach karein:
+        </p>
+        <div class="form-ctrl">
+          <label>EasyPaisa Account</label>
+          <input type="text" value="03186815926 (m Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
+        </div>
+        <div class="form-ctrl">
+          <label>Payment Screenshot</label>
+          <input type="file" id="ssInput" accept="image/*" onchange="previewScreenshot(event)">
+          <img id="ssPreview" class="preview-box" alt="Payment Proof">
+        </div>
+        <button class="btn-green-action" id="submitProofBtn" onclick="submitJoinWithSS()">Submit Proof</button>
+      </div>
+
+      <button class="btn-modal-close" onclick="closeModal('joinModal')">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="supportModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-comments" style="color:var(--mint-primary); margin-right:6px;"></i>Help / Owner Chat</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('supportModal')"></i>
+      </div>
+      <div class="chat-history-box" id="playerChatHistory"></div>
+      <div class="chat-input-row">
+        <input type="text" id="suppMsg" placeholder="Type message..." onkeypress="handleChatEnter(event)">
+        <button class="chat-send-btn" onclick="submitSupportMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+      <button class="btn-modal-close" onclick="closeModal('supportModal')">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const matchThumbnails = [
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80"
+    ];
+
+    const defaultMatches = [
+      {
+        id: "m_1",
+        title: "Multaniff (Solo)",
+        subtitle: "All guns allow",
+        map: "Kalahari",
+        rules: "Standard Rules | Solo",
+        time: "Hfte din 1 bje",
+        fee: 30,
+        prize: 300,
+        totalSlots: 12,
+        coverImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+        roomId: "",
+        roomPass: "",
+        players: []
+      },
+      {
+        id: "m_2",
+        title: "Friday MATCH ROOM",
+        subtitle: "Clash Squad 4v4",
+        map: "Bermuda",
+        rules: "Gun Attributes Off",
+        time: "5.00 pm. Friday",
+        fee: 50,
+        prize: 500,
+        totalSlots: 8,
+        coverImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
+        roomId: "",
+        roomPass: "",
+        players: []
       }
-      updateHeaderStats();
+    ];
+
+    let currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
+    let selectedMatchId = null;
+    let uploadedScreenshotBase64 = "";
+    let uploadedWalletProofBase64 = "";
+    let activeFilter = "All";
+
+    let currentGeneratedOtp = null;
+    let otpTargetEmail = null;
+
+    function getAllRegisteredUsers() {
+      return JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
     }
 
-    function openCreateMatchModal() {
-      document.getElementById('createMatchModal').style.display = 'flex';
-    }
-    function closeCreateMatchModal() {
-      document.getElementById('createMatchModal').style.display = 'none';
+    function saveAllRegisteredUsers(users) {
+      localStorage.setItem('mff_accounts_db', JSON.stringify(users));
     }
 
-    function openFullImage(src) {
-      const w = window.open("");
-      w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+    function shareWebsiteLink() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Multani FF Official Tournament',
+          text: 'Join Daily Free Fire Tournaments and Win Real Cash Prizes!',
+          url: window.location.href,
+        }).catch(err => console.log('Share error:', err));
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("✅ Website link copied to clipboard!");
+      }
     }
 
-    function openAddWinnerModal() {
-      document.getElementById('winnerModalTitle').innerHTML = `<i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Add New Announcement`;
-      document.getElementById('editWinnerIndex').value = "-1";
-      document.getElementById('winName').value = "";
-      document.getElementById('winUid').value = "";
-      document.getElementById('winMatch').value = "";
-      document.getElementById('winPrize').value = "";
-      document.getElementById('winSsInput').value = "";
-      document.getElementById('winSsPreview').style.display = "none";
-      uploadedWinnerProofBase64 = "";
-      document.getElementById('winnerModal').style.display = 'flex';
+    function openMenuModal() {
+      document.getElementById('menuModal').style.display = 'flex';
     }
 
-    function closeWinnerModal() {
-      document.getElementById('winnerModal').style.display = 'none';
+    function switchAuthView(view) {
+      document.getElementById('authLoginBlock').style.display = (view === 'login') ? 'block' : 'none';
+      document.getElementById('authSignupBlock').style.display = (view === 'signup') ? 'block' : 'none';
+      document.getElementById('authForgotStep1Block').style.display = (view === 'forgotStep1') ? 'block' : 'none';
+      document.getElementById('authForgotStep2Block').style.display = (view === 'forgotStep2') ? 'block' : 'none';
     }
 
-    function previewWinnerScreenshot(e) {
+    function openProfileManageModal() {
+      if (!currentUser) {
+        switchAuthView('login');
+        document.getElementById('authGateModal').style.display = 'flex';
+      } else {
+        let users = getAllRegisteredUsers();
+        let freshUser = users.find(u => u.email === currentUser.email) || currentUser;
+        currentUser = freshUser;
+        localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+        document.getElementById('profDispName').innerText = currentUser.name || "Player";
+        document.getElementById('profDispUid').innerText = `UID: ${currentUser.uid}`;
+        document.getElementById('profDispEmail').innerText = `Gmail: ${currentUser.email || 'Not Linked'}`;
+        document.getElementById('profDispPhone').innerText = `WhatsApp: ${currentUser.phone || 'N/A'}`;
+        document.getElementById('profileModal').style.display = 'flex';
+      }
+    }
+
+    function handleUserSignup() {
+      const email = document.getElementById('signEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('signPass').value.trim();
+      const name = document.getElementById('signName').value.trim();
+      const uid = document.getElementById('signUid').value.trim();
+      const phone = document.getElementById('signPhone').value.trim();
+
+      if (!email || !pass || !name || !uid || !phone) {
+        alert("Tamam details bharna lazmi hain!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      if (users.some(u => u.email === email)) {
+        alert("Yeh Gmail pehle se registered hai! Login karein.");
+        switchAuthView('login');
+        return;
+      }
+
+      const newUser = {
+        email: email,
+        password: pass,
+        name: name,
+        uid: uid,
+        phone: phone,
+        walletBalance: 0
+      };
+
+      users.push(newUser);
+      saveAllRegisteredUsers(users);
+
+      currentUser = newUser;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      closeModal('authGateModal');
+      updateNavProfile();
+      renderMatches();
+      alert(`🎉 Welcome ${name}! Naya account ban gaya.`);
+    }
+
+    function handleUserLogin() {
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPass').value.trim();
+
+      if (!email || !pass) {
+        alert("Gmail aur Password enter karein!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      const matched = users.find(u => u.email === email && u.password === pass);
+
+      if (!matched) {
+        alert("❌ Galat Gmail ya Password! Agar password bhool gaye hain toh 'Forgot Password' dabayein.");
+        return;
+      }
+
+      currentUser = matched;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      closeModal('authGateModal');
+      updateNavProfile();
+      renderMatches();
+      alert(`✅ Welcome Back, ${currentUser.name}!`);
+    }
+
+    function sendGmailOtpCode() {
+      const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
+      if (!email) {
+        alert("Pehle apna registered Gmail enter karein!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      const exists = users.find(u => u.email === email);
+      if (!exists) {
+        alert("❌ Yeh Gmail registered nahi hai! Pehle Sign Up karein.");
+        return;
+      }
+
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      currentGeneratedOtp = String(otp);
+      otpTargetEmail = email;
+
+      const sendBtn = document.getElementById('btnSendOtp');
+      const originalText = sendBtn.innerHTML;
+      sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending Code...`;
+      sendBtn.disabled = true;
+
+      const templateParams = {
+        to_email: email,
+        email: email,
+        to_name: exists.name || "Player",
+        name: exists.name || "Player",
+        passcode: otp,
+        otp_code: otp,
+        message: `Aapka Multani.ff password verification code: ${otp}`
+      };
+
+      emailjs.send("service_eqsd3p8", "template_fcwtgdh", templateParams)
+        .then(function(res) {
+          alert(`✅ Verification code aapke Gmail (${email}) par send kar diya gaya hai!`);
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalText;
+          proceedToOtpInput(email);
+        })
+        .catch(function(err) {
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalText;
+          alert(`❌ Code nahi bheja ja saka!`);
+        });
+    }
+
+    function proceedToOtpInput(email) {
+      document.getElementById('btnSendOtp').innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Verification Code`;
+      document.getElementById('otpTargetGmailText').innerText = email;
+      switchAuthView('forgotStep2');
+    }
+
+    function verifyOtpAndChangePassword() {
+      const enteredOtp = document.getElementById('otpCodeInput').value.trim();
+      const newPass = document.getElementById('otpNewPasswordInput').value.trim();
+
+      if (!enteredOtp || !newPass) {
+        alert("Code aur naya password dono likhein!");
+        return;
+      }
+
+      if (enteredOtp !== currentGeneratedOtp) {
+        alert("❌ Galat Confirmation Code!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      let user = users.find(u => u.email === otpTargetEmail);
+      if (user) {
+        user.password = newPass;
+        saveAllRegisteredUsers(users);
+      }
+
+      if (currentUser && currentUser.email === otpTargetEmail) {
+        currentUser.password = newPass;
+        localStorage.setItem('mff_user', JSON.stringify(currentUser));
+      }
+
+      currentGeneratedOtp = null;
+      otpTargetEmail = null;
+      document.getElementById('otpCodeInput').value = "";
+      document.getElementById('otpNewPasswordInput').value = "";
+
+      alert("🎉 Code verified! Naya Password set ho gaya.");
+      switchAuthView('login');
+    }
+
+    function handleChangePassword() {
+      const curPass = document.getElementById('curPasswordInput').value.trim();
+      const newPass = document.getElementById('newPasswordInput').value.trim();
+
+      if (!curPass || !newPass) {
+        alert("Purana aur naya password dono likhein!");
+        return;
+      }
+
+      if (currentUser.password !== curPass) {
+        alert("❌ Current password theek nahi hai!");
+        return;
+      }
+
+      let users = getAllRegisteredUsers();
+      const user = users.find(u => u.email === currentUser.email);
+      if (user) {
+        user.password = newPass;
+        saveAllRegisteredUsers(users);
+      }
+
+      currentUser.password = newPass;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      document.getElementById('curPasswordInput').value = "";
+      document.getElementById('newPasswordInput').value = "";
+      alert("✅ Password update ho gaya!");
+    }
+
+    function handleLogout() {
+      if (!confirm("Logout karna chahte hain?")) return;
+      currentUser = null;
+      localStorage.removeItem('mff_user');
+      closeModal('profileModal');
+      updateNavProfile();
+      renderMatches();
+    }
+
+    function updateNavProfile() {
+      currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
+      if (currentUser) {
+        let users = getAllRegisteredUsers();
+        let freshUser = users.find(u => u.email === currentUser.email);
+        if (freshUser) {
+          currentUser.walletBalance = freshUser.walletBalance;
+          localStorage.setItem('mff_user', JSON.stringify(currentUser));
+        }
+        document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
+      } else {
+        document.getElementById('navWalletBal').innerText = "0";
+      }
+    }
+
+    function switchMainTab(tab) {
+      const matchView = document.getElementById('matchesMainView');
+      const winView = document.getElementById('winnersMainView');
+      const mBtn = document.getElementById('tabMatchesBtn');
+      const wBtn = document.getElementById('tabWinnersBtn');
+
+      if (tab === 'matches') {
+        matchView.style.display = 'block';
+        winView.style.display = 'none';
+        mBtn.classList.add('active');
+        wBtn.classList.remove('active');
+      } else {
+        matchView.style.display = 'none';
+        winView.style.display = 'block';
+        mBtn.classList.remove('active');
+        wBtn.classList.add('active');
+        renderWinners();
+      }
+    }
+
+    function setMapFilter(mapName, btn) {
+      document.querySelectorAll('.filter-item').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = mapName;
+      renderMatches();
+    }
+
+    function renderMatches() {
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments'));
+      if (!tournaments || tournaments.length === 0) {
+        tournaments = defaultMatches;
+        localStorage.setItem('mff_tournaments', JSON.stringify(defaultMatches));
+      }
+
+      const container = document.getElementById('matchesContainer');
+      container.innerHTML = "";
+
+      const filtered = activeFilter === "All" 
+        ? tournaments 
+        : tournaments.filter(m => (m.map || "Bermuda").toLowerCase().includes(activeFilter.toLowerCase()));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: span 2; text-align:center; padding: 40px 10px; color:#a7f3d0; font-size:12px;">Is Map par koi match available nahi hai.</div>`;
+        return;
+      }
+
+      filtered.forEach((m, idx) => {
+        const approvedPlayers = (m.players || []).filter(p => p.status === "approved");
+        const joinedCount = approvedPlayers.length;
+        const thumbUrl = m.coverImage || matchThumbnails[idx % matchThumbnails.length];
+
+        let statusText = "Tap to Join";
+        let userRecord = currentUser ? (m.players || []).find(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid) : null;
+        if (userRecord) {
+          statusText = userRecord.status === "approved" ? "✔ CONFIRMED" : "⌛ PENDING";
+        } else if (joinedCount >= m.totalSlots) {
+          statusText = "FULL";
+        }
+
+        const card = document.createElement('div');
+        card.className = "tournament-grid-card";
+        card.onclick = () => handleCardClick(m.id);
+        card.innerHTML = `
+          <div class="card-thumb-wrap">
+            <img class="card-thumb" src="${thumbUrl}" alt="Match Image">
+            <div class="thumb-overlay"></div>
+            <div class="card-live-badge"><i class="fa-solid fa-signal"></i> ${joinedCount}/${m.totalSlots}</div>
+            <div class="card-thumb-text"><i class="fa-solid fa-clock"></i> ${m.time} | ${m.map}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-room-title"><span>🇵🇰</span><span>${m.title}</span></div>
+            <div class="card-room-desc">${m.subtitle || m.rules}</div>
+            <div class="card-footer-info">
+              <span class="fee-badge">Fee: Rs.${m.fee}</span>
+              <span class="prize-badge">Booyah: Rs.${m.prize}</span>
+            </div>
+            <div style="font-size:9px; font-weight:800; color:${userRecord?.status === 'approved' ? '#059669' : '#0284c7'}; margin-top:2px; text-align:right;">
+              ${statusText}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function handleCardClick(matchId) {
+      if (!currentUser) {
+        alert("Pehle Login karein!");
+        openProfileManageModal();
+        return;
+      }
+
+      const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bannedUids.includes(currentUser.uid)) {
+        alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
+        return;
+      }
+
+      selectedMatchId = matchId;
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+      const match = tournaments.find(m => m.id === matchId);
+      if (!match) return;
+
+      document.getElementById('modalMatchName').innerText = match.title;
+      const joinedContainer = document.getElementById('joinedDetailsContainer');
+      const pendingNoticeBox = document.getElementById('pendingNoticeBox');
+      const paymentFormBlock = document.getElementById('paymentFormBlock');
+
+      const approvedPlayers = (match.players || []).filter(p => p.status === "approved");
+      const userRecord = (match.players || []).find(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid);
+
+      joinedContainer.style.display = "none";
+      pendingNoticeBox.style.display = "none";
+      paymentFormBlock.style.display = "none";
+
+      if (userRecord) {
+        joinedContainer.style.display = "block";
+        document.getElementById('lobbyCoverImg').src = match.coverImage || matchThumbnails[0];
+        document.getElementById('lobbyMapBadge').innerText = (match.map || "BERMUDA").toUpperCase();
+        document.getElementById('lobbyModeVal').innerText = match.subtitle || "Battle";
+        document.getElementById('lobbyTimeVal').innerText = match.time || "--";
+        document.getElementById('lobbyFeeVal').innerText = `Rs. ${match.fee}`;
+        document.getElementById('lobbyPrizeVal').innerText = `Rs. ${match.prize}`;
+
+        const credsBox = document.getElementById('lobbyCredsBox');
+        if (userRecord.status === "approved" && match.roomId && match.roomPass) {
+          credsBox.innerHTML = `
+            <div style="color:var(--mint-primary); font-weight:800; font-size:9px; margin-bottom:4px;"><i class="fa-solid fa-key"></i> UNLOCKED</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+              <span>ID: <b style="color:#00f0ff;">${match.roomId}</b></span>
+              <button class="copy-btn-chip" onclick="copyToClipboard('${match.roomId}', 'Room ID')"><i class="fa-solid fa-copy"></i> Copy</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span>PW: <b style="color:#ffd000;">${match.roomPass}</b></span>
+              <button class="copy-btn-chip" onclick="copyToClipboard('${match.roomPass}', 'Password')"><i class="fa-solid fa-copy"></i> Copy</button>
+            </div>
+          `;
+        } else {
+          credsBox.innerHTML = `<div style="color:#ffd000; font-size:9px;"><i class="fa-solid fa-lock"></i> Match se thori der pehle ID & PW update hoga.</div>`;
+        }
+
+        const totalSlots = match.totalSlots || 12;
+        document.getElementById('lobbySlotsFraction').innerText = `${approvedPlayers.length}/${totalSlots}`;
+        const slotsContainer = document.getElementById('ffSlotsContainer');
+        slotsContainer.innerHTML = "";
+
+        for (let i = 0; i < totalSlots; i++) {
+          const player = approvedPlayers[i];
+          const slotRow = document.createElement('div');
+          if (player) {
+            const isMe = (player.email && player.email === currentUser.email) || player.uid === currentUser.uid;
+            slotRow.className = "ff-slot-bar occupied";
+            slotRow.innerHTML = `
+              <div class="ff-slot-num">${i + 1}</div>
+              <div class="ff-player-details">
+                <div class="ff-player-name"><i class="fa-solid fa-user-ninja" style="font-size:10px; color:var(--gold);"></i> ${player.name} ${isMe ? '<span style="color:var(--mint-primary); font-size:9px;">(You)</span>' : ''}</div>
+                <div class="ff-player-uid">UID: ${player.uid}</div>
+              </div>
+            `;
+          } else {
+            slotRow.className = "ff-slot-bar";
+            slotRow.innerHTML = `<div class="ff-slot-num">${i + 1}</div><div class="ff-slot-empty">Empty Slot</div>`;
+          }
+          slotsContainer.appendChild(slotRow);
+        }
+      } else if (userRecord && userRecord.status === "pending") {
+        pendingNoticeBox.style.display = "block";
+      } else {
+        paymentFormBlock.style.display = "block";
+        uploadedScreenshotBase64 = "";
+        document.getElementById('ssInput').value = "";
+        document.getElementById('ssPreview').style.display = "none";
+        const userBal = currentUser?.walletBalance || 0;
+        document.getElementById('btnPayWallet').innerText = `⚡ Pay via Wallet (Rs. ${match.fee} | Bal: Rs. ${userBal})`;
+      }
+
+      document.getElementById('joinModal').style.display = "flex";
+    }
+
+    function leaveCurrentMatch() {
+      if (!confirm("Kya aap waqai is match ko leave karna chahte hain? Entry fee wallet mein refund ho jayegi.")) return;
+      
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      const match = tournaments.find(m => m.id === selectedMatchId);
+      if (!match) return;
+
+      let playerIdx = (match.players || []).findIndex(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid);
+      if (playerIdx === -1) return;
+
+      let refundFee = Number(match.fee || 0);
+      currentUser.walletBalance = (Number(currentUser.walletBalance) || 0) + refundFee;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      let users = getAllRegisteredUsers();
+      let dbUser = users.find(u => u.email === currentUser.email);
+      if (dbUser) {
+        dbUser.walletBalance = currentUser.walletBalance;
+        saveAllRegisteredUsers(users);
+      }
+
+      match.players.splice(playerIdx, 1);
+      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+
+      closeModal('joinModal');
+      updateNavProfile();
+      renderMatches();
+      alert(`✅ Match leave kar diya gaya. Rs. ${refundFee} wallet mein wapis add ho gaye hain.`);
+    }
+
+    function copyToClipboard(text, label) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert(`✅ ${label} Copied: ${text}`);
+      });
+    }
+
+    function openWalletModal() {
+      if (!currentUser) {
+        alert("Pehle login karein!");
+        openProfileManageModal();
+        return;
+      }
+      updateNavProfile();
+      document.getElementById('modalWalletBal').innerText = currentUser.walletBalance || 0;
+      document.getElementById('walletModal').style.display = 'flex';
+    }
+
+    function previewWalletScreenshot(e) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          uploadedWinnerProofBase64 = evt.target.result;
-          const preview = document.getElementById('winSsPreview');
+          uploadedWalletProofBase64 = evt.target.result;
+          const preview = document.getElementById('walletSsPreview');
           preview.src = evt.target.result;
           preview.style.display = "block";
         };
@@ -638,604 +1606,264 @@
       }
     }
 
-    function saveWinnerAnnouncement() {
-      const name = document.getElementById('winName').value.trim();
-      const uid = document.getElementById('winUid').value.trim();
-      const match = document.getElementById('winMatch').value.trim();
-      const prize = document.getElementById('winPrize').value.trim();
-      const editIdx = Number(document.getElementById('editWinnerIndex').value);
-
-      if (!name || !uid || !prize) {
-        alert("Winner Name, UID aur Prize likhna lazmi hai!");
+    function submitWalletDepositProof() {
+      const amount = Number(document.getElementById('walletDepositAmount').value);
+      if (!amount || amount <= 0 || !uploadedWalletProofBase64) {
+        alert("Amount aur payment proof screenshot select karein!");
         return;
       }
 
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      
-      const newWinnerObj = {
-        name,
-        uid,
-        match: match || "Tournament Room",
-        prize: prize,
-        proofSs: uploadedWinnerProofBase64 || (editIdx >= 0 ? winnersList[editIdx].proofSs : "")
-      };
-
-      if (editIdx >= 0) {
-        winnersList[editIdx] = newWinnerObj;
-      } else {
-        winnersList.unshift(newWinnerObj);
-      }
-
-      localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
-      closeWinnerModal();
-      renderAdminWinners();
-      alert("🏆 Winner announcement successfully save ho gayi!");
-    }
-
-    function renderAdminWinners() {
-      const container = document.getElementById('adminWinnersListContainer');
-      container.innerHTML = "";
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-
-      if (winnersList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi winner announcement mojud nahi hai.</div>`;
-        return;
-      }
-
-      winnersList.forEach((w, idx) => {
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        
-        let thumbHtml = w.proofSs ? `<img src="${w.proofSs}" class="ss-thumbnail" onclick="openFullImage('${w.proofSs}')">` : '<span style="font-size:9.5px; color:var(--text-muted);">No SS</span>';
-
-        div.innerHTML = `
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${w.name} <span style="color:var(--blue); font-size:10px;">(UID: ${w.uid})</span></div>
-            <div style="font-size:10px; color:var(--text-muted);">${w.match} | <b style="color:var(--gold);">${w.prize}</b></div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            ${thumbHtml}
-            <button class="btn-action btn-orange" style="padding:5px 8px; font-size:10px;" onclick="editWinner(${idx})">Edit</button>
-            <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteWinner(${idx})">Delete</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function editWinner(idx) {
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      let w = winnersList[idx];
-      if (!w) return;
-
-      document.getElementById('winnerModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--gold);"></i> Edit Announcement`;
-      document.getElementById('editWinnerIndex').value = idx;
-      document.getElementById('winName').value = w.name || '';
-      document.getElementById('winUid').value = w.uid || '';
-      document.getElementById('winMatch').value = w.match || '';
-      document.getElementById('winPrize').value = w.prize || '';
-      
-      uploadedWinnerProofBase64 = w.proofSs || '';
-      const preview = document.getElementById('winSsPreview');
-      if (w.proofSs) {
-        preview.src = w.proofSs;
-        preview.style.display = "block";
-      } else {
-        preview.style.display = "none";
-      }
-
-      document.getElementById('winnerModal').style.display = 'flex';
-    }
-
-    function deleteWinner(idx) {
-      if (!confirm("Is winner announcement ko delete karna chahte hain?")) return;
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      winnersList.splice(idx, 1);
-      localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
-      renderAdminWinners();
-      alert("🗑️ Announcement delete kar di gayi hai.");
-    }
-
-    function renderAllRegisteredUsers() {
-      const container = document.getElementById('allRegisteredUsersContainer');
-      container.innerHTML = "";
-      const usersList = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-
-      if (usersList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Abhi tak kisi ne account nahi banaya.</div>`;
-        return;
-      }
-
-      usersList.forEach((u, index) => {
-        let cleanPhone = (u.phone || '').replace(/[^0-9]/g, '');
-        if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
-        const waLink = cleanPhone ? `https://wa.me/${cleanPhone}` : '#';
-
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        div.innerHTML = `
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${index + 1}. ${u.name} <span style="color:var(--blue); font-size:10px;">(UID: ${u.uid})</span></div>
-            <div style="font-size:10.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${u.phone || 'N/A'} | <b style="color:var(--gold);">Bal: Rs. ${u.walletBalance || 0}</b></div>
-            <div style="font-size:9.5px; color:var(--text-muted);">Gmail: ${u.email}</div>
-          </div>
-          <div style="display:flex; gap:4px; align-items:center;">
-            <button class="btn-action btn-orange" style="padding:5px 8px; font-size:10px;" onclick="editUserBalance(${index})">Edit Bal</button>
-            ${u.phone ? `<a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:5px 8px; font-size:10px;"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function editUserBalance(index) {
-      let usersList = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-      let u = usersList[index];
-      if (!u) return;
-
-      let newBal = prompt(`Enter new wallet balance for ${u.name} (UID: ${u.uid}):`, u.walletBalance || 0);
-      if (newBal !== null && !isNaN(newBal)) {
-        u.walletBalance = Number(newBal);
-        localStorage.setItem('mff_accounts_db', JSON.stringify(usersList));
-
-        let curUser = JSON.parse(localStorage.getItem('mff_user'));
-        if (curUser && curUser.email === u.email) {
-          curUser.walletBalance = u.walletBalance;
-          localStorage.setItem('mff_user', JSON.stringify(curUser));
-        }
-
-        renderAllRegisteredUsers();
-        alert(`✅ ${u.name} ka balance update ho kar Rs. ${u.walletBalance} ho gaya hai!`);
-      }
-    }
-
-    function renderDeposits() {
-      const container = document.getElementById('depositsContainer');
-      container.innerHTML = "";
-      
-      const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      const pendingDeps = deposits.filter(d => d.status === 'pending');
-
-      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      let pendingMatchPlayers = [];
-      matches.forEach((m, mIdx) => {
-        if (m.players) {
-          m.players.forEach((p, pIdx) => {
-            if (p.status === 'pending') {
-              pendingMatchPlayers.push({ matchIdx: mIdx, playerIdx: pIdx, matchTitle: m.title, fee: m.fee, ...p });
-            }
-          });
-        }
+      let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+      deposits.push({
+        id: "dep_" + Date.now(),
+        email: currentUser.email,
+        uid: currentUser.uid,
+        name: currentUser.name,
+        phone: currentUser.phone,
+        requestedCoins: amount,
+        screenshot: uploadedWalletProofBase64,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "pending"
       });
 
-      const totalPendingCount = pendingDeps.length + pendingMatchPlayers.length;
-      document.getElementById('reqCountText').innerText = `${totalPendingCount} Requests`;
+      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
+      closeModal('walletModal');
+      document.getElementById('walletDepositAmount').value = "";
+      document.getElementById('walletSsInput').value = "";
+      document.getElementById('walletSsPreview').style.display = "none";
+      alert("✅ Deposit proof submit ho gaya!");
+    }
 
-      if (totalPendingCount === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:11.5px;"><i class="fa-solid fa-circle-check" style="color:var(--mint); font-size:24px; margin-bottom:6px; display:block;"></i>Koi pending verification request nahi hai!</div>`;
+    function payViaWalletAction() {
+      const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bannedUids.includes(currentUser.uid)) {
+        alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
         return;
       }
 
-      pendingDeps.forEach((dep) => {
-        const globalIdx = deposits.findIndex(d => d.id === dep.id);
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+      const match = tournaments.find(m => m.id === selectedMatchId);
+      if (!match) return;
+
+      let users = getAllRegisteredUsers();
+      let dbUser = users.find(u => u.email === currentUser.email);
+      const userBal = Number(dbUser ? dbUser.walletBalance : (currentUser.walletBalance || 0));
+      const matchFee = Number(match.fee || 0);
+
+      if (userBal < matchFee) {
+        alert(`❌ Wallet balance kam hai! Required: Rs. ${matchFee}, Available: Rs. ${userBal}.`);
+        return;
+      }
+
+      if (!confirm(`Rs. ${matchFee} deduct karke match slot confirm karein?`)) return;
+
+      const newBal = userBal - matchFee;
+      currentUser.walletBalance = newBal;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      if (dbUser) {
+        dbUser.walletBalance = newBal;
+        saveAllRegisteredUsers(users);
+      }
+
+      if (!match.players) match.players = [];
+      match.players.push({
+        name: currentUser.name,
+        email: currentUser.email,
+        uid: currentUser.uid,
+        phone: currentUser.phone,
+        screenshot: "WALLET_PAYMENT",
+        status: "approved",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+      closeModal('joinModal');
+      updateNavProfile();
+      renderMatches();
+      alert("🎉 Slot confirm ho gaya!");
+    }
+
+    function renderWinners() {
+      const winners = JSON.parse(localStorage.getItem('mff_winners_list')) || [
+        { name: "MANDOOR_FF", uid: "3239454397", match: "Friday Match Room (CS)", prize: "Rs. 500" }
+      ];
+
+      const container = document.getElementById('winnersListContainer');
+      container.innerHTML = "";
+      winners.forEach(w => {
+        let proofHtml = w.proofSs ? `<div style="margin-top:6px;"><img src="${w.proofSs}" style="max-height:80px; border-radius:6px; cursor:pointer;" onclick="openFullImage('${w.proofSs}')"></div>` : '';
         const card = document.createElement('div');
-        card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        
-        let thumbHtml = dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumbnail" onclick="openFullImage('${dep.screenshot}')">` : '';
-        
+        card.className = "winner-card";
         card.innerHTML = `
-          <div>
-            <div style="font-size:11.5px; font-weight:800; color:#fff;">${dep.name} <span style="color:var(--blue); font-size:10px;">(${dep.uid})</span></div>
-            <div style="font-size:10px; color:var(--text-muted);">Wallet Recharge | ${dep.email}</div>
-            <div style="font-size:11.5px; font-weight:900; color:var(--gold); margin-top:2px;">Rs. ${dep.requestedCoins}</div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            ${thumbHtml}
-            <button class="btn-action" onclick="approveDepositReq(${globalIdx})">Approve</button>
-            <button class="btn-action btn-danger" onclick="rejectDepositReq(${globalIdx})">Reject</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-
-      pendingMatchPlayers.forEach((item) => {
-        const card = document.createElement('div');
-        card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        
-        let thumbHtml = (item.screenshot && item.screenshot !== 'WALLET_PAYMENT') 
-          ? `<img src="${item.screenshot}" class="ss-thumbnail" onclick="openFullImage('${item.screenshot}')">` 
-          : '<span style="font-size:9.5px; color:var(--text-muted);">Wallet Pay</span>';
-
-        card.innerHTML = `
-          <div>
-            <div style="font-size:11.5px; font-weight:800; color:#fff;">${item.name} <span style="color:var(--blue); font-size:10px;">(UID: ${item.uid})</span></div>
-            <div style="font-size:10px; color:var(--mint);">Match: ${item.matchTitle}</div>
-            <div style="font-size:11.5px; font-weight:900; color:var(--gold); margin-top:2px;">Fee: Rs. ${item.fee}</div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            ${thumbHtml}
-            <button class="btn-action" onclick="approveMatchPlayer(${item.matchIdx}, ${item.playerIdx})">Approve</button>
-            <button class="btn-action btn-danger" onclick="rejectMatchPlayer(${item.matchIdx}, ${item.playerIdx})">Reject</button>
+          <div class="winner-badge-circle"><i class="fa-solid fa-crown"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:900; color:#fff;">${w.name}</div>
+            <div style="font-size:10px; color:#38bdf8;">UID: ${w.uid}</div>
+            <div style="font-size:10.5px; color:#cbd5e1;">${w.match}</div>
+            <div style="font-size:11px; font-weight:800; color:var(--gold);"><i class="fa-solid fa-award"></i> Won: ${w.prize}</div>
+            ${proofHtml}
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    function approveDepositReq(idx) {
-      let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      const item = deposits[idx];
-      if (!item) return;
-
-      let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-      let user = users.find(u => u.email === item.email);
-      if (user) {
-        user.walletBalance = (Number(user.walletBalance) || 0) + Number(item.requestedCoins);
-        localStorage.setItem('mff_accounts_db', JSON.stringify(users));
-
-        let curUser = JSON.parse(localStorage.getItem('mff_user'));
-        if (curUser && curUser.email === item.email) {
-          curUser.walletBalance = user.walletBalance;
-          localStorage.setItem('mff_user', JSON.stringify(curUser));
-        }
-      }
-
-      item.status = 'approved';
-      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
-      renderDeposits();
-      updateHeaderStats();
-      alert("✅ Deposit approve ho gaya!");
+    function openFullImage(src) {
+      const w = window.open("");
+      w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
-    function rejectDepositReq(idx) {
-      if (!confirm("Is deposit request ko reject karna chahte hain?")) return;
-      let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      deposits[idx].status = 'rejected';
-      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
-      renderDeposits();
-      updateHeaderStats();
-    }
-
-    function approveMatchPlayer(matchIdx, playerIdx) {
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      if (matches[matchIdx] && matches[matchIdx].players && matches[matchIdx].players[playerIdx]) {
-        matches[matchIdx].players[playerIdx].status = 'approved';
-        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-        renderDeposits();
-        updateHeaderStats();
-        alert("✅ Tournament slot approve ho gaya!");
-      }
-    }
-
-    function rejectMatchPlayer(matchIdx, playerIdx) {
-      if (!confirm("Is player ki slot request reject karna chahte hain?")) return;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      if (matches[matchIdx] && matches[matchIdx].players) {
-        matches[matchIdx].players.splice(playerIdx, 1);
-        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-        renderDeposits();
-        updateHeaderStats();
-      }
-    }
-
-    function createMatchRoom() {
-      const title = document.getElementById('mTitle').value.trim();
-      const map = document.getElementById('mMap').value;
-      const slots = Number(document.getElementById('mSlots').value);
-      const fee = Number(document.getElementById('mFee').value);
-      const prize = Number(document.getElementById('mPrize').value);
-      const time = document.getElementById('mTime').value.trim();
-      const coverImage = document.getElementById('mCoverImg').value.trim();
-
-      if (!title || !time) {
-        alert("Match title aur timing likhna lazmi hai!");
-        return;
-      }
-
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches.push({
-        id: "m_" + Date.now(),
-        title, map, totalSlots: slots, fee, prize, time,
-        coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
-        subtitle: `${map} - ${slots} Slots`,
-        roomId: "", roomPass: "", players: []
-      });
-
-      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      closeCreateMatchModal();
-      document.getElementById('mTitle').value = "";
-      document.getElementById('mTime').value = "";
-      document.getElementById('mCoverImg').value = "";
-      renderAdminMatches();
-      updateHeaderStats();
-      alert("✅ Match successfully create ho gaya aur website par live ho gaya!");
-    }
-
-    function renderAdminMatches() {
-      const container = document.getElementById('activeMatchesList');
+    function openEventsModal() {
+      const gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      const container = document.getElementById('eventsListContainer');
       container.innerHTML = "";
-      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-
-      if (matches.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi active match nahi hai.</div>`;
-        return;
-      }
-
-      matches.forEach((m, idx) => {
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:12px; margin-bottom:12px;";
-        
-        let membersHtml = "";
-        if ((m.players || []).length === 0) {
-          membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:8px;">Abhi koi member join nahi hua.</div>`;
-        } else {
-          membersHtml = `<div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;"><div style="font-size:11px; font-weight:800; color:var(--mint); margin-bottom:6px;">All Members</div>`;
-          m.players.forEach((p, pIdx) => {
-            let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
-            if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
-            const waMsg = encodeURIComponent(`Congratulations 🎉 Aap tournament ki Rs. ${m.prize} prize jeet chukay ho!`);
-            const waLink = `https://wa.me/${cleanPhone}?text=${waMsg}`;
-
-            let statusBadge = p.status === 'approved' 
-              ? `<span style="color:var(--mint); font-size:9.5px;">[Approved]</span>` 
-              : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayer(${idx}, ${pIdx})">Approve</button>`;
-
-            membersHtml += `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#080e1a; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
-                <div>
-                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
-                </div>
-                <div style="display:flex; gap:3px;">
-                  <a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:3px 6px; font-size:9px;">
-                    <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner
-                  </a>
-                  <button class="btn-action btn-orange" style="padding:3px 6px; font-size:9px;" onclick="kickPlayerFromMatch(${idx}, ${pIdx}, '${p.name}')">Kick</button>
-                  <button class="btn-action btn-danger" style="padding:3px 6px; font-size:9px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban</button>
-                </div>
-              </div>
-            `;
-          });
-          membersHtml += `</div>`;
-        }
-
-        div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div>
-              <div style="font-size:12.5px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
-              <div style="font-size:10px; color:var(--text-muted);">Time: ${m.time} | Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
-            </div>
-            <div style="display:flex; gap:4px;">
-              <button class="btn-action" style="padding:5px 8px; font-size:10px;" onclick="openEditModal(${idx})"><i class="fa-solid fa-pen"></i> Edit</button>
-              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
-            </div>
-          </div>
-          <div style="font-size:10.5px; color:var(--blue); background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.2); padding:6px 8px; border-radius:6px; margin-bottom:6px;">
-            Room ID: <b>${m.roomId || 'Not set'}</b> | Password: <b>${m.roomPass || 'Not set'}</b>
-          </div>
-          ${membersHtml}
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function kickPlayerFromMatch(matchIdx, playerIdx, playerName) {
-      if (!confirm(`Kya aap ${playerName} ko is match se kick karna chahte hain?`)) return;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      if (matches[matchIdx] && matches[matchIdx].players) {
-        matches[matchIdx].players.splice(playerIdx, 1);
-        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-        renderAdminMatches();
-        updateHeaderStats();
-      }
-    }
-
-    function openEditModal(idx) {
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      let m = matches[idx];
-      if (!m) return;
-
-      document.getElementById('editMatchIndex').value = idx;
-      document.getElementById('editTitle').value = m.title || '';
-      document.getElementById('editMap').value = m.map || 'Bermuda';
-      document.getElementById('editSlots').value = m.totalSlots || 12;
-      document.getElementById('editFee').value = m.fee || 30;
-      document.getElementById('editPrize').value = m.prize || 300;
-      document.getElementById('editTime').value = m.time || '';
-      document.getElementById('editCoverImg').value = m.coverImage || '';
-      document.getElementById('editRoomId').value = m.roomId || '';
-      document.getElementById('editRoomPass').value = m.roomPass || '';
-
-      document.getElementById('editMatchModal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-      document.getElementById('editMatchModal').style.display = 'none';
-    }
-
-    function saveEditedMatch() {
-      let idx = document.getElementById('editMatchIndex').value;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      if (!matches[idx]) return;
-
-      matches[idx].title = document.getElementById('editTitle').value.trim();
-      matches[idx].map = document.getElementById('editMap').value;
-      matches[idx].totalSlots = Number(document.getElementById('editSlots').value);
-      matches[idx].fee = Number(document.getElementById('editFee').value);
-      matches[idx].prize = Number(document.getElementById('editPrize').value);
-      matches[idx].time = document.getElementById('editTime').value.trim();
-      matches[idx].coverImage = document.getElementById('editCoverImg').value.trim();
-      matches[idx].roomId = document.getElementById('editRoomId').value.trim();
-      matches[idx].roomPass = document.getElementById('editRoomPass').value.trim();
-      matches[idx].subtitle = `${matches[idx].map} - ${matches[idx].totalSlots} Slots`;
-
-      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      closeEditModal();
-      renderAdminMatches();
-      updateHeaderStats();
-      alert("✅ Match settings successfully update ho gayi aur website par live ho gayi!");
-    }
-
-    function deleteMatchAdmin(idx) {
-      if (!confirm("Is room/match ko delete karna chahte hain? Yeh website se foran remove ho jayega.")) return;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches.splice(idx, 1);
-      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      renderAdminMatches();
-      updateHeaderStats();
-      alert("🗑️ Room successfully delete kar diya gaya hai.");
-    }
-
-    function banPlayerByUid(uid, name, phone) {
-      if (!confirm(`Kya aap ${name} (UID: ${uid}) ko ban karna chahte hain?`)) return;
-      let bannedList = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      if (!bannedList.includes(uid)) {
-        bannedList.push(uid);
-        localStorage.setItem('mff_banned_uids', JSON.stringify(bannedList));
-      }
-      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-      if (!bannedDetails.some(b => b.uid === uid)) {
-        bannedDetails.push({ uid, name, phone, time: new Date().toLocaleTimeString() });
-        localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
-      }
-      alert("🚫 Player ko restrict kar diya gaya hai!");
-      renderAdminMatches();
-    }
-
-    function renderBannedPlayers() {
-      const container = document.getElementById('bannedPlayersListContainer');
-      container.innerHTML = "";
-      const bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-
-      if (bannedList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi restricted player nahi hai.</div>`;
-        return;
-      }
-
-      bannedList.forEach((b) => {
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        div.innerHTML = `
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${b.name} <span style="color:var(--red); font-size:10px;">(UID: ${b.uid})</span></div>
-          </div>
-          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="promptUnban('${b.uid}', '${b.name}')">Unban</button>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function promptUnban(uid, name) {
-      document.getElementById('unbanTargetUid').value = uid;
-      document.getElementById('unbanModalText').innerText = `Kya aap ${name} ko unban karna chahte hain?`;
-      document.getElementById('unbanModal').style.display = 'flex';
-    }
-
-    function closeUnbanModal() {
-      document.getElementById('unbanModal').style.display = 'none';
-    }
-
-    function confirmUnban() {
-      let targetUid = document.getElementById('unbanTargetUid').value;
-      let bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      bannedUids = bannedUids.filter(u => u !== targetUid);
-      localStorage.setItem('mff_banned_uids', JSON.stringify(bannedUids));
-
-      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-      bannedDetails = bannedDetails.filter(b => b.uid !== targetUid);
-      localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
-
-      closeUnbanModal();
-      renderBannedPlayers();
-      alert("✅ Player unban ho gaya hai!");
-    }
-
-    function renderAdminSupport() {
-      const container = document.getElementById('supportChatsContainer');
-      container.innerHTML = "";
-      let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-
-      if (msgs.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi support chat mojud nahi hai.</div>`;
-        return;
-      }
-
-      let grouped = {};
-      msgs.forEach(m => {
-        let key = m.email || m.uid || 'unknown';
-        if (!grouped[key]) {
-          grouped[key] = { name: m.name, contact: m.contact, items: [] };
-        }
-        grouped[key].items.push(m);
-      });
-
-      Object.keys(grouped).forEach(key => {
-        let group = grouped[key];
-        let threadBox = document.createElement('div');
-        threadBox.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:12px;";
-        
-        let headerHtml = `<div style="font-size:11.5px; font-weight:800; color:var(--blue); margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:4px;"><i class="fa-solid fa-user"></i> ${group.name} (${group.contact})</div>`;
-        
-        let msgsHtml = `<div class="chat-thread-box">`;
-        group.items.forEach(item => {
-          msgsHtml += `<div class="bubble-user"><b>Player:</b> ${item.message} <span style="font-size:8.5px; color:var(--text-muted); display:block; text-align:right;">${item.time || ''}</span></div>`;
-          if (item.adminReply) {
-            msgsHtml += `<div class="bubble-admin"><b>Owner:</b> ${item.adminReply}</div>`;
-          }
+      if (gList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 25px; color:#94a3b8; font-size:12px;">Koi active giveaway nahi hai.</div>`;
+      } else {
+        gList.forEach(ev => {
+          const card = document.createElement('div');
+          card.className = "event-card";
+          card.innerHTML = `
+            <div class="event-card-header"><span class="event-card-title">${ev.title}</span><span class="event-badge">${ev.endDate}</span></div>
+            <div class="event-desc">${ev.desc}</div>
+            <div class="event-reward-tag">Reward: ${ev.reward}</div>
+          `;
+          container.appendChild(card);
         });
-        msgsHtml += `</div>`;
-
-        let replyHtml = `
-          <div style="display:flex; gap:6px; margin-top:6px;">
-            <input type="text" id="chatReplyInput_${key}" placeholder="Type a message..." style="flex:1; background:#09101d; border:1px solid var(--card-border); color:#fff; padding:7px; border-radius:6px; font-size:11px;">
-            <button class="btn-action" style="width:auto; padding:6px 12px; font-size:11px;" onclick="sendGroupReply('${key}')">Send</button>
-          </div>
-        `;
-
-        threadBox.innerHTML = headerHtml + msgsHtml + replyHtml;
-        container.appendChild(threadBox);
-      });
-    }
-
-    function sendGroupReply(key) {
-      let inputVal = document.getElementById(`chatReplyInput_${key}`).value.trim();
-      if (!inputVal) return;
-
-      let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      for (let i = msgs.length - 1; i >= 0; i--) {
-        if ((msgs[i].email && msgs[i].email === key) || (msgs[i].uid && msgs[i].uid === key)) {
-          msgs[i].adminReply = inputVal;
-          break;
-        }
       }
-
-      localStorage.setItem('mff_support_msgs', JSON.stringify(msgs));
-      renderAdminSupport();
-      alert("✅ Reply bhej diya gaya!");
+      document.getElementById('eventsModal').style.display = 'flex';
     }
 
-    function postGiveaway() {
-      const title = document.getElementById('gTitle').value.trim();
-      const desc = document.getElementById('gDesc').value.trim();
-      const reward = document.getElementById('gReward').value.trim();
+    function updateEventsBadge() {
+      const gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      document.getElementById('eventsBadgeCount').innerText = gList.length;
+    }
 
-      if (!title) {
-        alert("Giveaway title likhna lazmi hai!");
+    function previewScreenshot(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedScreenshotBase64 = evt.target.result;
+          const preview = document.getElementById('ssPreview');
+          preview.src = evt.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function submitJoinWithSS() {
+      const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bannedUids.includes(currentUser.uid)) {
+        alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
         return;
       }
 
-      let gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
-      gList.unshift({ title, desc, reward, endDate: "Active" });
-      localStorage.setItem('mff_giveaways', JSON.stringify(gList));
+      if (!uploadedScreenshotBase64) {
+        alert("Screenshot select karein!");
+        return;
+      }
+      let allTournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
+      const match = allTournaments.find(m => m.id === selectedMatchId);
+      if (!match) return;
 
-      document.getElementById('gTitle').value = "";
-      document.getElementById('gDesc').value = "";
-      document.getElementById('gReward').value = "";
-      alert("🎁 Giveaway live post ho gaya!");
+      if (!match.players) match.players = [];
+      match.players.push({
+        name: currentUser.name,
+        email: currentUser.email,
+        uid: currentUser.uid,
+        phone: currentUser.phone,
+        screenshot: uploadedScreenshotBase64,
+        status: "pending",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(allTournaments));
+      closeModal('joinModal');
+      renderMatches();
+      alert("Screenshot submit ho gaya!");
     }
+
+    function openSupportModal() {
+      renderPlayerChatHistory();
+      document.getElementById('supportModal').style.display = "flex";
+      setTimeout(() => {
+        const historyBox = document.getElementById('playerChatHistory');
+        historyBox.scrollTop = historyBox.scrollHeight;
+      }, 100);
+    }
+
+    function renderPlayerChatHistory() {
+      const historyBox = document.getElementById('playerChatHistory');
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      let userMsgs = currentUser ? supportMsgs.filter(m => (m.email && m.email === currentUser.email) || m.uid === currentUser.uid) : [];
+      userMsgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+      if (userMsgs.length === 0) {
+        historyBox.innerHTML = `<div style="color:#64748b; font-size:11px; text-align:center; margin:auto;">Owner se rabta karne ke liye yahan message likhein.</div>`;
+        return;
+      }
+
+      historyBox.innerHTML = "";
+      userMsgs.forEach(msg => {
+        const uBubble = document.createElement('div');
+        uBubble.className = "chat-bubble-user";
+        uBubble.innerHTML = `<div>${msg.message}</div><span style="font-size:8.5px; color:#94a3b8; display:block; text-align:right;">${msg.time || ''}</span>`;
+        historyBox.appendChild(uBubble);
+
+        if (msg.adminReply) {
+          const aBubble = document.createElement('div');
+          aBubble.className = "chat-bubble-admin";
+          aBubble.innerHTML = `<div style="font-size:10px; font-weight:800; color:var(--mint-primary);"><i class="fa-solid fa-crown"></i> Owner Reply</div><div>${msg.adminReply}</div>`;
+          historyBox.appendChild(aBubble);
+        }
+      });
+      historyBox.scrollTop = historyBox.scrollHeight;
+    }
+
+    function handleChatEnter(e) {
+      if (e.key === 'Enter') submitSupportMessage();
+    }
+
+    function submitSupportMessage() {
+      const input = document.getElementById('suppMsg');
+      const msg = input.value.trim();
+      if (!msg || !currentUser) return;
+
+      let supportMsgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
+      supportMsgs.push({
+        id: "msg_" + Date.now(),
+        timestamp: Date.now(),
+        email: currentUser.email,
+        uid: currentUser.uid,
+        name: currentUser.name,
+        contact: `UID: ${currentUser.uid} (${currentUser.phone})`,
+        message: msg,
+        adminReply: "",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      localStorage.setItem('mff_support_msgs', JSON.stringify(supportMsgs));
+      input.value = "";
+      renderPlayerChatHistory();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'mff_tournaments') {
+        renderMatches();
+      }
+    });
 
     window.onload = function() {
-      renderDeposits();
-      updateHeaderStats();
+      updateNavProfile();
+      renderMatches();
+      updateEventsBadge();
     };
   </script>
 </body>
