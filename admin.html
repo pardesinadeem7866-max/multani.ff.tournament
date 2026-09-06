@@ -296,7 +296,7 @@
         </div>
         <div class="hero-btn-col">
           <button class="btn-pink-match" onclick="openCreateMatchModal()">+ MATCH</button>
-          <button class="btn-outline-backup" onclick="alert('Data is safely synced in local storage.')">BACKUP DATA</button>
+          <button class="btn-outline-backup" onclick="alert('Data synced.')">BACKUP DATA</button>
         </div>
       </div>
       <div class="hero-sub-time">
@@ -324,7 +324,7 @@
     </div>
 
     <div class="section-btn-bar">
-      <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> Match Manager (All Tournaments)</button>
+      <button class="view-all-btn" onclick="switchAdminTab('deposits')"><i class="fa-solid fa-receipt"></i> Payment Approvals & Match Requests</button>
     </div>
 
     <!-- Action Shortcuts Grid -->
@@ -372,10 +372,10 @@
     <!-- Content Sections -->
     <div class="content-section">
       
-      <!-- 1. DEPOSITS & APPROVALS VIEW -->
+      <!-- 1. DEPOSITS & TOURNAMENT JOIN REQUESTS VIEW -->
       <div id="sectionDeposits" class="panel-box">
         <div class="section-header-row">
-          <span><i class="fa-solid fa-wallet"></i> Payment Approvals (Pending)</span>
+          <span><i class="fa-solid fa-wallet"></i> Payment Approvals (Wallet & Matches)</span>
           <span style="font-size:11px; color:var(--text-muted);" id="reqCountText">0 Requests</span>
         </div>
         <div id="depositsContainer"></div>
@@ -507,21 +507,26 @@
       
       let totalSlots = 0;
       let totalRev = 0;
+      let pendingMatchCount = 0;
+
       matches.forEach(m => {
         if (m.players) {
           const approved = m.players.filter(p => p.status === 'approved');
+          const pending = m.players.filter(p => p.status === 'pending');
           totalSlots += approved.length;
           totalRev += approved.length * Number(m.fee || 0);
+          pendingMatchCount += pending.length;
         }
       });
 
-      const pendingCount = deposits.filter(d => d.status === 'pending').length;
+      const pendingDepCount = deposits.filter(d => d.status === 'pending').length;
+      const totalPending = pendingDepCount + pendingMatchCount;
 
       document.getElementById('totalRevVal').innerText = `Rs ${totalRev}`;
       document.getElementById('statMatches').innerText = matches.length;
       document.getElementById('statSlots').innerText = totalSlots;
-      document.getElementById('statRequests').innerText = pendingCount;
-      document.getElementById('pendingDepositBadge').innerText = pendingCount;
+      document.getElementById('statRequests').innerText = totalPending;
+      document.getElementById('pendingDepositBadge').innerText = totalPending;
     }
 
     function switchAdminTab(tabName) {
@@ -557,33 +562,66 @@
       document.getElementById('createMatchModal').style.display = 'none';
     }
 
-    /* 1. Deposits Render */
+    /* Combined Deposits & Pending Match Requests Render */
     function renderDeposits() {
       const container = document.getElementById('depositsContainer');
       container.innerHTML = "";
+      
       const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
-      const pending = deposits.filter(d => d.status === 'pending');
+      const pendingDeps = deposits.filter(d => d.status === 'pending');
 
-      document.getElementById('reqCountText').innerText = `${pending.length} Requests`;
+      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      let pendingMatchPlayers = [];
+      matches.forEach((m, mIdx) => {
+        if (m.players) {
+          m.players.forEach((p, pIdx) => {
+            if (p.status === 'pending') {
+              pendingMatchPlayers.push({ matchIdx: mIdx, playerIdx: pIdx, matchTitle: m.title, fee: m.fee, ...p });
+            }
+          });
+        }
+      });
 
-      if (pending.length === 0) {
+      const totalPendingCount = pendingDeps.length + pendingMatchPlayers.length;
+      document.getElementById('reqCountText').innerText = `${totalPendingCount} Requests`;
+
+      if (totalPendingCount === 0) {
         container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:11.5px;"><i class="fa-solid fa-circle-check" style="color:var(--mint); font-size:24px; margin-bottom:6px; display:block;"></i>Koi pending verification request nahi hai!</div>`;
         return;
       }
 
-      pending.forEach((dep) => {
+      // Render Wallet Deposits
+      pendingDeps.forEach((dep) => {
         const globalIdx = deposits.findIndex(d => d.id === dep.id);
         const card = document.createElement('div');
         card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
         card.innerHTML = `
           <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${dep.name} <span style="color:var(--blue); font-size:10px;">(${dep.uid})</span></div>
-            <div style="font-size:10.5px; color:var(--text-muted);">${dep.email}</div>
-            <div style="font-size:12px; font-weight:900; color:var(--gold); margin-top:2px;">Rs. ${dep.requestedCoins}</div>
+            <div style="font-size:11.5px; font-weight:800; color:#fff;">${dep.name} <span style="color:var(--blue); font-size:10px;">(${dep.uid})</span></div>
+            <div style="font-size:10px; color:var(--text-muted);">Wallet Recharge | ${dep.email}</div>
+            <div style="font-size:11.5px; font-weight:900; color:var(--gold); margin-top:2px;">Rs. ${dep.requestedCoins}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             ${dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumbnail" onclick="window.open().document.write('<img src=\x22${dep.screenshot}\x22 style=\x22max-width:100%\x22>')">` : ''}
             <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="approveDepositReq(${globalIdx})">Approve</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Render Match Join Requests
+      pendingMatchPlayers.forEach((item) => {
+        const card = document.createElement('div');
+        card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        card.innerHTML = `
+          <div>
+            <div style="font-size:11.5px; font-weight:800; color:#fff;">${item.name} <span style="color:var(--blue); font-size:10px;">(UID: ${item.uid})</span></div>
+            <div style="font-size:10px; color:var(--mint);">Match: ${item.matchTitle}</div>
+            <div style="font-size:11.5px; font-weight:900; color:var(--gold); margin-top:2px;">Fee: Rs. ${item.fee}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${item.screenshot && item.screenshot !== 'WALLET_PAYMENT' ? `<img src="${item.screenshot}" class="ss-thumbnail" onclick="window.open().document.write('<img src=\x22${item.screenshot}\x22 style=\x22max-width:100%\x22>')">` : '<span style="font-size:9.5px; color:var(--text-muted);">Wallet Pay</span>'}
+            <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="approveMatchPlayer(${item.matchIdx}, ${item.playerIdx})">Approve</button>
           </div>
         `;
         container.appendChild(card);
@@ -612,7 +650,18 @@
       localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
       renderDeposits();
       updateHeaderStats();
-      alert("✅ Deposit approve ho gaya aur user ke wallet me balance add ho gaya!");
+      alert("✅ Deposit approve ho gaya aur balance add ho gaya!");
+    }
+
+    function approveMatchPlayer(matchIdx, playerIdx) {
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (matches[matchIdx] && matches[matchIdx].players && matches[matchIdx].players[playerIdx]) {
+        matches[matchIdx].players[playerIdx].status = 'approved';
+        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+        renderDeposits();
+        updateHeaderStats();
+        alert("✅ Tournament slot approve ho gaya!");
+      }
     }
 
     /* 2. Matches Render & Manager with Edit */
@@ -661,24 +710,29 @@
 
       matches.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === 'approved');
+        const pendingPlayers = (m.players || []).filter(p => p.status === 'pending');
         const div = document.createElement('div');
         div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:10px;";
         
         let membersHtml = "";
-        if (approvedPlayers.length === 0) {
+        if ((m.players || []).length === 0) {
           membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:6px;">Abhi koi member join nahi hua.</div>`;
         } else {
-          membersHtml = `<div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:6px;"><div style="font-size:10.5px; font-weight:800; color:var(--mint); margin-bottom:4px;">Registered Members (${approvedPlayers.length})</div>`;
-          approvedPlayers.forEach(p => {
+          membersHtml = `<div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:6px;"><div style="font-size:10.5px; font-weight:800; color:var(--mint); margin-bottom:4px;">All Members (Approved & Pending)</div>`;
+          m.players.forEach((p, pIdx) => {
             let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
             const waMsg = encodeURIComponent(`Congratulations 🎉 Aap tournament ki Rs. ${m.prize} prize jeet chukay ho!`);
             const waLink = `https://wa.me/${cleanPhone}?text=${waMsg}`;
 
+            let statusBadge = p.status === 'approved' 
+              ? `<span style="color:var(--mint); font-size:9.5px;">[Approved]</span>` 
+              : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayer(${idx}, ${pIdx})">Approve</button>`;
+
             membersHtml += `
               <div style="display:flex; justify-content:space-between; align-items:center; background:#09101d; padding:6px; border-radius:6px; margin-bottom:4px;">
                 <div>
-                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
+                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
                   <div style="font-size:9.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${p.phone || 'N/A'}</div>
                 </div>
                 <div style="display:flex; gap:4px;">
