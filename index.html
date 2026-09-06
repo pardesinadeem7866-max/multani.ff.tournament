@@ -1376,6 +1376,13 @@
         return;
       }
 
+      // BAN CHECK: Check if player is restricted from joining room
+      const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bannedUids.includes(currentUser.uid)) {
+        alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai. Mazeed maloomat ke liye Support Chat mein Owner se rabta karein.");
+        return;
+      }
+
       selectedMatchId = matchId;
       let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
       const match = tournaments.find(m => m.id === matchId);
@@ -1517,6 +1524,13 @@
     }
 
     function payViaWalletAction() {
+      // BAN CHECK
+      const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bannedUids.includes(currentUser.uid)) {
+        alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
+        return;
+      }
+
       let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || defaultMatches;
       const match = tournaments.find(m => m.id === selectedMatchId);
       if (!match) return;
@@ -1624,6 +1638,13 @@
     }
 
     function submitJoinWithSS() {
+      // BAN CHECK
+      const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (bannedUids.includes(currentUser.uid)) {
+        alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
+        return;
+      }
+
       if (!uploadedScreenshotBase64) {
         alert("Screenshot select karein!");
         return;
