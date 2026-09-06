@@ -1854,11 +1854,13 @@
       document.getElementById(id).style.display = "none";
     }
 
-    window.addEventListener('storage', function(e) {
-      if (e.key === 'mff_tournaments') {
+    // Real-time synchronization bridge with Admin Panel
+    const syncChannel = new BroadcastChannel('mff_tournament_sync');
+    syncChannel.onmessage = function(event) {
+      if (event.data && event.data.type === 'REFRESH_TOURNAMENTS') {
         renderMatches();
       }
-    });
+    };
 
     window.onload = function() {
       updateNavProfile();
