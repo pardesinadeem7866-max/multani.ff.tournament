@@ -90,14 +90,15 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      background: rgba(255, 183, 3, 0.15);
+      background: rgba(255, 183, 3, 0.2);
       border: 1px solid var(--gold);
-      padding: 4px 9px;
+      padding: 5px 10px;
       border-radius: 16px;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 900;
       color: var(--gold);
+      z-index: 102;
     }
 
     .nav-tabs { display: flex; gap: 12px; font-size: 13px; font-weight: 800; }
@@ -878,7 +879,7 @@
         <div style="font-size:26px; font-weight:900; color:#fff; margin-top:2px;">Rs. <span id="modalWalletBal" style="color:var(--gold);">0</span></div>
       </div>
 
-      <!-- Updated Note as Requested -->
+      <!-- Note as Requested -->
       <div style="background: rgba(255, 183, 3, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; font-size: 11px; color: #fed7aa; margin-bottom: 10px; text-align: center; font-weight: 700;">
         ⚠️ Soch samajh kar add karein iska withdraw nahi hoga, aapko price sirf win karne par milegi.
       </div>
@@ -1780,7 +1781,7 @@
       userMsgs.forEach(msg => {
         const uBubble = document.createElement('div');
         uBubble.className = "chat-bubble-user";
-        uBubble.innerHTML = `<div>${msg.message}</div><span style="font-size:9px; color:#94a3b8; display:block; text-align:right;">${msg.time || ''}</span>`;
+        uBubble.innerHTML = `<div>${msg.message}</div><span style="font-size:8.5px; color:#94a3b8; display:block; text-align:right;">${msg.time || ''}</span>`;
         historyBox.appendChild(uBubble);
 
         if (msg.adminReply) {
