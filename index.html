@@ -63,7 +63,6 @@
     }
     .top-left-group { display: flex; align-items: center; gap: 8px; }
     
-    /* Compact Share Icon Button */
     .share-icon-btn {
       width: 32px;
       height: 32px;
@@ -625,8 +624,8 @@
           <i class="fa-solid fa-share-nodes"></i>
         </div>
 
-        <!-- Wallet Balance Badge (Clickable) -->
-        <div class="wallet-header-badge" onclick="openWalletModal()">
+        <!-- Wallet Balance Badge (Directly triggers openWalletModal) -->
+        <div class="wallet-header-badge" id="walletBadgeBtn" onclick="openWalletModal()">
           <i class="fa-solid fa-coins"></i>
           <span>Rs. <b id="navWalletBal">0</b></span>
         </div>
@@ -1709,8 +1708,8 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          uploadedScreenshotBase64 = evt.target.result;
-          const preview = document.getElementById('ssPreview');
+          uploadedWalletProofBase64 = evt.target.result;
+          const preview = document.getElementById('walletSsPreview');
           preview.src = evt.target.result;
           preview.style.display = "block";
         };
