@@ -534,6 +534,13 @@
   <script>
     let uploadedWinnerProofBase64 = "";
 
+    // Broadcast channel to instantly notify website of changes
+    const syncChannel = new BroadcastChannel('mff_tournament_sync');
+
+    function notifyWebsiteUpdate() {
+      syncChannel.postMessage({ type: 'REFRESH_TOURNAMENTS' });
+    }
+
     function updateHeaderStats() {
       const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
@@ -607,186 +614,244 @@
       w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
-    function openAddWinnerModal() {
-      document.getElementById('winnerModalTitle').innerHTML = `<i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Add New Announcement`;
-      document.getElementById('editWinnerIndex').value = "-1";
-      document.getElementById('winName').value = "";
-      document.getElementById('winUid').value = "";
-      document.getElementById('winMatch').value = "";
-      document.getElementById('winPrize').value = "";
-      document.getElementById('winSsInput').value = "";
-      document.getElementById('winSsPreview').style.display = "none";
-      uploadedWinnerProofBase64 = "";
-      document.getElementById('winnerModal').style.display = 'flex';
-    }
+    function createMatchRoom() {
+      const title = document.getElementById('mTitle').value.trim();
+      const map = document.getElementById('mMap').value;
+      const slots = Number(document.getElementById('mSlots').value);
+      const fee = Number(document.getElementById('mFee').value);
+      const prize = Number(document.getElementById('mPrize').value);
+      const time = document.getElementById('mTime').value.trim();
+      const coverImage = document.getElementById('mCoverImg').value.trim();
 
-    function closeWinnerModal() {
-      document.getElementById('winnerModal').style.display = 'none';
-    }
-
-    function previewWinnerScreenshot(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          uploadedWinnerProofBase64 = evt.target.result;
-          const preview = document.getElementById('winSsPreview');
-          preview.src = evt.target.result;
-          preview.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function saveWinnerAnnouncement() {
-      const name = document.getElementById('winName').value.trim();
-      const uid = document.getElementById('winUid').value.trim();
-      const match = document.getElementById('winMatch').value.trim();
-      const prize = document.getElementById('winPrize').value.trim();
-      const editIdx = Number(document.getElementById('editWinnerIndex').value);
-
-      if (!name || !uid || !prize) {
-        alert("Winner Name, UID aur Prize likhna lazmi hai!");
+      if (!title || !time) {
+        alert("Match title aur timing likhna lazmi hai!");
         return;
       }
 
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      
-      const newWinnerObj = {
-        name,
-        uid,
-        match: match || "Tournament Room",
-        prize: prize,
-        proofSs: uploadedWinnerProofBase64 || (editIdx >= 0 ? winnersList[editIdx].proofSs : "")
-      };
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      matches.push({
+        id: "m_" + Date.now(),
+        title, map, totalSlots: slots, fee, prize, time,
+        coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+        subtitle: `${map} - ${slots} Slots`,
+        roomId: "", roomPass: "", players: []
+      });
 
-      if (editIdx >= 0) {
-        winnersList[editIdx] = newWinnerObj;
-      } else {
-        winnersList.unshift(newWinnerObj);
-      }
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      notifyWebsiteUpdate();
 
-      localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
-      closeWinnerModal();
-      renderAdminWinners();
-      alert("🏆 Winner announcement successfully save ho gayi!");
+      closeCreateMatchModal();
+      document.getElementById('mTitle').value = "";
+      document.getElementById('mTime').value = "";
+      document.getElementById('mCoverImg').value = "";
+      renderAdminMatches();
+      updateHeaderStats();
+      alert("✅ Match successfully create ho gaya aur website par live ho gaya!");
     }
 
-    function renderAdminWinners() {
-      const container = document.getElementById('adminWinnersListContainer');
+    function renderAdminMatches() {
+      const container = document.getElementById('activeMatchesList');
       container.innerHTML = "";
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
+      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
 
-      if (winnersList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi winner announcement mojud nahi hai.</div>`;
+      if (matches.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi active match nahi hai.</div>`;
         return;
       }
 
-      winnersList.forEach((w, idx) => {
+      matches.forEach((m, idx) => {
         const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:12px; margin-bottom:12px;";
         
-        let thumbHtml = w.proofSs ? `<img src="${w.proofSs}" class="ss-thumbnail" onclick="openFullImage('${w.proofSs}')">` : '<span style="font-size:9.5px; color:var(--text-muted);">No SS</span>';
+        let membersHtml = "";
+        if ((m.players || []).length === 0) {
+          membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:8px;">Abhi koi member join nahi hua.</div>`;
+        } else {
+          membersHtml = `<div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;"><div style="font-size:11px; font-weight:800; color:var(--mint); margin-bottom:6px;">All Members</div>`;
+          m.players.forEach((p, pIdx) => {
+            let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
+            if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
+            const waMsg = encodeURIComponent(`Congratulations 🎉 Aap tournament ki Rs. ${m.prize} prize jeet chukay ho!`);
+            const waLink = `https://wa.me/${cleanPhone}?text=${waMsg}`;
 
-        div.innerHTML = `
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${w.name} <span style="color:var(--blue); font-size:10px;">(UID: ${w.uid})</span></div>
-            <div style="font-size:10px; color:var(--text-muted);">${w.match} | <b style="color:var(--gold);">${w.prize}</b></div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            ${thumbHtml}
-            <button class="btn-action btn-orange" style="padding:5px 8px; font-size:10px;" onclick="editWinner(${idx})">Edit</button>
-            <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteWinner(${idx})">Delete</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
+            let statusBadge = p.status === 'approved' 
+              ? `<span style="color:var(--mint); font-size:9.5px;">[Approved]</span>` 
+              : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayer(${idx}, ${pIdx})">Approve</button>`;
 
-    function editWinner(idx) {
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      let w = winnersList[idx];
-      if (!w) return;
-
-      document.getElementById('winnerModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--gold);"></i> Edit Announcement`;
-      document.getElementById('editWinnerIndex').value = idx;
-      document.getElementById('winName').value = w.name || '';
-      document.getElementById('winUid').value = w.uid || '';
-      document.getElementById('winMatch').value = w.match || '';
-      document.getElementById('winPrize').value = w.prize || '';
-      
-      uploadedWinnerProofBase64 = w.proofSs || '';
-      const preview = document.getElementById('winSsPreview');
-      if (w.proofSs) {
-        preview.src = w.proofSs;
-        preview.style.display = "block";
-      } else {
-        preview.style.display = "none";
-      }
-
-      document.getElementById('winnerModal').style.display = 'flex';
-    }
-
-    function deleteWinner(idx) {
-      if (!confirm("Is winner announcement ko delete karna chahte hain?")) return;
-      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      winnersList.splice(idx, 1);
-      localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
-      renderAdminWinners();
-      alert("🗑️ Announcement delete kar di gayi hai.");
-    }
-
-    function renderAllRegisteredUsers() {
-      const container = document.getElementById('allRegisteredUsersContainer');
-      container.innerHTML = "";
-      const usersList = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-
-      if (usersList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Abhi tak kisi ne account nahi banaya.</div>`;
-        return;
-      }
-
-      usersList.forEach((u, index) => {
-        let cleanPhone = (u.phone || '').replace(/[^0-9]/g, '');
-        if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
-        const waLink = cleanPhone ? `https://wa.me/${cleanPhone}` : '#';
-
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        div.innerHTML = `
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${index + 1}. ${u.name} <span style="color:var(--blue); font-size:10px;">(UID: ${u.uid})</span></div>
-            <div style="font-size:10.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${u.phone || 'N/A'} | <b style="color:var(--gold);">Bal: Rs. ${u.walletBalance || 0}</b></div>
-            <div style="font-size:9.5px; color:var(--text-muted);">Gmail: ${u.email}</div>
-          </div>
-          <div style="display:flex; gap:4px; align-items:center;">
-            <button class="btn-action btn-orange" style="padding:5px 8px; font-size:10px;" onclick="editUserBalance(${index})">Edit Bal</button>
-            ${u.phone ? `<a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:5px 8px; font-size:10px;"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function editUserBalance(index) {
-      let usersList = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
-      let u = usersList[index];
-      if (!u) return;
-
-      let newBal = prompt(`Enter new wallet balance for ${u.name} (UID: ${u.uid}):`, u.walletBalance || 0);
-      if (newBal !== null && !isNaN(newBal)) {
-        u.walletBalance = Number(newBal);
-        localStorage.setItem('mff_accounts_db', JSON.stringify(usersList));
-
-        let curUser = JSON.parse(localStorage.getItem('mff_user'));
-        if (curUser && curUser.email === u.email) {
-          curUser.walletBalance = u.walletBalance;
-          localStorage.setItem('mff_user', JSON.stringify(curUser));
+            membersHtml += `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#080e1a; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
+                </div>
+                <div style="display:flex; gap:3px;">
+                  <a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:3px 6px; font-size:9px;">
+                    <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner
+                  </a>
+                  <button class="btn-action btn-orange" style="padding:3px 6px; font-size:9px;" onclick="kickPlayerFromMatch(${idx}, ${pIdx}, '${p.name}')">Kick</button>
+                  <button class="btn-action btn-danger" style="padding:3px 6px; font-size:9px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban</button>
+                </div>
+              </div>
+            `;
+          });
+          membersHtml += `</div>`;
         }
 
-        renderAllRegisteredUsers();
-        alert(`✅ ${u.name} ka balance update ho kar Rs. ${u.walletBalance} ho gaya hai!`);
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div>
+              <div style="font-size:12.5px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
+              <div style="font-size:10px; color:var(--text-muted);">Time: ${m.time} | Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
+            </div>
+            <div style="display:flex; gap:4px;">
+              <button class="btn-action" style="padding:5px 8px; font-size:10px;" onclick="openEditModal(${idx})"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+            </div>
+          </div>
+          <div style="font-size:10.5px; color:var(--blue); background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.2); padding:6px 8px; border-radius:6px; margin-bottom:6px;">
+            Room ID: <b>${m.roomId || 'Not set'}</b> | Password: <b>${m.roomPass || 'Not set'}</b>
+          </div>
+          ${membersHtml}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function kickPlayerFromMatch(matchIdx, playerIdx, playerName) {
+      if (!confirm(`Kya aap ${playerName} ko is match se kick karna chahte hain?`)) return;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (matches[matchIdx] && matches[matchIdx].players) {
+        matches[matchIdx].players.splice(playerIdx, 1);
+        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+        notifyWebsiteUpdate();
+        renderAdminMatches();
+        updateHeaderStats();
       }
+    }
+
+    function openEditModal(idx) {
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      let m = matches[idx];
+      if (!m) return;
+
+      document.getElementById('editMatchIndex').value = idx;
+      document.getElementById('editTitle').value = m.title || '';
+      document.getElementById('editMap').value = m.map || 'Bermuda';
+      document.getElementById('editSlots').value = m.totalSlots || 12;
+      document.getElementById('editFee').value = m.fee || 30;
+      document.getElementById('editPrize').value = m.prize || 300;
+      document.getElementById('editTime').value = m.time || '';
+      document.getElementById('editCoverImg').value = m.coverImage || '';
+      document.getElementById('editRoomId').value = m.roomId || '';
+      document.getElementById('editRoomPass').value = m.roomPass || '';
+
+      document.getElementById('editMatchModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editMatchModal').style.display = 'none';
+    }
+
+    function saveEditedMatch() {
+      let idx = document.getElementById('editMatchIndex').value;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (!matches[idx]) return;
+
+      matches[idx].title = document.getElementById('editTitle').value.trim();
+      matches[idx].map = document.getElementById('editMap').value;
+      matches[idx].totalSlots = Number(document.getElementById('editSlots').value);
+      matches[idx].fee = Number(document.getElementById('editFee').value);
+      matches[idx].prize = Number(document.getElementById('editPrize').value);
+      matches[idx].time = document.getElementById('editTime').value.trim();
+      matches[idx].coverImage = document.getElementById('editCoverImg').value.trim();
+      matches[idx].roomId = document.getElementById('editRoomId').value.trim();
+      matches[idx].roomPass = document.getElementById('editRoomPass').value.trim();
+      matches[idx].subtitle = `${matches[idx].map} - ${matches[idx].totalSlots} Slots`;
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      notifyWebsiteUpdate();
+
+      closeEditModal();
+      renderAdminMatches();
+      updateHeaderStats();
+      alert("✅ Match settings successfully update ho gayi aur website par live ho gayi!");
+    }
+
+    function deleteMatchAdmin(idx) {
+      if (!confirm("Is room/match ko delete karna chahte hain? Yeh website se foran remove ho jayega.")) return;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      matches.splice(idx, 1);
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      notifyWebsiteUpdate();
+
+      renderAdminMatches();
+      updateHeaderStats();
+      alert("🗑️ Room successfully delete kar diya gaya hai.");
+    }
+
+    function banPlayerByUid(uid, name, phone) {
+      if (!confirm(`Kya aap ${name} (UID: ${uid}) ko ban karna chahte hain?`)) return;
+      let bannedList = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      if (!bannedList.includes(uid)) {
+        bannedList.push(uid);
+        localStorage.setItem('mff_banned_uids', JSON.stringify(bannedList));
+      }
+      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+      if (!bannedDetails.some(b => b.uid === uid)) {
+        bannedDetails.push({ uid, name, phone, time: new Date().toLocaleTimeString() });
+        localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
+      }
+      notifyWebsiteUpdate();
+      alert("🚫 Player ko restrict kar diya gaya hai!");
+      renderAdminMatches();
+    }
+
+    function renderBannedPlayers() {
+      const container = document.getElementById('bannedPlayersListContainer');
+      container.innerHTML = "";
+      const bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+
+      if (bannedList.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi restricted player nahi hai.</div>`;
+        return;
+      }
+
+      bannedList.forEach((b) => {
+        const div = document.createElement('div');
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        div.innerHTML = `
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">${b.name} <span style="color:var(--red); font-size:10px;">(UID: ${b.uid})</span></div>
+          </div>
+          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="promptUnban('${b.uid}', '${b.name}')">Unban</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function promptUnban(uid, name) {
+      document.getElementById('unbanTargetUid').value = uid;
+      document.getElementById('unbanModalText').innerText = `Kya aap ${name} ko unban karna chahte hain?`;
+      document.getElementById('unbanModal').style.display = 'flex';
+    }
+
+    function closeUnbanModal() {
+      document.getElementById('unbanModal').style.display = 'none';
+    }
+
+    function confirmUnban() {
+      let targetUid = document.getElementById('unbanTargetUid').value;
+      let bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
+      bannedUids = bannedUids.filter(u => u !== targetUid);
+      localStorage.setItem('mff_banned_uids', JSON.stringify(bannedUids));
+
+      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
+      bannedDetails = bannedDetails.filter(b => b.uid !== targetUid);
+      localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
+
+      notifyWebsiteUpdate();
+      closeUnbanModal();
+      renderBannedPlayers();
+      alert("✅ Player unban ho gaya hai!");
     }
 
     function renderDeposits() {
@@ -901,6 +966,7 @@
       if (matches[matchIdx] && matches[matchIdx].players && matches[matchIdx].players[playerIdx]) {
         matches[matchIdx].players[playerIdx].status = 'approved';
         localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+        notifyWebsiteUpdate();
         renderDeposits();
         updateHeaderStats();
         alert("✅ Tournament slot approve ho gaya!");
@@ -913,240 +979,10 @@
       if (matches[matchIdx] && matches[matchIdx].players) {
         matches[matchIdx].players.splice(playerIdx, 1);
         localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+        notifyWebsiteUpdate();
         renderDeposits();
         updateHeaderStats();
       }
-    }
-
-    function createMatchRoom() {
-      const title = document.getElementById('mTitle').value.trim();
-      const map = document.getElementById('mMap').value;
-      const slots = Number(document.getElementById('mSlots').value);
-      const fee = Number(document.getElementById('mFee').value);
-      const prize = Number(document.getElementById('mPrize').value);
-      const time = document.getElementById('mTime').value.trim();
-      const coverImage = document.getElementById('mCoverImg').value.trim();
-
-      if (!title || !time) {
-        alert("Match title aur timing likhna lazmi hai!");
-        return;
-      }
-
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches.push({
-        id: "m_" + Date.now(),
-        title, map, totalSlots: slots, fee, prize, time,
-        coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
-        subtitle: `${map} - ${slots} Slots`,
-        roomId: "", roomPass: "", players: []
-      });
-
-      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      closeCreateMatchModal();
-      document.getElementById('mTitle').value = "";
-      document.getElementById('mTime').value = "";
-      document.getElementById('mCoverImg').value = "";
-      renderAdminMatches();
-      updateHeaderStats();
-      alert("✅ Match successfully create ho gaya aur website par live ho gaya!");
-    }
-
-    function renderAdminMatches() {
-      const container = document.getElementById('activeMatchesList');
-      container.innerHTML = "";
-      const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-
-      if (matches.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi active match nahi hai.</div>`;
-        return;
-      }
-
-      matches.forEach((m, idx) => {
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:12px; margin-bottom:12px;";
-        
-        let membersHtml = "";
-        if ((m.players || []).length === 0) {
-          membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:8px;">Abhi koi member join nahi hua.</div>`;
-        } else {
-          membersHtml = `<div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;"><div style="font-size:11px; font-weight:800; color:var(--mint); margin-bottom:6px;">All Members</div>`;
-          m.players.forEach((p, pIdx) => {
-            let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
-            if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
-            const waMsg = encodeURIComponent(`Congratulations 🎉 Aap tournament ki Rs. ${m.prize} prize jeet chukay ho!`);
-            const waLink = `https://wa.me/${cleanPhone}?text=${waMsg}`;
-
-            let statusBadge = p.status === 'approved' 
-              ? `<span style="color:var(--mint); font-size:9.5px;">[Approved]</span>` 
-              : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayer(${idx}, ${pIdx})">Approve</button>`;
-
-            membersHtml += `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#080e1a; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
-                <div>
-                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
-                </div>
-                <div style="display:flex; gap:3px;">
-                  <a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:3px 6px; font-size:9px;">
-                    <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner
-                  </a>
-                  <button class="btn-action btn-orange" style="padding:3px 6px; font-size:9px;" onclick="kickPlayerFromMatch(${idx}, ${pIdx}, '${p.name}')">Kick</button>
-                  <button class="btn-action btn-danger" style="padding:3px 6px; font-size:9px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban</button>
-                </div>
-              </div>
-            `;
-          });
-          membersHtml += `</div>`;
-        }
-
-        div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div>
-              <div style="font-size:12.5px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
-              <div style="font-size:10px; color:var(--text-muted);">Time: ${m.time} | Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
-            </div>
-            <div style="display:flex; gap:4px;">
-              <button class="btn-action" style="padding:5px 8px; font-size:10px;" onclick="openEditModal(${idx})"><i class="fa-solid fa-pen"></i> Edit</button>
-              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
-            </div>
-          </div>
-          <div style="font-size:10.5px; color:var(--blue); background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.2); padding:6px 8px; border-radius:6px; margin-bottom:6px;">
-            Room ID: <b>${m.roomId || 'Not set'}</b> | Password: <b>${m.roomPass || 'Not set'}</b>
-          </div>
-          ${membersHtml}
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function kickPlayerFromMatch(matchIdx, playerIdx, playerName) {
-      if (!confirm(`Kya aap ${playerName} ko is match se kick karna chahte hain?`)) return;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      if (matches[matchIdx] && matches[matchIdx].players) {
-        matches[matchIdx].players.splice(playerIdx, 1);
-        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-        renderAdminMatches();
-        updateHeaderStats();
-      }
-    }
-
-    function openEditModal(idx) {
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      let m = matches[idx];
-      if (!m) return;
-
-      document.getElementById('editMatchIndex').value = idx;
-      document.getElementById('editTitle').value = m.title || '';
-      document.getElementById('editMap').value = m.map || 'Bermuda';
-      document.getElementById('editSlots').value = m.totalSlots || 12;
-      document.getElementById('editFee').value = m.fee || 30;
-      document.getElementById('editPrize').value = m.prize || 300;
-      document.getElementById('editTime').value = m.time || '';
-      document.getElementById('editCoverImg').value = m.coverImage || '';
-      document.getElementById('editRoomId').value = m.roomId || '';
-      document.getElementById('editRoomPass').value = m.roomPass || '';
-
-      document.getElementById('editMatchModal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-      document.getElementById('editMatchModal').style.display = 'none';
-    }
-
-    function saveEditedMatch() {
-      let idx = document.getElementById('editMatchIndex').value;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      if (!matches[idx]) return;
-
-      matches[idx].title = document.getElementById('editTitle').value.trim();
-      matches[idx].map = document.getElementById('editMap').value;
-      matches[idx].totalSlots = Number(document.getElementById('editSlots').value);
-      matches[idx].fee = Number(document.getElementById('editFee').value);
-      matches[idx].prize = Number(document.getElementById('editPrize').value);
-      matches[idx].time = document.getElementById('editTime').value.trim();
-      matches[idx].coverImage = document.getElementById('editCoverImg').value.trim();
-      matches[idx].roomId = document.getElementById('editRoomId').value.trim();
-      matches[idx].roomPass = document.getElementById('editRoomPass').value.trim();
-      matches[idx].subtitle = `${matches[idx].map} - ${matches[idx].totalSlots} Slots`;
-
-      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      closeEditModal();
-      renderAdminMatches();
-      updateHeaderStats();
-      alert("✅ Match settings successfully update ho gayi aur website par live ho gayi!");
-    }
-
-    function deleteMatchAdmin(idx) {
-      if (!confirm("Is room/match ko delete karna chahte hain? Yeh website se foran remove ho jayega.")) return;
-      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches.splice(idx, 1);
-      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      renderAdminMatches();
-      updateHeaderStats();
-      alert("🗑️ Room successfully delete kar diya gaya hai.");
-    }
-
-    function banPlayerByUid(uid, name, phone) {
-      if (!confirm(`Kya aap ${name} (UID: ${uid}) ko ban karna chahte hain?`)) return;
-      let bannedList = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      if (!bannedList.includes(uid)) {
-        bannedList.push(uid);
-        localStorage.setItem('mff_banned_uids', JSON.stringify(bannedList));
-      }
-      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-      if (!bannedDetails.some(b => b.uid === uid)) {
-        bannedDetails.push({ uid, name, phone, time: new Date().toLocaleTimeString() });
-        localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
-      }
-      alert("🚫 Player ko restrict kar diya gaya hai!");
-      renderAdminMatches();
-    }
-
-    function renderBannedPlayers() {
-      const container = document.getElementById('bannedPlayersListContainer');
-      container.innerHTML = "";
-      const bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-
-      if (bannedList.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Koi restricted player nahi hai.</div>`;
-        return;
-      }
-
-      bannedList.forEach((b) => {
-        const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
-        div.innerHTML = `
-          <div>
-            <div style="font-size:12px; font-weight:800; color:#fff;">${b.name} <span style="color:var(--red); font-size:10px;">(UID: ${b.uid})</span></div>
-          </div>
-          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="promptUnban('${b.uid}', '${b.name}')">Unban</button>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function promptUnban(uid, name) {
-      document.getElementById('unbanTargetUid').value = uid;
-      document.getElementById('unbanModalText').innerText = `Kya aap ${name} ko unban karna chahte hain?`;
-      document.getElementById('unbanModal').style.display = 'flex';
-    }
-
-    function closeUnbanModal() {
-      document.getElementById('unbanModal').style.display = 'none';
-    }
-
-    function confirmUnban() {
-      let targetUid = document.getElementById('unbanTargetUid').value;
-      let bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
-      bannedUids = bannedUids.filter(u => u !== targetUid);
-      localStorage.setItem('mff_banned_uids', JSON.stringify(bannedUids));
-
-      let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
-      bannedDetails = bannedDetails.filter(b => b.uid !== targetUid);
-      localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
-
-      closeUnbanModal();
-      renderBannedPlayers();
-      alert("✅ Player unban ho gaya hai!");
     }
 
     function renderAdminSupport() {
