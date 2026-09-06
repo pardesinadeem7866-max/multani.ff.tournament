@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Multani.ff - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
-  <meta name="title" content="Multani.ff - Daily Free Fire Tournaments Pakistan | Win Real Cash">
+  <title>Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
+  <meta name="title" content="Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash">
   <meta name="description" content="Pakistan ka No.1 Free Fire Esports Arena. Daily Solo, Duo, CS 4v4 Custom Rooms khele aur jeetein real cash prize.">
   <meta name="keywords" content="Free Fire Pakistan, Free Fire Tournament Pakistan, Multani ff, Paid Custom Room Free Fire">
   
@@ -641,11 +641,11 @@
         <div class="hero-avatar"><i class="fa-solid fa-crown"></i></div>
         <div class="hero-details">
           <div class="hero-title-row">
-            <span><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Multani Official</span>
+            <span><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Multani FF Official Tournament</span>
             <span style="font-size: 10px; color:#00b0ff;"><i class="fa-solid fa-signal"></i> LIVE</span>
           </div>
-          <div class="hero-subtitle">💖 Prince & Princess Esports Arena 🔥</div>
-          <div class="easypaisa-tag">EasyPaisa: 03186815926 (Nadeem)</div>
+          <div class="hero-subtitle">🔥 Free Fire Esports Gaming Arena 🎮</div>
+          <div class="easypaisa-tag">EasyPaisa: 03186815926 (m Nadeem)</div>
         </div>
       </div>
     </div>
@@ -861,12 +861,17 @@
         <div style="font-size:26px; font-weight:900; color:#fff; margin-top:2px;">Rs. <span id="modalWalletBal" style="color:var(--gold);">0</span></div>
       </div>
 
+      <!-- Updated Note as Requested -->
+      <div style="background: rgba(255, 183, 3, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; font-size: 11px; color: #fed7aa; margin-bottom: 10px; text-align: center; font-weight: 700;">
+        ⚠️ Soch samajh kar add karein iska withdraw nahi hoga, aapko price sirf win karne par milegi.
+      </div>
+
       <p style="font-size:11px; color:#a7f3d0; margin-bottom:8px;">
         EasyPaisa par payment bhej kar screenshot attach karein:
       </p>
       <div class="form-ctrl">
         <label>EasyPaisa Account</label>
-        <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
+        <input type="text" value="03186815926 (m Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
       </div>
       <div class="form-ctrl">
         <label>Deposit Amount (Rs)</label>
@@ -932,6 +937,11 @@
                 <span id="lobbyPrizeVal" style="color:var(--gold); font-weight:800;">Rs. 0</span>
               </div>
               <div class="ff-creds-badge-box" id="lobbyCredsBox"></div>
+              
+              <!-- Leave Match / Room Button -->
+              <button onclick="leaveCurrentMatch()" style="width:100%; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#ef4444; padding:7px; border-radius:6px; font-size:10.5px; font-weight:900; cursor:pointer; margin-top:6px;">
+                <i class="fa-solid fa-right-from-bracket"></i> Leave Room (Refund Fee)
+              </button>
             </div>
 
             <div class="ff-right-panel">
@@ -946,7 +956,10 @@
       </div>
 
       <div id="pendingNoticeBox" style="display: none; background:#022a18; border:1px solid #ffd000; border-radius:10px; padding:12px; font-size:12px; color:#ffd000; margin-bottom: 12px;">
-        <i class="fa-solid fa-hourglass-half"></i> Aapka payment screenshot review me hai. Admin verify karega to slot aur room unlock ho jaenge.
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span><i class="fa-solid fa-hourglass-half"></i> Payment review me hai.</span>
+          <button onclick="leaveCurrentMatch()" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:800; cursor:pointer;">Leave & Refund</button>
+        </div>
       </div>
 
       <div id="paymentFormBlock" style="display: none;">
@@ -961,7 +974,7 @@
         </p>
         <div class="form-ctrl">
           <label>EasyPaisa Account</label>
-          <input type="text" value="03186815926 (Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
+          <input type="text" value="03186815926 (m Nadeem)" readonly style="color:var(--mint-primary); font-weight: bold;">
         </div>
         <div class="form-ctrl">
           <label>Payment Screenshot</label>
@@ -1376,7 +1389,7 @@
         return;
       }
 
-      // BAN CHECK: Check if player is restricted from joining room
+      // BAN CHECK
       const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
       if (bannedUids.includes(currentUser.uid)) {
         alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai. Mazeed maloomat ke liye Support Chat mein Owner se rabta karein.");
@@ -1400,7 +1413,7 @@
       pendingNoticeBox.style.display = "none";
       paymentFormBlock.style.display = "none";
 
-      if (userRecord && userRecord.status === "approved") {
+      if (userRecord) {
         joinedContainer.style.display = "block";
         document.getElementById('lobbyCoverImg').src = match.coverImage || matchThumbnails[0];
         document.getElementById('lobbyMapBadge').innerText = (match.map || "BERMUDA").toUpperCase();
@@ -1410,7 +1423,7 @@
         document.getElementById('lobbyPrizeVal').innerText = `Rs. ${match.prize}`;
 
         const credsBox = document.getElementById('lobbyCredsBox');
-        if (match.roomId && match.roomPass) {
+        if (userRecord.status === "approved" && match.roomId && match.roomPass) {
           credsBox.innerHTML = `
             <div style="color:var(--mint-primary); font-weight:800; font-size:9px; margin-bottom:4px;"><i class="fa-solid fa-key"></i> UNLOCKED</div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
@@ -1462,6 +1475,43 @@
       }
 
       document.getElementById('joinModal').style.display = "flex";
+    }
+
+    /* Leave Match & Refund Entry Fee */
+    function leaveCurrentMatch() {
+      if (!confirm("Kya aap waqai is match ko leave karna chahte hain? Aapki entry fee aapke wallet mein refund ho jayegi.")) return;
+      
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      const match = tournaments.find(m => m.id === selectedMatchId);
+      if (!match) return;
+
+      let playerIdx = (match.players || []).findIndex(p => (p.email && p.email === currentUser.email) || p.uid === currentUser.uid);
+      if (playerIdx === -1) {
+        alert("Aap is match mein registered nahi hain.");
+        return;
+      }
+
+      // Refund fee
+      let refundFee = Number(match.fee || 0);
+      currentUser.walletBalance = (Number(currentUser.walletBalance) || 0) + refundFee;
+      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+
+      // Update users db
+      let users = getAllRegisteredUsers();
+      let dbUser = users.find(u => u.email === currentUser.email);
+      if (dbUser) {
+        dbUser.walletBalance = currentUser.walletBalance;
+        saveAllRegisteredUsers(users);
+      }
+
+      // Remove player from match
+      match.players.splice(playerIdx, 1);
+      localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
+
+      closeModal('joinModal');
+      updateNavProfile();
+      renderMatches();
+      alert(`✅ Aapne match leave kar diya hai. Rs. ${refundFee} aapke wallet mein wapis add ho gaye hain!`);
     }
 
     function copyToClipboard(text, label) {
@@ -1524,7 +1574,6 @@
     }
 
     function payViaWalletAction() {
-      // BAN CHECK
       const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
       if (bannedUids.includes(currentUser.uid)) {
         alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
@@ -1582,19 +1631,26 @@
       const container = document.getElementById('winnersListContainer');
       container.innerHTML = "";
       winners.forEach(w => {
+        let proofHtml = w.proofSs ? `<div style="margin-top:6px;"><img src="${w.proofSs}" style="max-height:80px; border-radius:6px; cursor:pointer;" onclick="openFullImage('${w.proofSs}')"></div>` : '';
         const card = document.createElement('div');
         card.className = "winner-card";
         card.innerHTML = `
           <div class="winner-badge-circle"><i class="fa-solid fa-crown"></i></div>
-          <div>
+          <div style="flex:1;">
             <div style="font-size:13px; font-weight:900; color:#fff;">${w.name}</div>
             <div style="font-size:10px; color:#38bdf8;">UID: ${w.uid}</div>
             <div style="font-size:10.5px; color:#cbd5e1;">${w.match}</div>
             <div style="font-size:11px; font-weight:800; color:var(--gold);"><i class="fa-solid fa-award"></i> Won: ${w.prize}</div>
+            ${proofHtml}
           </div>
         `;
         container.appendChild(card);
       });
+    }
+
+    function openFullImage(src) {
+      const w = window.open("");
+      w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
     function openEventsModal() {
@@ -1638,7 +1694,6 @@
     }
 
     function submitJoinWithSS() {
-      // BAN CHECK
       const bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
       if (bannedUids.includes(currentUser.uid)) {
         alert("❌ Aapka account tournament room join karne se restrict kar diya gaya hai.");
