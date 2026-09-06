@@ -780,7 +780,11 @@
       if (!confirm("Is room/match ko delete karna chahte hain? Yeh website se foran remove ho jayega.")) return;
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       matches.splice(idx, 1);
+      
+      // Update local storage properly
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      
+      // Send broadcast signal to update user website view instantly
       notifyWebsiteUpdate();
 
       renderAdminMatches();
