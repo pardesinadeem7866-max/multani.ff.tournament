@@ -534,7 +534,6 @@
   <script>
     let uploadedWinnerProofBase64 = "";
 
-    // Broadcast channel to instantly notify website of changes
     const syncChannel = new BroadcastChannel('mff_tournament_sync');
 
     function notifyWebsiteUpdate() {
@@ -704,7 +703,7 @@
             </div>
             <div style="display:flex; gap:4px;">
               <button class="btn-action" style="padding:5px 8px; font-size:10px;" onclick="openEditModal(${idx})"><i class="fa-solid fa-pen"></i> Edit</button>
-              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin('${m.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
             </div>
           </div>
           <div style="font-size:10.5px; color:var(--blue); background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.2); padding:6px 8px; border-radius:6px; margin-bottom:6px;">
@@ -776,10 +775,10 @@
       alert("✅ Match settings successfully update ho gayi aur website par live ho gayi!");
     }
 
-    function deleteMatchAdmin(idx) {
+    function deleteMatchAdmin(matchId) {
       if (!confirm("Is room/match ko delete karna chahte hain? Yeh website se foran remove ho jayega.")) return;
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches.splice(idx, 1);
+      matches = matches.filter(m => m.id !== matchId);
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
       notifyWebsiteUpdate();
 
