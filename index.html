@@ -59,7 +59,7 @@
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
     }
     .top-left-group { display: flex; align-items: center; gap: 8px; }
     
@@ -81,16 +81,17 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      background: rgba(255, 183, 3, 0.25);
+      background: rgba(255, 183, 3, 0.3);
       border: 1px solid var(--gold);
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 16px;
       cursor: pointer;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 900;
       color: var(--gold);
       position: relative;
-      z-index: 110;
+      z-index: 9999;
+      pointer-events: auto !important;
     }
 
     .nav-tabs { display: flex; gap: 10px; font-size: 12.5px; font-weight: 800; }
@@ -355,7 +356,7 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(8px);
-      z-index: 999;
+      z-index: 9999;
       justify-content: center;
       align-items: center;
       padding: 12px;
@@ -624,7 +625,7 @@
           <i class="fa-solid fa-share-nodes"></i>
         </div>
 
-        <!-- Wallet Balance Badge (Directly triggers openWalletModal) -->
+        <!-- Wallet Balance Badge (Guaranteed Clickable) -->
         <div class="wallet-header-badge" id="walletBadgeBtn" onclick="openWalletModal()">
           <i class="fa-solid fa-coins"></i>
           <span>Rs. <b id="navWalletBal">0</b></span>
@@ -1821,6 +1822,15 @@
       updateNavProfile();
       renderMatches();
       updateEventsBadge();
+
+      // Ensure explicit listener on wallet badge
+      const wBadge = document.getElementById('walletBadgeBtn');
+      if (wBadge) {
+        wBadge.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openWalletModal();
+        });
+      }
     };
   </script>
 </body>
