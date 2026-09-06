@@ -189,12 +189,11 @@
       background: var(--mint);
       border: none;
       color: #012817;
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 900;
       cursor: pointer;
-      width: 100%;
     }
     .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
     .btn-whatsapp-winner {
@@ -562,7 +561,12 @@
       document.getElementById('createMatchModal').style.display = 'none';
     }
 
-    /* Combined Deposits & Pending Match Requests Render */
+    function openFullImage(src) {
+      const w = window.open("");
+      w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+    }
+
+    /* Combined Deposits & Pending Match Requests Render with Approve/Reject */
     function renderDeposits() {
       const container = document.getElementById('depositsContainer');
       container.innerHTML = "";
@@ -595,15 +599,19 @@
         const globalIdx = deposits.findIndex(d => d.id === dep.id);
         const card = document.createElement('div');
         card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        
+        let thumbHtml = dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumbnail" onclick="openFullImage('${dep.screenshot}')">` : '';
+        
         card.innerHTML = `
           <div>
             <div style="font-size:11.5px; font-weight:800; color:#fff;">${dep.name} <span style="color:var(--blue); font-size:10px;">(${dep.uid})</span></div>
             <div style="font-size:10px; color:var(--text-muted);">Wallet Recharge | ${dep.email}</div>
             <div style="font-size:11.5px; font-weight:900; color:var(--gold); margin-top:2px;">Rs. ${dep.requestedCoins}</div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            ${dep.screenshot ? `<img src="${dep.screenshot}" class="ss-thumbnail" onclick="window.open().document.write('<img src=\x22${dep.screenshot}\x22 style=\x22max-width:100%\x22>')">` : ''}
-            <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="approveDepositReq(${globalIdx})">Approve</button>
+          <div style="display:flex; align-items:center; gap:6px;">
+            ${thumbHtml}
+            <button class="btn-action" onclick="approveDepositReq(${globalIdx})">Approve</button>
+            <button class="btn-action btn-danger" onclick="rejectDepositReq(${globalIdx})">Reject</button>
           </div>
         `;
         container.appendChild(card);
@@ -613,15 +621,21 @@
       pendingMatchPlayers.forEach((item) => {
         const card = document.createElement('div');
         card.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        
+        let thumbHtml = (item.screenshot && item.screenshot !== 'WALLET_PAYMENT') 
+          ? `<img src="${item.screenshot}" class="ss-thumbnail" onclick="openFullImage('${item.screenshot}')">` 
+          : '<span style="font-size:9.5px; color:var(--text-muted);">Wallet Pay</span>';
+
         card.innerHTML = `
           <div>
             <div style="font-size:11.5px; font-weight:800; color:#fff;">${item.name} <span style="color:var(--blue); font-size:10px;">(UID: ${item.uid})</span></div>
             <div style="font-size:10px; color:var(--mint);">Match: ${item.matchTitle}</div>
             <div style="font-size:11.5px; font-weight:900; color:var(--gold); margin-top:2px;">Fee: Rs. ${item.fee}</div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            ${item.screenshot && item.screenshot !== 'WALLET_PAYMENT' ? `<img src="${item.screenshot}" class="ss-thumbnail" onclick="window.open().document.write('<img src=\x22${item.screenshot}\x22 style=\x22max-width:100%\x22>')">` : '<span style="font-size:9.5px; color:var(--text-muted);">Wallet Pay</span>'}
-            <button class="btn-action" style="padding:6px 10px; font-size:11px;" onclick="approveMatchPlayer(${item.matchIdx}, ${item.playerIdx})">Approve</button>
+          <div style="display:flex; align-items:center; gap:6px;">
+            ${thumbHtml}
+            <button class="btn-action" onclick="approveMatchPlayer(${item.matchIdx}, ${item.playerIdx})">Approve</button>
+            <button class="btn-action btn-danger" onclick="rejectMatchPlayer(${item.matchIdx}, ${item.playerIdx})">Reject</button>
           </div>
         `;
         container.appendChild(card);
@@ -653,6 +667,16 @@
       alert("✅ Deposit approve ho gaya aur balance add ho gaya!");
     }
 
+    function rejectDepositReq(idx) {
+      if (!confirm("Is deposit request ko reject karna chahte hain?")) return;
+      let deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
+      deposits[idx].status = 'rejected';
+      localStorage.setItem('mff_wallet_deposits', JSON.stringify(deposits));
+      renderDeposits();
+      updateHeaderStats();
+      alert("❌ Deposit request reject kar di gayi hai.");
+    }
+
     function approveMatchPlayer(matchIdx, playerIdx) {
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       if (matches[matchIdx] && matches[matchIdx].players && matches[matchIdx].players[playerIdx]) {
@@ -661,6 +685,18 @@
         renderDeposits();
         updateHeaderStats();
         alert("✅ Tournament slot approve ho gaya!");
+      }
+    }
+
+    function rejectMatchPlayer(matchIdx, playerIdx) {
+      if (!confirm("Is player ki slot request reject karna chahte hain?")) return;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (matches[matchIdx] && matches[matchIdx].players) {
+        matches[matchIdx].players.splice(playerIdx, 1);
+        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+        renderDeposits();
+        updateHeaderStats();
+        alert("❌ Match slot request reject kar ke hata di gayi hai.");
       }
     }
 
@@ -710,7 +746,6 @@
 
       matches.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === 'approved');
-        const pendingPlayers = (m.players || []).filter(p => p.status === 'pending');
         const div = document.createElement('div');
         div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:10px;";
         
