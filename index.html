@@ -168,6 +168,19 @@
       border-radius: 6px;
       border: 1px solid #a5d6a7;
     }
+    .download-app-chip {
+      display: inline-block;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,114,255,0.3);
+    }
 
     /* Filter Track */
     .filter-track {
@@ -613,9 +626,10 @@
     <!-- Top Header -->
     <div class="top-header">
       <div class="top-left-group">
-        <div class="profile-avatar-badge" onclick="openProfileManageModal()">
-          <div class="avatar-circle"><i class="fa-solid fa-gamepad"></i></div>
-          <span class="badge-name" id="navUserBadge">LOGIN</span>
+        <!-- Share Website Button instead of logo -->
+        <div class="profile-avatar-badge" onclick="shareWebsiteLink()" style="background: rgba(0, 230, 118, 0.25);">
+          <div class="avatar-circle" style="background:var(--gold); color:#000;"><i class="fa-solid fa-share-nodes"></i></div>
+          <span class="badge-name" style="font-weight:900;">SHARE</span>
         </div>
 
         <div class="wallet-header-badge" onclick="openWalletModal()">
@@ -645,7 +659,10 @@
             <span style="font-size: 10px; color:#00b0ff;"><i class="fa-solid fa-signal"></i> LIVE</span>
           </div>
           <div class="hero-subtitle">🔥 Free Fire Esports Gaming Arena 🎮</div>
-          <div class="easypaisa-tag">EasyPaisa: 03186815926 (m Nadeem)</div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:4px;">
+            <div class="easypaisa-tag">EasyPaisa: 03186815926 (m Nadeem)</div>
+            <a href="#" onclick="alert('Official App link jald update hoga!')" class="download-app-chip"><i class="fa-solid fa-download"></i> DOWNLOAD OFFICIAL APP</a>
+          </div>
         </div>
       </div>
     </div>
@@ -1059,6 +1076,20 @@
 
     function saveAllRegisteredUsers(users) {
       localStorage.setItem('mff_accounts_db', JSON.stringify(users));
+    }
+
+    /* Share website feature */
+    function shareWebsiteLink() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Multani FF Official Tournament',
+          text: 'Join Daily Free Fire Tournaments and Win Real Cash Prizes!',
+          url: window.location.href,
+        }).catch(err => console.log('Share error:', err));
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("✅ Website link copied to clipboard!");
+      }
     }
 
     function switchAuthView(view) {
