@@ -352,10 +352,6 @@
         <div class="action-circle"><i class="fa-solid fa-list"></i></div>
         <span>Match Manager</span>
       </button>
-      <button class="action-icon-item" onclick="switchAdminTab('matches')">
-        <div class="action-circle"><i class="fa-solid fa-map-location-dot"></i></div>
-        <span>Filter Map</span>
-      </button>
       <button class="action-icon-item" onclick="switchAdminTab('support')">
         <div class="action-circle">
           <i class="fa-solid fa-comments" style="color:var(--mint);"></i>
@@ -363,9 +359,9 @@
         </div>
         <span>Help Chats</span>
       </button>
-      <button class="action-icon-item" onclick="clearOldData()">
-        <div class="action-circle"><i class="fa-solid fa-trash-can" style="color:var(--red);"></i></div>
-        <span>Cleanup Old</span>
+      <button class="action-icon-item" onclick="switchAdminTab('allusers')">
+        <div class="action-circle"><i class="fa-solid fa-address-book" style="color:var(--blue);"></i></div>
+        <span>View Player List</span>
       </button>
     </div>
 
@@ -381,7 +377,7 @@
         <div id="depositsContainer"></div>
       </div>
 
-      <!-- 2. MATCH MANAGER & MEMBER LIST VIEW -->
+      <!-- 2. MATCH MANAGER & MEMBER LIST VIEW (Professional Unified Card) -->
       <div id="sectionMatches" class="panel-box" style="display:none;">
         <div class="section-header-row">
           <span><i class="fa-solid fa-gamepad"></i> Match Manager (Active Tournaments)</span>
@@ -396,13 +392,19 @@
         <div id="bannedPlayersListContainer"></div>
       </div>
 
-      <!-- 4. SUPPORT CHATS VIEW -->
+      <!-- 4. ALL REGISTERED PLAYERS LIST VIEW -->
+      <div id="sectionAllUsers" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-address-book" style="color:var(--blue);"></i> All Registered Website Players</span></div>
+        <div id="allRegisteredUsersContainer"></div>
+      </div>
+
+      <!-- 5. SUPPORT CHATS VIEW -->
       <div id="sectionSupport" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
         <div id="supportChatsContainer"></div>
       </div>
 
-      <!-- 5. GIVEAWAYS VIEW -->
+      <!-- 6. GIVEAWAYS VIEW -->
       <div id="sectionGiveaways" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
         <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
@@ -550,6 +552,7 @@
       document.getElementById('sectionDeposits').style.display = (tabName === 'deposits') ? 'block' : 'none';
       document.getElementById('sectionMatches').style.display = (tabName === 'matches') ? 'block' : 'none';
       document.getElementById('sectionBanned').style.display = (tabName === 'banned') ? 'block' : 'none';
+      document.getElementById('sectionAllUsers').style.display = (tabName === 'allusers') ? 'block' : 'none';
       document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
       document.getElementById('sectionGiveaways').style.display = (tabName === 'giveaways') ? 'block' : 'none';
 
@@ -562,6 +565,8 @@
       } else if (tabName === 'banned') {
         document.getElementById('navBtnBanned').classList.add('active');
         renderBannedPlayers();
+      } else if (tabName === 'allusers') {
+        renderAllRegisteredUsers();
       } else if (tabName === 'support') {
         document.getElementById('navBtnSupport').classList.add('active');
         renderAdminSupport();
@@ -581,6 +586,36 @@
     function openFullImage(src) {
       const w = window.open("");
       w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+    }
+
+    /* Render All Registered Website Players */
+    function renderAllRegisteredUsers() {
+      const container = document.getElementById('allRegisteredUsersContainer');
+      container.innerHTML = "";
+      const usersList = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+
+      if (usersList.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">Abhi tak kisi ne account nahi banaya.</div>`;
+        return;
+      }
+
+      usersList.forEach((u, index) => {
+        let cleanPhone = (u.phone || '').replace(/[^0-9]/g, '');
+        if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
+        const waLink = cleanPhone ? `https://wa.me/${cleanPhone}` : '#';
+
+        const div = document.createElement('div');
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        div.innerHTML = `
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">${index + 1}. ${u.name} <span style="color:var(--blue); font-size:10px;">(UID: ${u.uid})</span></div>
+            <div style="font-size:10.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${u.phone || 'N/A'} | Bal: Rs. ${u.walletBalance || 0}</div>
+            <div style="font-size:9.5px; color:var(--text-muted);">Gmail: ${u.email}</div>
+          </div>
+          ${u.phone ? `<a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:5px 10px; font-size:10.5px;"><i class="fa-brands fa-whatsapp"></i> Chat</a>` : ''}
+        `;
+        container.appendChild(div);
+      });
     }
 
     /* Combined Deposits & Pending Match Requests Render */
@@ -669,7 +704,7 @@
         localStorage.setItem('mff_accounts_db', JSON.stringify(users));
 
         let curUser = JSON.parse(localStorage.getItem('mff_user'));
-        if (curUser && curUser.email === user.email) {
+        if (curUser && curUser.email === item.email) {
           curUser.walletBalance = user.walletBalance;
           localStorage.setItem('mff_user', JSON.stringify(curUser));
         }
@@ -715,7 +750,7 @@
       }
     }
 
-    /* 2. Matches Render & Manager with Edit & Kick */
+    /* 2. Matches Render & Manager with Clean Professional Unified Card */
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
@@ -762,13 +797,14 @@
       matches.forEach((m, idx) => {
         const approvedPlayers = (m.players || []).filter(p => p.status === 'approved');
         const div = document.createElement('div');
-        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:10px;";
+        // Professional unified card background with clean border
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:10px; padding:12px; margin-bottom:12px;";
         
         let membersHtml = "";
         if ((m.players || []).length === 0) {
-          membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:6px;">Abhi koi member join nahi hua.</div>`;
+          membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:8px;">Abhi koi member join nahi hua.</div>`;
         } else {
-          membersHtml = `<div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:6px;"><div style="font-size:10.5px; font-weight:800; color:var(--mint); margin-bottom:4px;">All Members (Approved & Pending)</div>`;
+          membersHtml = `<div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;"><div style="font-size:11px; font-weight:800; color:var(--mint); margin-bottom:6px;">All Members (Approved & Pending)</div>`;
           m.players.forEach((p, pIdx) => {
             let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
@@ -780,7 +816,7 @@
               : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayer(${idx}, ${pIdx})">Approve</button>`;
 
             membersHtml += `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#09101d; padding:6px; border-radius:6px; margin-bottom:4px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#080e1a; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
                 <div>
                   <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
                   <div style="font-size:9.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${p.phone || 'N/A'}</div>
@@ -799,9 +835,9 @@
         }
 
         div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <div>
-              <div style="font-size:12px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
+              <div style="font-size:12.5px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
               <div style="font-size:10px; color:var(--text-muted);">Time: ${m.time} | Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
             </div>
             <div style="display:flex; gap:4px;">
@@ -809,7 +845,7 @@
               <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin(${idx})"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
-          <div style="font-size:10.5px; color:var(--blue); background:#09101d; padding:6px; border-radius:6px; margin-bottom:6px;">
+          <div style="font-size:10.5px; color:var(--blue); background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.2); padding:6px 8px; border-radius:6px; margin-bottom:6px;">
             Room ID: <b>${m.roomId || 'Not set'}</b> | Password: <b>${m.roomPass || 'Not set'}</b>
           </div>
           ${membersHtml}
@@ -1035,16 +1071,6 @@
       document.getElementById('gDesc').value = "";
       document.getElementById('gReward').value = "";
       alert("🎁 Giveaway live post ho gaya!");
-    }
-
-    function clearOldData() {
-      if (confirm("Kya aap saara purana data clean karna chahte hain?")) {
-        localStorage.removeItem('mff_wallet_deposits');
-        localStorage.removeItem('mff_support_msgs');
-        renderDeposits();
-        updateHeaderStats();
-        alert("✅ Data clean ho gaya!");
-      }
     }
 
     window.onload = function() {
