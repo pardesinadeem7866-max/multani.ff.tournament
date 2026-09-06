@@ -196,6 +196,7 @@
       cursor: pointer;
     }
     .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red); }
+    .btn-orange { background: rgba(245, 158, 11, 0.2); border: 1px solid var(--gold); color: var(--gold); }
     .btn-whatsapp-winner {
       background: #25d366;
       color: #fff;
@@ -714,7 +715,7 @@
       }
     }
 
-    /* 2. Matches Render & Manager with Edit */
+    /* 2. Matches Render & Manager with Edit & Kick */
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
@@ -784,11 +785,12 @@
                   <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
                   <div style="font-size:9.5px; color:var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> ${p.phone || 'N/A'}</div>
                 </div>
-                <div style="display:flex; gap:4px;">
-                  <a href="${waLink}" target="_blank" class="btn-whatsapp-winner">
+                <div style="display:flex; gap:3px;">
+                  <a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:3px 6px; font-size:9px;">
                     <i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner
                   </a>
-                  <button class="btn-action btn-danger" style="padding:4px 8px; font-size:9.5px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban Room</button>
+                  <button class="btn-action btn-orange" style="padding:3px 6px; font-size:9px;" onclick="kickPlayerFromMatch(${idx}, ${pIdx}, '${p.name}')">Kick</button>
+                  <button class="btn-action btn-danger" style="padding:3px 6px; font-size:9px;" onclick="banPlayerByUid('${p.uid}', '${p.name}', '${p.phone || ''}')">Ban Room</button>
                 </div>
               </div>
             `;
@@ -814,6 +816,18 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    function kickPlayerFromMatch(matchIdx, playerIdx, playerName) {
+      if (!confirm(`Kya aap ${playerName} ko is match se kick karna chahte hain? (Wo dobara payment bhej kar join kar sakega)`)) return;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (matches[matchIdx] && matches[matchIdx].players) {
+        matches[matchIdx].players.splice(playerIdx, 1);
+        localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+        renderAdminMatches();
+        updateHeaderStats();
+        alert(`👢 ${playerName} ko match se kick kar diya gaya hai.`);
+      }
     }
 
     function openEditModal(idx) {
@@ -925,12 +939,10 @@
     function confirmUnban() {
       let targetUid = document.getElementById('unbanTargetUid').value;
       
-      // Remove from banned UIDs array used by player website
       let bannedUids = JSON.parse(localStorage.getItem('mff_banned_uids')) || [];
       bannedUids = bannedUids.filter(u => u !== targetUid);
       localStorage.setItem('mff_banned_uids', JSON.stringify(bannedUids));
 
-      // Remove from admin details list
       let bannedDetails = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
       bannedDetails = bannedDetails.filter(b => b.uid !== targetUid);
       localStorage.setItem('mff_banned_players', JSON.stringify(bannedDetails));
