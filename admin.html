@@ -477,6 +477,22 @@
       </div>
     </div>
 
+    <!-- Unban Confirmation Popup Modal -->
+    <div class="modal-backdrop" id="unbanModal">
+      <div class="modal-dialog" style="max-width: 320px; text-align: center; padding: 20px;">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff; font-size: 16px;" onclick="closeUnbanModal()"></i>
+        </div>
+        <div style="font-size: 16px; font-weight: 900; color: var(--gold); margin-bottom: 10px;"><i class="fa-solid fa-triangle-exclamation"></i> Unban Player</div>
+        <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 16px;" id="unbanModalText">Kya aap is player ko unban karna chahte hain?</div>
+        <input type="hidden" id="unbanTargetIdx">
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-action btn-danger" style="flex:1;" onclick="closeUnbanModal()">No</button>
+          <button class="btn-action" style="flex:1;" onclick="confirmUnban()">Yes</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
       <button class="bot-tab active" id="navBtnDeposits" onclick="switchAdminTab('deposits')">
@@ -868,7 +884,7 @@
       renderAdminMatches();
     }
 
-    /* 3. Banned Players List View & Unban */
+    /* 3. Banned Players List View & Unban with Custom Popup */
     function renderBannedPlayers() {
       const container = document.getElementById('bannedPlayersListContainer');
       container.innerHTML = "";
@@ -887,16 +903,28 @@
             <div style="font-size:12px; font-weight:800; color:#fff;">${b.name} <span style="color:var(--red); font-size:10px;">(UID: ${b.uid})</span></div>
             <div style="font-size:10px; color:var(--text-muted);">WhatsApp: ${b.phone || 'N/A'} | Banned at: ${b.time || '--'}</div>
           </div>
-          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="unbanPlayer(${idx})">Unban</button>
+          <button class="btn-action" style="width:auto; padding:6px 10px; font-size:11px;" onclick="promptUnban(${idx}, '${b.name}')">Unban</button>
         `;
         container.appendChild(div);
       });
     }
 
-    function unbanPlayer(idx) {
+    function promptUnban(idx, name) {
+      document.getElementById('unbanTargetIdx').value = idx;
+      document.getElementById('unbanModalText').innerText = `Kya aap ${name} ko unban karna chahte hain?`;
+      document.getElementById('unbanModal').style.display = 'flex';
+    }
+
+    function closeUnbanModal() {
+      document.getElementById('unbanModal').style.display = 'none';
+    }
+
+    function confirmUnban() {
+      let idx = document.getElementById('unbanTargetIdx').value;
       let bannedList = JSON.parse(localStorage.getItem('mff_banned_players')) || [];
       bannedList.splice(idx, 1);
       localStorage.setItem('mff_banned_players', JSON.stringify(bannedList));
+      closeUnbanModal();
       renderBannedPlayers();
       alert("✅ Player unban kar diya gaya hai!");
     }
