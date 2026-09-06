@@ -142,7 +142,7 @@
       color: #0f172a;
       position: relative;
     }
-    .action-icon-item span { font-size: 9.5px; font-weight: 800; color: #334155; text-align: center; }
+    .action-icon-item span { font-size: 9px; font-weight: 800; color: #334155; text-align: center; }
     .badge-dot {
       position: absolute;
       top: -2px;
@@ -334,9 +334,9 @@
         <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
         <span>Create Match</span>
       </button>
-      <button class="action-icon-item" onclick="switchAdminTab('winners')">
-        <div class="action-circle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i></div>
-        <span>Winner Announce</span>
+      <button class="action-icon-item" onclick="switchAdminTab('giveaways')">
+        <div class="action-circle"><i class="fa-solid fa-gift" style="color:#ff4625;"></i></div>
+        <span>Giveaways</span>
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('deposits')">
         <div class="action-circle">
@@ -363,6 +363,10 @@
       <button class="action-icon-item" onclick="switchAdminTab('allusers')">
         <div class="action-circle"><i class="fa-solid fa-address-book" style="color:var(--blue);"></i></div>
         <span>Player List</span>
+      </button>
+      <button class="action-icon-item" onclick="switchAdminTab('winners')">
+        <div class="action-circle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i></div>
+        <span>Winner Announce</span>
       </button>
     </div>
 
@@ -414,7 +418,16 @@
         <div id="allRegisteredUsersContainer"></div>
       </div>
 
-      <!-- 6. SUPPORT CHATS VIEW -->
+      <!-- 6. GIVEAWAYS VIEW -->
+      <div id="sectionGiveaways" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
+        <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
+        <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
+        <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
+        <button class="btn-action" onclick="postGiveaway()"><i class="fa-solid fa-check"></i> Add Giveaway</button>
+      </div>
+
+      <!-- 7. SUPPORT CHATS VIEW -->
       <div id="sectionSupport" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
         <div id="supportChatsContainer"></div>
@@ -563,6 +576,7 @@
       document.getElementById('sectionWinners').style.display = (tabName === 'winners') ? 'block' : 'none';
       document.getElementById('sectionBanned').style.display = (tabName === 'banned') ? 'block' : 'none';
       document.getElementById('sectionAllUsers').style.display = (tabName === 'allusers') ? 'block' : 'none';
+      document.getElementById('sectionGiveaways').style.display = (tabName === 'giveaways') ? 'block' : 'none';
       document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
 
       if (tabName === 'deposits') {
@@ -578,6 +592,8 @@
         renderBannedPlayers();
       } else if (tabName === 'allusers') {
         renderAllRegisteredUsers();
+      } else if (tabName === 'giveaways') {
+        document.getElementById('navBtnMatches').classList.add('active');
       } else if (tabName === 'support') {
         document.getElementById('navBtnSupport').classList.add('active');
         renderAdminSupport();
@@ -1130,6 +1146,26 @@
       localStorage.setItem('mff_support_msgs', JSON.stringify(msgs));
       renderAdminSupport();
       alert("✅ Reply bhej diya gaya!");
+    }
+
+    function postGiveaway() {
+      const title = document.getElementById('gTitle').value.trim();
+      const desc = document.getElementById('gDesc').value.trim();
+      const reward = document.getElementById('gReward').value.trim();
+
+      if (!title) {
+        alert("Giveaway title likhna lazmi hai!");
+        return;
+      }
+
+      let gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
+      gList.unshift({ title, desc, reward, endDate: "Active" });
+      localStorage.setItem('mff_giveaways', JSON.stringify(gList));
+
+      document.getElementById('gTitle').value = "";
+      document.getElementById('gDesc').value = "";
+      document.getElementById('gReward').value = "";
+      alert("🎁 Giveaway live post ho gaya!");
     }
 
     window.onload = function() {
