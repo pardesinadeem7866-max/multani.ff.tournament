@@ -391,19 +391,13 @@
         <div id="activeMatchesList"></div>
       </div>
 
-      <!-- 3. WINNER ANNOUNCEMENT VIEW -->
+      <!-- 3. WINNER ANNOUNCEMENTS VIEW (List + Add + Edit + Delete) -->
       <div id="sectionWinners" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Post Tournament Winner (Hall of Fame)</span></div>
-        <div class="form-ctrl"><label>Winner Nickname</label><input type="text" id="winName" placeholder="Player Name"></div>
-        <div class="form-ctrl"><label>Free Fire UID</label><input type="text" id="winUid" placeholder="Free Fire UID"></div>
-        <div class="form-ctrl"><label>Match Room Title</label><input type="text" id="winMatch" placeholder="e.g. Solo Night Cup (Bermuda)"></div>
-        <div class="form-ctrl"><label>Prize Won</label><input type="text" id="winPrize" placeholder="e.g. Rs. 500"></div>
-        <div class="form-ctrl">
-          <label>Payment / Prize Proof Screenshot</label>
-          <input type="file" id="winSsInput" accept="image/*" onchange="previewWinnerScreenshot(event)">
-          <img id="winSsPreview" class="preview-box" alt="Winner Payment SS">
+        <div class="section-header-row">
+          <span><i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Winner Announcements</span>
+          <button class="btn-action" style="width:auto; padding:4px 10px; font-size:10px;" onclick="openAddWinnerModal()">+ Add New</button>
         </div>
-        <button class="btn-action" onclick="postWinnerAnnouncement()"><i class="fa-solid fa-award"></i> Post Winner Live</button>
+        <div id="adminWinnersListContainer"></div>
       </div>
 
       <!-- 4. BANNED PLAYERS VIEW -->
@@ -462,6 +456,27 @@
         <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM Today"></div>
         <div class="form-ctrl"><label>Cover Photo Image URL (Optional)</label><input type="text" id="mCoverImg" placeholder="https://image-link.com/photo.jpg"></div>
         <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Publish Match Room</button>
+      </div>
+    </div>
+
+    <!-- Add / Edit Winner Modal -->
+    <div class="modal-backdrop" id="winnerModal">
+      <div class="modal-dialog">
+        <div class="section-header-row" style="margin-bottom:12px;">
+          <span id="winnerModalTitle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Add New Announcement</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeWinnerModal()"></i>
+        </div>
+        <input type="hidden" id="editWinnerIndex" value="-1">
+        <div class="form-ctrl"><label>Winner Nickname</label><input type="text" id="winName" placeholder="Player Name"></div>
+        <div class="form-ctrl"><label>Free Fire UID</label><input type="text" id="winUid" placeholder="Free Fire UID"></div>
+        <div class="form-ctrl"><label>Match Room Title</label><input type="text" id="winMatch" placeholder="e.g. Solo Night Cup (Bermuda)"></div>
+        <div class="form-ctrl"><label>Prize Won</label><input type="text" id="winPrize" placeholder="e.g. Rs. 500"></div>
+        <div class="form-ctrl">
+          <label>Payment / Prize Proof Screenshot</label>
+          <input type="file" id="winSsInput" accept="image/*" onchange="previewWinnerScreenshot(event)">
+          <img id="winSsPreview" class="preview-box" alt="Winner Payment SS">
+        </div>
+        <button class="btn-action" onclick="saveWinnerAnnouncement()"><i class="fa-solid fa-award"></i> Save Announcement</button>
       </div>
     </div>
 
@@ -587,6 +602,7 @@
         renderAdminMatches();
       } else if (tabName === 'winners') {
         document.getElementById('navBtnMatches').classList.add('active');
+        renderAdminWinners();
       } else if (tabName === 'banned') {
         document.getElementById('navBtnBanned').classList.add('active');
         renderBannedPlayers();
@@ -613,6 +629,23 @@
       w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
+    function openAddWinnerModal() {
+      document.getElementById('winnerModalTitle').innerHTML = `<i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Add New Announcement`;
+      document.getElementById('editWinnerIndex').value = "-1";
+      document.getElementById('winName').value = "";
+      document.getElementById('winUid').value = "";
+      document.getElementById('winMatch').value = "";
+      document.getElementById('winPrize').value = "";
+      document.getElementById('winSsInput').value = "";
+      document.getElementById('winSsPreview').style.display = "none";
+      uploadedWinnerProofBase64 = "";
+      document.getElementById('winnerModal').style.display = 'flex';
+    }
+
+    function closeWinnerModal() {
+      document.getElementById('winnerModal').style.display = 'none';
+    }
+
     function previewWinnerScreenshot(e) {
       const file = e.target.files[0];
       if (file) {
@@ -627,11 +660,12 @@
       }
     }
 
-    function postWinnerAnnouncement() {
+    function saveWinnerAnnouncement() {
       const name = document.getElementById('winName').value.trim();
       const uid = document.getElementById('winUid').value.trim();
       const match = document.getElementById('winMatch').value.trim();
       const prize = document.getElementById('winPrize').value.trim();
+      const editIdx = Number(document.getElementById('editWinnerIndex').value);
 
       if (!name || !uid || !prize) {
         alert("Winner Name, UID aur Prize likhna lazmi hai!");
@@ -639,25 +673,89 @@
       }
 
       let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
-      winnersList.unshift({
+      
+      const newWinnerObj = {
         name,
         uid,
         match: match || "Tournament Room",
         prize: prize,
-        proofSs: uploadedWinnerProofBase64 || ""
-      });
+        proofSs: uploadedWinnerProofBase64 || (editIdx >= 0 ? winnersList[editIdx].proofSs : "")
+      };
+
+      if (editIdx >= 0) {
+        winnersList[editIdx] = newWinnerObj;
+      } else {
+        winnersList.unshift(newWinnerObj);
+      }
 
       localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
+      closeWinnerModal();
+      renderAdminWinners();
+      alert("🏆 Winner announcement successfully save ho gayi!");
+    }
 
-      document.getElementById('winName').value = "";
-      document.getElementById('winUid').value = "";
-      document.getElementById('winMatch').value = "";
-      document.getElementById('winPrize').value = "";
-      document.getElementById('winSsInput').value = "";
-      document.getElementById('winSsPreview').style.display = "none";
-      uploadedWinnerProofBase64 = "";
+    function renderAdminWinners() {
+      const container = document.getElementById('adminWinnersListContainer');
+      container.innerHTML = "";
+      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
 
-      alert("🏆 Winner successfully website ke Winners section par live post ho gaya!");
+      if (winnersList.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi winner announcement mojud nahi hai.</div>`;
+        return;
+      }
+
+      winnersList.forEach((w, idx) => {
+        const div = document.createElement('div');
+        div.style = "background:#050b14; border:1px solid var(--card-border); border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+        
+        let thumbHtml = w.proofSs ? `<img src="${w.proofSs}" class="ss-thumbnail" onclick="openFullImage('${w.proofSs}')">` : '<span style="font-size:9.5px; color:var(--text-muted);">No SS</span>';
+
+        div.innerHTML = `
+          <div>
+            <div style="font-size:12px; font-weight:800; color:#fff;">${w.name} <span style="color:var(--blue); font-size:10px;">(UID: ${w.uid})</span></div>
+            <div style="font-size:10px; color:var(--text-muted);">${w.match} | <b style="color:var(--gold);">${w.prize}</b></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            ${thumbHtml}
+            <button class="btn-action btn-orange" style="padding:5px 8px; font-size:10px;" onclick="editWinner(${idx})">Edit</button>
+            <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteWinner(${idx})">Delete</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function editWinner(idx) {
+      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
+      let w = winnersList[idx];
+      if (!w) return;
+
+      document.getElementById('winnerModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--gold);"></i> Edit Announcement`;
+      document.getElementById('editWinnerIndex').value = idx;
+      document.getElementById('winName').value = w.name || '';
+      document.getElementById('winUid').value = w.uid || '';
+      document.getElementById('winMatch').value = w.match || '';
+      document.getElementById('winPrize').value = w.prize || '';
+      
+      uploadedWinnerProofBase64 = w.proofSs || '';
+      const preview = document.getElementById('winSsPreview');
+      if (w.proofSs) {
+        preview.src = w.proofSs;
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
+      }
+
+      document.getElementById('winnerModal').style.display = 'flex';
+    }
+
+    function deleteWinner(idx) {
+      if (!confirm("Is winner announcement ko delete karna chahte hain?")) return;
+      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
+      winnersList.splice(idx, 1);
+      localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
+      renderAdminWinners();
+      alert("🗑️ Announcement delete kar di gayi hai.");
     }
 
     /* Render All Registered Website Players with Edit Balance */
