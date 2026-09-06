@@ -742,6 +742,12 @@
           <span>WhatsApp Channel</span>
         </a>
 
+        <!-- WhatsApp Group Join Button -->
+        <a href="https://chat.whatsapp.com/CehXYPf6QGPJQtYR0fpooO" target="_blank" style="display: flex; align-items: center; gap: 10px; background: #064e3b; border: 1px solid #34d399; padding: 11px 14px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: 800; font-size: 12.5px;">
+          <i class="fa-solid fa-users-rectangle" style="color: #34d399; font-size: 18px;"></i>
+          <span>WhatsApp Group Join</span>
+        </a>
+
         <a href="https://youtube.com/@multaniff-b2k?si=v7J0Ki5QUqmrWsr6" target="_blank" style="display: flex; align-items: center; gap: 10px; background: #2a0808; border: 1px solid #ef4444; padding: 11px 14px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: 800; font-size: 12.5px;">
           <i class="fa-brands fa-youtube" style="color: #ef4444; font-size: 18px;"></i>
           <span>YouTube Channel</span>
@@ -752,7 +758,7 @@
           <span>TikTok ID (@multaniffgaming)</span>
         </a>
 
-        <!-- Payment History Button added at the bottom of the links -->
+        <!-- Payment History Button -->
         <div onclick="openPaymentHistoryModal()" style="display: flex; align-items: center; gap: 10px; background: rgba(255,183,3,0.12); border: 1px solid var(--gold); padding: 11px 14px; border-radius: 10px; color: var(--gold); text-decoration: none; font-weight: 800; font-size: 12.5px; cursor: pointer;">
           <i class="fa-solid fa-clock-rotate-left" style="font-size: 18px;"></i>
           <span>Payment History</span>
@@ -1110,10 +1116,10 @@
       history.unshift({
         email: email,
         uid: uid,
-        type: type, // 'JOIN', 'REFUND', 'REJECTED', 'DEPOSIT_APPROVED', 'DEPOSIT_REJECTED'
+        type: type,
         matchName: matchName,
         amount: amount,
-        status: status, // 'Approved', 'Refunded', 'Rejected'
+        status: status,
         time: new Date().toLocaleString()
       });
       localStorage.setItem('mff_payment_history', JSON.stringify(history));
@@ -1434,24 +1440,6 @@
 
     function renderMatches() {
       let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-
-      // Automatic check for deleted matches and processing refund for joined players
-      let cachedTournamentsIds = JSON.parse(localStorage.getItem('mff_cached_tournament_ids')) || [];
-      let currentTournamentsIds = tournaments.map(t => t.id);
-
-      if (cachedTournamentsIds.length > 0) {
-        let deletedIds = cachedTournamentsIds.filter(id => !currentTournamentsIds.includes(id));
-        if (deletedIds.length > 0) {
-          let allUsers = getAllRegisteredUsers();
-          deletedIds.forEach(delId => {
-            // Note: If tournament was deleted, we check if any record in payment history or active matches existed,
-            // or we handle it when admin deletes. For instant auto-detection if admin deleted via admin panel:
-            // Since admin panel directly modifies 'mff_tournaments', we can track deleted items by storing previous state snapshots.
-          });
-        }
-      }
-      localStorage.setItem('mff_cached_tournament_ids', JSON.stringify(currentTournamentsIds));
-
       const container = document.getElementById('matchesContainer');
       container.innerHTML = "";
 
@@ -1915,7 +1903,6 @@
       document.getElementById(id).style.display = "none";
     }
 
-    // Real-time synchronization bridge with Admin Panel and Automatic Match Delete/Refund Listener
     const syncChannel = new BroadcastChannel('mff_tournament_sync');
     syncChannel.onmessage = function(event) {
       if (event.data && event.data.type === 'REFRESH_TOURNAMENTS') {
@@ -1923,24 +1910,7 @@
       }
     };
 
-    // Check match deletions and process automatic refunds in real-time
-    setInterval(() => {
-      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      let currentIds = tournaments.map(t => t.id);
-      let cachedIds = JSON.parse(localStorage.getItem('mff_cached_tournament_ids')) || currentIds;
-
-      let deletedIds = cachedIds.filter(id => !currentIds.includes(id));
-      if (deletedIds.length > 0 && currentUser) {
-        // Handle auto-refund logic if user was in deleted match
-        let deletedTournamentsLog = JSON.parse(localStorage.getItem('mff_deleted_tournaments_log')) || [];
-        // Refresh cache
-        localStorage.setItem('mff_cached_tournament_ids', JSON.stringify(currentIds));
-      }
-    }, 1500);
-
     window.onload = function() {
-      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      localStorage.setItem('mff_cached_tournament_ids', JSON.stringify(tournaments.map(t => t.id)));
       updateNavProfile();
       renderMatches();
       updateEventsBadge();
