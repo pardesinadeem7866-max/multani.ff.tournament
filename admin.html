@@ -280,6 +280,7 @@
     .bot-tab span { font-size: 10px; font-weight: 800; }
 
     .ss-thumbnail { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--card-border); }
+    .preview-box { width: 100%; max-height: 130px; object-fit: contain; border-radius: 8px; border: 1px dashed var(--mint); margin-top: 6px; display: none; }
   </style>
 </head>
 <body>
@@ -333,9 +334,9 @@
         <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
         <span>Create Match</span>
       </button>
-      <button class="action-icon-item" onclick="switchAdminTab('giveaways')">
-        <div class="action-circle"><i class="fa-solid fa-gift" style="color:#ff4625;"></i></div>
-        <span>Giveaways</span>
+      <button class="action-icon-item" onclick="switchAdminTab('winners')">
+        <div class="action-circle"><i class="fa-solid fa-trophy" style="color:var(--gold);"></i></div>
+        <span>Winner Announce</span>
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('deposits')">
         <div class="action-circle">
@@ -361,7 +362,7 @@
       </button>
       <button class="action-icon-item" onclick="switchAdminTab('allusers')">
         <div class="action-circle"><i class="fa-solid fa-address-book" style="color:var(--blue);"></i></div>
-        <span>View Player List</span>
+        <span>Player List</span>
       </button>
     </div>
 
@@ -386,31 +387,37 @@
         <div id="activeMatchesList"></div>
       </div>
 
-      <!-- 3. BANNED PLAYERS VIEW -->
+      <!-- 3. WINNER ANNOUNCEMENT VIEW -->
+      <div id="sectionWinners" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-trophy" style="color:var(--gold);"></i> Post Tournament Winner (Hall of Fame)</span></div>
+        <div class="form-ctrl"><label>Winner Nickname</label><input type="text" id="winName" placeholder="Player Name"></div>
+        <div class="form-ctrl"><label>Free Fire UID</label><input type="text" id="winUid" placeholder="Free Fire UID"></div>
+        <div class="form-ctrl"><label>Match Room Title</label><input type="text" id="winMatch" placeholder="e.g. Solo Night Cup (Bermuda)"></div>
+        <div class="form-ctrl"><label>Prize Won</label><input type="text" id="winPrize" placeholder="e.g. Rs. 500"></div>
+        <div class="form-ctrl">
+          <label>Payment / Prize Proof Screenshot</label>
+          <input type="file" id="winSsInput" accept="image/*" onchange="previewWinnerScreenshot(event)">
+          <img id="winSsPreview" class="preview-box" alt="Winner Payment SS">
+        </div>
+        <button class="btn-action" onclick="postWinnerAnnouncement()"><i class="fa-solid fa-award"></i> Post Winner Live</button>
+      </div>
+
+      <!-- 4. BANNED PLAYERS VIEW -->
       <div id="sectionBanned" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List (Room Join Restricted)</span></div>
         <div id="bannedPlayersListContainer"></div>
       </div>
 
-      <!-- 4. ALL REGISTERED PLAYERS LIST VIEW (With Edit Balance) -->
+      <!-- 5. ALL REGISTERED PLAYERS LIST VIEW -->
       <div id="sectionAllUsers" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-address-book" style="color:var(--blue);"></i> All Registered Website Players</span></div>
         <div id="allRegisteredUsersContainer"></div>
       </div>
 
-      <!-- 5. SUPPORT CHATS VIEW -->
+      <!-- 6. SUPPORT CHATS VIEW -->
       <div id="sectionSupport" class="panel-box" style="display:none;">
         <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
         <div id="supportChatsContainer"></div>
-      </div>
-
-      <!-- 6. GIVEAWAYS VIEW -->
-      <div id="sectionGiveaways" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
-        <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
-        <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
-        <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
-        <button class="btn-action" onclick="postGiveaway()"><i class="fa-solid fa-check"></i> Add Giveaway</button>
       </div>
 
     </div>
@@ -519,6 +526,8 @@
   </div>
 
   <script>
+    let uploadedWinnerProofBase64 = "";
+
     function updateHeaderStats() {
       const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
@@ -551,10 +560,10 @@
       document.querySelectorAll('.bot-tab').forEach(b => b.classList.remove('active'));
       document.getElementById('sectionDeposits').style.display = (tabName === 'deposits') ? 'block' : 'none';
       document.getElementById('sectionMatches').style.display = (tabName === 'matches') ? 'block' : 'none';
+      document.getElementById('sectionWinners').style.display = (tabName === 'winners') ? 'block' : 'none';
       document.getElementById('sectionBanned').style.display = (tabName === 'banned') ? 'block' : 'none';
       document.getElementById('sectionAllUsers').style.display = (tabName === 'allusers') ? 'block' : 'none';
       document.getElementById('sectionSupport').style.display = (tabName === 'support') ? 'block' : 'none';
-      document.getElementById('sectionGiveaways').style.display = (tabName === 'giveaways') ? 'block' : 'none';
 
       if (tabName === 'deposits') {
         document.getElementById('navBtnDeposits').classList.add('active');
@@ -562,6 +571,8 @@
       } else if (tabName === 'matches') {
         document.getElementById('navBtnMatches').classList.add('active');
         renderAdminMatches();
+      } else if (tabName === 'winners') {
+        document.getElementById('navBtnMatches').classList.add('active');
       } else if (tabName === 'banned') {
         document.getElementById('navBtnBanned').classList.add('active');
         renderBannedPlayers();
@@ -570,8 +581,6 @@
       } else if (tabName === 'support') {
         document.getElementById('navBtnSupport').classList.add('active');
         renderAdminSupport();
-      } else if (tabName === 'giveaways') {
-        document.getElementById('navBtnMatches').classList.add('active');
       }
       updateHeaderStats();
     }
@@ -586,6 +595,53 @@
     function openFullImage(src) {
       const w = window.open("");
       w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
+    }
+
+    function previewWinnerScreenshot(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedWinnerProofBase64 = evt.target.result;
+          const preview = document.getElementById('winSsPreview');
+          preview.src = evt.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function postWinnerAnnouncement() {
+      const name = document.getElementById('winName').value.trim();
+      const uid = document.getElementById('winUid').value.trim();
+      const match = document.getElementById('winMatch').value.trim();
+      const prize = document.getElementById('winPrize').value.trim();
+
+      if (!name || !uid || !prize) {
+        alert("Winner Name, UID aur Prize likhna lazmi hai!");
+        return;
+      }
+
+      let winnersList = JSON.parse(localStorage.getItem('mff_winners_list')) || [];
+      winnersList.unshift({
+        name,
+        uid,
+        match: match || "Tournament Room",
+        prize: prize,
+        proofSs: uploadedWinnerProofBase64 || ""
+      });
+
+      localStorage.setItem('mff_winners_list', JSON.stringify(winnersList));
+
+      document.getElementById('winName').value = "";
+      document.getElementById('winUid').value = "";
+      document.getElementById('winMatch').value = "";
+      document.getElementById('winPrize').value = "";
+      document.getElementById('winSsInput').value = "";
+      document.getElementById('winSsPreview').style.display = "none";
+      uploadedWinnerProofBase64 = "";
+
+      alert("🏆 Winner successfully website ke Winners section par live post ho gaya!");
     }
 
     /* Render All Registered Website Players with Edit Balance */
@@ -631,7 +687,6 @@
         u.walletBalance = Number(newBal);
         localStorage.setItem('mff_accounts_db', JSON.stringify(usersList));
 
-        // Sync with active player session if logged in
         let curUser = JSON.parse(localStorage.getItem('mff_user'));
         if (curUser && curUser.email === u.email) {
           curUser.walletBalance = u.walletBalance;
@@ -1075,26 +1130,6 @@
       localStorage.setItem('mff_support_msgs', JSON.stringify(msgs));
       renderAdminSupport();
       alert("✅ Reply bhej diya gaya!");
-    }
-
-    function postGiveaway() {
-      const title = document.getElementById('gTitle').value.trim();
-      const desc = document.getElementById('gDesc').value.trim();
-      const reward = document.getElementById('gReward').value.trim();
-
-      if (!title) {
-        alert("Giveaway title likhna lazmi hai!");
-        return;
-      }
-
-      let gList = JSON.parse(localStorage.getItem('mff_giveaways')) || [];
-      gList.unshift({ title, desc, reward, endDate: "Active" });
-      localStorage.setItem('mff_giveaways', JSON.stringify(gList));
-
-      document.getElementById('gTitle').value = "";
-      document.getElementById('gDesc').value = "";
-      document.getElementById('gReward').value = "";
-      alert("🎁 Giveaway live post ho gaya!");
     }
 
     window.onload = function() {
