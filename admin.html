@@ -212,18 +212,29 @@
       text-decoration: none;
     }
 
-    /* Chat Box Styling */
-    .chat-user-row {
-      background: #050b14;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
+    /* Modal Styling */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 999;
+      justify-content: center;
       align-items: center;
-      cursor: pointer;
+      padding: 16px;
     }
+    .modal-dialog {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      width: 100%;
+      max-width: 400px;
+      border-radius: 14px;
+      padding: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Chat Box Styling */
     .chat-thread-box {
       background: #050b14;
       border: 1px solid var(--card-border);
@@ -284,7 +295,7 @@
           <div class="hero-rev-val" id="totalRevVal">Rs 0</div>
         </div>
         <div class="hero-btn-col">
-          <button class="btn-pink-match" onclick="switchAdminTab('matches')">+ MATCH</button>
+          <button class="btn-pink-match" onclick="openCreateMatchModal()">+ MATCH</button>
           <button class="btn-outline-backup" onclick="alert('Data is safely synced in local storage.')">BACKUP DATA</button>
         </div>
       </div>
@@ -313,12 +324,12 @@
     </div>
 
     <div class="section-btn-bar">
-      <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> View All Tournaments & Member Lists</button>
+      <button class="view-all-btn" onclick="switchAdminTab('matches')"><i class="fa-solid fa-list-check"></i> Match Manager (All Tournaments)</button>
     </div>
 
     <!-- Action Shortcuts Grid -->
     <div class="action-grid-card">
-      <button class="action-icon-item" onclick="switchAdminTab('matches')">
+      <button class="action-icon-item" onclick="openCreateMatchModal()">
         <div class="action-circle"><i class="fa-solid fa-plus"></i></div>
         <span>Create Match</span>
       </button>
@@ -370,9 +381,45 @@
         <div id="depositsContainer"></div>
       </div>
 
-      <!-- 2. MATCH MANAGER & DETAILS VIEW -->
+      <!-- 2. MATCH MANAGER & MEMBER LIST VIEW -->
       <div id="sectionMatches" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-gamepad"></i> Create Tournament Room</span></div>
+        <div class="section-header-row">
+          <span><i class="fa-solid fa-gamepad"></i> Match Manager (Active Tournaments)</span>
+          <button class="btn-action" style="width:auto; padding:4px 10px; font-size:10px;" onclick="openCreateMatchModal()">+ Add Match</button>
+        </div>
+        <div id="activeMatchesList"></div>
+      </div>
+
+      <!-- 3. BANNED PLAYERS VIEW -->
+      <div id="sectionBanned" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List</span></div>
+        <div id="bannedPlayersListContainer"></div>
+      </div>
+
+      <!-- 4. SUPPORT CHATS VIEW -->
+      <div id="sectionSupport" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
+        <div id="supportChatsContainer"></div>
+      </div>
+
+      <!-- 5. GIVEAWAYS VIEW -->
+      <div id="sectionGiveaways" class="panel-box" style="display:none;">
+        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
+        <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
+        <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
+        <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
+        <button class="btn-action" onclick="postGiveaway()"><i class="fa-solid fa-check"></i> Add Giveaway</button>
+      </div>
+
+    </div>
+
+    <!-- Create Match Modal -->
+    <div class="modal-backdrop" id="createMatchModal">
+      <div class="modal-dialog">
+        <div class="section-header-row" style="margin-bottom:12px;">
+          <span><i class="fa-solid fa-plus-circle"></i> Create Tournament Room</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeCreateMatchModal()"></i>
+        </div>
         <div class="form-ctrl"><label>Match Title</label><input type="text" id="mTitle" placeholder="e.g. Solo Night Cup"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
           <div class="form-ctrl">
@@ -391,35 +438,44 @@
           <div class="form-ctrl"><label>Booyah Prize (Rs)</label><input type="number" id="mPrize" value="300"></div>
         </div>
         <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM Today"></div>
-        <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-plus"></i> Publish Match Room</button>
+        <div class="form-ctrl"><label>Cover Photo Image URL (Optional)</label><input type="text" id="mCoverImg" placeholder="https://image-link.com/photo.jpg"></div>
+        <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Publish Match Room</button>
+      </div>
+    </div>
 
-        <div style="margin-top:16px; border-top:1px solid var(--card-border); padding-top:12px;">
-          <div class="section-header-row"><span>Active Tournaments & Member Lists</span></div>
-          <div id="activeMatchesList"></div>
+    <!-- Edit Match Modal -->
+    <div class="modal-backdrop" id="editMatchModal">
+      <div class="modal-dialog">
+        <div class="section-header-row" style="margin-bottom:12px;">
+          <span><i class="fa-solid fa-pen-to-square"></i> Edit Match Settings</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeEditModal()"></i>
         </div>
+        <input type="hidden" id="editMatchIndex">
+        <div class="form-ctrl"><label>Match Title</label><input type="text" id="editTitle"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl">
+            <label>Map</label>
+            <select id="editMap">
+              <option value="Bermuda">Bermuda</option>
+              <option value="Purgatory">Purgatory</option>
+              <option value="Kalahari">Kalahari</option>
+              <option value="Clash Squad">Clash Squad</option>
+            </select>
+          </div>
+          <div class="form-ctrl"><label>Slots</label><input type="number" id="editSlots"></div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl"><label>Fee (Rs)</label><input type="number" id="editFee"></div>
+          <div class="form-ctrl"><label>Prize (Rs)</label><input type="number" id="editPrize"></div>
+        </div>
+        <div class="form-ctrl"><label>Timing</label><input type="text" id="editTime"></div>
+        <div class="form-ctrl"><label>Cover Photo Image URL</label><input type="text" id="editCoverImg" placeholder="Image URL"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl"><label>Room ID</label><input type="text" id="editRoomId" placeholder="Room ID"></div>
+          <div class="form-ctrl"><label>Room Password</label><input type="text" id="editRoomPass" placeholder="Password"></div>
+        </div>
+        <button class="btn-action" onclick="saveEditedMatch()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
       </div>
-
-      <!-- 3. BANNED PLAYERS VIEW -->
-      <div id="sectionBanned" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-user-slash" style="color:var(--red);"></i> Banned Players List</span></div>
-        <div id="bannedPlayersListContainer"></div>
-      </div>
-
-      <!-- 4. SUPPORT CHATS VIEW (Real Chat Box Style) -->
-      <div id="sectionSupport" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-headset"></i> Player Inquiries & Chats</span></div>
-        <div id="supportChatsContainer"></div>
-      </div>
-
-      <!-- 5. GIVEAWAYS VIEW -->
-      <div id="sectionGiveaways" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
-        <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
-        <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
-        <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
-        <button class="btn-action" onclick="postGiveaway()"><i class="fa-solid fa-check"></i> Add Giveaway</button>
-      </div>
-
     </div>
 
     <!-- Bottom Navigation Bar -->
@@ -494,6 +550,13 @@
       updateHeaderStats();
     }
 
+    function openCreateMatchModal() {
+      document.getElementById('createMatchModal').style.display = 'flex';
+    }
+    function closeCreateMatchModal() {
+      document.getElementById('createMatchModal').style.display = 'none';
+    }
+
     /* 1. Deposits Render */
     function renderDeposits() {
       const container = document.getElementById('depositsContainer');
@@ -552,7 +615,7 @@
       alert("✅ Deposit approve ho gaya aur user ke wallet me balance add ho gaya!");
     }
 
-    /* 2. Matches Render & Member List / Winner WhatsApp */
+    /* 2. Matches Render & Manager with Edit */
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
@@ -560,6 +623,7 @@
       const fee = Number(document.getElementById('mFee').value);
       const prize = Number(document.getElementById('mPrize').value);
       const time = document.getElementById('mTime').value.trim();
+      const coverImage = document.getElementById('mCoverImg').value.trim();
 
       if (!title || !time) {
         alert("Match title aur timing likhna lazmi hai!");
@@ -570,13 +634,16 @@
       matches.push({
         id: "m_" + Date.now(),
         title, map, totalSlots: slots, fee, prize, time,
+        coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
         subtitle: `${map} - ${slots} Slots`,
         roomId: "", roomPass: "", players: []
       });
 
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      closeCreateMatchModal();
       document.getElementById('mTitle').value = "";
       document.getElementById('mTime').value = "";
+      document.getElementById('mCoverImg').value = "";
       renderAdminMatches();
       updateHeaderStats();
       alert("✅ Match successfully create ho gaya!");
@@ -588,7 +655,7 @@
       const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
 
       if (matches.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Koi active match nahi hai.</div>`;
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">Koi active match nahi hai.</div>`;
         return;
       }
 
@@ -627,21 +694,18 @@
         }
 
         div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:800; color:#fff; margin-bottom:6px;">
-            <span>${m.title} (${m.map})</span>
-            <span style="color:var(--gold);">Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div>
+              <div style="font-size:12px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
+              <div style="font-size:10px; color:var(--text-muted);">Time: ${m.time} | Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
+            </div>
+            <div style="display:flex; gap:4px;">
+              <button class="btn-action" style="padding:5px 8px; font-size:10px;" onclick="openEditModal(${idx})"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin(${idx})"><i class="fa-solid fa-trash"></i></button>
+            </div>
           </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
-            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Title</label><input type="text" id="mtitle_${idx}" value="${m.title}" style="padding:5px; font-size:11px;"></div>
-            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Timing</label><input type="text" id="mtime_${idx}" value="${m.time}" style="padding:5px; font-size:11px;"></div>
-          </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
-            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Room ID</label><input type="text" id="rid_${idx}" value="${m.roomId || ''}" placeholder="Room ID" style="padding:5px; font-size:11px;"></div>
-            <div class="form-ctrl" style="margin-bottom:0;"><label style="font-size:9px;">Password</label><input type="text" id="rpass_${idx}" value="${m.roomPass || ''}" placeholder="Password" style="padding:5px; font-size:11px;"></div>
-          </div>
-          <div style="display:flex; gap:6px; margin-top:6px;">
-            <button class="btn-action" style="padding:6px; font-size:10.5px;" onclick="updateMatchSettings(${idx})">Save Settings</button>
-            <button class="btn-action btn-danger" style="padding:6px; font-size:10.5px;" onclick="deleteMatchAdmin(${idx})">Delete</button>
+          <div style="font-size:10.5px; color:var(--blue); background:#09101d; padding:6px; border-radius:6px; margin-bottom:6px;">
+            Room ID: <b>${m.roomId || 'Not set'}</b> | Password: <b>${m.roomPass || 'Not set'}</b>
           </div>
           ${membersHtml}
         `;
@@ -649,15 +713,50 @@
       });
     }
 
-    function updateMatchSettings(idx) {
+    function openEditModal(idx) {
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
-      matches[idx].title = document.getElementById(`mtitle_${idx}`).value.trim();
-      matches[idx].time = document.getElementById(`mtime_${idx}`).value.trim();
-      matches[idx].roomId = document.getElementById(`rid_${idx}`).value.trim();
-      matches[idx].roomPass = document.getElementById(`rpass_${idx}`).value.trim();
+      let m = matches[idx];
+      if (!m) return;
+
+      document.getElementById('editMatchIndex').value = idx;
+      document.getElementById('editTitle').value = m.title || '';
+      document.getElementById('editMap').value = m.map || 'Bermuda';
+      document.getElementById('editSlots').value = m.totalSlots || 12;
+      document.getElementById('editFee').value = m.fee || 30;
+      document.getElementById('editPrize').value = m.prize || 300;
+      document.getElementById('editTime').value = m.time || '';
+      document.getElementById('editCoverImg').value = m.coverImage || '';
+      document.getElementById('editRoomId').value = m.roomId || '';
+      document.getElementById('editRoomPass').value = m.roomPass || '';
+
+      document.getElementById('editMatchModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editMatchModal').style.display = 'none';
+    }
+
+    function saveEditedMatch() {
+      let idx = document.getElementById('editMatchIndex').value;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      if (!matches[idx]) return;
+
+      matches[idx].title = document.getElementById('editTitle').value.trim();
+      matches[idx].map = document.getElementById('editMap').value;
+      matches[idx].totalSlots = Number(document.getElementById('editSlots').value);
+      matches[idx].fee = Number(document.getElementById('editFee').value);
+      matches[idx].prize = Number(document.getElementById('editPrize').value);
+      matches[idx].time = document.getElementById('editTime').value.trim();
+      matches[idx].coverImage = document.getElementById('editCoverImg').value.trim();
+      matches[idx].roomId = document.getElementById('editRoomId').value.trim();
+      matches[idx].roomPass = document.getElementById('editRoomPass').value.trim();
+      matches[idx].subtitle = `${matches[idx].map} - ${matches[idx].totalSlots} Slots`;
+
       localStorage.setItem('mff_tournaments', JSON.stringify(matches));
-      alert("✅ Match settings aur room credentials update ho gaye!");
+      closeEditModal();
       renderAdminMatches();
+      updateHeaderStats();
+      alert("✅ Match settings successfully update ho gayi!");
     }
 
     function deleteMatchAdmin(idx) {
@@ -713,7 +812,7 @@
       alert("✅ Player unban kar diya gaya hai!");
     }
 
-    /* 4. Support Chats Render (Real Chat Box Style) */
+    /* 4. Support Chats Render */
     function renderAdminSupport() {
       const container = document.getElementById('supportChatsContainer');
       container.innerHTML = "";
@@ -724,7 +823,6 @@
         return;
       }
 
-      // Group messages by user email or uid
       let grouped = {};
       msgs.forEach(m => {
         let key = m.email || m.uid || 'unknown';
@@ -767,7 +865,6 @@
       if (!inputVal) return;
 
       let msgs = JSON.parse(localStorage.getItem('mff_support_msgs')) || [];
-      // Update the latest message or add reply to matching user
       for (let i = msgs.length - 1; i >= 0; i--) {
         if ((msgs[i].email && msgs[i].email === key) || (msgs[i].uid && msgs[i].uid === key)) {
           msgs[i].adminReply = inputVal;
