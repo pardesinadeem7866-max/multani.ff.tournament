@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
-  <meta name="title" content="Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash">
-  <meta name="description" content="Pakistan ka No.1 Free Fire Esports Arena. Daily Solo, Duo, CS 4v4 Custom Rooms khele aur jeetein real cash prize.">
-  <meta name="keywords" content="Free Fire Pakistan, Free Fire Tournament Pakistan, Multani ff, Paid Custom Room Free Fire">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- EmailJS Library -->
@@ -105,7 +101,7 @@
       cursor: default;
     }
 
-    .nav-tabs { display: flex; gap: 10px; font-size: 12.5px; font-weight: 800; }
+    .nav-tabs { display: flex; gap: 8px; font-size: 11.5px; font-weight: 800; }
     .nav-tab-item { color: rgba(255,255,255,0.6); cursor: pointer; position: relative; padding: 4px 0; }
     .nav-tab-item.active { color: #fff; }
     .nav-tab-item.active::after {
@@ -235,7 +231,7 @@
       transition: transform 0.2s;
     }
     .tournament-grid-card:active { transform: scale(0.98); }
-    .card-thumb-wrap { position: relative; width: 100%; height: 125px; background: #0d1e15; }
+    .card-thumb-wrap { position: relative; width: 100%; height: 120px; background: #0d1e15; }
     .card-thumb { width: 100%; height: 100%; object-fit: cover; }
     .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); }
     .card-live-badge {
@@ -271,7 +267,7 @@
       color: var(--text-dark);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
     .card-room-title {
       font-size: 12px;
@@ -284,13 +280,14 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .card-room-desc { font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-room-desc { font-size: 9.5px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-timer-strip { font-size: 9px; font-weight: 800; color: #ef4444; background: #fee2e2; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; width: fit-content; margin-top: 2px; }
     .card-footer-info {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 4px;
-      padding-top: 4px;
+      margin-top: 3px;
+      padding-top: 3px;
       border-top: 1px dashed #e2e8f0;
       font-size: 10px;
       font-weight: 800;
@@ -673,6 +670,7 @@
       <div class="nav-tabs">
         <span class="nav-tab-item active" id="tabMatchesBtn" onclick="switchMainTab('matches')">Matches</span>
         <span class="nav-tab-item" id="tabWinnersBtn" onclick="switchMainTab('winners')">Winners</span>
+        <span class="nav-tab-item" id="tabStatsBtn" onclick="switchMainTab('stats')">Leaderboard</span>
       </div>
 
       <div class="top-menu-btn" onclick="openMenuModal()" style="cursor:pointer; padding:6px 8px; color:#fff; font-size:16px;">
@@ -714,6 +712,14 @@
         <i class="fa-solid fa-trophy"></i> Hall of Fame (Recent Tournament Winners)
       </div>
       <div id="winnersListContainer"></div>
+    </div>
+
+    <!-- Global Stats / Leaderboard View -->
+    <div id="statsMainView" style="display: none; padding: 0 16px 20px;">
+      <div style="font-size:13px; font-weight:900; color:var(--mint-primary); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-medal"></i> Global Kills & Standing Standings
+      </div>
+      <div id="globalLeaderboardContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <div class="bottom-bar">
@@ -853,6 +859,10 @@
           <label>WhatsApp Number</label>
           <input type="text" id="signPhone" placeholder="03XXXXXXXXX">
         </div>
+        <div class="form-ctrl">
+          <label>Referral Code (Optional)</label>
+          <input type="text" id="signRefCode" placeholder="Friend's UID for bonus coins">
+        </div>
         <button class="btn-green-action" onclick="handleUserSignup()">Register & Save</button>
 
         <div style="text-align:center; font-size:11px; color:#94a3b8; margin-top:14px;">
@@ -913,7 +923,7 @@
   <div class="modal-backdrop" id="profileModal">
     <div class="modal-dialog">
       <div class="modal-title">
-        <span>🎮 Player Profile & Rules</span>
+        <span>🎮 Player Profile & Referral</span>
         <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('profileModal')"></i>
       </div>
 
@@ -922,6 +932,7 @@
         <div style="font-size:11px; color:#38bdf8; margin-top:2px;" id="profDispUid">UID: --</div>
         <div style="font-size:11px; color:#94a3b8; margin-top:2px;" id="profDispEmail">Gmail: --</div>
         <div style="font-size:11px; color:#34d399; margin-top:2px;" id="profDispPhone">WhatsApp: --</div>
+        <div style="font-size:11px; color:var(--gold); margin-top:6px; font-weight:800;">🎁 Referral Code: <span id="profDispRef" style="color:#fff;">--</span></div>
       </div>
 
       <div style="background:#051910; border:1px solid rgba(255,183,3,0.3); border-radius:10px; padding:10px; margin-bottom:12px; font-size:10.5px; color:#fed7aa; line-height:1.4;">
@@ -930,8 +941,6 @@
         <div>2. Add kiya gaya balance withdraw nahi hoga, sirf match join karne ke liye hai.</div>
         <div>3. Prize sirf match win (Booyah) karne par milega.</div>
         <div>4. Free Fire account kam az kam <b>Level 50</b> ka hona chahiye.</div>
-        <div>5. Hacking ya unfair gameplay par ban lag jayega.</div>
-        <div>6. Match leave karne par entry fee wallet mein wapis refund ho jayegi.</div>
       </div>
 
       <div style="background:#080d14; border:1px solid #233148; border-radius:10px; padding:12px; margin-bottom:12px;">
@@ -968,8 +977,10 @@
         <div style="font-size:26px; font-weight:900; color:#fff; margin-top:2px;">Rs. <span id="modalWalletBal" style="color:var(--gold);">0</span></div>
       </div>
 
-      <div style="background: rgba(255, 183, 3, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; font-size: 11px; color: #fed7aa; margin-bottom: 10px; text-align: center; font-weight: 700;">
-        ⚠️ Soch samajh kar add karein iska withdraw nahi hoga, aapko price sirf win karne par milegi.
+      <div style="display:flex; gap:6px; margin-bottom:10px;">
+        <button class="btn-green-action" style="padding:6px; font-size:11px;" onclick="quickSetDeposit(100)">+ Rs.100</button>
+        <button class="btn-green-action" style="padding:6px; font-size:11px;" onclick="quickSetDeposit(250)">+ Rs.250</button>
+        <button class="btn-green-action" style="padding:6px; font-size:11px;" onclick="quickSetDeposit(500)">+ Rs.500</button>
       </div>
 
       <p style="font-size:11px; color:#a7f3d0; margin-bottom:8px;">
@@ -1142,6 +1153,10 @@
       }
     }
 
+    function quickSetDeposit(amt) {
+      document.getElementById('walletDepositAmount').value = amt;
+    }
+
     function recordPaymentHistory(email, uid, type, matchName, amount, status) {
       let history = JSON.parse(localStorage.getItem('mff_payment_history')) || [];
       history.unshift({
@@ -1231,6 +1246,7 @@
         document.getElementById('profDispUid').innerText = `UID: ${currentUser.uid}`;
         document.getElementById('profDispEmail').innerText = `Gmail: ${currentUser.email || 'Not Linked'}`;
         document.getElementById('profDispPhone').innerText = `WhatsApp: ${currentUser.phone || 'N/A'}`;
+        document.getElementById('profDispRef').innerText = currentUser.uid || 'MFF123';
         document.getElementById('profileModal').style.display = 'flex';
       }
     }
@@ -1241,6 +1257,7 @@
       const name = document.getElementById('signName').value.trim();
       const uid = document.getElementById('signUid').value.trim();
       const phone = document.getElementById('signPhone').value.trim();
+      const refCode = document.getElementById('signRefCode').value.trim();
 
       if (!email || !pass || !name || !uid || !phone) {
         alert("Tamam details bharna lazmi hain!");
@@ -1254,13 +1271,23 @@
         return;
       }
 
+      let bonusBal = 0;
+      if (refCode) {
+        let referrer = users.find(u => u.uid === refCode);
+        if (referrer) {
+          referrer.walletBalance = (Number(referrer.walletBalance) || 0) + 20;
+          bonusBal = 20; // Signup bonus for using referral
+          saveAllRegisteredUsers(users);
+        }
+      }
+
       const newUser = {
         email: email,
         password: pass,
         name: name,
         uid: uid,
         phone: phone,
-        walletBalance: 0
+        walletBalance: bonusBal
       };
 
       users.push(newUser);
@@ -1272,7 +1299,7 @@
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`🎉 Welcome ${name}! Naya account ban gaya.`);
+      alert(`🎉 Welcome ${name}! Account ban gaya ${bonusBal > 0 ? 'aur Rs. 20 referral bonus mil gaya!' : ''}`);
     }
 
     function handleUserLogin() {
@@ -1445,21 +1472,22 @@
     function switchMainTab(tab) {
       const matchView = document.getElementById('matchesMainView');
       const winView = document.getElementById('winnersMainView');
+      const statsView = document.getElementById('statsMainView');
+      
       const mBtn = document.getElementById('tabMatchesBtn');
       const wBtn = document.getElementById('tabWinnersBtn');
+      const sBtn = document.getElementById('tabStatsBtn');
 
-      if (tab === 'matches') {
-        matchView.style.display = 'block';
-        winView.style.display = 'none';
-        mBtn.classList.add('active');
-        wBtn.classList.remove('active');
-      } else {
-        matchView.style.display = 'none';
-        winView.style.display = 'block';
-        mBtn.classList.remove('active');
-        wBtn.classList.add('active');
-        renderWinners();
-      }
+      matchView.style.display = (tab === 'matches') ? 'block' : 'none';
+      winView.style.display = (tab === 'winners') ? 'block' : 'none';
+      statsView.style.display = (tab === 'stats') ? 'block' : 'none';
+
+      mBtn.classList.toggle('active', tab === 'matches');
+      wBtn.classList.toggle('active', tab === 'winners');
+      sBtn.classList.toggle('active', tab === 'stats');
+
+      if (tab === 'winners') renderWinners();
+      if (tab === 'stats') renderGlobalLeaderboard();
     }
 
     function setMapFilter(mapName, btn) {
@@ -1508,7 +1536,8 @@
           </div>
           <div class="card-body">
             <div class="card-room-title"><span>🇵🇰</span><span>${m.title}</span></div>
-            <div class="card-room-desc">${m.subtitle || m.rules || ''}</div>
+            <div class="card-room-desc">${m.subtitle || m.rules || 'Standard Custom Room'}</div>
+            <div class="card-timer-strip"><i class="fa-solid fa-stopwatch"></i> ${m.time} Live</div>
             <div class="card-footer-info">
               <span class="fee-badge">Fee: Rs.${m.fee}</span>
               <span class="prize-badge">Booyah: Rs.${m.prize}</span>
@@ -1519,6 +1548,45 @@
           </div>
         `;
         container.appendChild(card);
+      });
+    }
+
+    function renderGlobalLeaderboard() {
+      let tournaments = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      const container = document.getElementById('globalLeaderboardContainer');
+      container.innerHTML = "";
+
+      let allPlayers = [];
+      tournaments.forEach(m => {
+        if (m.players) {
+          m.players.forEach(p => {
+            if (p.status === 'approved') {
+              allPlayers.push({ ...p, matchTitle: m.title });
+            }
+          });
+        }
+      });
+
+      allPlayers.sort((a, b) => (b.kills || 0) - (a.kills || 0));
+
+      if (allPlayers.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12px;">Koi player standings available nahi hain.</div>`;
+        return;
+      }
+
+      allPlayers.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = "background:#03150d; border:1px solid rgba(0,230,118,0.2); border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; font-size:11.5px;";
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:900; color:#fff;">#${idx+1} ${p.name} <span style="color:#38bdf8; font-size:10px;">(UID: ${p.uid})</span></div>
+            <div style="color:#94a3b8; font-size:9.5px; margin-top:2px;">Match: ${p.matchTitle}</div>
+          </div>
+          <div style="background:rgba(255,183,3,0.15); border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:6px; font-weight:900; font-size:11px;">
+            🔥 Kills: ${p.kills || 0}
+          </div>
+        `;
+        container.appendChild(div);
       });
     }
 
