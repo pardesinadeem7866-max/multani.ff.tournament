@@ -33,6 +33,19 @@
       box-shadow: 0 0 50px rgba(0, 255, 136, 0.1);
     }
 
+    /* Admin Login Overlay */
+    #adminAuthOverlay {
+      position: absolute;
+      inset: 0;
+      background: var(--admin-bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
     .hero-top-box {
       background: radial-gradient(circle at 50% 0%, #1a0b2e 0%, #0b1323 70%);
       border-bottom: 1px solid var(--card-border);
@@ -291,6 +304,20 @@
 
   <div class="app-viewport">
     
+    <!-- Secure Admin Login Screen -->
+    <div id="adminAuthOverlay">
+      <div style="text-align:center; margin-bottom: 20px;">
+        <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--mint); margin-bottom: 10px;"></i>
+        <div style="font-size: 18px; font-weight: 900; color: #fff;">Admin Security Check</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Enter password to access Multani.ff Dashboard</div>
+      </div>
+      <div class="form-ctrl" style="width: 100%;">
+        <label>Admin Password</label>
+        <input type="password" id="adminPassInput" placeholder="Enter password (default: multani123)">
+      </div>
+      <button class="btn-action" style="width: 100%; padding: 12px; font-size: 13px;" onclick="verifyAdminLogin()">Login Dashboard</button>
+    </div>
+
     <div class="hero-top-box">
       <div class="hero-top-row">
         <div>
@@ -300,11 +327,11 @@
         </div>
         <div class="hero-btn-col">
           <button class="btn-neon-match" onclick="openCreateMatchModal()">+ MATCH</button>
-          <button class="btn-outline-backup" onclick="alert('Data synced.')">BACKUP</button>
+          <button class="btn-outline-backup" onclick="exportDataBackup()">BACKUP</button>
         </div>
       </div>
       <div class="hero-sub-time">
-        <i class="fa-solid fa-circle-dot" style="color:var(--mint); font-size:8px;"></i> Live Control Center Active
+        <i class="fa-solid fa-circle-dot" style="color:var(--mint); font-size:8px;"></i> Live Control Center Active (Secured)
       </div>
     </div>
 
@@ -408,7 +435,10 @@
       </div>
 
       <div id="sectionGiveaways" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway</span></div>
+        <div class="section-header-row"><span><i class="fa-solid fa-gift"></i> Post Event / Giveaway & Marquee</span></div>
+        <div class="form-ctrl"><label>Scrolling Ticker / Announcement Banner</label><input type="text" id="announcementTickerInput" placeholder="e.g. Room ID will be shared 15 mins before match!"></div>
+        <button class="btn-action" style="margin-bottom:14px;" onclick="saveTickerAnnouncement()">Update Ticker</button>
+
         <div class="form-ctrl"><label>Event Title</label><input type="text" id="gTitle" placeholder="e.g. Friday Free Giveaway"></div>
         <div class="form-ctrl"><label>Description</label><input type="text" id="gDesc" placeholder="Giveaway details..."></div>
         <div class="form-ctrl"><label>Reward</label><input type="text" id="gReward" placeholder="e.g. Rs. 200 Cash"></div>
@@ -440,15 +470,38 @@
               <option value="Clash Squad">Clash Squad</option>
             </select>
           </div>
-          <div class="form-ctrl"><label>Total Slots</label><input type="number" id="mSlots" value="12"></div>
+          <div class="form-ctrl">
+            <label>Squad Type</label>
+            <select id="mType">
+              <option value="Solo">Solo</option>
+              <option value="Duo">Duo</option>
+              <option value="Squad">Squad (4 players)</option>
+            </select>
+          </div>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl"><label>Total Slots</label><input type="number" id="mSlots" value="12"></div>
           <div class="form-ctrl"><label>Entry Fee (Rs)</label><input type="number" id="mFee" value="30"></div>
-          <div class="form-ctrl"><label>Booyah Prize (Rs)</label><input type="number" id="mPrize" value="300"></div>
         </div>
-        <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM Today"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-ctrl"><label>Booyah Prize (Rs)</label><input type="number" id="mPrize" value="300"></div>
+          <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM"></div>
+        </div>
         <div class="form-ctrl"><label>Cover Image URL</label><input type="text" id="mCoverImg" placeholder="https://image-link.com/photo.jpg"></div>
         <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Publish Match Room</button>
+      </div>
+    </div>
+
+    <!-- Match Stats / Leaderboard Modal -->
+    <div class="modal-backdrop" id="leaderboardModal">
+      <div class="modal-dialog">
+        <div class="section-header-row" style="margin-bottom:12px;">
+          <span><i class="fa-solid fa-medal"></i> Match Kills & Leaderboard</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeLeaderboardModal()"></i>
+        </div>
+        <input type="hidden" id="lbMatchId">
+        <div id="lbPlayersContainer" style="margin-bottom: 12px; max-height: 250px; overflow-y: auto;"></div>
+        <button class="btn-action" onclick="saveLeaderboardKills()"><i class="fa-solid fa-floppy-disk"></i> Save Kills & Standings</button>
       </div>
     </div>
 
@@ -550,6 +603,16 @@
       syncChannel.postMessage({ type: 'REFRESH_TOURNAMENTS' });
     }
 
+    function verifyAdminLogin() {
+      const pass = document.getElementById('adminPassInput').value.trim();
+      if (pass === "multani123" || pass === "admin123") {
+        document.getElementById('adminAuthOverlay').style.display = 'none';
+        localStorage.setItem('mff_admin_logged', 'true');
+      } else {
+        alert("❌ Galat password! Default password 'multani123' try karein.");
+      }
+    }
+
     function updateHeaderStats() {
       const matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       const deposits = JSON.parse(localStorage.getItem('mff_wallet_deposits')) || [];
@@ -624,9 +687,32 @@
       w.document.write(`<img src="${src}" style="max-width:100%; height:auto;">`);
     }
 
+    function exportDataBackup() {
+      const backupData = {
+        tournaments: localStorage.getItem('mff_tournaments'),
+        deposits: localStorage.getItem('mff_wallet_deposits'),
+        accounts: localStorage.getItem('mff_accounts_db'),
+        winners: localStorage.getItem('mff_winners_list')
+      };
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MultaniFF_Backup_${Date.now()}.json`;
+      a.click();
+    }
+
+    function saveTickerAnnouncement() {
+      const txt = document.getElementById('announcementTickerInput').value.trim();
+      localStorage.setItem('mff_live_ticker', txt);
+      notifyWebsiteUpdate();
+      alert("✅ Scrolling Ticker updated successfully!");
+    }
+
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
+      const type = document.getElementById('mType').value;
       const slots = Number(document.getElementById('mSlots').value);
       const fee = Number(document.getElementById('mFee').value);
       const prize = Number(document.getElementById('mPrize').value);
@@ -641,9 +727,9 @@
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       matches.push({
         id: "m_" + Date.now(),
-        title, map, totalSlots: slots, fee, prize, time,
+        title, map, type, totalSlots: slots, fee, prize, time,
         coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
-        subtitle: `${map} - ${slots} Slots`,
+        subtitle: `${map} (${type}) - ${slots} Slots`,
         roomId: "", roomPass: "", players: []
       });
 
@@ -676,7 +762,7 @@
         if ((m.players || []).length === 0) {
           membersHtml = `<div style="font-size:10px; color:var(--text-muted); font-style:italic; margin-top:8px;">Abhi koi member join nahi hua.</div>`;
         } else {
-          membersHtml = `<div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;"><div style="font-size:11px; font-weight:800; color:var(--mint); margin-bottom:6px;">All Members</div>`;
+          membersHtml = `<div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;"><div style="font-size:11px; font-weight:800; color:var(--mint); margin-bottom:6px;">All Members / Squads</div>`;
           m.players.forEach((p, pIdx) => {
             let cleanPhone = (p.phone || '').replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.slice(1);
@@ -687,10 +773,13 @@
               ? `<span style="color:var(--mint); font-size:9.5px;">[Approved]</span>` 
               : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayerById('${m.id}', ${pIdx})">Approve</button>`;
 
+            let squadExtra = p.squadMembers ? `<div style="font-size:9px; color:var(--text-muted);">Squad: ${p.squadMembers}</div>` : '';
+
             membersHtml += `
               <div style="display:flex; justify-content:space-between; align-items:center; background:#0b1323; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
                 <div>
                   <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--neon-blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
+                  ${squadExtra}
                 </div>
                 <div style="display:flex; gap:3px;">
                   <a href="${waLink}" target="_blank" class="btn-whatsapp-winner" style="padding:3px 6px; font-size:9px;">
@@ -708,12 +797,13 @@
         div.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <div>
-              <div style="font-size:12.5px; font-weight:900; color:#fff;">${m.title} (${m.map})</div>
+              <div style="font-size:12.5px; font-weight:900; color:#fff;">${m.title} (${m.map} - ${m.type || 'Solo'})</div>
               <div style="font-size:10px; color:var(--text-muted);">Time: ${m.time} | Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
             </div>
             <div style="display:flex; gap:4px;">
+              <button class="btn-action" style="padding:5px 8px; font-size:10px; background:var(--gold); color:#000;" onclick="openLeaderboardModal('${m.id}')"><i class="fa-solid fa-medal"></i> Kills</button>
               <button class="btn-action" style="padding:5px 8px; font-size:10px;" onclick="openEditModal('${m.id}')"><i class="fa-solid fa-pen"></i> Edit</button>
-              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin('${m.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+              <button class="btn-action btn-danger" style="padding:5px 8px; font-size:10px;" onclick="deleteMatchAdmin('${m.id}')"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
           <div style="font-size:10.5px; color:var(--neon-blue); background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.2); padding:6px 8px; border-radius:6px; margin-bottom:6px;">
@@ -723,6 +813,52 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    function openLeaderboardModal(matchId) {
+      document.getElementById('lbMatchId').value = matchId;
+      const container = document.getElementById('lbPlayersContainer');
+      container.innerHTML = "";
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      let m = matches.find(item => item.id === matchId);
+      if (!m || !m.players || m.players.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">No players in this match.</div>`;
+        document.getElementById('leaderboardModal').style.display = 'flex';
+        return;
+      }
+
+      m.players.forEach((p, idx) => {
+        let row = document.createElement('div');
+        row.style = "display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; background:#030812; padding:6px; border-radius:6px;";
+        row.innerHTML = `
+          <div style="font-size:11px; font-weight:800; color:#fff;">${p.name}</div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span style="font-size:9.5px; color:var(--text-muted);">Kills:</span>
+            <input type="number" id="killInput_${idx}" value="${p.kills || 0}" style="width:50px; background:#0b1323; border:1px solid var(--card-border); color:#fff; padding:4px; text-align:center; border-radius:4px; font-size:11px;">
+          </div>
+        `;
+        container.appendChild(row);
+      });
+      document.getElementById('leaderboardModal').style.display = 'flex';
+    }
+
+    function closeLeaderboardModal() { document.getElementById('leaderboardModal').style.display = 'none'; }
+
+    function saveLeaderboardKills() {
+      let matchId = document.getElementById('lbMatchId').value;
+      let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
+      let m = matches.find(item => item.id === matchId);
+      if (!m || !m.players) return;
+
+      m.players.forEach((p, idx) => {
+        let kVal = Number(document.getElementById(`killInput_${idx}`).value) || 0;
+        p.kills = kVal;
+      });
+
+      localStorage.setItem('mff_tournaments', JSON.stringify(matches));
+      notifyWebsiteUpdate();
+      closeLeaderboardModal();
+      alert("✅ Kills & Leaderboard updated!");
     }
 
     function deleteMatchAdmin(matchId) {
@@ -1122,6 +1258,9 @@
     }
 
     window.onload = function() {
+      if (localStorage.getItem('mff_admin_logged') === 'true') {
+        document.getElementById('adminAuthOverlay').style.display = 'none';
+      }
       renderDeposits();
       updateHeaderStats();
     };
