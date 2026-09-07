@@ -7,6 +7,9 @@
   <title>Multani FF Official Tournament - Daily Free Fire Tournaments Pakistan | Win Real Cash</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- EmailJS Library -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
@@ -1123,6 +1126,11 @@
   </div>
 
   <script>
+    // Supabase Initialization
+    const SUPABASE_URL = 'https://eyrwqmirdigsckcwbmxn.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const matchThumbnails = [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
       "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
@@ -1237,11 +1245,6 @@
         switchAuthView('login');
         document.getElementById('authGateModal').style.display = 'flex';
       } else {
-        let users = getAllRegisteredUsers();
-        let freshUser = users.find(u => u.email === currentUser.email) || currentUser;
-        currentUser = freshUser;
-        localStorage.setItem('mff_user', JSON.stringify(currentUser));
-
         document.getElementById('profDispName').innerText = currentUser.name || "Player";
         document.getElementById('profDispUid').innerText = `UID: ${currentUser.uid}`;
         document.getElementById('profDispEmail').innerText = `Gmail: ${currentUser.email || 'Not Linked'}`;
@@ -1251,58 +1254,54 @@
       }
     }
 
-    function handleUserSignup() {
+    async function handleUserSignup() {
       const email = document.getElementById('signEmail').value.trim().toLowerCase();
       const pass = document.getElementById('signPass').value.trim();
       const name = document.getElementById('signName').value.trim();
       const uid = document.getElementById('signUid').value.trim();
       const phone = document.getElementById('signPhone').value.trim();
-      const refCode = document.getElementById('signRefCode').value.trim();
 
       if (!email || !pass || !name || !uid || !phone) {
         alert("Tamam details bharna lazmi hain!");
         return;
       }
 
-      let users = getAllRegisteredUsers();
-      if (users.some(u => u.email === email)) {
-        alert("Yeh Gmail pehle se registered hai! Login karein.");
-        switchAuthView('login');
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email,
+        password: pass
+      });
+
+      if (authError) {
+        alert("Signup Error: " + authError.message);
         return;
       }
 
-      let bonusBal = 0;
-      if (refCode) {
-        let referrer = users.find(u => u.uid === refCode);
-        if (referrer) {
-          referrer.walletBalance = (Number(referrer.walletBalance) || 0) + 20;
-          bonusBal = 20; // Signup bonus for using referral
-          saveAllRegisteredUsers(users);
-        }
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{
+          id: authData.user.id,
+          email: email,
+          name: name,
+          freefire_uid: uid,
+          whatsapp: phone,
+          wallet_balance: 0
+        }]);
+
+      if (profileError) {
+        alert("Profile Save Error: " + profileError.message);
+        return;
       }
 
-      const newUser = {
-        email: email,
-        password: pass,
-        name: name,
-        uid: uid,
-        phone: phone,
-        walletBalance: bonusBal
-      };
-
-      users.push(newUser);
-      saveAllRegisteredUsers(users);
-
-      currentUser = newUser;
+      currentUser = { email, name, uid, phone, walletBalance: 0, id: authData.user.id };
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
 
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`🎉 Welcome ${name}! Account ban gaya ${bonusBal > 0 ? 'aur Rs. 20 referral bonus mil gaya!' : ''}`);
+      alert("🎉 Account kamyabi se ban gaya aur Supabase par save ho gaya!");
     }
 
-    function handleUserLogin() {
+    async function handleUserLogin() {
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
       const pass = document.getElementById('loginPass').value.trim();
 
@@ -1311,34 +1310,44 @@
         return;
       }
 
-      let users = getAllRegisteredUsers();
-      const matched = users.find(u => u.email === email && u.password === pass);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: pass
+      });
 
-      if (!matched) {
-        alert("❌ Galat Gmail ya Password! Agar password bhool gaye hain toh 'Forgot Password' dabayein.");
+      if (error) {
+        alert("❌ Galat Gmail ya Password: " + error.message);
         return;
       }
 
-      currentUser = matched;
-      localStorage.setItem('mff_user', JSON.stringify(currentUser));
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (profileData) {
+        currentUser = {
+          id: profileData.id,
+          email: profileData.email,
+          name: profileData.name,
+          uid: profileData.freefire_uid,
+          phone: profileData.whatsapp,
+          walletBalance: profileData.wallet_balance || 0
+        };
+        localStorage.setItem('mff_user', JSON.stringify(currentUser));
+      }
 
       closeModal('authGateModal');
       updateNavProfile();
       renderMatches();
-      alert(`✅ Welcome Back, ${currentUser.name}!`);
+      alert(`✅ Welcome Back, ${currentUser?.name || 'Player'}!`);
     }
 
     function sendGmailOtpCode() {
       const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
       if (!email) {
         alert("Pehle apna registered Gmail enter karein!");
-        return;
-      }
-
-      let users = getAllRegisteredUsers();
-      const exists = users.find(u => u.email === email);
-      if (!exists) {
-        alert("❌ Yeh Gmail registered nahi hai! Pehle Sign Up karein.");
         return;
       }
 
@@ -1354,8 +1363,8 @@
       const templateParams = {
         to_email: email,
         email: email,
-        to_name: exists.name || "Player",
-        name: exists.name || "Player",
+        to_name: "Player",
+        name: "Player",
         passcode: otp,
         otp_code: otp,
         message: `Aapka Multani.ff password verification code: ${otp}`
@@ -1381,7 +1390,7 @@
       switchAuthView('forgotStep2');
     }
 
-    function verifyOtpAndChangePassword() {
+    async function verifyOtpAndChangePassword() {
       const enteredOtp = document.getElementById('otpCodeInput').value.trim();
       const newPass = document.getElementById('otpNewPasswordInput').value.trim();
 
@@ -1395,18 +1404,6 @@
         return;
       }
 
-      let users = getAllRegisteredUsers();
-      let user = users.find(u => u.email === otpTargetEmail);
-      if (user) {
-        user.password = newPass;
-        saveAllRegisteredUsers(users);
-      }
-
-      if (currentUser && currentUser.email === otpTargetEmail) {
-        currentUser.password = newPass;
-        localStorage.setItem('mff_user', JSON.stringify(currentUser));
-      }
-
       currentGeneratedOtp = null;
       otpTargetEmail = null;
       document.getElementById('otpCodeInput').value = "";
@@ -1416,37 +1413,27 @@
       switchAuthView('login');
     }
 
-    function handleChangePassword() {
-      const curPass = document.getElementById('curPasswordInput').value.trim();
+    async function handleChangePassword() {
       const newPass = document.getElementById('newPasswordInput').value.trim();
-
-      if (!curPass || !newPass) {
-        alert("Purana aur naya password dono likhein!");
+      if (!newPass) {
+        alert("Naya password likhein!");
         return;
       }
 
-      if (currentUser.password !== curPass) {
-        alert("❌ Current password theek nahi hai!");
+      const { data, error } = await supabase.auth.updateUser({ password: newPass });
+      if (error) {
+        alert("❌ Password update nahi ho saka: " + error.message);
         return;
       }
-
-      let users = getAllRegisteredUsers();
-      const user = users.find(u => u.email === currentUser.email);
-      if (user) {
-        user.password = newPass;
-        saveAllRegisteredUsers(users);
-      }
-
-      currentUser.password = newPass;
-      localStorage.setItem('mff_user', JSON.stringify(currentUser));
 
       document.getElementById('curPasswordInput').value = "";
       document.getElementById('newPasswordInput').value = "";
       alert("✅ Password update ho gaya!");
     }
 
-    function handleLogout() {
+    async function handleLogout() {
       if (!confirm("Logout karna chahte hain?")) return;
+      await supabase.auth.signOut();
       currentUser = null;
       localStorage.removeItem('mff_user');
       closeModal('profileModal');
@@ -1457,12 +1444,6 @@
     function updateNavProfile() {
       currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
       if (currentUser) {
-        let users = getAllRegisteredUsers();
-        let freshUser = users.find(u => u.email === currentUser.email);
-        if (freshUser) {
-          currentUser.walletBalance = freshUser.walletBalance;
-          localStorage.setItem('mff_user', JSON.stringify(currentUser));
-        }
         document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
       } else {
         document.getElementById('navWalletBal').innerText = "0";
@@ -1709,13 +1690,6 @@
       currentUser.walletBalance = (Number(currentUser.walletBalance) || 0) + refundFee;
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
 
-      let users = getAllRegisteredUsers();
-      let dbUser = users.find(u => u.email === currentUser.email);
-      if (dbUser) {
-        dbUser.walletBalance = currentUser.walletBalance;
-        saveAllRegisteredUsers(users);
-      }
-
       match.players.splice(playerIdx, 1);
       localStorage.setItem('mff_tournaments', JSON.stringify(tournaments));
 
@@ -1797,9 +1771,7 @@
       const match = tournaments.find(m => m.id === selectedMatchId);
       if (!match) return;
 
-      let users = getAllRegisteredUsers();
-      let dbUser = users.find(u => u.email === currentUser.email);
-      const userBal = Number(dbUser ? dbUser.walletBalance : (currentUser.walletBalance || 0));
+      const userBal = Number(currentUser.walletBalance || 0);
       const matchFee = Number(match.fee || 0);
 
       if (userBal < matchFee) {
@@ -1821,11 +1793,6 @@
       const newBal = userBal - matchFee;
       currentUser.walletBalance = newBal;
       localStorage.setItem('mff_user', JSON.stringify(currentUser));
-
-      if (dbUser) {
-        dbUser.walletBalance = newBal;
-        saveAllRegisteredUsers(users);
-      }
 
       if (!match.players) match.players = [];
       match.players.push({
@@ -2034,14 +2001,6 @@
     function closeModal(id) {
       document.getElementById(id).style.display = "none";
     }
-
-    const syncChannel = new BroadcastChannel('mff_tournament_sync');
-    syncChannel.onmessage = function(event) {
-      if (event.data && event.data.type === 'REFRESH_TOURNAMENTS') {
-        renderMatches();
-        loadLiveTicker();
-      }
-    };
 
     window.onload = function() {
       loadLiveTicker();
