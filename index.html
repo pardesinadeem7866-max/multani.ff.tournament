@@ -49,6 +49,20 @@
       overflow-x: hidden;
     }
 
+    /* Live Scrolling Ticker Banner */
+    .live-ticker-bar {
+      background: rgba(255, 183, 3, 0.15);
+      border-bottom: 1px solid rgba(255, 183, 3, 0.4);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      position: relative;
+    }
+    .live-ticker-bar marquee { width: 100%; }
+
     /* Top Bar */
     .top-header {
       display: flex;
@@ -639,6 +653,11 @@
 
   <div class="app-viewport">
     
+    <!-- Live Ticker Bar -->
+    <div class="live-ticker-bar" id="liveTickerBarBox">
+      <marquee scrollamount="4" id="liveTickerText">🔥 Welcome to Multani FF Official Tournament Arena! Join matches and win real cash.</marquee>
+    </div>
+
     <div class="top-header">
       <div class="top-left-group">
         <div class="share-icon-btn" onclick="shareWebsiteLink()" title="Share Website">
@@ -1047,6 +1066,11 @@
       </div>
 
       <div id="paymentFormBlock" style="display: none;">
+        <div id="squadInputsGroup" style="display:none; margin-bottom:10px;">
+          <label style="font-size:11px; font-weight:700; color:#a7f3d0; margin-bottom:4px; display:block;">Squad / Duo Member Names & UIDs</label>
+          <input type="text" id="squadMembersInput" placeholder="e.g. Player2 (UID), Player3 (UID), Player4 (UID)" style="background:#06090e; border:1px solid rgba(0, 230, 118, 0.2); border-radius:8px; padding:9px 12px; color:#fff; font-size:12px; width:100%;">
+        </div>
+
         <button class="btn-wallet-pay" id="btnPayWallet" onclick="payViaWalletAction()">
           <i class="fa-solid fa-bolt"></i> Pay via Wallet Balance (1-Click)
         </button>
@@ -1109,6 +1133,13 @@
 
     function saveAllRegisteredUsers(users) {
       localStorage.setItem('mff_accounts_db', JSON.stringify(users));
+    }
+
+    function loadLiveTicker() {
+      const tickerText = localStorage.getItem('mff_live_ticker');
+      if (tickerText) {
+        document.getElementById('liveTickerText').innerText = tickerText;
+      }
     }
 
     function recordPaymentHistory(email, uid, type, matchName, amount, status) {
@@ -1473,7 +1504,7 @@
             <img class="card-thumb" src="${thumbUrl}" alt="Match Image">
             <div class="thumb-overlay"></div>
             <div class="card-live-badge"><i class="fa-solid fa-signal"></i> ${joinedCount}/${m.totalSlots}</div>
-            <div class="card-thumb-text"><i class="fa-solid fa-clock"></i> ${m.time} | ${m.map}</div>
+            <div class="card-thumb-text"><i class="fa-solid fa-clock"></i> ${m.time} | ${m.map} (${m.type || 'Solo'})</div>
           </div>
           <div class="card-body">
             <div class="card-room-title"><span>🇵🇰</span><span>${m.title}</span></div>
@@ -1525,7 +1556,7 @@
         joinedContainer.style.display = "block";
         document.getElementById('lobbyCoverImg').src = match.coverImage || matchThumbnails[0];
         document.getElementById('lobbyMapBadge').innerText = (match.map || "BERMUDA").toUpperCase();
-        document.getElementById('lobbyModeVal').innerText = match.subtitle || "Battle";
+        document.getElementById('lobbyModeVal').innerText = `${match.type || 'Solo'} - ${match.map}`;
         document.getElementById('lobbyTimeVal').innerText = match.time || "--";
         document.getElementById('lobbyFeeVal').innerText = `Rs. ${match.fee}`;
         document.getElementById('lobbyPrizeVal').innerText = `Rs. ${match.prize}`;
@@ -1558,11 +1589,14 @@
           if (player) {
             const isMe = (player.email && player.email === currentUser.email) || player.uid === currentUser.uid;
             slotRow.className = "ff-slot-bar occupied";
+            let squadInfo = player.squadMembers ? `<div style="font-size:8.5px; color:#cbd5e1;">Squad: ${player.squadMembers}</div>` : '';
+            let killInfo = (player.kills !== undefined) ? `<span style="color:var(--gold); font-size:9px;"> | Kills: ${player.kills}</span>` : '';
             slotRow.innerHTML = `
               <div class="ff-slot-num">${i + 1}</div>
               <div class="ff-player-details">
-                <div class="ff-player-name"><i class="fa-solid fa-user-ninja" style="font-size:10px; color:var(--gold);"></i> ${player.name} ${isMe ? '<span style="color:var(--mint-primary); font-size:9px;">(You)</span>' : ''}</div>
+                <div class="ff-player-name"><i class="fa-solid fa-user-ninja" style="font-size:10px; color:var(--gold);"></i> ${player.name} ${isMe ? '<span style="color:var(--mint-primary); font-size:9px;">(You)</span>' : ''}${killInfo}</div>
                 <div class="ff-player-uid">UID: ${player.uid}</div>
+                ${squadInfo}
               </div>
             `;
           } else {
@@ -1578,6 +1612,14 @@
         uploadedScreenshotBase64 = "";
         document.getElementById('ssInput').value = "";
         document.getElementById('ssPreview').style.display = "none";
+        
+        if (match.type === 'Squad' || match.type === 'Duo') {
+          document.getElementById('squadInputsGroup').style.display = 'block';
+          document.getElementById('squadMembersInput').value = "";
+        } else {
+          document.getElementById('squadInputsGroup').style.display = 'none';
+        }
+
         const userBal = currentUser?.walletBalance || 0;
         document.getElementById('btnPayWallet').innerText = `⚡ Pay via Wallet (Rs. ${match.fee} | Bal: Rs. ${userBal})`;
       }
@@ -1697,6 +1739,15 @@
         return;
       }
 
+      let squadMembersVal = "";
+      if (match.type === 'Squad' || match.type === 'Duo') {
+        squadMembersVal = document.getElementById('squadMembersInput').value.trim();
+        if (!squadMembersVal) {
+          alert("Sathi players ke names aur UIDs enter karna lazmi hain!");
+          return;
+        }
+      }
+
       if (!confirm(`Rs. ${matchFee} deduct karke match slot confirm karein?`)) return;
 
       const newBal = userBal - matchFee;
@@ -1714,8 +1765,10 @@
         email: currentUser.email,
         uid: currentUser.uid,
         phone: currentUser.phone,
+        squadMembers: squadMembersVal,
         screenshot: "WALLET_PAYMENT",
         status: "approved",
+        kills: 0,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
@@ -1816,14 +1869,25 @@
       const match = allTournaments.find(m => m.id === selectedMatchId);
       if (!match) return;
 
+      let squadMembersVal = "";
+      if (match.type === 'Squad' || match.type === 'Duo') {
+        squadMembersVal = document.getElementById('squadMembersInput').value.trim();
+        if (!squadMembersVal) {
+          alert("Sathi players ke names aur UIDs enter karna lazmi hain!");
+          return;
+        }
+      }
+
       if (!match.players) match.players = [];
       match.players.push({
         name: currentUser.name,
         email: currentUser.email,
         uid: currentUser.uid,
         phone: currentUser.phone,
+        squadMembers: squadMembersVal,
         screenshot: uploadedScreenshotBase64,
         status: "pending",
+        kills: 0,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
@@ -1907,10 +1971,12 @@
     syncChannel.onmessage = function(event) {
       if (event.data && event.data.type === 'REFRESH_TOURNAMENTS') {
         renderMatches();
+        loadLiveTicker();
       }
     };
 
     window.onload = function() {
+      loadLiveTicker();
       updateNavProfile();
       renderMatches();
       updateEventsBadge();
