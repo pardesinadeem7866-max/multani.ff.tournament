@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani.ff - Elite Esports Admin Dashboard</title>
+  <title>Multani.ff - Elite Esports Admin Dashboard v100</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
@@ -105,21 +105,21 @@
     .stat-num { font-size: 18px; font-weight: 900; margin-top: 4px; color: var(--mint); text-shadow: 0 0 8px rgba(0,255,136,0.3); }
     .stat-label { font-size: 9.5px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
 
-    .section-btn-bar { padding: 0 16px 14px; }
+    .section-btn-bar { padding: 0 16px 14px; display:flex; gap:6px; }
     .view-all-btn {
-      width: 100%;
+      flex: 1;
       background: rgba(0, 240, 255, 0.1);
       border: 1px solid var(--neon-blue);
       color: var(--neon-blue);
       padding: 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       box-shadow: 0 0 10px rgba(0,240,255,0.2);
     }
 
@@ -190,7 +190,7 @@
 
     .form-ctrl { margin-bottom: 10px; }
     .form-ctrl label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 3px; }
-    .form-ctrl input, .form-ctrl select {
+    .form-ctrl input, .form-ctrl select, .form-ctrl textarea {
       width: 100%;
       background: #030812;
       border: 1px solid var(--card-border);
@@ -200,7 +200,7 @@
       font-size: 12px;
       outline: none;
     }
-    .form-ctrl input:focus { border-color: var(--mint); box-shadow: 0 0 8px rgba(0,255,136,0.3); }
+    .form-ctrl input:focus, .form-ctrl textarea:focus { border-color: var(--mint); box-shadow: 0 0 8px rgba(0,255,136,0.3); }
 
     .btn-action {
       background: var(--mint);
@@ -308,8 +308,8 @@
     <div id="adminAuthOverlay">
       <div style="text-align:center; margin-bottom: 20px;">
         <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--mint); margin-bottom: 10px;"></i>
-        <div style="font-size: 18px; font-weight: 900; color: #fff;">Admin Security Check</div>
-        <div style="font-size: 11px; color: var(--text-muted);">Enter password to access Multani.ff Dashboard</div>
+        <div style="font-size: 18px; font-weight: 900; color: #fff;">Admin Security Check v100</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Enter password to access Multani.ff Elite Control</div>
       </div>
       <div class="form-ctrl" style="width: 100%;">
         <label>Admin Password</label>
@@ -321,7 +321,7 @@
     <div class="hero-top-box">
       <div class="hero-top-row">
         <div>
-          <div class="brand-title"><i class="fa-solid fa-gamepad" style="color:var(--mint);"></i> Multani.ff Esports Admin</div>
+          <div class="brand-title"><i class="fa-solid fa-gamepad" style="color:var(--mint);"></i> Multani.ff Elite Admin</div>
           <div class="hero-rev-label" style="margin-top:6px;">Total Match Revenue</div>
           <div class="hero-rev-val" id="totalRevVal">Rs 0</div>
         </div>
@@ -331,7 +331,7 @@
         </div>
       </div>
       <div class="hero-sub-time">
-        <i class="fa-solid fa-circle-dot" style="color:var(--mint); font-size:8px;"></i> Live Control Center Active (Secured)
+        <i class="fa-solid fa-circle-dot" style="color:var(--mint); font-size:8px;"></i> Ultra Panel Active (100+ Features)
       </div>
     </div>
 
@@ -354,7 +354,8 @@
     </div>
 
     <div class="section-btn-bar">
-      <button class="view-all-btn" onclick="switchAdminTab('deposits')"><i class="fa-solid fa-receipt"></i> Payment Approvals & Match Requests</button>
+      <button class="view-all-btn" onclick="switchAdminTab('deposits')"><i class="fa-solid fa-receipt"></i> Approvals & Slot Requests</button>
+      <button class="view-all-btn" onclick="openBroadcastModal()"><i class="fa-solid fa-bullhorn"></i> Broadcast Notice</button>
     </div>
 
     <div class="action-grid-card">
@@ -430,7 +431,10 @@
       </div>
 
       <div id="sectionAllUsers" class="panel-box" style="display:none;">
-        <div class="section-header-row"><span><i class="fa-solid fa-address-book" style="color:var(--neon-blue);"></i> All Registered Website Players</span></div>
+        <div class="section-header-row">
+          <span><i class="fa-solid fa-address-book" style="color:var(--neon-blue);"></i> All Registered Website Players</span>
+          <button class="btn-action btn-orange" style="width:auto; padding:3px 8px; font-size:9px;" onclick="openBonusCoinModal()">+ Give Bonus</button>
+        </div>
         <div id="allRegisteredUsersContainer"></div>
       </div>
 
@@ -456,7 +460,7 @@
     <div class="modal-backdrop" id="createMatchModal">
       <div class="modal-dialog">
         <div class="section-header-row" style="margin-bottom:12px;">
-          <span><i class="fa-solid fa-plus-circle"></i> Create Tournament Room</span>
+          <span><i class="fa-solid fa-plus-circle"></i> Create Tournament Room (v100)</span>
           <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeCreateMatchModal()"></i>
         </div>
         <div class="form-ctrl"><label>Match Title</label><input type="text" id="mTitle" placeholder="e.g. Solo Night Cup"></div>
@@ -468,6 +472,7 @@
               <option value="Purgatory">Purgatory</option>
               <option value="Kalahari">Kalahari</option>
               <option value="Clash Squad">Clash Squad</option>
+              <option value="Alpine">Alpine</option>
             </select>
           </div>
           <div class="form-ctrl">
@@ -476,6 +481,7 @@
               <option value="Solo">Solo</option>
               <option value="Duo">Duo</option>
               <option value="Squad">Squad (4 players)</option>
+              <option value="Custom Squad">Custom Squad (6 players)</option>
             </select>
           </div>
         </div>
@@ -485,10 +491,37 @@
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
           <div class="form-ctrl"><label>Booyah Prize (Rs)</label><input type="number" id="mPrize" value="300"></div>
-          <div class="form-ctrl"><label>Timing</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM"></div>
+          <div class="form-ctrl"><label>Timing / Countdown Target</label><input type="text" id="mTime" placeholder="e.g. 5:00 PM Today"></div>
         </div>
+        <div class="form-ctrl"><label>Rules & Weapon Restrictions</label><textarea id="mRules" rows="2" placeholder="e.g. AWM Ban, No Team-up..."></textarea></div>
         <div class="form-ctrl"><label>Cover Image URL</label><input type="text" id="mCoverImg" placeholder="https://image-link.com/photo.jpg"></div>
         <button class="btn-action" onclick="createMatchRoom()"><i class="fa-solid fa-check"></i> Publish Match Room</button>
+      </div>
+    </div>
+
+    <!-- Broadcast Modal -->
+    <div class="modal-backdrop" id="broadcastModal">
+      <div class="modal-dialog">
+        <div class="section-header-row" style="margin-bottom:12px;">
+          <span><i class="fa-solid fa-bullhorn" style="color:var(--gold);"></i> Send Global Popup Notice</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeModal('broadcastModal')"></i>
+        </div>
+        <div class="form-ctrl"><label>Notice Title</label><input type="text" id="bcTitle" placeholder="e.g. Important Update"></div>
+        <div class="form-ctrl"><label>Notice Message</label><textarea id="bcMsg" rows="3" placeholder="Write announcement for all players..."></textarea></div>
+        <button class="btn-action" onclick="sendGlobalBroadcast()"><i class="fa-solid fa-paper-plane"></i> Broadcast to All Users</button>
+      </div>
+    </div>
+
+    <!-- Give Bonus Coins Modal -->
+    <div class="modal-backdrop" id="bonusModal">
+      <div class="modal-dialog">
+        <div class="section-header-row" style="margin-bottom:12px;">
+          <span><i class="fa-solid fa-coins" style="color:var(--gold);"></i> Give Bonus Wallet Coins</span>
+          <i class="fa-solid fa-xmark" style="cursor:pointer; color:#fff;" onclick="closeModal('bonusModal')"></i>
+        </div>
+        <div class="form-ctrl"><label>Player Free Fire UID</label><input type="text" id="bonusUidInput" placeholder="Target UID"></div>
+        <div class="form-ctrl"><label>Bonus Amount (Rs)</label><input type="number" id="bonusAmtInput" placeholder="e.g. 100"></div>
+        <button class="btn-action" onclick="confirmGiveBonus()"><i class="fa-solid fa-check-double"></i> Credit Bonus Coins</button>
       </div>
     </div>
 
@@ -541,6 +574,7 @@
               <option value="Purgatory">Purgatory</option>
               <option value="Kalahari">Kalahari</option>
               <option value="Clash Squad">Clash Squad</option>
+              <option value="Alpine">Alpine</option>
             </select>
           </div>
           <div class="form-ctrl"><label>Slots</label><input type="number" id="editSlots"></div>
@@ -550,6 +584,7 @@
           <div class="form-ctrl"><label>Prize (Rs)</label><input type="number" id="editPrize"></div>
         </div>
         <div class="form-ctrl"><label>Timing</label><input type="text" id="editTime"></div>
+        <div class="form-ctrl"><label>Rules</label><input type="text" id="editRules"></div>
         <div class="form-ctrl"><label>Cover Image URL</label><input type="text" id="editCoverImg"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
           <div class="form-ctrl"><label>Room ID</label><input type="text" id="editRoomId" placeholder="Room ID"></div>
@@ -673,6 +708,10 @@
 
     function openCreateMatchModal() { document.getElementById('createMatchModal').style.display = 'flex'; }
     function closeCreateMatchModal() { document.getElementById('createMatchModal').style.display = 'none'; }
+    function openBroadcastModal() { document.getElementById('broadcastModal').style.display = 'flex'; }
+    function openBonusCoinModal() { document.getElementById('bonusModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
     function openAddWinnerModal() {
       document.getElementById('editWinnerIndex').value = "-1";
       document.getElementById('winName').value = "";
@@ -698,7 +737,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `MultaniFF_Backup_${Date.now()}.json`;
+      a.download = `MultaniFF_v100_Backup_${Date.now()}.json`;
       a.click();
     }
 
@@ -709,6 +748,43 @@
       alert("✅ Scrolling Ticker updated successfully!");
     }
 
+    function sendGlobalBroadcast() {
+      const title = document.getElementById('bcTitle').value.trim();
+      const msg = document.getElementById('bcMsg').value.trim();
+      if (!title || !msg) {
+        alert("Title aur Message dono likhein!");
+        return;
+      }
+      localStorage.setItem('mff_global_broadcast', JSON.stringify({ title, msg, time: Date.now() }));
+      notifyWebsiteUpdate();
+      closeModal('broadcastModal');
+      document.getElementById('bcTitle').value = "";
+      document.getElementById('bcMsg').value = "";
+      alert("📢 Global broadcast successfully send ho gaya!");
+    }
+
+    function confirmGiveBonus() {
+      const uid = document.getElementById('bonusUidInput').value.trim();
+      const amt = Number(document.getElementById('bonusAmtInput').value);
+      if (!uid || !amt) {
+        alert("UID aur amount enter karein!");
+        return;
+      }
+      let users = JSON.parse(localStorage.getItem('mff_accounts_db')) || [];
+      let user = users.find(u => u.uid === uid);
+      if (!user) {
+        alert("❌ Is UID ka koi player registered nahi mila!");
+        return;
+      }
+      user.walletBalance = (Number(user.walletBalance) || 0) + amt;
+      localStorage.setItem('mff_accounts_db', JSON.stringify(users));
+      closeModal('bonusModal');
+      document.getElementById('bonusUidInput').value = "";
+      document.getElementById('bonusAmtInput').value = "";
+      renderAllRegisteredUsers();
+      alert(`✅ Successfully credited Rs. ${amt} to ${user.name}!`);
+    }
+
     function createMatchRoom() {
       const title = document.getElementById('mTitle').value.trim();
       const map = document.getElementById('mMap').value;
@@ -717,6 +793,7 @@
       const fee = Number(document.getElementById('mFee').value);
       const prize = Number(document.getElementById('mPrize').value);
       const time = document.getElementById('mTime').value.trim();
+      const rules = document.getElementById('mRules').value.trim();
       const coverImage = document.getElementById('mCoverImg').value.trim();
 
       if (!title || !time) {
@@ -727,7 +804,7 @@
       let matches = JSON.parse(localStorage.getItem('mff_tournaments')) || [];
       matches.push({
         id: "m_" + Date.now(),
-        title, map, type, totalSlots: slots, fee, prize, time,
+        title, map, type, totalSlots: slots, fee, prize, time, rules,
         coverImage: coverImage || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
         subtitle: `${map} (${type}) - ${slots} Slots`,
         roomId: "", roomPass: "", players: []
@@ -738,10 +815,11 @@
       closeCreateMatchModal();
       document.getElementById('mTitle').value = "";
       document.getElementById('mTime').value = "";
+      document.getElementById('mRules').value = "";
       document.getElementById('mCoverImg').value = "";
       renderAdminMatches();
       updateHeaderStats();
-      alert("✅ Match successfully create ho gaya!");
+      alert("✅ Match successfully create ho gaya (v100)!");
     }
 
     function renderAdminMatches() {
@@ -911,6 +989,7 @@
       document.getElementById('editFee').value = m.fee || 30;
       document.getElementById('editPrize').value = m.prize || 300;
       document.getElementById('editTime').value = m.time || '';
+      document.getElementById('editRules').value = m.rules || '';
       document.getElementById('editCoverImg').value = m.coverImage || '';
       document.getElementById('editRoomId').value = m.roomId || '';
       document.getElementById('editRoomPass').value = m.roomPass || '';
@@ -932,6 +1011,7 @@
       m.fee = Number(document.getElementById('editFee').value);
       m.prize = Number(document.getElementById('editPrize').value);
       m.time = document.getElementById('editTime').value.trim();
+      m.rules = document.getElementById('editRules').value.trim();
       m.coverImage = document.getElementById('editCoverImg').value.trim();
       m.roomId = document.getElementById('editRoomId').value.trim();
       m.roomPass = document.getElementById('editRoomPass').value.trim();
