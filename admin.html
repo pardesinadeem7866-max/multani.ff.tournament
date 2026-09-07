@@ -774,11 +774,12 @@
               : `<button class="btn-action" style="padding:2px 6px; font-size:9px;" onclick="approveMatchPlayerById('${m.id}', ${pIdx})">Approve</button>`;
 
             let squadExtra = p.squadMembers ? `<div style="font-size:9px; color:var(--text-muted);">Squad: ${p.squadMembers}</div>` : '';
+            let killInfo = (p.kills !== undefined) ? `<span style="color:var(--gold); font-size:9.5px;"> | Kills: ${p.kills}</span>` : '';
 
             membersHtml += `
               <div style="display:flex; justify-content:space-between; align-items:center; background:#0b1323; padding:6px 8px; border-radius:6px; margin-bottom:4px;">
                 <div>
-                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--neon-blue); font-size:9.5px;">(UID: ${p.uid})</span></div>
+                  <div style="font-size:11px; font-weight:800; color:#fff;">${p.name} ${statusBadge} <span style="color:var(--neon-blue); font-size:9.5px;">(UID: ${p.uid})</span>${killInfo}</div>
                   ${squadExtra}
                 </div>
                 <div style="display:flex; gap:3px;">
