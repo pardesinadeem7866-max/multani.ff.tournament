@@ -6,6 +6,7 @@
 <title>Multani FF Official Tournament</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 *{
@@ -16,82 +17,112 @@
 }
 
 body{
-  background:#090012;
+  background:#05150a;
   color:white;
   min-height:100vh;
+  padding-bottom: 30px;
 }
 
 header{
   text-align:center;
-  padding:30px 10px;
-  border-bottom:2px solid #9d00ff;
-  background:#12001f;
+  padding:25px 10px;
+  border-bottom:2px solid #00d084;
+  background:#081c10;
 }
 
 header h1{
-  color:#c238ff;
-  font-size:34px;
-  text-shadow:0 0 15px #a000ff;
+  color:#00ff9d;
+  font-size:32px;
+  text-shadow:0 0 15px #00d084;
 }
 
 header p{
-  font-size:21px;
+  font-size:18px;
   margin-top:5px;
+  color:#a3e4d7;
 }
 
 .container{
-  width:92%;
+  width:94%;
   max-width:700px;
-  margin:25px auto;
+  margin:20px auto;
+}
+
+/* Tabs Bar */
+.tabs-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 5px 0 15px 0;
+  white-space: nowrap;
+}
+
+.tab-btn {
+  background: #0d2e1c;
+  color: #a3e4d7;
+  border: 1px solid #145a32;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: #00d084;
+  color: #05150a;
+  border-color: #00ff9d;
+  box-shadow: 0 0 15px rgba(0, 208, 132, 0.4);
 }
 
 .card{
-  background:#11001d;
-  border:2px solid #8c00ff;
-  border-radius:25px;
-  padding:25px;
-  margin-bottom:25px;
-  box-shadow:0 0 25px #6500b8;
+  background:#0d2e1c;
+  border:2px solid #145a32;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 0 20px rgba(0, 100, 50, 0.3);
 }
 
 h2{
-  margin-bottom:20px;
+  margin-bottom:15px;
+  color: #00ff9d;
 }
 
 input{
   width:100%;
-  padding:15px;
+  padding:14px;
   margin:8px 0;
   border:none;
   border-radius:12px;
-  background:#20002f;
+  background:#05150a;
   color:white;
   font-size:16px;
+  border: 1px solid #145a32;
 }
 
 button{
   width:100%;
-  padding:15px;
-  margin-top:12px;
+  padding:14px;
+  margin-top:10px;
   border:none;
   border-radius:12px;
-  background:#e00055;
-  color:white;
+  background:#00d084;
+  color:#05150a;
   font-weight:bold;
-  font-size:17px;
+  font-size:16px;
   cursor:pointer;
+  transition: opacity 0.2s;
 }
 
 button:hover{
-  opacity:.85;
-}
-
-.green{
-  background:#00a86b;
+  opacity:.9;
 }
 
 .blue{
-  background:#5b00ff;
+  background:#117a65;
+  color: white;
 }
 
 .info{
@@ -102,33 +133,37 @@ button:hover{
 }
 
 .box{
-  background:#08000e;
+  background:#05150a;
   padding:15px;
   border-radius:15px;
   text-align:center;
+  border: 1px solid #145a32;
 }
 
 .big{
-  font-size:25px;
+  font-size:22px;
   font-weight:bold;
+  color: #00ff9d;
 }
 
 .tournament{
-  margin-top:20px;
+  margin-top:15px;
   padding:20px;
-  background:#160022;
-  border:1px solid #9d00ff;
+  background:#0d2e1c;
+  border:1px solid #00d084;
   border-radius:20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
 
 .tournament h3{
-  font-size:24px;
-  margin-bottom:15px;
+  font-size:22px;
+  margin-bottom:12px;
+  color: #00ff9d;
 }
 
 .row{
-  margin:10px 0;
-  font-size:17px;
+  margin:8px 0;
+  font-size:16px;
 }
 
 .slot-grid{
@@ -143,23 +178,25 @@ button:hover{
   text-align:center;
   border-radius:6px;
   font-size:12px;
-  background:#270038;
-  border:1px solid #65008f;
+  background:#05150a;
+  border:1px solid #145a32;
 }
 
 .slot.filled{
-  background:#00a86b;
+  background:#00d084;
+  color: #05150a;
+  font-weight: bold;
 }
 
 .slot.mine{
-  background:#ff9800;
-  color:#000;
+  background:#f39c12;
+  color:#05150a;
   font-weight:bold;
 }
 
 .room{
-  background:#071f17;
-  border:2px solid #00d084;
+  background:#052b1b;
+  border:2px solid #00ff9d;
   padding:18px;
   border-radius:15px;
   margin-top:18px;
@@ -174,12 +211,8 @@ button:hover{
   display:none;
 }
 
-.center{
-  text-align:center;
-}
-
 .small{
-  color:#bbb;
+  color:#a3e4d7;
   font-size:14px;
   margin-top:10px;
 }
@@ -194,6 +227,14 @@ button:hover{
 </header>
 
 <div class="container">
+
+<!-- TABS NAVIGATION BAR (Inspired from your UI) -->
+<div class="tabs-container">
+  <button class="tab-btn active" onclick="switchTab('recently')">Recently</button>
+  <button class="tab-btn" onclick="switchTab('joined')">Joined</button>
+  <button class="tab-btn" onclick="switchTab('following')">Following</button>
+  <button class="tab-btn" onclick="switchTab('friends')">Friends</button>
+</div>
 
 <!-- AUTH -->
 <div id="authSection" class="card">
@@ -212,10 +253,10 @@ button:hover{
 <div id="profileSection" class="card hidden">
   <h2>👤 My Profile</h2>
 
-  <h3 id="username"></h3>
+  <h3 id="username" style="color: #00ff9d;"></h3>
 
-  <p style="margin-top:15px;">
-    UID: <b id="ffuid">-</b>
+  <p style="margin-top:10px;">
+    UID: <b id="ffuid" style="color: #00ff9d;">-</b>
   </p>
 
   <div class="info">
@@ -230,7 +271,7 @@ button:hover{
     </div>
   </div>
 
-  <button onclick="logout()">LOGOUT</button>
+  <button class="blue" style="margin-top: 15px;" onclick="logout()">LOGOUT</button>
 </div>
 
 <!-- TOURNAMENTS -->
@@ -288,10 +329,10 @@ button:hover{
       <h3>🔐 ROOM DETAILS</h3>
 
       <p>Room ID</p>
-      <h2 id="roomId"></h2>
+      <h2 id="roomId" style="color:white;"></h2>
 
-      <p>Password</p>
-      <h2 id="roomPassword"></h2>
+      <p style="margin-top:10px;">Password</p>
+      <h2 id="roomPassword" style="color:white;"></h2>
     </div>
 
     <div id="roomHidden" class="box" style="margin-top:18px;">
@@ -301,7 +342,7 @@ button:hover{
       </p>
     </div>
 
-    <button onclick="leaveMatch()">
+    <button style="background: #e74c3c; color: white;" onclick="leaveMatch()">
       🚪 LEAVE MATCH
     </button>
 
@@ -320,38 +361,33 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser = null;
 let currentMatchId = null;
 
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  // Aap yahan tab switching ke mutabiq filtering laga sakte hain
+}
 
 /* =========================
    SIGNUP
 ========================= */
 
 async function signup(){
-
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
   if(!email || !password){
     alert("Email aur password enter karo");
     return;
   }
 
-  const {data,error} =
-    await supabaseClient.auth.signUp({
-      email,
-      password
-    });
+  const {data,error} = await supabaseClient.auth.signUp({ email, password });
 
   if(error){
     alert(error.message);
     return;
   }
 
-  alert(
-    "Account successfully created! Agar email confirmation on hai to email verify karo."
-  );
+  alert("Account successfully created! Agar email confirmation on hai to email verify karo.");
 }
 
 
@@ -360,18 +396,10 @@ async function signup(){
 ========================= */
 
 async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  const {data,error} =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+  const {data,error} = await supabaseClient.auth.signInWithPassword({ email, password });
 
   if(error){
     alert(error.message);
@@ -383,17 +411,9 @@ async function login(){
   await loadProfile();
   await loadTournaments();
 
-  document
-    .getElementById("authSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("profileSection")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("tournamentsSection")
-    .classList.remove("hidden");
+  document.getElementById("authSection").classList.add("hidden");
+  document.getElementById("profileSection").classList.remove("hidden");
+  document.getElementById("tournamentsSection").classList.remove("hidden");
 }
 
 
@@ -402,9 +422,7 @@ async function login(){
 ========================= */
 
 async function loadProfile(){
-
-  const {data,error} =
-    await supabaseClient
+  const {data,error} = await supabaseClient
       .from("profiles")
       .select("*")
       .eq("id",currentUser.id)
@@ -415,17 +433,10 @@ async function loadProfile(){
     return;
   }
 
-  document.getElementById("username").textContent =
-    data.username || "FF Player";
-
-  document.getElementById("ffuid").textContent =
-    data.free_fire_uid || "Not Added";
-
-  document.getElementById("wallet").textContent =
-    Number(data.wallet_balance || 0).toFixed(2);
-
-  document.getElementById("wins").textContent =
-    data.total_wins || 0;
+  document.getElementById("username").textContent = data.username || "FF Player";
+  document.getElementById("ffuid").textContent = data.free_fire_uid || "Not Added";
+  document.getElementById("wallet").textContent = Number(data.wallet_balance || 0).toFixed(2);
+  document.getElementById("wins").textContent = data.total_wins || 0;
 }
 
 
@@ -434,9 +445,7 @@ async function loadProfile(){
 ========================= */
 
 async function loadTournaments(){
-
-  const {data,error} =
-    await supabaseClient
+  const {data,error} = await supabaseClient
       .from("tournaments")
       .select("*")
       .eq("status","upcoming")
@@ -447,64 +456,31 @@ async function loadTournaments(){
     return;
   }
 
-  const box =
-    document.getElementById("tournaments");
-
+  const box = document.getElementById("tournaments");
   box.innerHTML = "";
 
   if(!data || data.length === 0){
-    box.innerHTML =
-      `<div class="card">No tournaments available.</div>`;
+    box.innerHTML = `<div class="card">No tournaments available.</div>`;
     return;
   }
 
   data.forEach(t => {
-
-    const div =
-      document.createElement("div");
-
+    const div = document.createElement("div");
     div.className = "tournament";
 
     div.innerHTML = `
-
       <h3>🏆 ${escapeHTML(t.title)}</h3>
-
       <div class="row">🎮 Game: ${escapeHTML(t.game)}</div>
-
       <div class="row">👥 Mode: ${escapeHTML(t.mode)}</div>
-
       <div class="row">🗺️ Map: ${escapeHTML(t.map)}</div>
+      <div class="row">💰 Entry Fee: <b>Rs. ${Number(t.entry_fee).toFixed(2)}</b></div>
+      <div class="row">🏆 Prize Pool: <b>Rs. ${Number(t.prize_pool).toFixed(2)}</b></div>
+      <div class="row">👥 Players: <b>${t.joined_players}</b> / <b>${t.max_players}</b></div>
+      <div class="row">📅 ${formatDate(t.match_date)}</div>
 
-      <div class="row">
-        💰 Entry Fee:
-        <b>Rs. ${Number(t.entry_fee).toFixed(2)}</b>
-      </div>
-
-      <div class="row">
-        🏆 Prize Pool:
-        <b>Rs. ${Number(t.prize_pool).toFixed(2)}</b>
-      </div>
-
-      <div class="row">
-        👥 Players:
-        <b>${t.joined_players}</b> /
-        <b>${t.max_players}</b>
-      </div>
-
-      <div class="row">
-        📅 ${formatDate(t.match_date)}
-      </div>
-
-      <button onclick="joinTournament('${t.id}')">
-        🎮 JOIN TOURNAMENT
-      </button>
-
-      <button class="blue"
-        onclick="openMyMatch('${t.id}')">
-        📋 MY MATCH
-      </button>
+      <button onclick="joinTournament('${t.id}')">🎮 JOIN TOURNAMENT</button>
+      <button class="blue" onclick="openMyMatch('${t.id}')" style="margin-top:8px;">📋 MY MATCH</button>
     `;
-
     box.appendChild(div);
   });
 }
@@ -515,9 +491,7 @@ async function loadTournaments(){
 ========================= */
 
 async function joinTournament(id){
-
-  const {data:profile,error:profileError} =
-    await supabaseClient
+  const {data:profile,error:profileError} = await supabaseClient
       .from("profiles")
       .select("free_fire_uid,free_fire_name")
       .eq("id",currentUser.id)
@@ -533,23 +507,18 @@ async function joinTournament(id){
     return;
   }
 
-  const teamName =
-    prompt("Team Name enter karo:", "Multani FF Team");
+  const teamName = prompt("Team Name enter karo:", "Multani FF Team");
+  if(!teamName){ return; }
 
-  if(!teamName){
-    return;
-  }
-
-  const {data,error} =
-    await supabaseClient.rpc(
-      "join_tournament",
-      {
-        p_tournament_id:id,
-        p_free_fire_uid:profile.free_fire_uid,
-        p_free_fire_name:profile.free_fire_name || "",
-        p_team_name:teamName
-      }
-    );
+  const {data,error} = await supabaseClient.rpc(
+    "join_tournament",
+    {
+      p_tournament_id:id,
+      p_free_fire_uid:profile.free_fire_uid,
+      p_free_fire_name:profile.free_fire_name || "",
+      p_team_name:teamName
+    }
+  );
 
   if(error){
     alert(error.message);
@@ -561,13 +530,10 @@ async function joinTournament(id){
     return;
   }
 
-  alert(
-    "🏆 Tournament successfully joined!\n\nYour Slot: #" +
-    data.slot
-  );
+  const assignedSlot = data.slot || data.assigned_slot || data.slot_number || "1";
+  alert("🏆 Tournament successfully joined!\n\nYour Slot: #" + assignedSlot);
 
   await loadProfile();
-
   openMyMatch(id);
 }
 
@@ -577,14 +543,7 @@ async function joinTournament(id){
 ========================= */
 
 async function openMyMatch(id){
-
-  const {data,error} =
-    await supabaseClient.rpc(
-      "get_my_match",
-      {
-        p_tournament_id:id
-      }
-    );
+  const {data,error} = await supabaseClient.rpc("get_my_match", { p_tournament_id:id });
 
   if(error){
     alert(error.message);
@@ -597,72 +556,32 @@ async function openMyMatch(id){
   }
 
   currentMatchId = id;
-
   const m = data.match;
 
-  document.getElementById("tournamentsSection")
-    .classList.add("hidden");
+  document.getElementById("tournamentsSection").classList.add("hidden");
+  document.getElementById("matchSection").classList.remove("hidden");
 
-  document.getElementById("matchSection")
-    .classList.remove("hidden");
+  document.getElementById("matchTitle").textContent = "🏆 " + m.title;
+  document.getElementById("matchGame").textContent = m.game;
+  document.getElementById("matchMode").textContent = m.mode;
+  document.getElementById("matchMap").textContent = m.map;
+  document.getElementById("matchDate").textContent = formatDate(m.match_date);
+  document.getElementById("matchFee").textContent = Number(m.entry_fee).toFixed(2);
+  document.getElementById("matchPrize").textContent = Number(m.prize_pool).toFixed(2);
+  document.getElementById("mySlot").textContent = m.my_slot;
+  document.getElementById("joinedPlayers").textContent = m.joined_players;
+  document.getElementById("maxPlayers").textContent = m.max_players;
 
-  document.getElementById("matchTitle")
-    .textContent = "🏆 " + m.title;
-
-  document.getElementById("matchGame")
-    .textContent = m.game;
-
-  document.getElementById("matchMode")
-    .textContent = m.mode;
-
-  document.getElementById("matchMap")
-    .textContent = m.map;
-
-  document.getElementById("matchDate")
-    .textContent = formatDate(m.match_date);
-
-  document.getElementById("matchFee")
-    .textContent = Number(m.entry_fee).toFixed(2);
-
-  document.getElementById("matchPrize")
-    .textContent = Number(m.prize_pool).toFixed(2);
-
-  document.getElementById("mySlot")
-    .textContent = m.my_slot;
-
-  document.getElementById("joinedPlayers")
-    .textContent = m.joined_players;
-
-  document.getElementById("maxPlayers")
-    .textContent = m.max_players;
-
-  createSlots(
-    m.max_players,
-    m.joined_players,
-    m.my_slot
-  );
+  createSlots(m.max_players, m.joined_players, m.my_slot);
 
   if(m.room_visible && m.room_id){
-
-    document.getElementById("roomBox")
-      .classList.remove("hidden");
-
-    document.getElementById("roomHidden")
-      .classList.add("hidden");
-
-    document.getElementById("roomId")
-      .textContent = m.room_id;
-
-    document.getElementById("roomPassword")
-      .textContent = m.room_password || "No Password";
-  }
-  else{
-
-    document.getElementById("roomBox")
-      .classList.add("hidden");
-
-    document.getElementById("roomHidden")
-      .classList.remove("hidden");
+    document.getElementById("roomBox").classList.remove("hidden");
+    document.getElementById("roomHidden").classList.add("hidden");
+    document.getElementById("roomId").textContent = m.room_id;
+    document.getElementById("roomPassword").textContent = m.room_password || "No Password";
+  } else {
+    document.getElementById("roomBox").classList.add("hidden");
+    document.getElementById("roomHidden").classList.remove("hidden");
   }
 }
 
@@ -672,19 +591,12 @@ async function openMyMatch(id){
 ========================= */
 
 function createSlots(max,joined,mySlot){
-
-  const grid =
-    document.getElementById("slotGrid");
-
+  const grid = document.getElementById("slotGrid");
   grid.innerHTML = "";
 
   for(let i=1;i<=max;i++){
-
-    const slot =
-      document.createElement("div");
-
+    const slot = document.createElement("div");
     slot.className = "slot";
-
     slot.textContent = "#" + i;
 
     if(i <= joined){
@@ -694,8 +606,7 @@ function createSlots(max,joined,mySlot){
     if(i == mySlot){
       slot.classList.remove("filled");
       slot.classList.add("mine");
-      slot.textContent =
-        "YOU #" + i;
+      slot.textContent = "YOU #" + i;
     }
 
     grid.appendChild(slot);
@@ -708,27 +619,12 @@ function createSlots(max,joined,mySlot){
 ========================= */
 
 async function leaveMatch(){
+  if(!currentMatchId){ return; }
 
-  if(!currentMatchId){
-    return;
-  }
+  const confirmLeave = confirm("Kya aap waqai tournament leave karna chahte hain?\n\nEntry fee wallet mein refund hogi.");
+  if(!confirmLeave){ return; }
 
-  const confirmLeave =
-    confirm(
-      "Kya aap waqai tournament leave karna chahte hain?\n\nEntry fee wallet mein refund hogi."
-    );
-
-  if(!confirmLeave){
-    return;
-  }
-
-  const {data,error} =
-    await supabaseClient.rpc(
-      "leave_tournament",
-      {
-        p_tournament_id:currentMatchId
-      }
-    );
+  const {data,error} = await supabaseClient.rpc("leave_tournament", { p_tournament_id:currentMatchId });
 
   if(error){
     alert(error.message);
@@ -740,17 +636,11 @@ async function leaveMatch(){
     return;
   }
 
-  alert(
-    "🚪 Match leave ho gaya!\n\n💰 Entry fee refund ho gayi."
-  );
-
+  alert("🚪 Match leave ho gaya!\n\n💰 Entry fee refund ho gayi.");
   currentMatchId = null;
 
-  document.getElementById("matchSection")
-    .classList.add("hidden");
-
-  document.getElementById("tournamentsSection")
-    .classList.remove("hidden");
+  document.getElementById("matchSection").classList.add("hidden");
+  document.getElementById("tournamentsSection").classList.remove("hidden");
 
   await loadProfile();
   await loadTournaments();
@@ -758,59 +648,26 @@ async function leaveMatch(){
 
 
 /* =========================
-   BACK
+   BACK & LOGOUT
 ========================= */
 
 function backToTournaments(){
-
-  document.getElementById("matchSection")
-    .classList.add("hidden");
-
-  document.getElementById("tournamentsSection")
-    .classList.remove("hidden");
-
+  document.getElementById("matchSection").classList.add("hidden");
+  document.getElementById("tournamentsSection").classList.remove("hidden");
   loadTournaments();
 }
 
-
-/* =========================
-   LOGOUT
-========================= */
-
 async function logout(){
-
   await supabaseClient.auth.signOut();
-
   location.reload();
 }
 
-
-/* =========================
-   DATE
-========================= */
-
 function formatDate(date){
-
-  if(!date){
-    return "Not set";
-  }
-
-  return new Date(date).toLocaleString(
-    "en-PK",
-    {
-      dateStyle:"medium",
-      timeStyle:"short"
-    }
-  );
+  if(!date){ return "Not set"; }
+  return new Date(date).toLocaleString("en-PK", { dateStyle:"medium", timeStyle:"short" });
 }
 
-
-/* =========================
-   SECURITY HTML
-========================= */
-
 function escapeHTML(value){
-
   return String(value ?? "")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
@@ -819,29 +676,13 @@ function escapeHTML(value){
     .replace(/'/g,"&#039;");
 }
 
-
-/* =========================
-   AUTO LOGIN
-========================= */
-
 async function checkSession(){
-
-  const {data} =
-    await supabaseClient.auth.getSession();
-
+  const {data} = await supabaseClient.auth.getSession();
   if(data.session){
-
     currentUser = data.session.user;
-
-    document.getElementById("authSection")
-      .classList.add("hidden");
-
-    document.getElementById("profileSection")
-      .classList.remove("hidden");
-
-    document.getElementById("tournamentsSection")
-      .classList.remove("hidden");
-
+    document.getElementById("authSection").classList.add("hidden");
+    document.getElementById("profileSection").classList.remove("hidden");
+    document.getElementById("tournamentsSection").classList.remove("hidden");
     await loadProfile();
     await loadTournaments();
   }
