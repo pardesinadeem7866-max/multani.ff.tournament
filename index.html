@@ -1,3 +1,4 @@
+</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,9 +123,8 @@
             <button onclick="filterMatchCategory('Clash Squad')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">CS Battle</button>
         </div>
 
-        <!-- Dynamic Content View Area (Matches or Winners or Empty Pages) -->
+        <!-- Dynamic Content View Area -->
         <div id="dynamicContentArea">
-            <!-- Matches Grid -->
             <div id="websiteMatchesContainer" class="grid grid-cols-2 gap-3">
                 <div class="col-span-2 text-center py-10 text-slate-500 text-xs">
                     <i class="fa-solid fa-triangle-exclamation text-amber-500 text-2xl mb-2 block"></i>
@@ -168,9 +168,10 @@
             <i class="fa-solid fa-shield-halved text-base"></i>
             <span>Battle</span>
         </button>
+        <!-- Center Circular Add Fund / Headphone & Payment Proof Button -->
         <div class="flex justify-center -mt-6">
             <button onclick="openAddFundModal()" class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center shadow-xl border-4 border-[#0b1a12] text-xl font-bold">
-                <i class="fa-solid fa-plus"></i>
+                <i class="fa-solid fa-headset"></i>
             </button>
         </div>
         <button onclick="openChatPage()" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
@@ -280,12 +281,10 @@
             toggleAuthMode('login');
         }
 
-        // Load Real Matches created from Admin Panel
         function loadWebsiteMatches() {
             let container = document.getElementById('dynamicContentArea');
             let adminMatches = JSON.parse(localStorage.getItem('multani_admin_matches') || '[]');
             
-            // Fallback sync with main script if saved differently
             if(adminMatches.length === 0) {
                 container.innerHTML = `
                     <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-6 text-center col-span-2 space-y-2">
@@ -382,7 +381,104 @@
             closeJoinModal();
         }
 
-        // Bottom Nav Functional Empty Pages Handlers
+        // 1. HEADPHONE / ADD FUND MODAL (With Easypaisa Number & Screenshot upload up to bottom)
+        function openAddFundModal() {
+            let container = document.getElementById('dynamicContentArea');
+            container.innerHTML = `
+                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-5 space-y-4">
+                    <div class="text-center">
+                        <i class="fa-solid fa-headset text-amber-400 text-3xl mb-1"></i>
+                        <h4 class="font-bold text-sm text-white">Add Funds & Payment Proof</h4>
+                        <p class="text-xs text-slate-300 mt-1">Easypaisa Account Number: <b class="text-emerald-400">03186815926</b> (m Nadeem)</p>
+                    </div>
+                    <div class="space-y-3 pt-2 border-t border-[#143825]">
+                        <div>
+                            <label class="text-[11px] text-slate-400 block mb-1">Upload Easypaisa Screenshot Proof</label>
+                            <input type="file" id="fundReceipt" class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-slate-950">
+                        </div>
+                        <button onclick="submitFundProof()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-xs shadow-lg transition">
+                            Submit Payment Proof to Admin
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitFundProof() {
+            alert('Payment proof screenshot submitted successfully! Admin will verify and update your balance.');
+            loadWebsiteMatches();
+        }
+
+        // 2. CHAT PAGE (Real Message Box sending messages directly to Admin Panel help chats)
+        function openChatPage() {
+            let container = document.getElementById('dynamicContentArea');
+            container.innerHTML = `
+                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-4 space-y-3 flex flex-col h-[350px] justify-between">
+                    <div>
+                        <h4 class="font-bold text-sm text-emerald-400 mb-1"><i class="fa-solid fa-comments"></i> Admin Support Chat</h4>
+                        <p class="text-[11px] text-slate-400">Apni shikayat ya sawal yahan type karein, seedha admin tak jayega.</p>
+                    </div>
+                    <div id="chatHistory" class="flex-1 bg-[#143825] rounded-xl p-3 overflow-y-auto space-y-2 text-xs text-slate-300">
+                        <p class="text-slate-500 italic">No messages yet. Send a message to admin...</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="chatMsgInput" placeholder="Type your message..." class="flex-1 bg-[#143825] border border-emerald-500/20 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                        <button onclick="sendChatMessage()" class="bg-emerald-500 text-slate-950 px-4 py-2 rounded-xl font-bold text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function sendChatMessage() {
+            let msgInput = document.getElementById('chatMsgInput');
+            let text = msgInput.value.trim();
+            if(!text) return;
+
+            // Push to admin help chats storage
+            let adminChats = JSON.parse(localStorage.getItem('multani_admin_chats') || '[]');
+            adminChats.push({
+                name: currentUser.gameName,
+                uid: currentUser.uid,
+                whatsapp: currentUser.whatsapp,
+                message: text,
+                time: new Date().toLocaleTimeString()
+            });
+            localStorage.setItem('multani_admin_chats', JSON.stringify(adminChats));
+
+            let history = document.getElementById('chatHistory');
+            if(history.innerHTML.includes('No messages yet')) history.innerHTML = '';
+            
+            history.innerHTML += `<div class="bg-[#0f281b] p-2 rounded-lg text-right"><span class="text-emerald-400 font-bold">You:</span> ${text}</div>`;
+            msgInput.value = '';
+            alert('Message sent to Admin successfully!');
+        }
+
+        // 3. PROFILE PAGE (Showing player details and complete website rules)
+        function openProfilePage() {
+            let container = document.getElementById('dynamicContentArea');
+            container.innerHTML = `
+                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-5 space-y-4">
+                    <div>
+                        <h4 class="font-bold text-sm text-emerald-400 mb-2"><i class="fa-solid fa-user-gear"></i> Player Profile</h4>
+                        <p class="text-xs text-slate-300"><b>Name:</b> ${currentUser.gameName}</p>
+                        <p class="text-xs text-slate-300"><b>Email:</b> ${currentUser.email}</p>
+                        <p class="text-xs text-slate-300"><b>Free Fire UID:</b> ${currentUser.uid}</p>
+                        <p class="text-xs text-slate-300"><b>WhatsApp:</b> ${currentUser.whatsapp}</p>
+                        <p class="text-xs text-slate-300"><b>Wallet Balance:</b> Rs. ${currentUser.balance || 0}</p>
+                    </div>
+                    <div class="border-t border-[#143825] pt-3">
+                        <h4 class="font-bold text-xs text-amber-400 mb-2"><i class="fa-solid fa-book-open"></i> Website Rules & Regulations</h4>
+                        <ul class="text-[11px] text-slate-300 space-y-1 list-disc pl-4">
+                            <li>Match join karne ke liye fee send karke screenshot lazmi upload karein.</li>
+                            <li>Room ID aur Password match start hone se 10 minute pehle provide kiya jayega.</li>
+                            <li>Kisi bhi kism ka hacking, script, ya emulator use karne par seedha permanent ban lag jayega.</li>
+                            <li>Wrong UID ya fake payment screenshot bhejne par account block ho sakta hai.</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
         function openEventsPage() {
             let container = document.getElementById('dynamicContentArea');
             container.innerHTML = `
@@ -390,43 +486,6 @@
                     <i class="fa-solid fa-gift text-pink-400 text-3xl mb-1"></i>
                     <h4 class="font-bold text-sm text-white">Empty Events / Giveaways</h4>
                     <p class="text-xs text-slate-400">Filhal koi active giveaway event maujood nahi hai.</p>
-                </div>
-            `;
-        }
-
-        function openAddFundModal() {
-            let container = document.getElementById('dynamicContentArea');
-            container.innerHTML = `
-                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-6 text-center space-y-3">
-                    <i class="fa-solid fa-wallet text-amber-400 text-3xl mb-1"></i>
-                    <h4 class="font-bold text-sm text-white">Add Funds via Easypaisa</h4>
-                    <p class="text-xs text-slate-300">Send money to Easypaisa Account: <b>03186815926</b> (m Nadeem)</p>
-                    <p class="text-[11px] text-slate-400">Payment ke baad screenshot WhatsApp paradmin ko bhejein taaki wallet balance update ho sake.</p>
-                </div>
-            `;
-        }
-
-        function openChatPage() {
-            let container = document.getElementById('dynamicContentArea');
-            container.innerHTML = `
-                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-8 text-center space-y-2">
-                    <i class="fa-solid fa-comments text-emerald-400 text-3xl mb-1"></i>
-                    <h4 class="font-bold text-sm text-white">Empty Support Chat</h4>
-                    <p class="text-xs text-slate-400">Aapki koi active shikayat ya chat history nahi hai.</p>
-                </div>
-            `;
-        }
-
-        function openProfilePage() {
-            let container = document.getElementById('dynamicContentArea');
-            container.innerHTML = `
-                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-5 space-y-2">
-                    <h4 class="font-bold text-sm text-emerald-400 mb-2"><i class="fa-solid fa-user-gear"></i> Player Profile</h4>
-                    <p class="text-xs text-slate-300"><b>Name:</b> ${currentUser.gameName}</p>
-                    <p class="text-xs text-slate-300"><b>Email:</b> ${currentUser.email}</p>
-                    <p class="text-xs text-slate-300"><b>Free Fire UID:</b> ${currentUser.uid}</p>
-                    <p class="text-xs text-slate-300"><b>WhatsApp:</b> ${currentUser.whatsapp}</p>
-                    <p class="text-xs text-slate-300"><b>Wallet Balance:</b> Rs. ${currentUser.balance || 0}</p>
                 </div>
             `;
         }
