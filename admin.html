@@ -1,547 +1,1061 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multani.ff Admin Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multani.ff Admin Panel</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body class="bg-slate-950 text-white font-sans pb-28">
 
-    <!-- Top Header -->
-    <header class="flex justify-between items-center p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500">
-                <i class="fa-solid fa-shield-halved text-emerald-400 text-sm"></i>
-            </div>
-            <span class="font-bold text-lg text-emerald-400">Multani.ff Admin</span>
+<header class="flex justify-between items-center p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500">
+            <i class="fa-solid fa-shield-halved text-emerald-400 text-sm"></i>
         </div>
-        <div class="flex gap-2">
-            <button onclick="openPage('matchesPage')" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-1.5 rounded-xl font-bold text-sm shadow-lg shadow-pink-600/30 flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-gamepad"></i> + MATCH
-            </button>
-        </div>
-    </header>
+        <span class="font-bold text-lg text-emerald-400">Multani.ff Admin</span>
+    </div>
 
-    <!-- Main Dashboard Container -->
-    <main id="dashboardPage" class="p-4 space-y-4">
-        
-        <!-- Revenue Card -->
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-md">
-            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Total Match Revenue</p>
-            <h2 class="text-3xl font-extrabold text-emerald-400 mt-1">Rs <span id="totalRevenue">0</span></h2>
-            <p class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-check text-emerald-500"></i> Free Fire Tournament Admin Panel</p>
-        </div>
-
-        <!-- Metric Grid -->
-        <div class="grid grid-cols-3 gap-3">
-            <div onclick="openPage('matchesPage')" class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center cursor-pointer hover:border-emerald-500 transition">
-                <i class="fa-solid fa-gamepad text-emerald-400 text-lg mb-1"></i>
-                <h3 class="text-lg font-bold" id="liveMatchesCount">0</h3>
-                <p class="text-[11px] text-slate-400">Live Matches</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center">
-                <i class="fa-solid fa-users text-blue-400 text-lg mb-1"></i>
-                <h3 class="text-lg font-bold" id="approvedSlotsCount">0</h3>
-                <p class="text-[11px] text-slate-400">Approved Slots</p>
-            </div>
-            <div onclick="openPage('paymentPage')" class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center cursor-pointer hover:border-emerald-500 transition">
-                <i class="fa-solid fa-receipt text-amber-400 text-lg mb-1"></i>
-                <h3 class="text-lg font-bold" id="needsApprovalCount">0</h3>
-                <p class="text-[11px] text-slate-400">Needs Approval</p>
-            </div>
-        </div>
-
-        <!-- Match Manager Quick Banner -->
-        <button onclick="openPage('matchesPage')" class="w-full bg-slate-900 border border-emerald-500/40 text-emerald-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-850 transition">
-            <i class="fa-solid fa-list-check"></i> Match Manager (All Tournaments)
+    <div class="flex gap-2">
+        <button onclick="openPage('createMatchPage')"
+        class="bg-pink-600 hover:bg-pink-700 px-4 py-1.5 rounded-xl font-bold text-sm">
+            <i class="fa-solid fa-gamepad"></i> + MATCH
         </button>
-
-        <!-- Admin Control Grid Hub -->
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="grid grid-cols-4 gap-4 text-center">
-                <div onclick="openPage('createMatchPage')" class="cursor-pointer group">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition border border-slate-700">
-                        <i class="fa-solid fa-plus text-lg"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Create Match</span>
-                </div>
-                <div onclick="openPage('giveawayPage')" class="cursor-pointer group">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition border border-slate-700">
-                        <i class="fa-solid fa-gift text-lg text-pink-400 group-hover:text-white"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Giveaways</span>
-                </div>
-                <div onclick="openPage('paymentPage')" class="cursor-pointer group relative">
-                    <span id="payBadge" class="absolute top-0 right-3 bg-red-600 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-950 transition border border-slate-700">
-                        <i class="fa-solid fa-file-invoice-dollar text-lg text-amber-400 group-hover:text-slate-950"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Payment Approval</span>
-                </div>
-                <div onclick="openPage('bannedPage')" class="cursor-pointer group">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition border border-slate-700">
-                        <i class="fa-solid fa-user-slash text-lg text-red-400 group-hover:text-white"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Ban Player</span>
-                </div>
-                <div onclick="openPage('matchesPage')" class="cursor-pointer group pt-2">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition border border-slate-700">
-                        <i class="fa-solid fa-list text-lg"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Match Manager</span>
-                </div>
-                <div onclick="openPage('filterMapPage')" class="cursor-pointer group pt-2">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition border border-slate-700">
-                        <i class="fa-solid fa-map text-lg text-purple-400 group-hover:text-white"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Filter Map</span>
-                </div>
-                <div onclick="openPage('chatsPage')" class="cursor-pointer group pt-2 relative">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition border border-slate-700">
-                        <i class="fa-solid fa-comments text-lg text-emerald-400 group-hover:text-slate-950"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Help Chats</span>
-                </div>
-                <div onclick="openPage('registeredPlayersPage')" class="cursor-pointer group pt-2">
-                    <div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition border border-slate-700">
-                        <i class="fa-solid fa-users-gear text-lg text-blue-400 group-hover:text-white"></i>
-                    </div>
-                    <span class="text-[11px] text-slate-300 mt-2 block font-medium">Registered Players</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-wallet text-amber-400"></i> Payment Approvals (Pending)
-            </h3>
-            <div id="pendingPaymentsContainer" class="text-center py-6 text-slate-500 text-sm">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-2 block"></i>
-                Koi pending verification request nahi hai!
-            </div>
-        </div>
-    </main>
-
-    <!-- SUB-PAGES -->
-    <div id="matchesPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-pink-400"><i class="fa-solid fa-gamepad"></i> All Active Matches</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div id="matchesListContainer" class="space-y-3"></div>
     </div>
+</header>
 
-    <div id="createMatchPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-emerald-400"><i class="fa-solid fa-plus-circle"></i> Create New Match</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">Match Title / Room Name</label>
-                <input type="text" id="matchTitle" placeholder="e.g. Solo Night Cup" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-emerald-500">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Match Mode</label>
-                    <select id="matchMode" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none">
-                        <option value="Solo">Solo</option>
-                        <option value="Duo">Duo</option>
-                        <option value="Squad">Squad</option>
-                        <option value="Clash Squad">Clash Squad</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Map Filter</label>
-                    <select id="matchMap" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none">
-                        <option value="Bermuda">Bermuda</option>
-                        <option value="Kalahari">Kalahari</option>
-                        <option value="Purgatory">Purgatory</option>
-                        <option value="Nexterra">Nexterra</option>
-                        <option value="Alpine">Alpine</option>
-                    </select>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Slot Capacity</label>
-                    <input type="number" id="matchSlots" placeholder="e.g. 48 or 100" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Entry Fee / Prize</label>
-                    <input type="text" id="matchPrize" placeholder="e.g. Rs. 500" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm">
-                </div>
-            </div>
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">Match Banner Image (DP)</label>
-                <input type="file" id="matchBanner" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white">
-            </div>
-            <button onclick="saveNewMatch()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition">Publish Match Live</button>
-        </div>
-    </div>
+<main id="dashboardPage" class="p-4 space-y-4">
 
-    <div id="giveawayPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-pink-400"><i class="fa-solid fa-gift"></i> Giveaway Notification Setup</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">Giveaway Reward Announcement</label>
-                <textarea id="giveawayText" rows="4" placeholder="Type notification message here..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-pink-500"></textarea>
-            </div>
-            <button onclick="postGiveaway()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl text-sm transition">Broadcast Giveaway Live</button>
-        </div>
-    </div>
+<div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+    <p class="text-xs text-slate-400 uppercase">Total Match Revenue</p>
+    <h2 class="text-3xl font-extrabold text-emerald-400 mt-1">
+        Rs <span id="totalRevenue">0</span>
+    </h2>
+    <p class="text-xs text-slate-500 mt-1">
+        <i class="fa-solid fa-circle-check text-emerald-500"></i>
+        Free Fire Tournament Admin Panel
+    </p>
+</div>
 
-    <div id="paymentPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-amber-400"><i class="fa-solid fa-file-invoice-dollar"></i> Payment Approvals & Screenshots</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div id="fullPaymentList" class="space-y-3">
-            <p class="text-center text-slate-500 py-6">No payment proofs uploaded yet.</p>
-        </div>
-    </div>
+<div class="grid grid-cols-3 gap-3">
 
-    <div id="bannedPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-red-400"><i class="fa-solid fa-user-slash"></i> Banned Players List</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div id="bannedPlayersContainer" class="space-y-3">
-            <p class="text-center text-slate-500 py-6">No banned players found.</p>
-        </div>
-    </div>
+<div onclick="openPage('matchesPage')"
+class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center cursor-pointer">
+<i class="fa-solid fa-gamepad text-emerald-400 text-lg"></i>
+<h3 class="text-lg font-bold" id="liveMatchesCount">0</h3>
+<p class="text-[11px] text-slate-400">Live Matches</p>
+</div>
 
-    <div id="registeredPlayersPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-blue-400"><i class="fa-solid fa-users-gear"></i> Registered Users & Balances</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div id="registeredPlayersContainer" class="space-y-3">
-            <p class="text-center text-slate-500 py-6">No registered players yet.</p>
-        </div>
-    </div>
+<div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center">
+<i class="fa-solid fa-users text-blue-400 text-lg"></i>
+<h3 class="text-lg font-bold" id="approvedSlotsCount">0</h3>
+<p class="text-[11px] text-slate-400">Joined Slots</p>
+</div>
 
-    <div id="filterMapPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-purple-400"><i class="fa-solid fa-map"></i> Map Filters Customizer</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-            <div class="flex gap-2">
-                <input type="text" id="newMapName" placeholder="Add custom map name..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm">
-                <button onclick="addCustomMap()" class="bg-purple-600 px-4 py-2.5 rounded-xl font-bold text-sm">Add Map</button>
-            </div>
-            <div id="mapListContainer" class="space-y-2 mt-2"></div>
-        </div>
-    </div>
+<div onclick="openPage('paymentPage')"
+class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center cursor-pointer">
+<i class="fa-solid fa-receipt text-amber-400 text-lg"></i>
+<h3 class="text-lg font-bold" id="needsApprovalCount">0</h3>
+<p class="text-[11px] text-slate-400">Needs Approval</p>
+</div>
 
-    <div id="chatsPage" class="sub-page hidden p-4 space-y-4">
-        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <h2 class="font-bold text-base text-emerald-400"><i class="fa-solid fa-comments"></i> Player Help & Support Chats</h2>
-            <button onclick="openPage('dashboardPage')" class="bg-slate-800 px-3 py-1 rounded-lg text-xs font-semibold">Back</button>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="space-y-3" id="chatsContainer">
-                <p class="text-center text-slate-500 py-4">No active support chats.</p>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 grid grid-cols-4 py-2 px-1 z-50 text-center">
-        <button onclick="openPage('dashboardPage')" class="text-emerald-400 flex flex-col items-center justify-center gap-1 text-xs font-medium">
-            <i class="fa-solid fa-house text-base"></i>
-            <span>Home</span>
-        </button>
-        <button onclick="openPage('matchesPage')" class="text-slate-400 hover:text-white flex flex-col items-center justify-center gap-1 text-xs font-medium">
-            <i class="fa-solid fa-gamepad text-base"></i>
-            <span>Match</span>
-        </button>
-        <button onclick="openPage('bannedPage')" class="text-slate-400 hover:text-white flex flex-col items-center justify-center gap-1 text-xs font-medium">
-            <i class="fa-solid fa-user-slash text-base"></i>
-            <span>Banned</span>
-        </button>
-        <button onclick="openPage('chatsPage')" class="text-slate-400 hover:text-white flex flex-col items-center justify-center gap-1 text-xs font-medium">
-            <i class="fa-solid fa-comments text-base"></i>
-            <span>Chat</span>
-        </button>
-    </nav>
+<button onclick="openPage('matchesPage')"
+class="w-full bg-slate-900 border border-emerald-500/40 text-emerald-400 py-3 rounded-xl font-bold text-sm">
+<i class="fa-solid fa-list-check"></i>
+Match Manager (All Tournaments)
+</button>
 
-    <!-- JavaScript Logic -->
-    <script>
-        let appData = {
-            matches: [],
-            payments: [],
-            banned: [],
-            registeredUsers: [],
-            maps: ['Bermuda', 'Kalahari', 'Purgatory', 'Nexterra', 'Alpine']
-        };
+<div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
 
-        function openPage(pageId) {
-            document.querySelectorAll('.sub-page').forEach(page => page.classList.add('hidden'));
-            document.getElementById('dashboardPage').classList.add('hidden');
-            
-            if(pageId === 'dashboardPage') {
-                document.getElementById('dashboardPage').classList.remove('hidden');
-                updateDashboardCounts();
-            } else {
-                document.getElementById(pageId).classList.remove('hidden');
-                renderPageContent(pageId);
-            }
-            window.scrollTo(0,0);
-        }
+<div class="grid grid-cols-4 gap-4 text-center">
 
-        function updateDashboardCounts() {
-            document.getElementById('liveMatchesCount').innerText = appData.matches.length;
-            document.getElementById('needsApprovalCount').innerText = appData.payments.length;
-            document.getElementById('payBadge').innerText = appData.payments.length;
-            
-            let totalSlots = 0;
-            appData.matches.forEach(m => totalSlots += m.registeredPlayers.length);
-            document.getElementById('approvedSlotsCount').innerText = totalSlots;
-        }
+<div onclick="openPage('createMatchPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-plus"></i>
+</div>
+<span class="text-[11px] block mt-2">Create Match</span>
+</div>
 
-        function renderPageContent(pageId) {
-            if(pageId === 'matchesPage') {
-                let container = document.getElementById('matchesListContainer');
-                container.innerHTML = '';
-                if(appData.matches.length === 0) {
-                    container.innerHTML = '<p class="text-center text-slate-500 py-6">No active matches found.</p>';
-                    return;
-                }
-                appData.matches.forEach(match => {
-                    let playersHtml = match.registeredPlayers.map(p => `
-                        <div class="flex justify-between items-center bg-slate-800 p-2 rounded-lg text-xs mt-1">
-                            <div>
-                                <span class="font-bold text-white">${p.name}</span> | UID: <span class="text-emerald-400">${p.uid}</span> | WA: ${p.whatsapp}
-                            </div>
-                            <div class="flex gap-1">
-                                <button onclick="kickPlayer(${match.id}, '${p.uid}')" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600 hover:text-white px-2 py-1 rounded font-bold transition">Kick</button>
-                                <button onclick="banPlayerFromMatch(${match.id}, '${p.uid}')" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-2 py-1 rounded font-bold transition">Ban</button>
-                            </div>
-                        </div>
-                    `).join('');
+<div onclick="openPage('giveawayPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-gift text-pink-400"></i>
+</div>
+<span class="text-[11px] block mt-2">Giveaways</span>
+</div>
 
-                    container.innerHTML += `
-                        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span class="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded font-bold">${match.mode} - ${match.map}</span>
-                                    <h3 class="font-bold text-base mt-1">${match.title}</h3>
-                                    <p class="text-xs text-slate-400">Prize: ${match.prize} | Slots: ${match.registeredPlayers.length}/${match.slots}</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="deleteMatch(${match.id})" class="bg-slate-800 text-red-400 p-2 rounded-xl text-xs"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                            <div class="border-t border-slate-800 pt-2">
-                                <p class="text-xs font-semibold text-slate-400 mb-1">Registered Players:</p>
-                                <div class="space-y-1">${playersHtml || '<p class="text-slate-500 text-xs">No registrations yet.</p>'}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else if(pageId === 'paymentPage') {
-                let container = document.getElementById('fullPaymentList');
-                container.innerHTML = '';
-                if(appData.payments.length === 0) {
-                    container.innerHTML = '<p class="text-center text-slate-500 py-6">No payment proofs uploaded yet.</p>';
-                    return;
-                }
-                appData.payments.forEach(pay => {
-                    container.innerHTML += `
-                        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-2">
-                            <div class="flex justify-between items-center text-xs text-slate-400">
-                                <span class="font-bold text-white">${pay.player}</span>
-                                <span class="text-amber-400 font-bold">Rs. ${pay.amount}</span>
-                            </div>
-                            <p class="text-xs">UID: <span class="text-emerald-400">${pay.uid}</span> | WA: ${pay.whatsapp}</p>
-                            <div class="bg-slate-800 p-2 rounded-lg text-center text-xs text-slate-300">
-                                <i class="fa-solid fa-image text-emerald-400"></i> Screenshot attached by user
-                            </div>
-                            <div class="flex gap-2 pt-2">
-                                <button onclick="approvePayment(${pay.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition">Approve</button>
-                                <button onclick="rejectPayment(${pay.id})" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-xs font-bold transition">Reject</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else if(pageId === 'bannedPage') {
-                let container = document.getElementById('bannedPlayersContainer');
-                container.innerHTML = '';
-                if(appData.banned.length === 0) {
-                    container.innerHTML = '<p class="text-center text-slate-500 py-6">No banned players.</p>';
-                    return;
-                }
-                appData.banned.forEach((b, index) => {
-                    container.innerHTML += `
-                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-sm text-red-400">${b.name}</h4>
-                                <p class="text-xs text-slate-400">UID: ${b.uid} | WA: ${b.whatsapp}</p>
-                                <span class="inline-block bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded mt-1 font-semibold">Restriction: Match Join Blocked (Can View Website)</span>
-                            </div>
-                            <button onclick="unbanPlayer(${index})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">Unban</button>
-                        </div>
-                    `;
-                });
-            } else if(pageId === 'registeredPlayersPage') {
-                let container = document.getElementById('registeredPlayersContainer');
-                container.innerHTML = '';
-                if(appData.registeredUsers.length === 0) {
-                    container.innerHTML = '<p class="text-center text-slate-500 py-6">No registered players yet.</p>';
-                    return;
-                }
-                appData.registeredUsers.forEach((user) => {
-                    container.innerHTML += `
-                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl flex flex-col gap-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h4 class="font-bold text-sm text-white">${user.name}</h4>
-                                    <p class="text-xs text-slate-400">UID: <span class="text-emerald-400">${user.uid}</span> | WA: ${user.whatsapp}</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xs text-slate-400 block">Balance</span>
-                                    <span class="font-bold text-emerald-400 text-sm">Rs. ${user.balance}</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-2 pt-1 border-t border-slate-800">
-                                <input type="number" id="bal_${user.id}" value="${user.balance}" class="w-28 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs">
-                                <button onclick="updateUserBalance(${user.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-xs font-bold transition">Update</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else if(pageId === 'filterMapPage') {
-                let container = document.getElementById('mapListContainer');
-                container.innerHTML = '';
-                appData.maps.forEach((m, idx) => {
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center bg-slate-800 p-2.5 rounded-xl text-xs">
-                            <span class="font-medium">${m}</span>
-                            <button onclick="removeMap(${idx})" class="text-red-400 font-bold">Remove</button>
-                        </div>
-                    `;
-                });
-            }
-        }
+<div onclick="openPage('paymentPage')" class="cursor-pointer relative">
+<span id="payBadge"
+class="absolute top-0 right-3 bg-red-600 text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+0
+</span>
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-file-invoice-dollar text-amber-400"></i>
+</div>
+<span class="text-[11px] block mt-2">Payment</span>
+</div>
 
-        function saveNewMatch() {
-            let title = document.getElementById('matchTitle').value;
-            let mode = document.getElementById('matchMode').value;
-            let map = document.getElementById('matchMap').value;
-            let slots = document.getElementById('matchSlots').value;
-            let prize = document.getElementById('matchPrize').value;
+<div onclick="openPage('bannedPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-user-slash text-red-400"></i>
+</div>
+<span class="text-[11px] block mt-2">Ban Player</span>
+</div>
 
-            if(!title || !slots) {
-                alert('Please enter match title and slot capacity!');
-                return;
-            }
+<div onclick="openPage('matchesPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-list"></i>
+</div>
+<span class="text-[11px] block mt-2">Match Manager</span>
+</div>
 
-            appData.matches.push({
-                id: Date.now(),
-                title, mode, map, slots, prize: prize ? `Rs. ${prize}` : 'Free',
-                registeredPlayers: []
-            });
+<div onclick="openPage('filterMapPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-map text-purple-400"></i>
+</div>
+<span class="text-[11px] block mt-2">Filter Map</span>
+</div>
 
-            alert('Match created successfully!');
-            document.getElementById('matchTitle').value = '';
-            document.getElementById('matchSlots').value = '';
-            document.getElementById('matchPrize').value = '';
-            openPage('matchesPage');
-        }
+<div onclick="openPage('chatsPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-comments text-emerald-400"></i>
+</div>
+<span class="text-[11px] block mt-2">Help Chats</span>
+</div>
 
-        function deleteMatch(id) {
-            appData.matches = appData.matches.filter(m => m.id !== id);
-            renderPageContent('matchesPage');
-            updateDashboardCounts();
-        }
+<div onclick="openPage('registeredPlayersPage')" class="cursor-pointer">
+<div class="w-12 h-12 mx-auto bg-slate-800 rounded-full flex items-center justify-center">
+<i class="fa-solid fa-users-gear text-blue-400"></i>
+</div>
+<span class="text-[11px] block mt-2">Players</span>
+</div>
 
-        function kickPlayer(matchId, uid) {
-            let match = appData.matches.find(m => m.id === matchId);
-            if(match) {
-                match.registeredPlayers = match.registeredPlayers.filter(p => p.uid !== uid);
-                renderPageContent('matchesPage');
-                updateDashboardCounts();
-                alert('Player kicked from match slot successfully!');
-            }
-        }
+</div>
+</div>
 
-        function banPlayerFromMatch(matchId, uid) {
-            let match = appData.matches.find(m => m.id === matchId);
-            if(match) {
-                let player = match.registeredPlayers.find(p => p.uid === uid);
-                match.registeredPlayers = match.registeredPlayers.filter(p => p.uid !== uid);
-                if(player) {
-                    appData.banned.push({ name: player.name, uid: player.uid, whatsapp: player.whatsapp });
-                }
-                renderPageContent('matchesPage');
-                updateDashboardCounts();
-                alert('Player banned! They can view the website but cannot join matches.');
-            }
-        }
+<div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+<h3 class="font-bold text-sm mb-3">
+<i class="fa-solid fa-wallet text-amber-400"></i>
+Payment Approvals
+</h3>
+<div id="pendingPaymentsContainer"
+class="text-center py-6 text-slate-500 text-sm">
+Loading...
+</div>
+</div>
 
-        function approvePayment(id) {
-            appData.payments = appData.payments.filter(p => p.id !== id);
-            renderPageContent('paymentPage');
-            updateDashboardCounts();
-            alert('Payment approved!');
-        }
+</main>
 
-        function rejectPayment(id) {
-            appData.payments = appData.payments.filter(p => p.id !== id);
-            renderPageContent('paymentPage');
-            updateDashboardCounts();
-            alert('Payment rejected.');
-        }
 
-        function unbanPlayer(index) {
-            appData.banned.splice(index, 1);
-            renderPageContent('bannedPage');
-            alert('Player unbanned successfully! They can now join matches again.');
-        }
+<!-- MATCHES -->
 
-        function updateUserBalance(userId) {
-            let inputVal = document.getElementById(`bal_${userId}`).value;
-            let user = appData.registeredUsers.find(u => u.id === userId);
-            if(user) {
-                user.balance = Number(inputVal);
-                alert('Balance updated!');
-                renderPageContent('registeredPlayersPage');
-            }
-        }
+<div id="matchesPage" class="hidden p-4 space-y-4">
 
-        function postGiveaway() {
-            let text = document.getElementById('giveawayText').value;
-            if(!text) {
-                alert('Please enter announcement text!');
-                return;
-            }
-            alert('Giveaway broadcasted live!');
-            document.getElementById('giveawayText').value = '';
-            openPage('dashboardPage');
-        }
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+<h2 class="font-bold text-pink-400">
+<i class="fa-solid fa-gamepad"></i> All Matches
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
 
-        function addCustomMap() {
-            let mapName = document.getElementById('newMapName').value;
-            if(mapName) {
-                appData.maps.push(mapName);
-                document.getElementById('newMapName').value = '';
-                renderPageContent('filterMapPage');
-            }
-        }
+<div id="matchesListContainer" class="space-y-3"></div>
 
-        function removeMap(idx) {
-            appData.maps.splice(idx, 1);
-            renderPageContent('filterMapPage');
-        }
+</div>
 
-        updateDashboardCounts();
-    </script>
+
+<!-- CREATE MATCH -->
+
+<div id="createMatchPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+<h2 class="font-bold text-emerald-400">
+<i class="fa-solid fa-plus-circle"></i> Create Match
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
+
+<input id="matchTitle"
+placeholder="Match Title"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+<textarea id="matchDescription"
+placeholder="Description"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm"></textarea>
+
+<div class="grid grid-cols-2 gap-3">
+
+<select id="matchMode"
+class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+<option>Solo</option>
+<option>Duo</option>
+<option>Squad</option>
+<option>Clash Squad</option>
+</select>
+
+<select id="matchMap"
+class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+<option>Bermuda</option>
+<option>Kalahari</option>
+<option>Purgatory</option>
+<option>Nexterra</option>
+<option>Alpine</option>
+</select>
+
+</div>
+
+<div class="grid grid-cols-2 gap-3">
+
+<input type="number" id="matchSlots"
+placeholder="Max Players"
+class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+<input type="number" id="entryFee"
+placeholder="Entry Fee"
+class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+</div>
+
+<input type="number" id="prizePool"
+placeholder="Prize Pool"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+<input type="datetime-local" id="matchDate"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+<input type="text" id="roomId"
+placeholder="Room ID (optional)"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+<input type="text" id="roomPassword"
+placeholder="Room Password (optional)"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+
+<select id="matchStatus"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+<option value="upcoming">Upcoming</option>
+<option value="live">Live</option>
+<option value="completed">Completed</option>
+<option value="cancelled">Cancelled</option>
+</select>
+
+<button onclick="saveNewMatch()"
+class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold">
+Publish Match Live
+</button>
+
+</div>
+</div>
+
+
+<!-- PAYMENTS -->
+
+<div id="paymentPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+<h2 class="font-bold text-amber-400">
+Payment Approvals
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div id="fullPaymentList" class="space-y-3"></div>
+
+</div>
+
+
+<!-- BANNED -->
+
+<div id="bannedPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+<h2 class="font-bold text-red-400">
+<i class="fa-solid fa-user-slash"></i> Banned Players
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div id="bannedPlayersContainer"></div>
+
+</div>
+
+
+<!-- PLAYERS -->
+
+<div id="registeredPlayersPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+<h2 class="font-bold text-blue-400">
+<i class="fa-solid fa-users"></i> Registered Players
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div id="registeredPlayersContainer" class="space-y-3"></div>
+
+</div>
+
+
+<!-- GIVEAWAY -->
+
+<div id="giveawayPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+<h2 class="font-bold text-pink-400">
+<i class="fa-solid fa-gift"></i> Giveaway
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div class="bg-slate-900 p-4 rounded-2xl space-y-3">
+
+<input id="giveawayTitle"
+placeholder="Giveaway Title"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3">
+
+<textarea id="giveawayDescription"
+placeholder="Description"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3"></textarea>
+
+<input id="giveawayPrize"
+placeholder="Prize"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3">
+
+<input type="number" id="maxWinners"
+placeholder="Max Winners"
+class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3">
+
+<button onclick="postGiveaway()"
+class="w-full bg-pink-600 py-3 rounded-xl font-bold">
+Create Giveaway
+</button>
+
+</div>
+</div>
+
+
+<!-- MAP -->
+
+<div id="filterMapPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl">
+<h2 class="font-bold text-purple-400">Map Settings</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div class="bg-slate-900 p-4 rounded-2xl">
+
+<p class="text-xs text-slate-400 mb-3">
+Maps currently available:
+</p>
+
+<div class="flex flex-wrap gap-2">
+
+<span class="bg-slate-800 px-3 py-2 rounded-lg text-xs">Bermuda</span>
+<span class="bg-slate-800 px-3 py-2 rounded-lg text-xs">Kalahari</span>
+<span class="bg-slate-800 px-3 py-2 rounded-lg text-xs">Purgatory</span>
+<span class="bg-slate-800 px-3 py-2 rounded-lg text-xs">Nexterra</span>
+<span class="bg-slate-800 px-3 py-2 rounded-lg text-xs">Alpine</span>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- CHATS -->
+
+<div id="chatsPage" class="hidden p-4 space-y-4">
+
+<div class="flex justify-between bg-slate-900 p-3 rounded-xl">
+<h2 class="font-bold text-emerald-400">
+<i class="fa-solid fa-comments"></i> Support Chats
+</h2>
+<button onclick="openPage('dashboardPage')"
+class="bg-slate-800 px-3 py-1 rounded-lg text-xs">Back</button>
+</div>
+
+<div id="chatsContainer" class="space-y-3"></div>
+
+</div>
+
+
+<!-- NAV -->
+
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 grid grid-cols-4 py-2 z-50">
+
+<button onclick="openPage('dashboardPage')" class="text-emerald-400">
+<i class="fa-solid fa-house block"></i>
+<span class="text-xs">Home</span>
+</button>
+
+<button onclick="openPage('matchesPage')" class="text-slate-400">
+<i class="fa-solid fa-gamepad block"></i>
+<span class="text-xs">Match</span>
+</button>
+
+<button onclick="openPage('bannedPage')" class="text-slate-400">
+<i class="fa-solid fa-user-slash block"></i>
+<span class="text-xs">Banned</span>
+</button>
+
+<button onclick="openPage('chatsPage')" class="text-slate-400">
+<i class="fa-solid fa-comments block"></i>
+<span class="text-xs">Chat</span>
+</button>
+
+</nav>
+
+
+<script>
+
+/* ===============================
+   SUPABASE
+================================ */
+
+const SUPABASE_URL =
+"https://eyrwqmirdigsckcwbmxn.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
+
+const supabaseClient =
+supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+/* ===============================
+   PAGE
+================================ */
+
+function openPage(pageId){
+
+document.querySelectorAll(
+"main, .hidden-page"
+).forEach(()=>{});
+
+document.querySelectorAll(
+'[id$="Page"]'
+).forEach(el=>{
+el.classList.add("hidden");
+});
+
+document.getElementById(pageId)
+.classList.remove("hidden");
+
+if(pageId==="dashboardPage") loadDashboard();
+if(pageId==="matchesPage") loadMatches();
+if(pageId==="paymentPage") loadPayments();
+if(pageId==="bannedPage") loadBanned();
+if(pageId==="registeredPlayersPage") loadPlayers();
+if(pageId==="chatsPage") loadChats();
+
+window.scrollTo(0,0);
+}
+
+
+/* ===============================
+   DASHBOARD
+================================ */
+
+async function loadDashboard(){
+
+const {data:matches,error:mError} =
+await supabaseClient
+.from("tournaments")
+.select("id,entry_fee,joined_players,status");
+
+if(mError){
+console.error(mError);
+return;
+}
+
+const active =
+matches.filter(x =>
+["upcoming","live"].includes(
+String(x.status).toLowerCase()
+)
+);
+
+let slots=0;
+let revenue=0;
+
+matches.forEach(m=>{
+slots += Number(m.joined_players || 0);
+revenue +=
+Number(m.entry_fee || 0) *
+Number(m.joined_players || 0);
+});
+
+document.getElementById(
+"liveMatchesCount"
+).innerText=active.length;
+
+document.getElementById(
+"approvedSlotsCount"
+).innerText=slots;
+
+document.getElementById(
+"totalRevenue"
+).innerText=revenue;
+
+const {count} =
+await supabaseClient
+.from("deposit_requests")
+.select("*",{count:"exact",head:true})
+.eq("status","pending");
+
+document.getElementById(
+"needsApprovalCount"
+).innerText=count || 0;
+
+document.getElementById(
+"payBadge"
+).innerText=count || 0;
+
+loadPendingPayments();
+}
+
+
+/* ===============================
+   PENDING PAYMENTS
+================================ */
+
+async function loadPendingPayments(){
+
+const {data,error} =
+await supabaseClient
+.from("deposit_requests")
+.select("*")
+.eq("status","pending")
+.order("created_at",{ascending:false});
+
+const box =
+document.getElementById(
+"pendingPaymentsContainer"
+);
+
+if(error){
+box.innerText="Error loading payments";
+console.error(error);
+return;
+}
+
+if(!data || data.length===0){
+box.innerHTML=
+`<i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-2 block"></i>
+No pending verification request!`;
+return;
+}
+
+box.innerHTML=data.slice(0,5).map(p=>`
+
+<div class="bg-slate-800 p-3 rounded-xl text-left mb-2">
+
+<div class="flex justify-between">
+
+<span class="font-bold">
+Rs. ${p.amount}
+</span>
+
+<span class="text-amber-400 text-xs">
+${p.status}
+</span>
+
+</div>
+
+<p class="text-xs text-slate-400 mt-1">
+Transaction: ${p.transaction_id || "-"}
+</p>
+
+<div class="flex gap-2 mt-2">
+
+<button onclick="approvePayment('${p.id}')"
+class="flex-1 bg-emerald-600 py-2 rounded-lg text-xs font-bold">
+Approve
+</button>
+
+<button onclick="rejectPayment('${p.id}')"
+class="flex-1 bg-red-600 py-2 rounded-lg text-xs font-bold">
+Reject
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+}
+
+
+/* ===============================
+   MATCHES
+================================ */
+
+async function loadMatches(){
+
+const box =
+document.getElementById(
+"matchesListContainer"
+);
+
+box.innerHTML=
+`<p class="text-center text-slate-500 py-6">
+Loading matches...
+</p>`;
+
+const {data,error} =
+await supabaseClient
+.from("tournaments")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+box.innerHTML=
+`<p class="text-red-400 text-center">${error.message}</p>`;
+return;
+}
+
+if(!data.length){
+box.innerHTML=
+`<p class="text-center text-slate-500 py-6">
+No matches found.
+</p>`;
+return;
+}
+
+box.innerHTML="";
+
+for(const match of data){
+
+const {data:entries} =
+await supabaseClient
+.from("tournament_entries")
+.select("*")
+.eq("tournament_id",match.id)
+.order("slot_number",{ascending:true});
+
+const players =
+entries || [];
+
+const playersHtml =
+players.map(p=>`
+
+<div class="bg-slate-800 p-2 rounded-lg text-xs mt-1">
+
+<div>
+<b>${p.free_fire_name || "-"}</b>
+<br>
+UID:
+<span class="text-emerald-400">
+${p.free_fire_uid || "-"}
+</span>
+
+<br>
+Slot: ${p.slot_number || "-"}
+</div>
+
+<div class="flex gap-1 mt-2">
+
+<button onclick="kickPlayer('${p.id}')"
+class="bg-amber-600/20 text-amber-400 px-2 py-1 rounded">
+Kick
+</button>
+
+<button onclick="banPlayer('${p.id}','${p.free_fire_uid}')"
+class="bg-red-600/20 text-red-400 px-2 py-1 rounded">
+Ban
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+box.innerHTML+=`
+
+<div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+
+<div class="flex justify-between">
+
+<div>
+
+<span class="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-1 rounded">
+${match.mode} - ${match.map}
+</span>
+
+<h3 class="font-bold mt-2">
+${match.title}
+</h3>
+
+<p class="text-xs text-slate-400">
+Entry: Rs. ${match.entry_fee || 0}
+|
+Prize: Rs. ${match.prize_pool || 0}
+</p>
+
+<p class="text-xs text-slate-400">
+Players:
+${match.joined_players || 0}/${match.max_players || 0}
+</p>
+
+<p class="text-xs text-slate-400">
+Status:
+<span class="text-emerald-400">
+${match.status}
+</span>
+</p>
+
+</div>
+
+<button onclick="deleteMatch('${match.id}')"
+class="bg-slate-800 text-red-400 p-2 rounded-xl">
+<i class="fa-solid fa-trash"></i>
+</button>
+
+</div>
+
+<div class="border-t border-slate-800 mt-3 pt-2">
+
+<p class="text-xs text-slate-400 mb-2">
+Registered Players
+</p>
+
+${playersHtml ||
+`<p class="text-xs text-slate-500">
+No players joined.
+</p>`}
+
+</div>
+
+</div>
+`;
+}
+}
+
+
+/* ===============================
+   CREATE MATCH
+================================ */
+
+async function saveNewMatch(){
+
+const title =
+document.getElementById("matchTitle").value.trim();
+
+const description =
+document.getElementById("matchDescription").value.trim();
+
+const mode =
+document.getElementById("matchMode").value;
+
+const map =
+document.getElementById("matchMap").value;
+
+const max_players =
+Number(document.getElementById("matchSlots").value);
+
+const entry_fee =
+Number(document.getElementById("entryFee").value || 0);
+
+const prize_pool =
+Number(document.getElementById("prizePool").value || 0);
+
+const match_date =
+document.getElementById("matchDate").value;
+
+const room_id =
+document.getElementById("roomId").value.trim();
+
+const room_password =
+document.getElementById("roomPassword").value.trim();
+
+const status =
+document.getElementById("matchStatus").value;
+
+if(!title || !max_players){
+alert("Match title aur max players zaroor enter karein.");
+return;
+}
+
+const {
+data:{user}
+} =
+await supabaseClient.auth.getUser();
+
+const {error} =
+await supabaseClient
+.from("tournaments")
+.insert({
+
+title,
+description,
+game:"Free Fire",
+mode,
+map,
+entry_fee,
+prize_pool,
+max_players,
+joined_players:0,
+match_date:match_date
+? new Date(match_date).toISOString()
+: null,
+status,
+room_id:room_id || null,
+room_password:room_password || null,
+created_by:user ? user.id : null
+
+});
+
+if(error){
+
+alert(error.message);
+console.error(error);
+return;
+
+}
+
+alert("Match successfully created!");
+
+document.getElementById("matchTitle").value="";
+document.ge
+    tElementById("matchDescription").value="";
+document.getElementById("matchSlots").value="";
+document.getElementById("entryFee").value="";
+document.getElementById("prizePool").value="";
+document.getElementById("roomId").value="";
+document.getElementById("roomPassword").value="";
+
+openPage("matchesPage");
+}
+
+
+/* ===============================
+   DELETE MATCH
+================================ */
+
+async function deleteMatch(id){
+
+if(!confirm("Is match ko delete karna hai?"))
+return;
+
+const {error} =
+await supabaseClient
+.from("tournaments")
+.delete()
+.eq("id",id);
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("Match deleted!");
+
+loadMatches();
+loadDashboard();
+}
+
+
+/* ===============================
+   KICK PLAYER
+================================ */
+
+async function kickPlayer(entryId){
+
+if(!confirm("Player ko match se kick karna hai?"))
+return;
+
+const {data:entry,error:getError} =
+await supabaseClient
+.from("tournament_entries")
+.select("tournament_id")
+.eq("id",entryId)
+.single();
+
+if(getError){
+alert(getError.message);
+return;
+}
+
+const {error} =
+await supabaseClient
+.from("tournament_entries")
+.delete()
+.eq("id",entryId);
+
+if(error){
+alert(error.message);
+return;
+}
+
+if(entry){
+
+const {data:all} =
+await supabaseClient
+.from("tournament_entries")
+.select("id")
+.eq("tournament_id",entry.tournament_id);
+
+await supabaseClient
+.from("tournaments")
+.update({
+joined_players:(all || []).length
+})
+.eq("id",entry.tournament_id);
+
+}
+
+alert("Player kicked!");
+
+loadMatches();
+loadDashboard();
+}
+
+
+/* ===============================
+   BAN PLAYER
+================================ */
+
+async function banPlayer(entryId,uid){
+
+if(!confirm("Player ko ban karna hai?"))
+return;
+
+const {error:banError} =
+await supabaseClient
+.from("banned_uids")
+.insert({
+free_fire_uid:uid,
+reason:"Admin banned player"
+});
+
+if(banError){
+alert(banError.message);
+return;
+}
+
+const {error} =
+await supabaseClient
+.from("tournament_entries")
+.delete()
+.eq("id",entryId);
+
+if(error){
+alert(error.message);
+return;
+}
+
+await supabaseClient
+.from("profiles")
+.update({
+is_banned:true
+})
+.eq("free_fire_uid",uid);
+
+alert("Player banned successfully!");
+
+loadMatches();
+loadBanned();
+}
+
+
+/* ===============================
+   PAYMENTS
+================================ */
+
+async function loadPayments(){
+
+const box =
+document.getElementById("fullPaymentList");
+
+const {data,error} =
+await supabaseClient
+.from("deposit_requests")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+box.innerHTML=
+`<p
+class="text-red-400">${error.message}</p>`;
+return;
+}
+
+if(!data || data.length===0){
+box.innerHTML=
+`<p class="text-center text-slate-500 py-6">
+No support messages.
+</p>`;
+return;
+}
+
+box.innerHTML=data.map(c=>`
+
+<div class="bg-slate-800 p-3 rounded-xl">
+
+<div class="flex justify-between">
+
+<span class="text-xs text-emerald-400">
+${c.sender_type || "user"}
+</span>
+
+<span class="text-[10px] text-slate-500">
+${new Date(c.created_at).toLocaleString()}
+</span>
+
+</div>
+
+<p class="text-sm mt-2">
+${c.message}
+</p>
+
+<button onclick="markChatRead('${c.id}')"
+class="mt-2 bg-emerald-600 px-3 py-1 rounded-lg text-xs">
+Mark Read
+</button>
+
+</div>
+
+`).join("");
+}
+
+async function markChatRead(id){
+
+const {error} =
+await supabaseClient
+.from("support_messages")
+.update({
+is_read:true
+})
+.eq("id",id);
+
+if(error){
+alert(error.message);
+return;
+}
+
+loadChats();
+}
+
+loadDashboard();
+
+</script>
+
 </body>
 </html>
