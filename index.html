@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,44 +28,45 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:12px 15px;
+  padding:10px 12px;
   background:#0d1b22;
   border-bottom:1px solid #162935;
   position:sticky;
   top:0;
   z-index:100;
+  gap: 6px;
 }
 
 .logo-area{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:6px;
   font-weight:bold;
-  font-size:15px;
+  font-size:13px;
   color:#00ff9d;
 }
 
 .logo-icon{
   background:#00d084;
   color:#091216;
-  width:28px;
-  height:28px;
+  width:24px;
+  height:24px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:14px;
+  font-size:12px;
 }
 
+/* Chota Search Bar */
 .search-box{
-  flex:1;
-  margin:0 10px;
+  width: 110px;
   background:#14222b;
-  border-radius:20px;
-  padding:6px 12px;
+  border-radius:15px;
+  padding:4px 8px;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:5px;
   border:1px solid #1e3340;
 }
 
@@ -74,28 +74,39 @@ body{
   background:transparent;
   border:none;
   color:white;
-  font-size:13px;
+  font-size:11px;
   width:100%;
   outline:none;
 }
 
+/* Header Wallet & Icons */
+.header-wallet {
+  background: #14222b;
+  border: 1px solid #00d084;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: #00ff9d;
+  font-weight: bold;
+}
+
 .header-icons{
   display:flex;
-  gap:8px;
+  gap:5px;
 }
 
 .icon-btn{
   background:#14222b;
   border:1px solid #1e3340;
   color:#a3e4d7;
-  width:32px;
-  height:32px;
+  width:28px;
+  height:28px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  font-size:13px;
+  font-size:11px;
 }
 
 .container{
@@ -157,6 +168,27 @@ body{
   margin-top:2px;
 }
 
+/* Action Buttons Grid inside Home */
+.action-buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.action-card-btn {
+  background: #0d1b22;
+  border: 1px solid #00d084;
+  padding: 12px;
+  border-radius: 14px;
+  text-align: center;
+  color: #00ff9d;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
 /* Download APK Banner */
 .download-banner{
   background:#0d261e;
@@ -207,42 +239,6 @@ body{
   gap:6px;
 }
 
-.sort-dropdown{
-  background:#14222b;
-  color:#a3e4d7;
-  border:1px solid #1e3340;
-  padding:6px 10px;
-  border-radius:12px;
-  font-size:12px;
-  outline:none;
-}
-
-/* Category Pills */
-.pills-container{
-  display:flex;
-  gap:8px;
-  overflow-x:auto;
-  padding-bottom:12px;
-  white-space:nowrap;
-}
-
-.pill{
-  background:#14222b;
-  color:#a3e4d7;
-  border:1px solid #1e3340;
-  padding:7px 16px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.pill.active{
-  background:#00d084;
-  color:#091216;
-  border-color:#00ff9d;
-}
-
 /* Grid Tournaments */
 .grid-tournaments{
   display:grid;
@@ -257,25 +253,25 @@ body{
   overflow:hidden;
   position:relative;
   box-shadow:0 3px 10px rgba(0,0,0,0.3);
-  cursor:pointer;
 }
 
 .t-thumb{
-  height:110px;
-  background:#14222b;
+  height:100px;
+  background: linear-gradient(135deg, #14222b, #1b3644);
   position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
   color:#00ff9d;
   font-size:26px;
+  border-bottom: 1px solid #162935;
 }
 
 .whatsapp-tag{
   position:absolute;
   top:8px;
   right:8px;
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,0.7);
   color:#00ff9d;
   font-size:9px;
   padding:2px 6px;
@@ -306,11 +302,22 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-top:8px;
-  padding-top:6px;
-  border-top:1px solid #14222b;
+  margin-top:6px;
   font-size:10px;
   color:#8aa0ae;
+}
+
+.join-match-btn {
+  width: 100%;
+  margin-top: 8px;
+  background: #00d084;
+  color: #091216;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 11px;
+  cursor: pointer;
 }
 
 /* Bottom Navigation */
@@ -381,16 +388,24 @@ button.main-btn{ width:100%; padding:12px; margin-top:10px; background:#00d084; 
 <header class="top-header">
   <div class="logo-area">
     <div class="logo-icon"><i class="fa-solid fa-fire"></i></div>
-    <span>Multani FF Official</span>
+    <span>Multani FF</span>
   </div>
+  
+  <!-- Chota Search Bar -->
   <div class="search-box">
-    <i class="fa-solid fa-search" style="color:#8aa0ae; font-size:12px;"></i>
-    <input type="text" placeholder="Search Tournament...">
+    <i class="fa-solid fa-search" style="color:#8aa0ae; font-size:11px;"></i>
+    <input type="text" placeholder="Search...">
   </div>
+
+  <!-- Wallet Balance Uper -->
+  <div class="header-wallet">
+    Rs. <span id="topWalletBal">0</span>
+  </div>
+
   <div class="header-icons">
-    <div class="icon-btn"><i class="fa-solid fa-share-nodes"></i></div>
-    <div class="icon-btn"><i class="fa-solid fa-gear"></i></div>
-    <div class="icon-btn"><i class="fa-solid fa-bars"></i></div>
+    <div class="icon-btn" onclick="shareApp()"><i class="fa-solid fa-share-nodes"></i></div>
+    <div class="icon-btn" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
+    <div class="icon-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></div>
   </div>
 </header>
 
@@ -410,34 +425,33 @@ button.main-btn{ width:100%; padding:12px; margin-top:10px; background:#00d084; 
       </div>
     </div>
 
+    <!-- Quick Action Buttons (Add Balance & Admin Support) -->
+    <div class="action-buttons-grid">
+      <div class="action-card-btn" onclick="openAddBalance()">
+        <i class="fa-solid fa-wallet fa-lg mb-1"></i><br>💰 Add Balance
+      </div>
+      <div class="action-card-btn" style="border-color:#3498db; color:#5dade2;" onclick="contactAdmin()">
+        <i class="fa-solid fa-headset fa-lg mb-1"></i><br>💬 Admin Support
+      </div>
+    </div>
+
     <!-- DOWNLOAD APK BANNER -->
     <div class="download-banner">
       <div>
         <h4>ڈاون لوڈ آفیشل ایپ</h4>
         <p>Download Official App (APK)</p>
       </div>
-      <button class="dl-btn"><i class="fa-solid fa-download"></i> Download</button>
+      <button class="dl-btn" onclick="alert('Downloading APK...')"><i class="fa-solid fa-download"></i> Download</button>
     </div>
 
     <!-- FILTER & CATEGORIES -->
     <div class="filter-row">
-      <div class="filter-title"><i class="fa-solid fa-layer-group" style="color:#00ff9d;"></i> Tournaments</div>
-      <select class="sort-dropdown">
-        <option>Latest First</option>
-        <option>Oldest First</option>
-      </select>
-    </div>
-
-    <div class="pills-container">
-      <button class="pill active">All Matches</button>
-      <button class="pill">Solo</button>
-      <button class="pill">Duo</button>
-      <button class="pill">Squad</button>
+      <div class="filter-title"><i class="fa-solid fa-layer-group" style="color:#00ff9d;"></i> Active Tournaments</div>
     </div>
 
     <!-- TOURNAMENTS GRID SECTION -->
     <div id="tournamentsGrid" class="grid-tournaments">
-      <!-- Dynamic Tournaments will load here -->
+      <!-- Dynamic Tournaments will load here with auto DPs & Join buttons -->
     </div>
 
   </div>
@@ -464,7 +478,23 @@ button.main-btn{ width:100%; padding:12px; margin-top:10px; background:#00d084; 
           🏆 Wins <div style="font-size:18px; font-weight:bold; color:#00ff9d;" id="totalWins">0</div>
         </div>
       </div>
+      <button class="main-btn" onclick="openAddBalance()" style="background:#f39c12; color:white; margin-top:10px;">💰 Add Balance Request</button>
+      <button class="main-btn" onclick="contactAdmin()" style="background:#3498db; color:white; margin-top:10px;">💬 Contact Admin</button>
       <button class="main-btn" style="background:#e74c3c; color:white; margin-top:15px;" onclick="logout()">LOGOUT</button>
+    </div>
+  </div>
+
+  <!-- MATCH DETAILS & JOIN SECTION -->
+  <div id="matchSection" class="hidden">
+    <div class="card">
+      <button class="main-btn blue-btn" onclick="backToHome()" style="margin-bottom:15px;">← BACK TO TOURNAMENTS</button>
+      <h2 id="matchTitle" style="color:#00ff9d;"></h2>
+      <div style="margin:8px 0;">🎮 Mode: <b id="matchMode"></b></div>
+      <div style="margin:8px 0;">🗺️ Map: <b id="matchMap"></b></div>
+      <div style="margin:8px 0;">💰 Entry Fee: <b>Rs. <span id="matchFee"></span></b></div>
+      <div style="margin:8px 0;">🏆 Prize Pool: <b>Rs. <span id="matchPrize"></span></b></div>
+      
+      <button class="main-btn" onclick="joinCurrentTournament()" style="margin-top:20px;">🎮 JOIN TOURNAMENT NOW</button>
     </div>
   </div>
 
@@ -476,7 +506,7 @@ button.main-btn{ width:100%; padding:12px; margin-top:10px; background:#00d084; 
     <i class="fa-solid fa-house" style="font-size:16px;"></i>
     <span>Home</span>
   </button>
-  <button class="nav-center-btn" onclick="openAddMatch()">
+  <button class="nav-center-btn" onclick="openAddBalance()">
     <i class="fa-solid fa-plus"></i>
   </button>
   <button class="nav-item" onclick="switchBottomNav('me')">
@@ -491,23 +521,52 @@ const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
+let selectedTournamentId = null;
 
 function switchBottomNav(tab) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   if(tab === 'home') {
     document.getElementById('homeSection').classList.remove('hidden');
     document.getElementById('profileAuthSection').classList.add('hidden');
+    document.getElementById('matchSection').classList.add('hidden');
     event.currentTarget.classList.add('active');
     loadTournaments();
   } else if(tab === 'me') {
     document.getElementById('homeSection').classList.add('hidden');
     document.getElementById('profileAuthSection').classList.remove('hidden');
+    document.getElementById('matchSection').classList.add('hidden');
     event.currentTarget.classList.add('active');
   }
 }
 
-function openAddMatch() {
-  alert("Match create karne ke liye admin panel open karein.");
+function shareApp() {
+  if (navigator.share) {
+    navigator.share({ title: 'Multani FF', url: window.location.href });
+  } else {
+    alert("Website link copied!");
+  }
+}
+
+function openSettings() {
+  alert("Settings: Multani FF Tournament v1.0");
+}
+
+function openMenu() {
+  alert("Multani FF Official Menu - All systems active.");
+}
+
+function openAddBalance() {
+  let amt = prompt("Kitna balance add karna hai? (Amount enter karein):", "500");
+  if(amt) {
+    alert("Balance request submitted! Admin approval ke baad wallet mein add ho jayega.");
+  }
+}
+
+function contactAdmin() {
+  let msg = prompt("Admin ko apna masla ya message likhein:");
+  if(msg) {
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  }
 }
 
 async function loadTournaments() {
@@ -526,10 +585,13 @@ async function loadTournaments() {
   }
 
   data.forEach(t => {
+    // Auto Gaming DP / Icons based on Mode
+    let iconClass = t.mode === 'Squad' ? 'fa-users' : (t.mode === 'Duo' ? 'fa-user-group' : 'fa-gamepad');
+
     grid.innerHTML += `
       <div class="t-card">
         <div class="t-thumb">
-          <i class="fa-solid fa-gamepad"></i>
+          <i class="fa-solid ${iconClass}"></i>
           <span class="whatsapp-tag">${escapeHTML(t.mode)}</span>
         </div>
         <div class="t-body">
@@ -539,10 +601,66 @@ async function loadTournaments() {
             <span>👥 ${t.joined_players}/${t.max_players}</span>
             <span style="color:#00ff9d; font-weight:bold;">Rs.${t.prize_pool}</span>
           </div>
+          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${escapeHTML(t.title)}', '${escapeHTML(t.mode)}', '${escapeHTML(t.map)}', ${t.entry_fee}, ${t.prize_pool})">VIEW / JOIN</button>
         </div>
       </div>
     `;
   });
+}
+
+function openMatchDetails(id, title, mode, map, fee, prize) {
+  selectedTournamentId = id;
+  document.getElementById('matchTitle').textContent = title;
+  document.getElementById('matchMode').textContent = mode;
+  document.getElementById('matchMap').textContent = map;
+  document.getElementById('matchFee').textContent = fee;
+  document.getElementById('matchPrize').textContent = prize;
+
+  document.getElementById('homeSection').classList.add('hidden');
+  document.getElementById('profileAuthSection').classList.add('hidden');
+  document.getElementById('matchSection').classList.remove('hidden');
+}
+
+function backToHome() {
+  document.getElementById('matchSection').classList.add('hidden');
+  document.getElementById('homeSection').classList.remove('hidden');
+  loadTournaments();
+}
+
+async function joinCurrentTournament() {
+  if(!currentUser) {
+    alert("Pehle Login karein!");
+    switchBottomNav('me');
+    return;
+  }
+
+  const teamName = prompt("Team Name enter karo:", "Multani FF Team");
+  if(!teamName) return;
+
+  const { data:profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+  if(!profile || !profile.free_fire_uid) {
+    alert("Pehle apni Free Fire UID profile mein set karein.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.rpc("join_tournament", {
+    p_tournament_id: selectedTournamentId,
+    p_free_fire_uid: profile.free_fire_uid,
+    p_free_fire_name: profile.free_fire_name || "",
+    p_team_name: teamName
+  });
+
+  if(error) {
+    alert(error.message);
+    return;
+  }
+
+  if(data && data.success) {
+    alert("🏆 Tournament successfully joined! Slot: #" + (data.slot || data.assigned_slot || "1"));
+    backToHome();
+  } else {
+    alert(data.message || "Failed to join");
+  }
 }
 
 async function signup() {
@@ -574,7 +692,9 @@ async function checkAuthSession() {
     if(profile) {
       document.getElementById('profileName').textContent = profile.username || "FF Player";
       document.getElementById('profileUid').textContent = profile.free_fire_uid || "Not Added";
-      document.getElementById('walletBal').textContent = Number(profile.wallet_balance || 0).toFixed(2);
+      let bal = Number(profile.wallet_balance || 0).toFixed(2);
+      document.getElementById('walletBal').textContent = bal;
+      document.getElementById('topWalletBal').textContent = bal;
       document.getElementById('totalWins').textContent = profile.total_wins || 0;
       document.getElementById('dashUsername').textContent = profile.username || "☆Mr ᝰ Nadeem.ff ᝰ";
       document.getElementById('dashUid').textContent = profile.free_fire_uid || "3239454397";
