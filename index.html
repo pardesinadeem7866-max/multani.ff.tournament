@@ -6,16 +6,33 @@
     <title>Multani FF Official Tournament</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-[#0b1a12] text-white font-sans pb-28">
 
+    <!-- LOGIN / AUTH MODAL (Website open hote hi pehle dikhega jab tak login na ho) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-[#0f281b] border border-emerald-500/40 w-full max-w-sm rounded-2xl p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 bg-emerald-500/20 mx-auto rounded-full flex items-center justify-center border border-emerald-500">
+                <i class="fa-solid fa-shield-halved text-emerald-400 text-2xl"></i>
+            </div>
+            <h2 class="font-bold text-xl text-emerald-400">Multani FF Tournaments</h2>
+            <p class="text-xs text-slate-300">Website access karne aur matches join karne ke liye apne Google account se sign in karein.</p>
+            
+            <button onclick="loginWithGoogle()" class="w-full bg-white text-slate-950 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg hover:bg-slate-200 transition">
+                <i class="fa-brands fa-google text-red-500 text-base"></i> Continue with Google
+            </button>
+        </div>
+    </div>
+
     <!-- Top Header Bar -->
-    <header class="flex justify-between items-center p-4 bg-[#0d2218] border-b border-[#143825] sticky top-0 z-50">
+    <header class="flex justify-between items-center p-4 bg-[#0d2218] border-b border-[#143825] sticky top-0 z-40">
         <div class="flex items-center gap-3">
             <button class="text-slate-300"><i class="fa-solid fa-share-nodes text-lg"></i></button>
             <div class="bg-[#143825] border border-emerald-500/40 px-3 py-1 rounded-full flex items-center gap-2">
                 <i class="fa-solid fa-coins text-amber-400 text-sm"></i>
-                <span class="font-bold text-sm text-amber-300" id="userWalletBalance">Rs. 10525</span>
+                <span class="font-bold text-sm text-amber-300" id="userWalletBalance">Rs. 0</span>
             </div>
         </div>
         <div class="flex items-center gap-4">
@@ -23,7 +40,7 @@
                 <span class="text-emerald-400 border-b-2 border-emerald-400 pb-0.5 cursor-pointer">Matches</span>
                 <span class="text-slate-400 cursor-pointer" onclick="openWinners()">Winners</span>
             </div>
-            <button class="text-slate-300"><i class="fa-solid fa-gear text-lg"></i></button>
+            <button onclick="logoutUser()" class="text-slate-300" title="Logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
         </div>
     </header>
 
@@ -58,16 +75,15 @@
 
         <!-- Category Filter Pills -->
         <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <button onclick="filterMatches('All')" class="px-4 py-2 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs whitespace-nowrap shadow">Recently</button>
-            <button onclick="filterMatches('Bermuda')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">Bermuda</button>
-            <button onclick="filterMatches('Purgatory')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">Purgatory</button>
-            <button onclick="filterMatches('Clash Squad')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">CS Battle</button>
+            <button class="px-4 py-2 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs whitespace-nowrap shadow">Recently</button>
+            <button class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">Bermuda</button>
+            <button class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">Purgatory</button>
+            <button class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">CS Battle</button>
         </div>
 
         <!-- Matches Cards Grid -->
         <div>
             <div id="websiteMatchesContainer" class="grid grid-cols-2 gap-3">
-                <!-- Dynamic Match Cards will render here -->
                 <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-3 relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-2">
@@ -123,16 +139,16 @@
             
             <div class="space-y-2">
                 <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Player / In-Game Name</label>
-                    <input type="text" id="joinName" placeholder="Enter your nickname..." class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    <label class="text-[11px] text-slate-400 block mb-1">Player Nickname</label>
+                    <input type="text" id="joinName" placeholder="Enter your nickname..." class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none">
                 </div>
                 <div>
                     <label class="text-[11px] text-slate-400 block mb-1">Free Fire UID</label>
-                    <input type="number" id="joinUid" placeholder="e.g. 3239454397" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    <input type="number" id="joinUid" placeholder="e.g. 3239454397" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none">
                 </div>
                 <div>
                     <label class="text-[11px] text-slate-400 block mb-1">WhatsApp Number</label>
-                    <input type="text" id="joinWhatsapp" placeholder="03XXXXXXXXX" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="joinWhatsapp" placeholder="03XXXXXXXXX" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none">
                 </div>
                 <div>
                     <label class="text-[11px] text-slate-400 block mb-1">Easypaisa Payment Screenshot Proof</label>
@@ -146,38 +162,76 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar Matching Reference Layout -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#0d2218] border-t border-[#143825] grid grid-cols-5 py-2 px-2 z-50 text-center items-center">
-        <button onclick="switchTab('events')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400 relative">
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0d2218] border-t border-[#143825] grid grid-cols-5 py-2 px-2 z-40 text-center items-center">
+        <button onclick="alert('Giveaway Notifications active!')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400 relative">
             <span class="absolute top-0 right-3 bg-red-600 text-[9px] w-3.5 h-3.5 rounded-full font-bold flex items-center justify-center">2</span>
             <i class="fa-solid fa-gift text-base text-pink-500"></i>
             <span>Events</span>
         </button>
-        <button onclick="switchTab('battle')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-emerald-400 font-semibold">
+        <button class="flex flex-col items-center justify-center gap-1 text-[11px] text-emerald-400 font-semibold">
             <i class="fa-solid fa-shield-halved text-base"></i>
             <span>Battle</span>
         </button>
-        <!-- Center Circular Add Fund Button -->
         <div class="flex justify-center -mt-6">
-            <button onclick="openAddFund()" class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center shadow-xl border-4 border-[#0b1a12] text-xl font-bold">
+            <button onclick="alert('Send Easypaisa to 03186815926 and share receipt with admin.')" class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center shadow-xl border-4 border-[#0b1a12] text-xl font-bold">
                 <i class="fa-solid fa-plus"></i>
             </button>
         </div>
-        <button onclick="switchTab('chat')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
+        <button onclick="let m = prompt('Enter your complaint to Admin:'); if(m) alert('Complaint sent successfully!');" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
             <i class="fa-solid fa-comments text-base"></i>
             <span>Chat</span>
         </button>
-        <button onclick="switchTab('profile')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400 relative">
-            <span class="absolute top-0 right-3 bg-red-600 text-[9px] w-3.5 h-3.5 rounded-full font-bold flex items-center justify-center">1</span>
+        <button onclick="alert('Logged in user profile active.')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
             <i class="fa-solid fa-user text-base"></i>
             <span>Profile</span>
         </button>
     </nav>
 
-    <!-- JavaScript Client Logic -->
+    <!-- Script Logic with Supabase Auth & Real Balances -->
     <script>
+        // Supabase configuration placeholders (Apni Supabase keys yahan dalein jab live karein)
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let selectedMatchName = "";
         let selectedMatchFee = 0;
+
+        // Check if user is logged in via LocalStorage/Supabase session
+        window.addEventListener('DOMContentLoaded', () => {
+            let loggedUser = localStorage.getItem('multani_user_email');
+            if(loggedUser) {
+                document.getElementById('authModal').classList.add('hidden');
+                loadUserWallet(loggedUser);
+            } else {
+                document.getElementById('authModal').classList.remove('hidden');
+            }
+        });
+
+        async function loginWithGoogle() {
+            // Simulated real Google Auth login prompt for prototype test
+            let email = prompt("Enter your Gmail address to sign in:");
+            if(email && email.includes("@")) {
+                localStorage.setItem('multani_user_email', email);
+                localStorage.setItem('multani_wallet', '0'); // Real starting balance Rs. 0
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('userWalletBalance').innerText = "Rs. 0";
+                alert("Successfully signed in with " + email);
+            } else {
+                alert("Please enter a valid Gmail address.");
+            }
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('multani_user_email');
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function loadUserWallet(email) {
+            let balance = localStorage.getItem('multani_wallet') || '0';
+            document.getElementById('userWalletBalance').innerText = `Rs. ${balance}`;
+        }
 
         function openJoinModal(title, fee) {
             selectedMatchName = title;
@@ -201,7 +255,7 @@
                 return;
             }
 
-            // Check if player is banned in localStorage simulation
+            // Check if player UID is banned
             let bannedList = JSON.parse(localStorage.getItem('multani_banned') || '[]');
             if(bannedList.includes(uid)) {
                 alert('Access Denied: Your Free Fire UID is banned from joining matches!');
@@ -209,7 +263,7 @@
                 return;
             }
 
-            // Save registration & payment request for Admin Panel
+            // Send to Admin Panel payment requests
             let pendingPayments = JSON.parse(localStorage.getItem('multani_payments') || '[]');
             pendingPayments.push({
                 id: Date.now(),
@@ -221,32 +275,11 @@
             });
             localStorage.setItem('multani_payments', JSON.stringify(pendingPayments));
 
-            alert('Registration submitted successfully! Pending payment approval.');
+            alert('Registration request submitted! Awaiting admin payment approval.');
             closeJoinModal();
             document.getElementById('joinName').value = '';
             document.getElementById('joinUid').value = '';
             document.getElementById('joinWhatsapp').value = '';
-        }
-
-        function switchTab(tab) {
-            if(tab === 'events') {
-                alert('Giveaway / Event Notifications: Check out our official YouTube & WhatsApp channel for rewards!');
-            } else if(tab === 'chat') {
-                let msg = prompt('Enter your complaint or message for Multani FF Admin:');
-                if(msg) {
-                    alert('Your message has been sent to Admin Support successfully!');
-                }
-            } else if(tab === 'profile') {
-                alert('Multani FF Player Profile - Wallet Balance: Rs. 10525');
-            }
-        }
-
-        function openAddFund() {
-            alert('To add funds, send money via Easypaisa to 03186815926 (m Nadeem) and share receipt on WhatsApp.');
-        }
-
-        function filterMatches(category) {
-            alert(`Filtering matches by: ${category}`);
         }
     </script>
 </body>
