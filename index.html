@@ -1,3 +1,5 @@
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,679 +19,581 @@
 }
 
 body{
-  background:#05150a;
+  background:#091216;
   color:white;
   min-height:100vh;
-  padding-bottom: 30px;
+  padding-bottom:90px;
 }
 
-header{
-  text-align:center;
-  padding:25px 10px;
-  border-bottom:2px solid #00d084;
-  background:#081c10;
+/* Top Header */
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 15px;
+  background:#0d1b22;
+  border-bottom:1px solid #162935;
+  position:sticky;
+  top:0;
+  z-index:100;
 }
 
-header h1{
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:bold;
+  font-size:15px;
   color:#00ff9d;
-  font-size:32px;
-  text-shadow:0 0 15px #00d084;
 }
 
-header p{
-  font-size:18px;
-  margin-top:5px;
+.logo-icon{
+  background:#00d084;
+  color:#091216;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+
+.search-box{
+  flex:1;
+  margin:0 10px;
+  background:#14222b;
+  border-radius:20px;
+  padding:6px 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid #1e3340;
+}
+
+.search-box input{
+  background:transparent;
+  border:none;
+  color:white;
+  font-size:13px;
+  width:100%;
+  outline:none;
+}
+
+.header-icons{
+  display:flex;
+  gap:8px;
+}
+
+.icon-btn{
+  background:#14222b;
+  border:1px solid #1e3340;
   color:#a3e4d7;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:13px;
 }
 
 .container{
-  width:94%;
+  width:95%;
   max-width:700px;
-  margin:20px auto;
+  margin:15px auto;
 }
 
-/* Tabs Bar */
-.tabs-container {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 5px 0 15px 0;
-  white-space: nowrap;
-}
-
-.tab-btn {
-  background: #0d2e1c;
-  color: #a3e4d7;
-  border: 1px solid #145a32;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.tab-btn.active {
-  background: #00d084;
-  color: #05150a;
-  border-color: #00ff9d;
-  box-shadow: 0 0 15px rgba(0, 208, 132, 0.4);
-}
-
-.card{
-  background:#0d2e1c;
-  border:2px solid #145a32;
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 0 20px rgba(0, 100, 50, 0.3);
-}
-
-h2{
+/* Featured Banner Card */
+.featured-card{
+  background:linear-gradient(135deg, #0d1b22 0%, #112836 100%);
+  border:1px solid #1a3848;
+  border-radius:18px;
+  padding:15px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,0.5);
   margin-bottom:15px;
-  color: #00ff9d;
 }
 
-input{
-  width:100%;
-  padding:14px;
-  margin:8px 0;
-  border:none;
-  border-radius:12px;
-  background:#05150a;
-  color:white;
-  font-size:16px;
-  border: 1px solid #145a32;
+.badge-featured{
+  background:#00d084;
+  color:#091216;
+  font-size:10px;
+  font-weight:bold;
+  padding:3px 8px;
+  border-radius:6px;
+  display:inline-block;
+  margin-bottom:10px;
 }
 
-button{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  border:none;
-  border-radius:12px;
+.profile-info{
+  text-align:center;
+}
+
+.avatar-circle{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:2px solid #00ff9d;
+  margin:0 auto 8px auto;
+  object-fit:cover;
+  background:#1b3644;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+}
+
+.profile-name{
+  font-size:15px;
+  font-weight:bold;
+  color:#fff;
+}
+
+.profile-sub{
+  font-size:12px;
+  color:#00ff9d;
+  margin-top:2px;
+}
+
+/* Download APK Banner */
+.download-banner{
+  background:#0d261e;
+  border:1px solid #144535;
+  border-radius:15px;
+  padding:12px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.download-banner h4{
+  font-size:13px;
+  color:#00ff9d;
+}
+
+.download-banner p{
+  font-size:11px;
+  color:#a3e4d7;
+}
+
+.dl-btn{
   background:#00d084;
   color:#05150a;
+  padding:8px 14px;
+  border-radius:12px;
   font-weight:bold;
-  font-size:16px;
+  font-size:12px;
+  border:none;
   cursor:pointer;
-  transition: opacity 0.2s;
 }
 
-button:hover{
-  opacity:.9;
+/* Filter Bar */
+.filter-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
 }
 
-.blue{
-  background:#117a65;
-  color: white;
+.filter-title{
+  font-size:14px;
+  font-weight:bold;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 
-.info{
+.sort-dropdown{
+  background:#14222b;
+  color:#a3e4d7;
+  border:1px solid #1e3340;
+  padding:6px 10px;
+  border-radius:12px;
+  font-size:12px;
+  outline:none;
+}
+
+/* Category Pills */
+.pills-container{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:12px;
+  white-space:nowrap;
+}
+
+.pill{
+  background:#14222b;
+  color:#a3e4d7;
+  border:1px solid #1e3340;
+  padding:7px 16px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.pill.active{
+  background:#00d084;
+  color:#091216;
+  border-color:#00ff9d;
+}
+
+/* Grid Tournaments */
+.grid-tournaments{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
-  margin-top:15px;
 }
 
-.box{
-  background:#05150a;
-  padding:15px;
-  border-radius:15px;
-  text-align:center;
-  border: 1px solid #145a32;
+.t-card{
+  background:#0d1b22;
+  border:1px solid #162935;
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 3px 10px rgba(0,0,0,0.3);
+  cursor:pointer;
 }
 
-.big{
-  font-size:22px;
-  font-weight:bold;
-  color: #00ff9d;
-}
-
-.tournament{
-  margin-top:15px;
-  padding:20px;
-  background:#0d2e1c;
-  border:1px solid #00d084;
-  border-radius:20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-}
-
-.tournament h3{
-  font-size:22px;
-  margin-bottom:12px;
-  color: #00ff9d;
-}
-
-.row{
-  margin:8px 0;
-  font-size:16px;
-}
-
-.slot-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:6px;
-  margin-top:15px;
-}
-
-.slot{
-  padding:8px 2px;
-  text-align:center;
-  border-radius:6px;
-  font-size:12px;
-  background:#05150a;
-  border:1px solid #145a32;
-}
-
-.slot.filled{
-  background:#00d084;
-  color: #05150a;
-  font-weight: bold;
-}
-
-.slot.mine{
-  background:#f39c12;
-  color:#05150a;
-  font-weight:bold;
-}
-
-.room{
-  background:#052b1b;
-  border:2px solid #00ff9d;
-  padding:18px;
-  border-radius:15px;
-  margin-top:18px;
-}
-
-.room h3{
+.t-thumb{
+  height:110px;
+  background:#14222b;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   color:#00ff9d;
-  margin-bottom:12px;
+  font-size:26px;
 }
 
-.hidden{
-  display:none;
+.whatsapp-tag{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:rgba(0,0,0,0.6);
+  color:#00ff9d;
+  font-size:9px;
+  padding:2px 6px;
+  border-radius:6px;
+  border:1px solid #00d084;
 }
 
-.small{
-  color:#a3e4d7;
-  font-size:14px;
-  margin-top:10px;
+.t-body{
+  padding:10px;
 }
+
+.t-title{
+  font-size:13px;
+  font-weight:bold;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.t-cat{
+  font-size:10px;
+  color:#8aa0ae;
+  margin-top:3px;
+}
+
+.t-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+  padding-top:6px;
+  border-top:1px solid #14222b;
+  font-size:10px;
+  color:#8aa0ae;
+}
+
+/* Bottom Navigation */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#0d1b22;
+  border-top:1px solid #162935;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  padding:10px 0;
+  z-index:100;
+}
+
+.nav-item{
+  background:transparent;
+  border:none;
+  color:#8aa0ae;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.nav-item.active{
+  color:#00ff9d;
+}
+
+.nav-center-btn{
+  background:#00d084;
+  color:#091216;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  border:none;
+  box-shadow:0 0 15px rgba(0,208,132,0.4);
+  margin-top:-15px;
+  cursor:pointer;
+}
+
+.card{
+  background:#0d1b22;
+  border:1px solid #162935;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:15px;
+}
+
+.hidden{ display:none; }
+input{ width:100%; padding:12px; margin:6px 0; background:#14222b; border:1px solid #1e3340; border-radius:10px; color:white; font-size:14px; outline:none; }
+button.main-btn{ width:100%; padding:12px; margin-top:10px; background:#00d084; color:#091216; font-weight:bold; border:none; border-radius:10px; cursor:pointer; }
+.blue-btn{ background:#1b4f72 !important; color:white !important; }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🔥 MULTANI FF</h1>
-  <p>OFFICIAL TOURNAMENT</p>
+<!-- TOP HEADER BAR -->
+<header class="top-header">
+  <div class="logo-area">
+    <div class="logo-icon"><i class="fa-solid fa-fire"></i></div>
+    <span>Multani FF Official</span>
+  </div>
+  <div class="search-box">
+    <i class="fa-solid fa-search" style="color:#8aa0ae; font-size:12px;"></i>
+    <input type="text" placeholder="Search Tournament...">
+  </div>
+  <div class="header-icons">
+    <div class="icon-btn"><i class="fa-solid fa-share-nodes"></i></div>
+    <div class="icon-btn"><i class="fa-solid fa-gear"></i></div>
+    <div class="icon-btn"><i class="fa-solid fa-bars"></i></div>
+  </div>
 </header>
 
 <div class="container">
 
-<!-- TABS NAVIGATION BAR (Inspired from your UI) -->
-<div class="tabs-container">
-  <button class="tab-btn active" onclick="switchTab('recently')">Recently</button>
-  <button class="tab-btn" onclick="switchTab('joined')">Joined</button>
-  <button class="tab-btn" onclick="switchTab('following')">Following</button>
-  <button class="tab-btn" onclick="switchTab('friends')">Friends</button>
-</div>
+  <!-- HOME DASHBOARD SECTION -->
+  <div id="homeSection">
 
-<!-- AUTH -->
-<div id="authSection" class="card">
-  <h2>🔐 Login / Signup</h2>
-
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-
-  <button onclick="signup()">CREATE ACCOUNT</button>
-  <button class="blue" onclick="login()">LOGIN</button>
-
-  <p id="authMsg" class="small"></p>
-</div>
-
-<!-- PROFILE -->
-<div id="profileSection" class="card hidden">
-  <h2>👤 My Profile</h2>
-
-  <h3 id="username" style="color: #00ff9d;"></h3>
-
-  <p style="margin-top:10px;">
-    UID: <b id="ffuid" style="color: #00ff9d;">-</b>
-  </p>
-
-  <div class="info">
-    <div class="box">
-      💰 Wallet
-      <div class="big">Rs. <span id="wallet">0</span></div>
-    </div>
-
-    <div class="box">
-      🏆 Wins
-      <div class="big" id="wins">0</div>
-    </div>
-  </div>
-
-  <button class="blue" style="margin-top: 15px;" onclick="logout()">LOGOUT</button>
-</div>
-
-<!-- TOURNAMENTS -->
-<div id="tournamentsSection" class="hidden">
-  <h2>🏆 Tournaments</h2>
-  <div id="tournaments"></div>
-</div>
-
-<!-- MATCH PAGE -->
-<div id="matchSection" class="hidden">
-  <div class="card">
-
-    <button class="blue" onclick="backToTournaments()">
-      ← BACK TO TOURNAMENTS
-    </button>
-
-    <h2 style="margin-top:20px;">🎮 MY MATCH</h2>
-
-    <h3 id="matchTitle"></h3>
-
-    <div class="row">🎮 Game: <b id="matchGame"></b></div>
-    <div class="row">👥 Mode: <b id="matchMode"></b></div>
-    <div class="row">🗺️ Map: <b id="matchMap"></b></div>
-    <div class="row">📅 Match: <b id="matchDate"></b></div>
-
-    <div class="info">
-      <div class="box">
-        💰 Entry Fee
-        <div class="big">Rs. <span id="matchFee"></span></div>
-      </div>
-
-      <div class="box">
-        🏆 Prize Pool
-        <div class="big">Rs. <span id="matchPrize"></span></div>
+    <!-- FEATURED PROFILE CARD -->
+    <div class="featured-card">
+      <span class="badge-featured">🔥 OFFICIAL TOURNAMENT</span>
+      <div class="profile-info">
+        <div class="avatar-circle"><i class="fa-solid fa-trophy" style="color:#00ff9d;"></i></div>
+        <div class="profile-name" id="dashUsername">☆Mr ᝰ Nadeem.ff ᝰ</div>
+        <div class="profile-sub">🔥 Multani FF Official ©</div>
+        <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">Free Fire UID: <span id="dashUid">3239454397</span></div>
       </div>
     </div>
 
-    <div class="box" style="margin-top:15px;">
-      🎯 YOUR SLOT
-      <div class="big">#<span id="mySlot"></span></div>
+    <!-- DOWNLOAD APK BANNER -->
+    <div class="download-banner">
+      <div>
+        <h4>ڈاون لوڈ آفیشل ایپ</h4>
+        <p>Download Official App (APK)</p>
+      </div>
+      <button class="dl-btn"><i class="fa-solid fa-download"></i> Download</button>
     </div>
 
-    <h3 style="margin-top:25px;">👥 MATCH SLOTS</h3>
-
-    <p>
-      Joined:
-      <b id="joinedPlayers"></b> /
-      <b id="maxPlayers"></b>
-    </p>
-
-    <div id="slotGrid" class="slot-grid"></div>
-
-    <!-- ROOM -->
-    <div id="roomBox" class="room hidden">
-      <h3>🔐 ROOM DETAILS</h3>
-
-      <p>Room ID</p>
-      <h2 id="roomId" style="color:white;"></h2>
-
-      <p style="margin-top:10px;">Password</p>
-      <h2 id="roomPassword" style="color:white;"></h2>
+    <!-- FILTER & CATEGORIES -->
+    <div class="filter-row">
+      <div class="filter-title"><i class="fa-solid fa-layer-group" style="color:#00ff9d;"></i> Tournaments</div>
+      <select class="sort-dropdown">
+        <option>Latest First</option>
+        <option>Oldest First</option>
+      </select>
     </div>
 
-    <div id="roomHidden" class="box" style="margin-top:18px;">
-      🔒 Room ID & Password
-      <p class="small">
-        Admin room details share karega to yahan show honge.
-      </p>
+    <div class="pills-container">
+      <button class="pill active">All Matches</button>
+      <button class="pill">Solo</button>
+      <button class="pill">Duo</button>
+      <button class="pill">Squad</button>
     </div>
 
-    <button style="background: #e74c3c; color: white;" onclick="leaveMatch()">
-      🚪 LEAVE MATCH
-    </button>
+    <!-- TOURNAMENTS GRID SECTION -->
+    <div id="tournamentsGrid" class="grid-tournaments">
+      <!-- Dynamic Tournaments will load here -->
+    </div>
 
   </div>
-</div>
+
+  <!-- AUTH / PROFILE SECTION -->
+  <div id="profileAuthSection" class="hidden">
+    <div class="card" id="loginCard">
+      <h2>🔐 Login / Signup</h2>
+      <input id="email" type="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Password">
+      <button class="main-btn" onclick="signup()">CREATE ACCOUNT</button>
+      <button class="main-btn blue-btn" onclick="login()">LOGIN</button>
+    </div>
+
+    <div class="card hidden" id="userCard">
+      <h2>👤 My Profile</h2>
+      <p style="margin-top:10px;">Username: <b id="profileName" style="color:#00ff9d;">-</b></p>
+      <p style="margin-top:5px;">UID: <b id="profileUid" style="color:#00ff9d;">-</b></p>
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <div style="flex:1; background:#14222b; padding:12px; border-radius:12px; text-align:center;">
+          💰 Wallet <div style="font-size:18px; font-weight:bold; color:#00ff9d;" id="walletBal">0</div>
+        </div>
+        <div style="flex:1; background:#14222b; padding:12px; border-radius:12px; text-align:center;">
+          🏆 Wins <div style="font-size:18px; font-weight:bold; color:#00ff9d;" id="totalWins">0</div>
+        </div>
+      </div>
+      <button class="main-btn" style="background:#e74c3c; color:white; margin-top:15px;" onclick="logout()">LOGOUT</button>
+    </div>
+  </div>
 
 </div>
+
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="switchBottomNav('home')">
+    <i class="fa-solid fa-house" style="font-size:16px;"></i>
+    <span>Home</span>
+  </button>
+  <button class="nav-center-btn" onclick="openAddMatch()">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+  <button class="nav-item" onclick="switchBottomNav('me')">
+    <i class="fa-solid fa-user" style="font-size:16px;"></i>
+    <span>Me</span>
+  </button>
+</nav>
 
 <script>
-
 const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
-let currentMatchId = null;
 
-function switchTab(tabName) {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-  // Aap yahan tab switching ke mutabiq filtering laga sakte hain
+function switchBottomNav(tab) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  if(tab === 'home') {
+    document.getElementById('homeSection').classList.remove('hidden');
+    document.getElementById('profileAuthSection').classList.add('hidden');
+    event.currentTarget.classList.add('active');
+    loadTournaments();
+  } else if(tab === 'me') {
+    document.getElementById('homeSection').classList.add('hidden');
+    document.getElementById('profileAuthSection').classList.remove('hidden');
+    event.currentTarget.classList.add('active');
+  }
 }
 
-/* =========================
-   SIGNUP
-========================= */
-
-async function signup(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if(!email || !password){
-    alert("Email aur password enter karo");
-    return;
-  }
-
-  const {data,error} = await supabaseClient.auth.signUp({ email, password });
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  alert("Account successfully created! Agar email confirmation on hai to email verify karo.");
+function openAddMatch() {
+  alert("Match create karne ke liye admin panel open karein.");
 }
 
+async function loadTournaments() {
+  const { data, error } = await supabaseClient
+    .from('tournaments')
+    .select('*')
+    .eq('status', 'upcoming')
+    .order('match_date', { ascending: true });
 
-/* =========================
-   LOGIN
-========================= */
+  const grid = document.getElementById('tournamentsGrid');
+  grid.innerHTML = '';
 
-async function login(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  const {data,error} = await supabaseClient.auth.signInWithPassword({ email, password });
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  currentUser = data.user;
-
-  await loadProfile();
-  await loadTournaments();
-
-  document.getElementById("authSection").classList.add("hidden");
-  document.getElementById("profileSection").classList.remove("hidden");
-  document.getElementById("tournamentsSection").classList.remove("hidden");
-}
-
-
-/* =========================
-   PROFILE
-========================= */
-
-async function loadProfile(){
-  const {data,error} = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id",currentUser.id)
-      .single();
-
-  if(error){
-    console.log(error);
-    return;
-  }
-
-  document.getElementById("username").textContent = data.username || "FF Player";
-  document.getElementById("ffuid").textContent = data.free_fire_uid || "Not Added";
-  document.getElementById("wallet").textContent = Number(data.wallet_balance || 0).toFixed(2);
-  document.getElementById("wins").textContent = data.total_wins || 0;
-}
-
-
-/* =========================
-   TOURNAMENTS
-========================= */
-
-async function loadTournaments(){
-  const {data,error} = await supabaseClient
-      .from("tournaments")
-      .select("*")
-      .eq("status","upcoming")
-      .order("match_date",{ascending:true});
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  const box = document.getElementById("tournaments");
-  box.innerHTML = "";
-
-  if(!data || data.length === 0){
-    box.innerHTML = `<div class="card">No tournaments available.</div>`;
+  if(!data || data.length === 0) {
+    grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:20px; color:#8aa0ae;">No active tournaments.</div>`;
     return;
   }
 
   data.forEach(t => {
-    const div = document.createElement("div");
-    div.className = "tournament";
-
-    div.innerHTML = `
-      <h3>🏆 ${escapeHTML(t.title)}</h3>
-      <div class="row">🎮 Game: ${escapeHTML(t.game)}</div>
-      <div class="row">👥 Mode: ${escapeHTML(t.mode)}</div>
-      <div class="row">🗺️ Map: ${escapeHTML(t.map)}</div>
-      <div class="row">💰 Entry Fee: <b>Rs. ${Number(t.entry_fee).toFixed(2)}</b></div>
-      <div class="row">🏆 Prize Pool: <b>Rs. ${Number(t.prize_pool).toFixed(2)}</b></div>
-      <div class="row">👥 Players: <b>${t.joined_players}</b> / <b>${t.max_players}</b></div>
-      <div class="row">📅 ${formatDate(t.match_date)}</div>
-
-      <button onclick="joinTournament('${t.id}')">🎮 JOIN TOURNAMENT</button>
-      <button class="blue" onclick="openMyMatch('${t.id}')" style="margin-top:8px;">📋 MY MATCH</button>
+    grid.innerHTML += `
+      <div class="t-card">
+        <div class="t-thumb">
+          <i class="fa-solid fa-gamepad"></i>
+          <span class="whatsapp-tag">${escapeHTML(t.mode)}</span>
+        </div>
+        <div class="t-body">
+          <div class="t-title">${escapeHTML(t.title)}</div>
+          <div class="t-cat"><i class="fa-solid fa-map"></i> ${escapeHTML(t.map)}</div>
+          <div class="t-footer">
+            <span>👥 ${t.joined_players}/${t.max_players}</span>
+            <span style="color:#00ff9d; font-weight:bold;">Rs.${t.prize_pool}</span>
+          </div>
+        </div>
+      </div>
     `;
-    box.appendChild(div);
   });
 }
 
+async function signup() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || !password) { alert("Email aur password enter karein"); return; }
+  const { error } = await supabaseClient.auth.signUp({ email, password });
+  if(error) { alert(error.message); return; }
+  alert("Account created successfully!");
+}
 
-/* =========================
-   JOIN TOURNAMENT
-========================= */
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if(error) { alert(error.message); return; }
+  currentUser = data.user;
+  checkAuthSession();
+}
 
-async function joinTournament(id){
-  const {data:profile,error:profileError} = await supabaseClient
-      .from("profiles")
-      .select("free_fire_uid,free_fire_name")
-      .eq("id",currentUser.id)
-      .single();
+async function checkAuthSession() {
+  const { data } = await supabaseClient.auth.getSession();
+  if(data.session) {
+    currentUser = data.session.user;
+    document.getElementById('loginCard').classList.add('hidden');
+    document.getElementById('userCard').classList.remove('hidden');
 
-  if(profileError){
-    alert(profileError.message);
-    return;
-  }
-
-  if(!profile.free_fire_uid){
-    alert("Pehle apni Free Fire UID profile mein add karo.");
-    return;
-  }
-
-  const teamName = prompt("Team Name enter karo:", "Multani FF Team");
-  if(!teamName){ return; }
-
-  const {data,error} = await supabaseClient.rpc(
-    "join_tournament",
-    {
-      p_tournament_id:id,
-      p_free_fire_uid:profile.free_fire_uid,
-      p_free_fire_name:profile.free_fire_name || "",
-      p_team_name:teamName
+    const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+    if(profile) {
+      document.getElementById('profileName').textContent = profile.username || "FF Player";
+      document.getElementById('profileUid').textContent = profile.free_fire_uid || "Not Added";
+      document.getElementById('walletBal').textContent = Number(profile.wallet_balance || 0).toFixed(2);
+      document.getElementById('totalWins').textContent = profile.total_wins || 0;
+      document.getElementById('dashUsername').textContent = profile.username || "☆Mr ᝰ Nadeem.ff ᝰ";
+      document.getElementById('dashUid').textContent = profile.free_fire_uid || "3239454397";
     }
-  );
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  if(!data.success){
-    alert(data.message);
-    return;
-  }
-
-  const assignedSlot = data.slot || data.assigned_slot || data.slot_number || "1";
-  alert("🏆 Tournament successfully joined!\n\nYour Slot: #" + assignedSlot);
-
-  await loadProfile();
-  openMyMatch(id);
-}
-
-
-/* =========================
-   OPEN MATCH
-========================= */
-
-async function openMyMatch(id){
-  const {data,error} = await supabaseClient.rpc("get_my_match", { p_tournament_id:id });
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  if(!data.success){
-    alert(data.message);
-    return;
-  }
-
-  currentMatchId = id;
-  const m = data.match;
-
-  document.getElementById("tournamentsSection").classList.add("hidden");
-  document.getElementById("matchSection").classList.remove("hidden");
-
-  document.getElementById("matchTitle").textContent = "🏆 " + m.title;
-  document.getElementById("matchGame").textContent = m.game;
-  document.getElementById("matchMode").textContent = m.mode;
-  document.getElementById("matchMap").textContent = m.map;
-  document.getElementById("matchDate").textContent = formatDate(m.match_date);
-  document.getElementById("matchFee").textContent = Number(m.entry_fee).toFixed(2);
-  document.getElementById("matchPrize").textContent = Number(m.prize_pool).toFixed(2);
-  document.getElementById("mySlot").textContent = m.my_slot;
-  document.getElementById("joinedPlayers").textContent = m.joined_players;
-  document.getElementById("maxPlayers").textContent = m.max_players;
-
-  createSlots(m.max_players, m.joined_players, m.my_slot);
-
-  if(m.room_visible && m.room_id){
-    document.getElementById("roomBox").classList.remove("hidden");
-    document.getElementById("roomHidden").classList.add("hidden");
-    document.getElementById("roomId").textContent = m.room_id;
-    document.getElementById("roomPassword").textContent = m.room_password || "No Password";
-  } else {
-    document.getElementById("roomBox").classList.add("hidden");
-    document.getElementById("roomHidden").classList.remove("hidden");
   }
 }
 
-
-/* =========================
-   SLOT GRID
-========================= */
-
-function createSlots(max,joined,mySlot){
-  const grid = document.getElementById("slotGrid");
-  grid.innerHTML = "";
-
-  for(let i=1;i<=max;i++){
-    const slot = document.createElement("div");
-    slot.className = "slot";
-    slot.textContent = "#" + i;
-
-    if(i <= joined){
-      slot.classList.add("filled");
-    }
-
-    if(i == mySlot){
-      slot.classList.remove("filled");
-      slot.classList.add("mine");
-      slot.textContent = "YOU #" + i;
-    }
-
-    grid.appendChild(slot);
-  }
-}
-
-
-/* =========================
-   LEAVE MATCH
-========================= */
-
-async function leaveMatch(){
-  if(!currentMatchId){ return; }
-
-  const confirmLeave = confirm("Kya aap waqai tournament leave karna chahte hain?\n\nEntry fee wallet mein refund hogi.");
-  if(!confirmLeave){ return; }
-
-  const {data,error} = await supabaseClient.rpc("leave_tournament", { p_tournament_id:currentMatchId });
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  if(!data.success){
-    alert(data.message);
-    return;
-  }
-
-  alert("🚪 Match leave ho gaya!\n\n💰 Entry fee refund ho gayi.");
-  currentMatchId = null;
-
-  document.getElementById("matchSection").classList.add("hidden");
-  document.getElementById("tournamentsSection").classList.remove("hidden");
-
-  await loadProfile();
-  await loadTournaments();
-}
-
-
-/* =========================
-   BACK & LOGOUT
-========================= */
-
-function backToTournaments(){
-  document.getElementById("matchSection").classList.add("hidden");
-  document.getElementById("tournamentsSection").classList.remove("hidden");
-  loadTournaments();
-}
-
-async function logout(){
+async function logout() {
   await supabaseClient.auth.signOut();
   location.reload();
 }
 
-function formatDate(date){
-  if(!date){ return "Not set"; }
-  return new Date(date).toLocaleString("en-PK", { dateStyle:"medium", timeStyle:"short" });
+function escapeHTML(value) {
+  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
 
-function escapeHTML(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-async function checkSession(){
-  const {data} = await supabaseClient.auth.getSession();
-  if(data.session){
-    currentUser = data.session.user;
-    document.getElementById("authSection").classList.add("hidden");
-    document.getElementById("profileSection").classList.remove("hidden");
-    document.getElementById("tournamentsSection").classList.remove("hidden");
-    await loadProfile();
-    await loadTournaments();
-  }
-}
-
-checkSession();
-
+loadTournaments();
+checkAuthSession();
 </script>
 
 </body>
