@@ -6,22 +6,46 @@
     <title>Multani FF Official Tournament</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase SDK CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-[#0b1a12] text-white font-sans pb-28">
 
-    <!-- LOGIN / AUTH MODAL (Website open hote hi pehle dikhega jab tak login na ho) -->
+    <!-- SIGN UP / LOGIN MODAL -->
     <div id="authModal" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-        <div class="bg-[#0f281b] border border-emerald-500/40 w-full max-w-sm rounded-2xl p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 bg-emerald-500/20 mx-auto rounded-full flex items-center justify-center border border-emerald-500">
-                <i class="fa-solid fa-shield-halved text-emerald-400 text-2xl"></i>
+        <div class="bg-[#0f281b] border border-emerald-500/40 w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl">
+            <div class="text-center">
+                <div class="w-14 h-14 bg-emerald-500/20 mx-auto rounded-full flex items-center justify-center border border-emerald-500 mb-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i>
+                </div>
+                <h2 class="font-bold text-lg text-emerald-400">Multani FF Registration</h2>
+                <p class="text-xs text-slate-300">Website access karne ke liye pehle sign up karein.</p>
             </div>
-            <h2 class="font-bold text-xl text-emerald-400">Multani FF Tournaments</h2>
-            <p class="text-xs text-slate-300">Website access karne aur matches join karne ke liye apne Google account se sign in karein.</p>
             
-            <button onclick="loginWithGoogle()" class="w-full bg-white text-slate-950 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg hover:bg-slate-200 transition">
-                <i class="fa-brands fa-google text-red-500 text-base"></i> Continue with Google
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Gmail Address</label>
+                    <input type="email" id="regEmail" placeholder="example@gmail.com" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Password</label>
+                    <input type="password" id="regPassword" placeholder="********" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">WhatsApp Number</label>
+                    <input type="text" id="regWhatsapp" placeholder="03XXXXXXXXX" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Free Fire In-Game Name</label>
+                    <input type="text" id="regGameName" placeholder="Your FF Name" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Free Fire UID</label>
+                    <input type="number" id="regUid" placeholder="3239454397" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+            </div>
+
+            <button onclick="registerUser()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-xs shadow-lg transition">
+                Create Account & Login
             </button>
         </div>
     </div>
@@ -38,7 +62,7 @@
         <div class="flex items-center gap-4">
             <div class="flex gap-3 font-bold text-sm">
                 <span class="text-emerald-400 border-b-2 border-emerald-400 pb-0.5 cursor-pointer">Matches</span>
-                <span class="text-slate-400 cursor-pointer" onclick="openWinners()">Winners</span>
+                <span class="text-slate-400 cursor-pointer">Winners</span>
             </div>
             <button onclick="logoutUser()" class="text-slate-300" title="Logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
         </div>
@@ -139,18 +163,6 @@
             
             <div class="space-y-2">
                 <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Player Nickname</label>
-                    <input type="text" id="joinName" placeholder="Enter your nickname..." class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none">
-                </div>
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Free Fire UID</label>
-                    <input type="number" id="joinUid" placeholder="e.g. 3239454397" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none">
-                </div>
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">WhatsApp Number</label>
-                    <input type="text" id="joinWhatsapp" placeholder="03XXXXXXXXX" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none">
-                </div>
-                <div>
                     <label class="text-[11px] text-slate-400 block mb-1">Easypaisa Payment Screenshot Proof</label>
                     <input type="file" id="joinReceipt" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-slate-950">
                 </div>
@@ -174,11 +186,11 @@
             <span>Battle</span>
         </button>
         <div class="flex justify-center -mt-6">
-            <button onclick="alert('Send Easypaisa to 03186815926 and share receipt with admin.')" class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center shadow-xl border-4 border-[#0b1a12] text-xl font-bold">
+            <button onclick="alert('Send Easypaisa to 03186815926 and share receipt.')" class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center shadow-xl border-4 border-[#0b1a12] text-xl font-bold">
                 <i class="fa-solid fa-plus"></i>
             </button>
         </div>
-        <button onclick="let m = prompt('Enter your complaint to Admin:'); if(m) alert('Complaint sent successfully!');" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
+        <button onclick="let m = prompt('Enter your complaint to Admin:'); if(m) alert('Complaint sent!');" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
             <i class="fa-solid fa-comments text-base"></i>
             <span>Chat</span>
         </button>
@@ -188,49 +200,50 @@
         </button>
     </nav>
 
-    <!-- Script Logic with Supabase Auth & Real Balances -->
     <script>
-        // Supabase configuration placeholders (Apni Supabase keys yahan dalein jab live karein)
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        let currentUser = null;
         let selectedMatchName = "";
         let selectedMatchFee = 0;
 
-        // Check if user is logged in via LocalStorage/Supabase session
         window.addEventListener('DOMContentLoaded', () => {
-            let loggedUser = localStorage.getItem('multani_user_email');
-            if(loggedUser) {
+            let savedUser = localStorage.getItem('multani_current_user');
+            if(savedUser) {
+                currentUser = JSON.parse(savedUser);
                 document.getElementById('authModal').classList.add('hidden');
-                loadUserWallet(loggedUser);
+                document.getElementById('userWalletBalance').innerText = `Rs. ${currentUser.balance || 0}`;
             } else {
                 document.getElementById('authModal').classList.remove('hidden');
             }
         });
 
-        async function loginWithGoogle() {
-            // Simulated real Google Auth login prompt for prototype test
-            let email = prompt("Enter your Gmail address to sign in:");
-            if(email && email.includes("@")) {
-                localStorage.setItem('multani_user_email', email);
-                localStorage.setItem('multani_wallet', '0'); // Real starting balance Rs. 0
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('userWalletBalance').innerText = "Rs. 0";
-                alert("Successfully signed in with " + email);
-            } else {
-                alert("Please enter a valid Gmail address.");
+        function registerUser() {
+            let email = document.getElementById('regEmail').value;
+            let password = document.getElementById('regPassword').value;
+            let whatsapp = document.getElementById('regWhatsapp').value;
+            let gameName = document.getElementById('regGameName').value;
+            let uid = document.getElementById('regUid').value;
+
+            if(!email || !password || !whatsapp || !gameName || !uid) {
+                alert('Please fill out all registration fields!');
+                return;
             }
+
+            currentUser = { email, whatsapp, gameName, uid, balance: 0 };
+            localStorage.setItem('multani_current_user', JSON.stringify(currentUser));
+
+            // Also push to registered users list for Admin Panel
+            let allUsers = JSON.parse(localStorage.getItem('multani_registered_users') || '[]');
+            allUsers.push({ id: Date.now(), name: gameName, uid: uid, whatsapp: whatsapp, balance: 0 });
+            localStorage.setItem('multani_registered_users', JSON.stringify(allUsers));
+
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('userWalletBalance').innerText = "Rs. 0";
+            alert("Account created and logged in successfully!");
         }
 
         function logoutUser() {
-            localStorage.removeItem('multani_user_email');
+            localStorage.removeItem('multani_current_user');
             document.getElementById('authModal').classList.remove('hidden');
-        }
-
-        function loadUserWallet(email) {
-            let balance = localStorage.getItem('multani_wallet') || '0';
-            document.getElementById('userWalletBalance').innerText = `Rs. ${balance}`;
         }
 
         function openJoinModal(title, fee) {
@@ -246,30 +259,21 @@
         }
 
         function submitJoinMatch() {
-            let name = document.getElementById('joinName').value;
-            let uid = document.getElementById('joinUid').value;
-            let whatsapp = document.getElementById('joinWhatsapp').value;
-
-            if(!name || !uid || !whatsapp) {
-                alert('Please fill out all required fields!');
-                return;
-            }
-
             // Check if player UID is banned
             let bannedList = JSON.parse(localStorage.getItem('multani_banned') || '[]');
-            if(bannedList.includes(uid)) {
+            if(bannedList.includes(currentUser.uid)) {
                 alert('Access Denied: Your Free Fire UID is banned from joining matches!');
                 closeJoinModal();
                 return;
             }
 
-            // Send to Admin Panel payment requests
+            // Send to Admin Panel payment requests automatically using profile details
             let pendingPayments = JSON.parse(localStorage.getItem('multani_payments') || '[]');
             pendingPayments.push({
                 id: Date.now(),
-                player: name,
-                uid: uid,
-                whatsapp: whatsapp,
+                player: currentUser.gameName,
+                uid: currentUser.uid,
+                whatsapp: currentUser.whatsapp,
                 amount: selectedMatchFee,
                 match: selectedMatchName
             });
@@ -277,9 +281,6 @@
 
             alert('Registration request submitted! Awaiting admin payment approval.');
             closeJoinModal();
-            document.getElementById('joinName').value = '';
-            document.getElementById('joinUid').value = '';
-            document.getElementById('joinWhatsapp').value = '';
         }
     </script>
 </body>
