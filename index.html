@@ -312,14 +312,10 @@ button:hover{
 
 <script>
 
-const SUPABASE_URL =
-"https://eyrwqmirdigsckcwbmxn.supabase.co";
+const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
 
-const SUPABASE_KEY =
-"sb_publishable_N2bFvVebY84Ac4kF7PYjw_1YCdUUHX";
-
-const supabaseClient =
-supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let currentMatchId = null;
