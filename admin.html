@@ -1,5 +1,3 @@
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -510,17 +508,25 @@
                 return;
             }
 
-            const { error } = await supabaseClient
+            let matchId = isNaN(id) ? id : Number(id);
+
+            const { data, error } = await supabaseClient
                 .from('tournaments')
                 .delete()
-                .eq('id', id);
+                .eq('id', matchId)
+                .select();
 
             if(error) {
-                alert("Delete nahi ho saka (Agar isme players joined hain toh pehle unhe remove karein ya Cascade enable karein): " + error.message);
+                alert("Delete nahi ho saka: " + error.message);
                 return;
             }
 
-            appData.matches = appData.matches.filter(m => m.id !== id);
+            if(!data || data.length === 0) {
+                alert("Database mein match nahi mila ya RLS policy ki wajah se delete block ho gaya.");
+                return;
+            }
+
+            appData.matches = appData.matches.filter(m => m.id != id);
             renderPageContent('matchesPage');
             updateDashboardCounts();
             alert("Match successfully delete ho gaya!");
