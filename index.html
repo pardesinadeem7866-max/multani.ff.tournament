@@ -1,165 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multani FF Official Tournament Arena</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bg-dark: #022013;
-      --bg-gradient: radial-gradient(circle at 50% 0%, #08482c 0%, #032316 45%, #01130a 100%);
-      --mint-primary: #00e676;
-      --gold: #ffb703;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-    body { background: #010d07; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
-    .app-viewport { width: 100%; max-width: 440px; background: var(--bg-gradient); min-height: 100vh; padding-bottom: 90px; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
-    .top-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(2, 32, 19, 0.95); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(0,230,118,0.2); }
-    .wallet-badge { background: rgba(255,183,3,0.2); border: 1px solid var(--gold); padding: 5px 10px; border-radius: 14px; color: var(--gold); font-size: 11.5px; font-weight: 800; }
-    .main-container { padding: 16px; }
-    .btn-action { width: 100%; background: var(--mint-primary); color: #012817; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; margin-top: 8px; font-size: 13px; }
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 16px; }
-    .modal-box { background: #0d121a; border: 1px solid rgba(0,230,118,0.4); width: 100%; max-width: 400px; border-radius: 12px; padding: 16px; }
-    .form-group { margin-bottom: 10px; }
-    .form-group label { font-size: 11px; color: #a7f3d0; display: block; margin-bottom: 4px; font-weight: 700; }
-    .form-group input { width: 100%; background: #06090e; border: 1px solid rgba(0,230,118,0.3); border-radius: 6px; padding: 9px; color: #fff; font-size: 12px; outline: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multani FF Official Tournament</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-[#0b1a12] text-white font-sans pb-28">
 
-  <div class="app-viewport">
-    <div class="top-header">
-      <div class="wallet-badge"><i class="fa-solid fa-coins"></i> Rs. <span id="navWalletBal">0</span></div>
-      <div style="display:flex; gap:10px;">
-        <button onclick="openAuthModal()" style="background:var(--mint-primary); border:none; padding:5px 12px; border-radius:6px; font-weight:900; font-size:11px; cursor:pointer;">Login / Signup</button>
-        <button onclick="openAdminModal()" style="background:var(--gold); border:none; padding:5px 10px; border-radius:6px; font-weight:900; font-size:11px; cursor:pointer;"><i class="fa-solid fa-shield"></i> Admin</button>
-      </div>
+    <!-- Top Header Bar -->
+    <header class="flex justify-between items-center p-4 bg-[#0d2218] border-b border-[#143825] sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button class="text-slate-300"><i class="fa-solid fa-share-nodes text-lg"></i></button>
+            <div class="bg-[#143825] border border-emerald-500/40 px-3 py-1 rounded-full flex items-center gap-2">
+                <i class="fa-solid fa-coins text-amber-400 text-sm"></i>
+                <span class="font-bold text-sm text-amber-300" id="userWalletBalance">Rs. 10525</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex gap-3 font-bold text-sm">
+                <span class="text-emerald-400 border-b-2 border-emerald-400 pb-0.5 cursor-pointer">Matches</span>
+                <span class="text-slate-400 cursor-pointer" onclick="openWinners()">Winners</span>
+            </div>
+            <button class="text-slate-300"><i class="fa-solid fa-gear text-lg"></i></button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="p-4 space-y-4">
+        
+        <!-- Featured Banner Card -->
+        <div class="bg-[#0f281b] border border-emerald-500/30 rounded-2xl p-4 relative overflow-hidden shadow-lg">
+            <div class="flex justify-between items-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-emerald-400 shadow-md">
+                        <i class="fa-solid fa-crown text-slate-950 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-bold text-base text-white">Multani FF Official Tournament</h2>
+                            <span class="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-0.5">🔥 Free Fire Esports Gaming Arena 🎮</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs text-emerald-300 font-medium flex justify-between items-center">
+                <span><i class="fa-solid fa-wallet text-amber-400"></i> Easypaisa: <b>03186815926</b> (m Nadeem)</span>
+            </div>
+            <button onclick="alert('Downloading Official APK...')" class="mt-3 w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+                <i class="fa-solid fa-download"></i> DOWNLOAD OFFICIAL APP
+            </button>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button onclick="filterMatches('All')" class="px-4 py-2 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs whitespace-nowrap shadow">Recently</button>
+            <button onclick="filterMatches('Bermuda')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">Bermuda</button>
+            <button onclick="filterMatches('Purgatory')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">Purgatory</button>
+            <button onclick="filterMatches('Clash Squad')" class="px-4 py-2 rounded-full bg-[#112d1e] text-slate-300 font-semibold text-xs whitespace-nowrap border border-emerald-500/20">CS Battle</button>
+        </div>
+
+        <!-- Matches Cards Grid -->
+        <div>
+            <div id="websiteMatchesContainer" class="grid grid-cols-2 gap-3">
+                <!-- Dynamic Match Cards will render here -->
+                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-3 relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">🕒 Kalahari</span>
+                            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">0/12 Slots</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">Multaniff (Solo)</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">All guns allow</p>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-[#143825]">
+                        <div class="flex justify-between text-[11px] font-semibold mb-2">
+                            <span class="text-slate-300">Fee: <b class="text-amber-400">Rs.30</b></span>
+                            <span class="text-emerald-400">Booyah: Rs.300</span>
+                        </div>
+                        <button onclick="openJoinModal('Multaniff (Solo)', 30)" class="w-full bg-[#143825] hover:bg-emerald-600 hover:text-slate-950 text-emerald-400 border border-emerald-500/40 py-2 rounded-xl font-bold text-xs transition">
+                            Tap to Join
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-[#0f281b] border border-[#143825] rounded-2xl p-3 relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">🕒 Friday 5PM</span>
+                            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">0/8 Slots</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">Friday MATCH ROOM</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Clash Squad 4v4</p>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-[#143825]">
+                        <div class="flex justify-between text-[11px] font-semibold mb-2">
+                            <span class="text-slate-300">Fee: <b class="text-amber-400">Rs.50</b></span>
+                            <span class="text-emerald-400">Booyah: Rs.500</span>
+                        </div>
+                        <button onclick="openJoinModal('Friday MATCH ROOM', 50)" class="w-full bg-[#143825] hover:bg-emerald-600 hover:text-slate-950 text-emerald-400 border border-emerald-500/40 py-2 rounded-xl font-bold text-xs transition">
+                            Tap to Join
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JOIN MATCH MODAL -->
+    <div id="joinModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#0f281b] border border-emerald-500/40 w-full max-w-sm rounded-2xl p-5 space-y-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-emerald-400" id="modalMatchTitle">Join Match</h3>
+                <button onclick="closeJoinModal()" class="text-slate-400 hover:text-white font-bold text-sm"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-300">Entry Fee: <span id="modalFee" class="font-bold text-amber-400">Rs. 30</span></p>
+            
+            <div class="space-y-2">
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Player / In-Game Name</label>
+                    <input type="text" id="joinName" placeholder="Enter your nickname..." class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Free Fire UID</label>
+                    <input type="number" id="joinUid" placeholder="e.g. 3239454397" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">WhatsApp Number</label>
+                    <input type="text" id="joinWhatsapp" placeholder="03XXXXXXXXX" class="w-full bg-[#143825] border border-emerald-500/20 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Easypaisa Payment Screenshot Proof</label>
+                    <input type="file" id="joinReceipt" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-slate-950">
+                </div>
+            </div>
+
+            <button onclick="submitJoinMatch()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs transition shadow-lg mt-2">
+                Submit & Request Approval
+            </button>
+        </div>
     </div>
 
-    <div class="main-container">
-      <h2 style="font-size:15px; color:var(--mint-primary); margin-bottom:12px;"><i class="fa-solid fa-gamepad"></i> Multani FF Tournaments</h2>
-      <div id="tournamentsList" style="display:flex; flex-direction:column; gap:10px;">
-        <!-- Dynamic Tournaments Load Here -->
-      </div>
-    </div>
-  </div>
+    <!-- Bottom Navigation Bar Matching Reference Layout -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0d2218] border-t border-[#143825] grid grid-cols-5 py-2 px-2 z-50 text-center items-center">
+        <button onclick="switchTab('events')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400 relative">
+            <span class="absolute top-0 right-3 bg-red-600 text-[9px] w-3.5 h-3.5 rounded-full font-bold flex items-center justify-center">2</span>
+            <i class="fa-solid fa-gift text-base text-pink-500"></i>
+            <span>Events</span>
+        </button>
+        <button onclick="switchTab('battle')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-emerald-400 font-semibold">
+            <i class="fa-solid fa-shield-halved text-base"></i>
+            <span>Battle</span>
+        </button>
+        <!-- Center Circular Add Fund Button -->
+        <div class="flex justify-center -mt-6">
+            <button onclick="openAddFund()" class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center shadow-xl border-4 border-[#0b1a12] text-xl font-bold">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+        <button onclick="switchTab('chat')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
+            <i class="fa-solid fa-comments text-base"></i>
+            <span>Chat</span>
+        </button>
+        <button onclick="switchTab('profile')" class="flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400 relative">
+            <span class="absolute top-0 right-3 bg-red-600 text-[9px] w-3.5 h-3.5 rounded-full font-bold flex items-center justify-center">1</span>
+            <i class="fa-solid fa-user text-base"></i>
+            <span>Profile</span>
+        </button>
+    </nav>
 
-  <!-- Auth Modal -->
-  <div class="modal" id="authModal">
-    <div class="modal-box">
-      <h3 style="color:#fff; font-size:14px; margin-bottom:10px;">Player Login / Signup</h3>
-      <div class="form-group"><label>Gmail</label><input type="email" id="authEmail" placeholder="player@gmail.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" id="authPass" placeholder="Password"></div>
-      <button class="btn-action" onclick="supabaseLogin()">Login</button>
-      <button class="btn-action" onclick="supabaseSignup()" style="background:#38bdf8;">Sign Up</button>
-      <button onclick="closeModal('authModal')" style="width:100%; background:transparent; border:none; color:#94a3b8; margin-top:8px; cursor:pointer;">Close</button>
-    </div>
-  </div>
+    <!-- JavaScript Client Logic -->
+    <script>
+        let selectedMatchName = "";
+        let selectedMatchFee = 0;
 
-  <!-- Admin Modal Panel -->
-  <div class="modal" id="adminModal">
-    <div class="modal-box">
-      <h3 style="color:var(--gold); font-size:14px; margin-bottom:10px;"><i class="fa-solid fa-gear"></i> Admin Control Panel</h3>
-      <div class="form-group"><label>Tournament Title</label><input type="text" id="admTitle" placeholder="Bermuda Daily Clash"></div>
-      <div class="form-group"><label>Entry Fee (Rs)</label><input type="number" id="admFee" placeholder="50"></div>
-      <div class="form-group"><label>Prize (Rs)</label><input type="number" id="admPrize" placeholder="500"></div>
-      <button class="btn-action" onclick="adminAddTournament()">Add Tournament to Supabase</button>
-      <button onclick="closeModal('adminModal')" style="width:100%; background:transparent; border:none; color:#94a3b8; margin-top:8px; cursor:pointer;">Close</button>
-    </div>
-  </div>
+        function openJoinModal(title, fee) {
+            selectedMatchName = title;
+            selectedMatchFee = fee;
+            document.getElementById('modalMatchTitle').innerText = title;
+            document.getElementById('modalFee').innerText = `Rs. ${fee}`;
+            document.getElementById('joinModal').classList.remove('hidden');
+        }
 
-  <script>
-    // Supabase Credentials Configured
-    const SUPABASE_URL = 'https://eyrwqmirdigsckcwbmxn.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        function closeJoinModal() {
+            document.getElementById('joinModal').classList.add('hidden');
+        }
 
-    let currentUser = JSON.parse(localStorage.getItem('mff_user')) || null;
+        function submitJoinMatch() {
+            let name = document.getElementById('joinName').value;
+            let uid = document.getElementById('joinUid').value;
+            let whatsapp = document.getElementById('joinWhatsapp').value;
 
-    function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
-    function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+            if(!name || !uid || !whatsapp) {
+                alert('Please fill out all required fields!');
+                return;
+            }
 
-    async function supabaseSignup() {
-      const email = document.getElementById('authEmail').value.trim();
-      const pass = document.getElementById('authPass').value.trim();
-      if (!email || !pass) { alert("Email aur password likhein!"); return; }
+            // Check if player is banned in localStorage simulation
+            let bannedList = JSON.parse(localStorage.getItem('multani_banned') || '[]');
+            if(bannedList.includes(uid)) {
+                alert('Access Denied: Your Free Fire UID is banned from joining matches!');
+                closeJoinModal();
+                return;
+            }
 
-      const { data, error } = await supabase.auth.signUp({ email, password: pass });
-      if (error) { alert("Error: " + error.message); return; }
-      alert("✅ Signup successful! Ab login karein.");
-    }
+            // Save registration & payment request for Admin Panel
+            let pendingPayments = JSON.parse(localStorage.getItem('multani_payments') || '[]');
+            pendingPayments.push({
+                id: Date.now(),
+                player: name,
+                uid: uid,
+                whatsapp: whatsapp,
+                amount: selectedMatchFee,
+                match: selectedMatchName
+            });
+            localStorage.setItem('multani_payments', JSON.stringify(pendingPayments));
 
-    async function supabaseLogin() {
-      const email = document.getElementById('authEmail').value.trim();
-      const pass = document.getElementById('authPass').value.trim();
-      if (!email || !pass) { alert("Email aur password likhein!"); return; }
+            alert('Registration submitted successfully! Pending payment approval.');
+            closeJoinModal();
+            document.getElementById('joinName').value = '';
+            document.getElementById('joinUid').value = '';
+            document.getElementById('joinWhatsapp').value = '';
+        }
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-      if (error) { alert("❌ Login Failed: " + error.message); return; }
+        function switchTab(tab) {
+            if(tab === 'events') {
+                alert('Giveaway / Event Notifications: Check out our official YouTube & WhatsApp channel for rewards!');
+            } else if(tab === 'chat') {
+                let msg = prompt('Enter your complaint or message for Multani FF Admin:');
+                if(msg) {
+                    alert('Your message has been sent to Admin Support successfully!');
+                }
+            } else if(tab === 'profile') {
+                alert('Multani FF Player Profile - Wallet Balance: Rs. 10525');
+            }
+        }
 
-      currentUser = data.user;
-      localStorage.setItem('mff_user', JSON.stringify(currentUser));
-      closeModal('authModal');
-      alert("✅ Login Successful!");
-      loadTournaments();
-    }
+        function openAddFund() {
+            alert('To add funds, send money via Easypaisa to 03186815926 (m Nadeem) and share receipt on WhatsApp.');
+        }
 
-    async function adminAddTournament() {
-      const title = document.getElementById('admTitle').value.trim();
-      const fee = Number(document.getElementById('admFee').value);
-      const prize = Number(document.getElementById('admPrize').value);
-
-      if (!title) { alert("Title likhein!"); return; }
-
-      const { error } = await supabase
-        .from('tournaments')
-        .insert([{ title: title, fee: fee, prize: prize, map: 'Bermuda', time: '8:00 PM', total_slots: 12 }]);
-
-      if (error) { alert("Error adding: " + error.message); return; }
-      alert("✅ Tournament database mein add ho gaya!");
-      closeModal('adminModal');
-      loadTournaments();
-    }
-
-    async function loadTournaments() {
-      const container = document.getElementById('tournamentsList');
-      container.innerHTML = "Loading...";
-
-      const { data, error } = await supabase.from('tournaments').select('*');
-      if (error) {
-        container.innerHTML = "Error loading tournaments.";
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        container.innerHTML = "<div style='font-size:11px; color:#94a3b8;'>Koi tournament available nahi hai. Admin panel se add karein.</div>";
-        return;
-      }
-
-      container.innerHTML = "";
-      data.forEach(m => {
-        const div = document.createElement('div');
-        div.style.cssText = "background:#04130b; border:1px solid rgba(0,230,118,0.3); border-radius:8px; padding:10px; font-size:12px;";
-        div.innerHTML = `
-          <div style="font-weight:900; color:#fff;">${m.title}</div>
-          <div style="color:#a7f3d0; font-size:11px; margin-top:2px;">Fee: Rs.${m.fee} | Prize: Rs.${m.prize}</div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    window.onload = function() {
-      loadTournaments();
-      if (currentUser) {
-        document.getElementById('navWalletBal').innerText = currentUser.walletBalance || 0;
-      }
-    };
-  </script>
+        function filterMatches(category) {
+            alert(`Filtering matches by: ${category}`);
+        }
+    </script>
 </body>
 </html>
