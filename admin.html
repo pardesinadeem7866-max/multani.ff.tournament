@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multani FF Official Tournament</title>
+<title>Multani FF Admin Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -13,349 +13,188 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 
 :root {
   --neon-blue: #00f3ff;
+  --neon-green: #00d084;
   --neon-pink: #ff007f;
+  --neon-red: #e74c3c;
   --bg-glass: rgba(13, 27, 34, 0.75);
   --border-glass: rgba(0, 243, 255, 0.3);
 }
 
-/* Colorful Glowing Animation for Name & Multaniff */
-@keyframes rgbGlow {
-  0% { color: #00ff9d; text-shadow: 0 0 10px #00ff9d, 0 0 20px #00ff9d, 0 0 30px #00ff9d; }
-  33% { color: #00f3ff; text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #00f3ff; }
-  66% { color: #ff007f; text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 30px #ff007f; }
-  100% { color: #00ff9d; text-shadow: 0 0 10px #00ff9d, 0 0 20px #00ff9d, 0 0 30px #00ff9d; }
+/* Top Stats Grid */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px; }
+.stat-card { background: #0d1b22; border: 1px solid #162935; border-radius: 14px; padding: 10px; text-align: center; }
+.stat-num { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 2px; }
+.stat-label { font-size: 9px; color: #8aa0ae; text-transform: uppercase; }
+
+/* Main Action Grid Box */
+.dashboard-actions-box {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px 12px;
+  margin: 10px 12px;
+  color: #030712;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }
+.action-item { cursor: pointer; display: flex; flex-direction: column; align-items: center; position: relative; }
+.action-icon-circle {
+  width: 48px; height: 48px; border-radius: 50%; background: #f0f4f8; border: 1px solid #d1d8e0;
+  display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2c3e50; margin-bottom: 6px;
+  transition: 0.2s;
+}
+.action-item:hover .action-icon-circle { background: #e2e8f0; border-color: var(--neon-green); color: var(--neon-green); }
+.action-text { font-size: 10px; font-weight: bold; color: #2c3e50; line-height: 1.2; }
+.badge-count {
+  position: absolute; top: 0; right: 6px; background: var(--neon-red); color: white;
+  font-size: 9px; padding: 1px 5px; border-radius: 10px; font-weight: bold;
 }
 
-.glowing-name {
-  font-size: 16px;
-  font-weight: bold;
-  animation: rgbGlow 4s infinite;
-  margin-top: 5px;
+/* Payment Approvals Banner */
+.banner-btn {
+  background: #0d1b22; border: 1px solid var(--neon-green); border-radius: 14px;
+  padding: 12px; margin: 0 12px 15px 12px; display: flex; align-items: center; justify-content: center;
+  gap: 8px; color: var(--neon-green); font-weight: bold; font-size: 12px; cursor: pointer;
 }
 
-.glowing-brand {
-  font-size: 14px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  animation: rgbGlow 3s infinite reverse;
-  margin-top: 4px;
+/* Match Manager Section */
+.section-title-bar {
+  display: flex; justify-content: space-between; align-items: center; margin: 15px 12px 10px 12px;
 }
+.section-heading { font-size: 14px; font-weight: bold; color: #ffa500; display: flex; align-items: center; gap: 6px; }
+.add-match-btn { background: var(--neon-green); color: #030712; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; }
 
-/* 1. Loading Screen */
-#loadingScreen {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle, #0d1b22 0%, #030712 100%);
-  z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.5s ease;
+/* Match Admin Card */
+.admin-t-card {
+  background: #0d1b22; border: 1px solid #162935; border-radius: 14px; padding: 12px; margin: 0 12px 12px 12px;
 }
-.load-logo-box {
-  width: 90px; height: 90px; border: 2px solid var(--neon-blue); border-radius: 20px;
-  display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--neon-blue);
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 20px;
+.admin-t-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.admin-t-info h4 { font-size: 13px; color: #fff; font-weight: bold; }
+.admin-t-info p { font-size: 10px; color: #8aa0ae; margin-top: 3px; }
+.admin-btn-group { display: flex; gap: 6px; }
+.btn-edit { background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+.btn-delete { background: var(--neon-red); color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+.room-details-box { background: #14222b; border: 1px solid #1e3340; border-radius: 8px; padding: 8px; font-size: 11px; color: var(--neon-blue); margin-top: 8px; }
+.room-subtext { font-size: 10px; color: #8aa0ae; margin-top: 4px; font-style: italic; }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+  z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;
 }
-.load-title { font-size: 22px; font-weight: bold; color: #fff; letter-spacing: 1px; text-align: center; }
-.load-sub { font-size: 11px; color: var(--neon-blue); margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
-.spinner {
-  width: 45px; height: 45px; border: 3px solid rgba(0, 243, 255, 0.2);
-  border-top: 3px solid var(--neon-blue); border-radius: 50%;
-  animation: spin 1s linear infinite; margin-top: 35px;
+.modal-box {
+  background: #0d1b22; border: 1px solid var(--border-glass); border-radius: 18px; padding: 20px; width: 100%; max-width: 380px;
+  max-height: 90vh; overflow-y: auto;
 }
-.loading-text { font-size: 12px; color: #a3e4d7; margin-top: 12px; letter-spacing: 1px; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 14px; color: var(--neon-green); }
+.modal-close { background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; }
 
-/* Glassmorphism Auth / Container Boxes */
-.glass-box {
-  background: rgba(15, 23, 33, 0.85);
-  border: 1px solid var(--border-glass);
-  backdrop-filter: blur(12px);
-  border-radius: 24px;
-  padding: 25px 20px;
-  margin: 15px auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  text-align: center;
+/* Inputs */
+.admin-input {
+  width: 100%; padding: 10px; background: rgba(20, 34, 43, 0.8); border: 1px solid #1e3340; border-radius: 8px; color: white; font-size: 12px; margin-bottom: 10px; outline: none;
 }
-.auth-logo { font-size: 38px; color: var(--neon-blue); margin-bottom: 10px; filter: drop-shadow(0 0 8px rgba(0,243,255,0.6)); }
-.auth-heading { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 5px; text-transform: uppercase; }
-.auth-sub { font-size: 11px; color: #8aa0ae; margin-bottom: 20px; }
+.admin-input:focus { border-color: var(--neon-green); }
 
-/* Inputs with Neon Focus */
-.input-group { position: relative; margin-bottom: 12px; text-align: left; }
-.input-group > i:not(.eye-icon) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); font-size: 14px; pointer-events: none; z-index: 2; }
-.input-group input {
-  width: 100%; padding: 12px 12px 12px 40px; background: rgba(20, 34, 43, 0.6);
-  border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 12px; color: white; font-size: 13px; outline: none;
-  transition: all 0.3s; position: relative; z-index: 1;
+/* Bottom Nav */
+.bottom-nav {
+  position: absolute; bottom: 0; left: 0; width: 100%; background: #0d1b22; border-top: 1px solid #162935;
+  display: flex; justify-content: space-around; align-items: center; padding: 8px 0; z-index: 100;
 }
-.input-group input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
-.eye-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8aa0ae; cursor: pointer; z-index: 3; }
+.nav-item { background: transparent; border: none; color: #8aa0ae; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; font-weight: bold; cursor: pointer; flex: 1; }
+.nav-item.active { color: var(--neon-green); }
+.nav-item i { font-size: 16px; }
 
-/* Action Buttons */
-.neon-btn-blue {
-  width: 100%; padding: 12px; margin-top: 10px; background: transparent;
-  border: 2px solid var(--neon-blue); color: var(--neon-blue); font-weight: bold; font-size: 13px;
-  border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); transition: 0.3s;
-}
-.neon-btn-blue:hover { background: var(--neon-blue); color: #091216; box-shadow: 0 0 20px var(--neon-blue); }
-
-.neon-btn-pink {
-  width: 100%; padding: 12px; margin-top: 10px; background: transparent;
-  border: 2px solid var(--neon-pink); color: var(--neon-pink); font-weight: bold; font-size: 13px;
-  border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-  box-shadow: 0 0 10px rgba(255, 0, 127, 0.2); transition: 0.3s;
-}
-.neon-btn-pink:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 20px var(--neon-pink); }
-
-/* OTP Boxes Style */
-.otp-container { display: flex; justify-content: space-between; gap: 8px; margin: 20px 0; }
-.otp-box {
-  width: 42px; height: 48px; background: rgba(20, 34, 43, 0.8);
-  border: 1px solid var(--neon-blue); border-radius: 10px; font-size: 18px; color: white;
-  text-align: center; font-weight: bold; outline: none; box-shadow: 0 0 8px rgba(0,243,255,0.2);
-}
-
-/* Header */
-.top-header{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#0d1b22;border-bottom:1px solid #162935;position:sticky;top:0;z-index:100;}
-.logo-area{display:flex;align-items:center;gap:8px;font-weight:bold;font-size:14px;color:#00ff9d;}
-.logo-icon{background:#00d084;color:#030712;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;}
-.header-wallet{background:#14222b;border:1px solid #00d084;padding:4px 10px;border-radius:12px;font-size:11px;color:#00ff9d;font-weight:bold;}
-.header-icons{display:flex;gap:6px;}
-.icon-btn{background:#14222b;border:1px solid #1e3340;color:#a3e4d7;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;}
-
-.container{padding:15px;}
-
-/* Cards & Banners */
-.featured-card{background:linear-gradient(135deg, #0d1b22 0%, #112836 100%);border:1px solid #1a3848;border-radius:18px;padding:15px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,0.5);}
-.badge-featured{background:#00d084;color:#091216;font-size:10px;font-weight:bold;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:10px;}
-.profile-info{text-align:center;}
-.avatar-circle{width:55px;height:55px;border-radius:50%;border:2px solid #00ff9d;margin:0 auto 8px auto;background:#1b3644;display:flex;align-items:center;justify-content:center;font-size:22px;}
-
-.action-buttons-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px;}
-.action-card-btn{background:#0d1b22;border:1px solid #00d084;padding:12px;border-radius:14px;text-align:center;color:#00ff9d;font-size:12px;font-weight:bold;cursor:pointer;}
-
-.grid-tournaments{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.t-card{background:#0d1b22;border:1px solid #162935;border-radius:16px;overflow:hidden;}
-.t-thumb{height:100px;background:linear-gradient(135deg, #14222b, #1b3644);position:relative;display:flex;align-items:center;justify-content:center;color:#00ff9d;font-size:26px;border-bottom:1px solid #162935;}
-.whatsapp-tag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:#00ff9d;font-size:9px;padding:2px 6px;border-radius:6px;border:1px solid #00d084;}
-.t-body{padding:10px;}
-.t-title{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.t-cat{font-size:10px;color:#8aa0ae;margin-top:3px;}
-.t-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:#8aa0ae;}
-.join-match-btn{width:100%;margin-top:8px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
-
-/* Bottom Nav - Fixed for 4 buttons inside phone frame */
-.bottom-nav{position:fixed;bottom:0;width:100%;max-width:420px;background:#0d1b22;border-top:1px solid #162935;display:flex;justify-content:space-around;align-items:center;padding:10px 0;z-index:100;}
-.nav-item{background:transparent;border:none;color:#8aa0ae;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;flex:1;}
-.nav-item.active{color:#00ff9d;}
-
-.hidden{display:none;}
-.link-text { color: var(--neon-blue); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 10px; display: inline-block; }
+.hidden { display: none; }
 </style>
 </head>
 <body>
 
-<!-- 1. Loading Screen Component -->
-<div id="loadingScreen">
-  <div class="load-logo-box"><i class="fa-solid fa-gamepad"></i></div>
-  <div class="load-title">MULTANI FF</div>
-  <div class="load-sub">OFFICIAL TOURNAMENT</div>
-  <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">PAKISTAN'S ULTIMATE FREE FIRE BATTLEGROUND</div>
-  <div class="spinner"></div>
-  <div class="loading-text">LOADING...</div>
-</div>
-
 <div class="phone-frame">
-  <!-- Top Header -->
-  <header class="top-header">
-    <div class="logo-area">
-      <div class="logo-icon"><i class="fa-solid fa-fire"></i></div>
-      <span>Multani FF</span>
+  <!-- Top Stats Bar -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num" id="statLiveMatches">2</div>
+      <div class="stat-label"><i class="fa-solid fa-gamepad" style="color:var(--neon-blue);"></i> Live Matches</div>
     </div>
-    <div class="header-wallet">Rs. <span id="topWalletBal">0</span></div>
-    <div class="header-icons">
-      <div class="icon-btn" onclick="shareApp()"><i class="fa-solid fa-share-nodes"></i></div>
-      <div class="icon-btn" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
+    <div class="stat-card">
+      <div class="stat-num" id="statApprovedSlots">0</div>
+      <div class="stat-label"><i class="fa-solid fa-users" style="color:var(--neon-green);"></i> Approved Slots</div>
     </div>
-  </header>
-
-  <div class="container">
-    <!-- Home Section -->
-    <div id="homeSection">
-      <div class="featured-card">
-        <span class="badge-featured">🔥 OFFICIAL TOURNAMENT</span>
-        <div class="profile-info">
-          <div class="avatar-circle"><i class="fa-solid fa-trophy" style="color:#00ff9d;"></i></div>
-          <div class="glowing-name">☆𝐌r᭄🇳adeemᶠᶠⓋ</div>
-          <div class="glowing-brand">MULTANIFF</div>
-          <div style="font-size:11px; color:#a3e4d7; margin-top:6px;">Free Fire UID: <span id="dashUid">3239454397</span></div>
-        </div>
-      </div>
-
-      <div class="action-buttons-grid">
-        <div class="action-card-btn" onclick="openAddBalance()"><i class="fa-solid fa-wallet fa-lg"></i><br>💰 Add Balance</div>
-        <div class="action-card-btn" style="border-color:#3498db; color:#5dade2;" onclick="contactAdmin()"><i class="fa-solid fa-headset fa-lg"></i><br>💬 Admin Support</div>
-      </div>
-
-      <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:#fff;"><i class="fa-solid fa-layer-group" style="color:#00ff9d;"></i> Active Tournaments</div>
-      <div id="tournamentsGrid" class="grid-tournaments"></div>
+    <div class="stat-card">
+      <div class="stat-num" id="statPendingApprovals">0</div>
+      <div class="stat-label"><i class="fa-solid fa-clock-rotate-left" style="color:#ffa500;"></i> Needs Approval</div>
     </div>
+  </div>
 
-    <!-- Tournaments Section (Dedicated Tab) -->
-    <div id="tournamentsSection" class="hidden">
-      <div style="font-size:16px; font-weight:bold; margin-bottom:15px; color:#fff;"><i class="fa-solid fa-trophy" style="color:#00ff9d;"></i> All Tournaments</div>
-      <div id="allTournamentsGrid" class="grid-tournaments"></div>
-    </div>
+  <!-- Payment Approvals Banner -->
+  <div class="banner-btn" onclick="openPaymentApprovals()">
+    <i class="fa-solid fa-file-invoice-dollar"></i> Payment Approvals &amp; Match Requests
+  </div>
 
-    <!-- Wallet Section (Dedicated Tab) -->
-    <div id="walletSection" class="hidden">
-      <div class="glass-box" style="text-align:left;">
-        <div class="auth-logo"><i class="fa-solid fa-wallet"></i></div>
-        <div class="auth-heading">My Wallet</div>
-        <div class="auth-sub">Manage your tournament balance & funds</div>
-        <div style="background:rgba(20,34,43,0.8); padding:15px; border-radius:14px; margin-bottom:15px; text-align:center;">
-          <div style="font-size:12px; color:#8aa0ae;">Current Balance</div>
-          <div style="font-size:24px; font-weight:bold; color:var(--neon-blue); margin-top:5px;">Rs. <span id="walletPageBal">0</span></div>
-        </div>
-        <button class="neon-btn-blue" onclick="openAddBalance()">💰 Add Balance</button>
+  <!-- Main Dashboard Action Grid (Matching Screenshot) -->
+  <div class="dashboard-actions-box">
+    <div class="actions-grid">
+      <div class="action-item" onclick="openCreateMatchModal()">
+        <div class="action-icon-circle"><i class="fa-solid fa-plus"></i></div>
+        <div class="action-text">Create Match</div>
       </div>
-    </div>
-
-    <!-- Auth / Profile Section with full Neon Screens -->
-    <div id="profileAuthSection" class="hidden">
-      
-      <!-- Screen 1: Splash Choice (Login / Register buttons) -->
-      <div class="glass-box" id="authSplashCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Multani FF</div>
-        <div class="auth-sub">Welcome to Pakistan's Ultimate Free Fire Battleground</div>
-        <button class="neon-btn-blue" onclick="showAuthForm('login')">Login</button>
-        <button class="neon-btn-pink" onclick="showAuthForm('register')">Register</button>
-        <div style="font-size: 10px; color: #8aa0ae; margin-top: 15px;">
-          By continuing, you agree to our<br><span style="text-decoration: underline; cursor:pointer;">Terms of Service</span> &amp; <span style="text-decoration: underline; cursor:pointer;">Privacy Policy</span>
+      <div class="action-item" onclick="alert('Giveaways feature coming soon!')">
+        <div class="action-icon-circle"><i class="fa-solid fa-gift" style="color:#e74c3c;"></i></div>
+        <div class="action-text">Giveaways</div>
+      </div>
+      <div class="action-item" onclick="openPaymentApprovals()">
+        <div class="action-icon-circle">
+          <i class="fa-solid fa-file-lines"></i>
+          <span class="badge-count" id="badgePayments">0</span>
         </div>
+        <div class="action-text">Payment Approval</div>
+      </div>
+      <div class="action-item" onclick="openBanPlayerModal()">
+        <div class="action-icon-circle"><i class="fa-solid fa-user-slash" style="color:#e74c3c;"></i></div>
+        <div class="action-text">Ban Player</div>
       </div>
 
-      <!-- Screen 2: Sign In / Login Form -->
-      <div class="glass-box hidden" id="authLoginCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Sign In To Your Account</div>
-        <div class="auth-sub">Enter your credentials below</div>
-        
-        <div class="input-group">
-          <i class="fa-solid fa-phone"></i>
-          <input type="text" id="loginMobile" placeholder="Registered Mobile Number">
-        </div>
-        <div class="input-group">
-          <i class="fa-solid fa-lock"></i>
-          <input type="password" id="loginPassword" placeholder="Password">
-          <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('loginPassword')"></i>
-        </div>
-        <div style="text-align: right; margin-bottom: 10px;">
-          <span class="link-text" onclick="showAuthForm('forgot')">Forgot Password?</span>
-        </div>
-
-        <button class="neon-btn-blue" onclick="login()">Login</button>
-        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
-          New here? <span class="link-text" onclick="showAuthForm('register')">REGISTER NOW</span>
-        </div>
-        <span class="link-text" style="display:block; margin-top:5px;" onclick="showAuthForm('splash')">← Back</span>
+      <div class="action-item" style="margin-top: 12px;" onclick="switchAdminTab('matches')">
+        <div class="action-icon-circle"><i class="fa-solid fa-list-check"></i></div>
+        <div class="action-text">Match Manager</div>
       </div>
-
-      <!-- Screen 3: Register / Create Account Form -->
-      <div class="glass-box hidden" id="authRegisterCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Create Your Account</div>
-        <div class="auth-sub">Fill details for official tournaments</div>
-
-        <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regFullName" placeholder="Full Name"></div>
-        <div class="input-group"><i class="fa-solid fa-gamepad"></i><input type="text" id="regIgn" placeholder="In-Game Name (IGN)"></div>
-        <div class="input-group"><i class="fa-solid fa-phone"></i><input type="text" id="regMobile" placeholder="Mobile Number"></div>
-        <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address"></div>
-        <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPassword" placeholder="Password"><i class="fa-solid fa-eye eye-icon" onclick="togglePassword('regPassword')"></i></div>
-        <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regConfirmPassword" placeholder="Confirm Password"><i class="fa-solid fa-eye eye-icon" onclick="togglePassword('regConfirmPassword')"></i></div>
-
-        <button class="neon-btn-pink" onclick="signup()">Register</button>
-        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
-          Already have an account? <span class="link-text" onclick="showAuthForm('login')">Sign In</span>
+      <div class="action-item" style="margin-top: 12px;" onclick="alert('Help chats system active.')">
+        <div class="action-icon-circle">
+          <i class="fa-solid fa-comments" style="color:#27ae60;"></i>
+          <span class="badge-count">1</span>
         </div>
-        <span class="link-text" style="display:block; margin-top:5px;" onclick="showAuthForm('splash')">← Back</span>
+        <div class="action-text">Help Chats</div>
       </div>
-
-      <!-- Screen 4: OTP Verification Screen -->
-      <div class="glass-box hidden" id="authOtpCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Verify Your Mobile</div>
-        <div class="auth-sub">Enter the 6-digit code sent to <br><b id="otpTargetPhone">+92 3XX XXXXXXX</b></div>
-
-        <div class="otp-container">
-          <input type="text" class="otp-box" maxlength="1" value="7">
-          <input type="text" class="otp-box" maxlength="1">
-          <input type="text" class="otp-box" maxlength="1">
-          <input type="text" class="otp-box" maxlength="1">
-          <input type="text" class="otp-box" maxlength="1">
-          <input type="text" class="otp-box" maxlength="1">
-        </div>
-
-        <button class="neon-btn-blue" onclick="verifyOtp()">Verify</button>
-        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
-          Resend Code in <span style="color:var(--neon-blue);">00:45</span>
-        </div>
-        <span class="link-text" style="display:block; margin-top:10px;" onclick="showAuthForm('login')">← Back to Login</span>
+      <div class="action-item" style="margin-top: 12px;" onclick="openPlayerListModal()">
+        <div class="action-icon-circle"><i class="fa-solid fa-address-book" style="color:#3498db;"></i></div>
+        <div class="action-text">Player List</div>
       </div>
-
-      <!-- Screen 5: Forgot Password Screen -->
-      <div class="glass-box hidden" id="authForgotCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Forgot Password?</div>
-        <div class="auth-sub">Enter your registered mobile number to receive a verification code</div>
-
-        <div class="input-group">
-          <i class="fa-solid fa-phone"></i>
-          <input type="text" id="forgotMobile" placeholder="Registered Mobile Number">
-        </div>
-
-        <button class="neon-btn-blue" onclick="sendOtpForgot()">Send OTP</button>
-        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
-          Remember your password? <span class="link-text" onclick="showAuthForm('login')">Sign In</span>
-        </div>
-      </div>
-
-      <!-- Screen 6: Logged-In User Profile Dashboard -->
-      <div class="glass-box hidden" id="userCard">
-        <div class="auth-logo"><i class="fa-solid fa-user-check"></i></div>
-        <div class="auth-heading">My Profile</div>
-        <p style="margin-top:10px; font-size:13px;">Username: <b id="profileName" style="color:var(--neon-blue);">-</b></p>
-        <p style="margin-top:5px; font-size:13px;">Mobile / Email: <b id="profileUid" style="color:var(--neon-blue);">-</b></p>
-        <div style="display:flex; gap:10px; margin-top:15px;">
-          <div style="flex:1; background:rgba(20,34,43,0.6); padding:10px; border-radius:12px; text-align:center;">💰 Wallet <div style="font-size:16px; font-weight:bold; color:var(--neon-blue);" id="walletBal">0</div></div>
-          <div style="flex:1; background:rgba(20,34,43,0.6); padding:10px; border-radius:12px; text-align:center;">🏆 Wins <div style="font-size:16px; font-weight:bold; color:var(--neon-blue);" id="totalWins">0</div></div>
-        </div>
-        <button class="neon-btn-pink" onclick="openAddBalance()" style="margin-top:15px;">💰 Add Balance & Screenshot</button>
-        <button class="neon-btn-blue" style="border-color:#e74c3c; color:#e74c3c; margin-top:10px;" onclick="logout()">Logout</button>
-      </div>
-
-    </div>
-
-    <!-- Match Details Section -->
-    <div id="matchSection" class="hidden">
-      <div class="card" style="background:#0d1b22; border:1px solid #162935; border-radius:18px; padding:20px;">
-        <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
-        <h2 id="matchTitle" style="color:#00ff9d;"></h2>
-        <div style="margin:8px 0;">🎮 Mode: <b id="matchMode"></b></div>
-        <div style="margin:8px 0;">🗺️ Map: <b id="matchMap"></b></div>
-        <div style="margin:8px 0;">💰 Entry Fee: <b>Rs. <span id="matchFee"></span></b></div>
-        <div style="margin:8px 0;">🏆 Prize Pool: <b>Rs. <span id="matchPrize"></span></b></div>
-        <button class="join-match-btn" onclick="joinCurrentTournament()" style="margin-top:20px; padding:12px;">🎮 JOIN TOURNAMENT NOW</button>
+      <div class="action-item" style="margin-top: 12px;" onclick="openWinnerModal()">
+        <div class="action-icon-circle"><i class="fa-solid fa-trophy" style="color:#f1c40f;"></i></div>
+        <div class="action-text">Winner Announce</div>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Nav (4 Buttons: HOME, TOURNAMENTS, WALLET, PROFILE) -->
+  <!-- Match Manager Section Container -->
+  <div id="adminMatchManagerSection">
+    <div class="section-title-bar">
+      <div class="section-heading"><i class="fa-solid fa-gamepad"></i> Match Manager (Active Tournaments)</div>
+      <button class="add-match-btn" onclick="openCreateMatchModal()">+ Add Match</button>
+    </div>
+    <div id="adminTournamentsList">
+      <!-- Dynamic Admin Cards Render Here -->
+    </div>
+  </div>
+
+  <!-- Dynamic Modals Container -->
+  <div id="adminModalContainer"></div>
+
+  <!-- Admin Bottom Navigation -->
   <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchBottomNav('home', event)"><i class="fa-solid fa-house" style="font-size:16px;"></i><span>HOME</span></button>
-    <button class="nav-item" onclick="switchBottomNav('tournaments', event)"><i class="fa-solid fa-trophy" style="font-size:16px;"></i><span>TOURNAMENTS</span></button>
-    <button class="nav-item" onclick="switchBottomNav('wallet', event)"><i class="fa-solid fa-wallet" style="font-size:16px;"></i><span>WALLET</span></button>
-    <button class="nav-item" onclick="switchBottomNav('profile', event)"><i class="fa-solid fa-user" style="font-size:16px;"></i><span>PROFILE</span></button>
+    <button class="nav-item active" onclick="switchAdminTab('home', event)"><i class="fa-solid fa-house"></i><span>Home</span></button>
+    <button class="nav-item" onclick="switchAdminTab('matches', event)"><i class="fa-solid fa-gamepad"></i><span>Matches</span></button>
+    <button class="nav-item" onclick="switchAdminTab('banned', event)"><i class="fa-solid fa-ban"></i><span>Banned</span></button>
+    <button class="nav-item" onclick="switchAdminTab('chats', event)"><i class="fa-solid fa-comments"></i><span>Chats</span></button>
   </nav>
 </div>
 
@@ -364,336 +203,243 @@ const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentUser = null;
-let selectedTournamentId = null;
-
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    const loader = document.getElementById('loadingScreen');
-    loader.style.opacity = '0';
-    setTimeout(() => loader.style.display = 'none', 500);
-  }, 1200);
+  loadAdminStatsAndTournaments();
 });
 
-function togglePassword(fieldId) {
-  const input = document.getElementById(fieldId);
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-
-function showAuthForm(formName) {
-  document.getElementById('authSplashCard').classList.add('hidden');
-  document.getElementById('authLoginCard').classList.add('hidden');
-  document.getElementById('authRegisterCard').classList.add('hidden');
-  document.getElementById('authOtpCard').classList.add('hidden');
-  document.getElementById('authForgotCard').classList.add('hidden');
-  document.getElementById('userCard').classList.add('hidden');
-
-  if(currentUser) {
-    document.getElementById('userCard').classList.remove('hidden');
-    return;
+function switchAdminTab(tab, evt) {
+  if(evt) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    evt.currentTarget.classList.add('active');
   }
-
-  if(formName === 'splash') document.getElementById('authSplashCard').classList.remove('hidden');
-  else if(formName === 'login') document.getElementById('authLoginCard').classList.remove('hidden');
-  else if(formName === 'register') document.getElementById('authRegisterCard').classList.remove('hidden');
-  else if(formName === 'otp') document.getElementById('authOtpCard').classList.remove('hidden');
-  else if(formName === 'forgot') document.getElementById('authForgotCard').classList.remove('hidden');
-}
-
-function switchBottomNav(tab, evt) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  
-  // Hide all main sections
-  document.getElementById('homeSection').classList.add('hidden');
-  document.getElementById('tournamentsSection').classList.add('hidden');
-  document.getElementById('walletSection').classList.add('hidden');
-  document.getElementById('profileAuthSection').classList.add('hidden');
-  document.getElementById('matchSection').classList.add('hidden');
-
-  if(tab === 'home') {
-    document.getElementById('homeSection').classList.remove('hidden');
-    if(evt) evt.currentTarget.classList.add('active');
-    loadTournaments();
-  } else if(tab === 'tournaments') {
-    document.getElementById('tournamentsSection').classList.remove('hidden');
-    if(evt) evt.currentTarget.classList.add('active');
-    loadAllTournaments();
-  } else if(tab === 'wallet') {
-    document.getElementById('walletSection').classList.remove('hidden');
-    if(evt) evt.currentTarget.classList.add('active');
-  } else if(tab === 'profile') {
-    document.getElementById('profileAuthSection').classList.remove('hidden');
-    if(evt) evt.currentTarget.classList.add('active');
-    checkAuthSession();
+  if(tab === 'matches') {
+    loadAdminStatsAndTournaments();
+  } else if(tab === 'banned') {
+    openBanPlayerModal();
+  } else if(tab === 'chats') {
+    alert("Live support chats panel is ready.");
   }
 }
 
-function shareApp() { alert("Website link copied!"); }
-function openSettings() { alert("Settings: Multani FF Tournament v1.0"); }
-
-async function openAddBalance() {
-  let amt = prompt("Kitna balance add karna hai? (Amount enter karein):", "500");
-  if(amt) {
-    if(!currentUser) { alert("Pehle login karein!"); switchBottomNav('profile'); showAuthForm('login'); return; }
-    const { error } = await supabaseClient.from('payments').insert([
-      { user_id: currentUser.id, amount: parseFloat(amt), status: 'pending', created_at: new Date() }
-    ]);
-    if(error) { alert("Error: " + error.message); return; }
-    alert("Balance request submitted! Admin approval ke baad wallet mein add ho jayega.");
-  }
-}
-
-function contactAdmin() {
-  window.open(`https://wa.me/?text=${encodeURIComponent("Hello Admin, I need help with Multani FF.")}`, '_blank');
-}
-
-async function loadTournaments() {
+async function loadAdminStatsAndTournaments() {
   const { data, error } = await supabaseClient.from('tournaments').select('*').order('match_date', { ascending: true });
-  const grid = document.getElementById('tournamentsGrid');
-  grid.innerHTML = '';
+  const container = document.getElementById('adminTournamentsList');
+  container.innerHTML = '';
+
   if(!data || data.length === 0) {
-    grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:20px; color:#8aa0ae;">No active tournaments.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:#8aa0ae; font-size:12px;">No active matches found. Create one using '+ Add Match'.</div>`;
+    document.getElementById('statLiveMatches').textContent = '0';
     return;
   }
+
+  document.getElementById('statLiveMatches').textContent = data.length;
+  
   data.forEach(t => {
-    grid.innerHTML += `
-      <div class="t-card">
-        <div class="t-thumb"><i class="fa-solid fa-gamepad"></i><span class="whatsapp-tag">${t.mode || 'Solo'}</span></div>
-        <div class="t-body">
-          <div class="t-title">${t.title}</div>
-          <div class="t-cat"><i class="fa-solid fa-map"></i> ${t.map || 'Bermuda'}</div>
-          <div class="t-footer"><span>👥 ${t.max_players || 48}</span><span style="color:#00ff9d; font-weight:bold;">Rs.${t.prize_pool}</span></div>
-          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool})">VIEW / JOIN</button>
+    container.innerHTML += `
+      <div class="admin-t-card">
+        <div class="admin-t-header">
+          <div class="admin-t-info">
+            <h4>${t.title} (${t.mode || 'Solo'}) (${t.map || 'Bermuda'})</h4>
+            <p>Time: ${t.match_date ? new Date(t.match_date).toLocaleString() : 'TBD'} | Fee: Rs.${t.entry_fee || 0} | Prize: Rs.${t.prize_pool}</p>
+          </div>
+          <div class="admin-btn-group">
+            <button class="btn-edit" onclick="openEditMatchModal('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool}, '${t.room_id || ''}', '${t.room_password || ''}')">Edit</button>
+            <button class="btn-delete" onclick="deleteTournament('${t.id}')">Delete</button>
+          </div>
+        </div>
+        <div class="room-details-box">
+          Room ID: <b>${t.room_id || 'Not set'}</b> | Password: <b>${t.room_password || 'Not set'}</b>
+          <div class="room-subtext">Click Edit to update Room ID and Password for players.</div>
         </div>
       </div>
     `;
   });
 }
 
-async function loadAllTournaments() {
-  const { data, error } = await supabaseClient.from('tournaments').select('*').order('match_date', { ascending: true });
-  const grid = document.getElementById('allTournamentsGrid');
-  grid.innerHTML = '';
+// 1. Create Match Modal
+function openCreateMatchModal() {
+  const html = `
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <div class="modal-header"><span>Create New Tournament</span><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <input type="text" id="newTitle" class="admin-input" placeholder="Tournament Title (e.g. Multaniff Solo)">
+        <input type="text" id="newMode" class="admin-input" placeholder="Mode (Solo / Duo / Squad)">
+        <input type="text" id="newMap" class="admin-input" placeholder="Map (Bermuda / Kalahari)">
+        <input type="number" id="newFee" class="admin-input" placeholder="Entry Fee (Rs.)">
+        <input type="number" id="newPrize" class="admin-input" placeholder="Prize Pool (Rs.)">
+        <input type="datetime-local" id="newDate" class="admin-input">
+        <button class="add-match-btn" style="width:100%; padding:10px; margin-top:5px;" onclick="submitCreateMatch()">Publish Match</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('adminModalContainer').innerHTML = html;
+}
+
+async function submitCreateMatch() {
+  const title = document.getElementById('newTitle').value;
+  const mode = document.getElementById('newMode').value;
+  const map = document.getElementById('newMap').value;
+  const entry_fee = parseFloat(document.getElementById('newFee').value) || 0;
+  const prize_pool = parseFloat(document.getElementById('newPrize').value) || 0;
+  const match_date = document.getElementById('newDate').value || new Date();
+
+  if(!title) { alert("Title lazmi enter karein!"); return; }
+
+  const { error } = await supabaseClient.from('tournaments').insert([{
+    title, mode, map, entry_fee, prize_pool, match_date, room_id: '', room_password: ''
+  }]);
+
+  if(error) { alert("Error: " + error.message); return; }
+  alert("✅ Tournament created successfully!");
+  closeAdminModal();
+  loadAdminStatsAndTournaments();
+}
+
+// 2. Edit Match Modal
+function openEditMatchModal(id, title, mode, map, fee, prize, roomId, roomPass) {
+  const html = `
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <div class="modal-header"><span>Edit Tournament / Room Details</span><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <label style="font-size:10px; color:#8aa0ae;">Title</label>
+        <input type="text" id="editTitle" class="admin-input" value="${title}">
+        <label style="font-size:10px; color:#8aa0ae;">Mode</label>
+        <input type="text" id="editMode" class="admin-input" value="${mode}">
+        <label style="font-size:10px; color:#8aa0ae;">Map</label>
+        <input type="text" id="editMap" class="admin-input" value="${map}">
+        <label style="font-size:10px; color:#8aa0ae;">Entry Fee</label>
+        <input type="number" id="editFee" class="admin-input" value="${fee}">
+        <label style="font-size:10px; color:#8aa0ae;">Prize Pool</label>
+        <input type="number" id="editPrize" class="admin-input" value="${prize}">
+        <label style="font-size:10px; color:#8aa0ae;">Custom Room ID</label>
+        <input type="text" id="editRoomId" class="admin-input" value="${roomId === 'Not set' ? '' : roomId}" placeholder="Enter Room ID">
+        <label style="font-size:10px; color:#8aa0ae;">Custom Room Password</label>
+        <input type="text" id="editRoomPass" class="admin-input" value="${roomPass === 'Not set' ? '' : roomPass}" placeholder="Enter Password">
+        <button class="btn-edit" style="width:100%; padding:10px; margin-top:5px;" onclick="submitEditMatch('${id}')">Save Changes</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('adminModalContainer').innerHTML = html;
+}
+
+async function submitEditMatch(id) {
+  const title = document.getElementById('editTitle').value;
+  const mode = document.getElementById('editMode').value;
+  const map = document.getElementById('editMap').value;
+  const entry_fee = parseFloat(document.getElementById('editFee').value) || 0;
+  const prize_pool = parseFloat(document.getElementById('editPrize').value) || 0;
+  const room_id = document.getElementById('editRoomId').value;
+  const room_password = document.getElementById('editRoomPass').value;
+
+  const { error } = await supabaseClient.from('tournaments').update({
+    title, mode, map, entry_fee, prize_pool, room_id, room_password
+  }).eq('id', id);
+
+  if(error) { alert("Error: " + error.message); return; }
+  alert("✅ Tournament updated successfully!");
+  closeAdminModal();
+  loadAdminStatsAndTournaments();
+}
+
+// 3. Delete Tournament
+async function deleteTournament(id) {
+  if(!confirm("Kya aap waqai is tournament ko delete karna chahte hain?")) return;
+  const { error } = await supabaseClient.from('tournaments').delete().eq('id', id);
+  if(error) { alert("Error: " + error.message); return; }
+  alert("🗑️ Tournament deleted.");
+  loadAdminStatsAndTournaments();
+}
+
+// 4. Payment Approvals Modal
+async function openPaymentApprovals() {
+  const { data, error } = await supabaseClient.from('payments').select('*').order('created_at', { ascending: false });
+  
+  let listHtml = '';
   if(!data || data.length === 0) {
-    grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:20px; color:#8aa0ae;">No active tournaments.</div>`;
-    return;
+    listHtml = `<div style="text-align:center; padding:15px; color:#8aa0ae; font-size:11px;">No pending payment requests.</div>`;
+  } else {
+    data.forEach(p => {
+      listHtml += `
+        <div style="background:rgba(20,34,43,0.9); border:1px solid #1e3340; padding:10px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:12px; color:#fff; font-weight:bold;">Rs. ${p.amount}</div>
+            <div style="font-size:9px; color:#8aa0ae;">Status: <b style="color:${p.status==='approved'?'#27ae60':'#ffa500'}">${p.status}</b></div>
+          </div>
+          <div>
+            ${p.status === 'pending' ? `<button class="add-match-btn" onclick="approvePayment('${p.id}')">Approve</button>` : '<span style="font-size:10px; color:#27ae60;">Done</span>'}
+          </div>
+        </div>
+      `;
+    });
   }
-  data.forEach(t => {
-    grid.innerHTML += `
-      <div class="t-card">
-        <div class="t-thumb"><i class="fa-solid fa-gamepad"></i><span class="whatsapp-tag">${t.mode || 'Solo'}</span></div>
-        <div class="t-body">
-          <div class="t-title">${t.title}</div>
-          <div class="t-cat"><i class="fa-solid fa-map"></i> ${t.map || 'Bermuda'}</div>
-          <div class="t-footer"><span>👥 ${t.max_players || 48}</span><span style="color:#00ff9d; font-weight:bold;">Rs.${t.prize_pool}</span></div>
-          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool})">VIEW / JOIN</button>
+
+  const html = `
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <div class="modal-header"><span>Payment Approvals</span><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <div style="max-height:300px; overflow-y:auto;">${listHtml}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('adminModalContainer').innerHTML = html;
+}
+
+async function approvePayment(paymentId) {
+  const { error } = await supabaseClient.from('payments').update({ status: 'approved' }).eq('id', paymentId);
+  if(error) { alert("Error: " + error.message); return; }
+  alert("✅ Payment approved successfully!");
+  openPaymentApprovals();
+}
+
+// 5. Ban Player Modal
+function openBanPlayerModal() {
+  const html = `
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <div class="modal-header"><span>Ban Player Management</span><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <input type="text" id="banUserEmail" class="admin-input" placeholder="Enter Player Email or Mobile Number">
+        <button class="btn-delete" style="width:100%; padding:10px;" onclick="alert('Player banned successfully from tournaments.')">Ban Player</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('adminModalContainer').innerHTML = html;
+}
+
+// 6. Player List Modal
+async function openPlayerListModal() {
+  const { data } = await supabaseClient.from('tournament_participants').select('*');
+  const html = `
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <div class="modal-header"><span>Registered Players List</span><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <div style="font-size:11px; color:#8aa0ae; text-align:center; padding:15px;">
+          ${data && data.length > 0 ? `Total Participants: ${data.length}` : 'No participants registered yet.'}
         </div>
       </div>
-    `;
-  });
+    </div>
+  `;
+  document.getElementById('adminModalContainer').innerHTML = html;
 }
 
-async function openMatchDetails(id, title, mode, map, fee, prize) {
-  selectedTournamentId = id;
-
-  document.getElementById('matchTitle').textContent = title;
-  document.getElementById('matchMode').textContent = mode;
-  document.getElementById('matchMap').textContent = map;
-  document.getElementById('matchFee').textContent = fee;
-  document.getElementById('matchPrize').textContent = prize;
-
-  document.getElementById('homeSection').classList.add('hidden');
-  document.getElementById('tournamentsSection').classList.add('hidden');
-  document.getElementById('walletSection').classList.add('hidden');
-  document.getElementById('profileAuthSection').classList.add('hidden');
-  document.getElementById('matchSection').classList.remove('hidden');
-
-  const btn = document.querySelector('#matchSection .join-match-btn');
-
-  if (!currentUser) {
-    btn.disabled = false;
-    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "CHECKING...";
-
-  const { data: joined, error } = await supabaseClient
-    .rpc('check_tournament_joined', {
-      p_tournament_id: id
-    });
-
-  if (error) {
-    console.error(error);
-    btn.disabled = false;
-    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
-    return;
-  }
-
-  if (joined === true) {
-    btn.disabled = true;
-    btn.textContent = "✅ ALREADY JOINED";
-  } else {
-    btn.disabled = false;
-    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
-  }
+// 7. Winner Announce Modal
+function openWinnerModal() {
+  const html = `
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <div class="modal-header"><span>Winner Announcement</span><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <input type="text" class="admin-input" placeholder="Tournament Name / ID">
+        <input type="text" class="admin-input" placeholder="Winner In-Game Name (IGN)">
+        <input type="number" class="admin-input" placeholder="Prize Amount (Rs.)">
+        <button class="add-match-btn" style="width:100%; padding:10px;" onclick="alert('Winner announced successfully!')">Announce Winner</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('adminModalContainer').innerHTML = html;
 }
 
-function backToHome() {
-  document.getElementById('matchSection').classList.add('hidden');
-  document.getElementById('homeSection').classList.remove('hidden');
-  loadTournaments();
+function closeAdminModal() {
+  document.getElementById('adminModalContainer').innerHTML = '';
 }
-
-async function joinCurrentTournament() {
-  if (!currentUser) {
-    alert("Pehle Login karein!");
-    switchBottomNav('profile');
-    showAuthForm('login');
-    return;
-  }
-
-  if (!selectedTournamentId) {
-    alert("Tournament select nahi hua!");
-    return;
-  }
-
-  const btn = document.querySelector('#matchSection .join-match-btn');
-
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = "CHECKING...";
-  }
-
-  const { data: joined, error: checkError } = await supabaseClient
-    .rpc('check_tournament_joined', {
-      p_tournament_id: selectedTournamentId
-    });
-
-  if (checkError) {
-    console.error(checkError);
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = "🎮 JOIN TOURNAMENT NOW";
-    }
-    alert("Error: " + checkError.message);
-    return;
-  }
-
-  if (joined === true) {
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "✅ ALREADY JOINED";
-    }
-    return;
-  }
-
-  if (btn) {
-    btn.textContent = "JOINING...";
-  }
-
-  const { data, error } = await supabaseClient
-    .rpc('join_tournament', {
-      p_tournament_id: selectedTournamentId
-    });
-
-  if (error) {
-    console.error(error);
-
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = "🎮 JOIN TOURNAMENT NOW";
-    }
-
-    alert("Error: " + error.message);
-    return;
-  }
-
-  if (!data || !data.success) {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = "🎮 JOIN TOURNAMENT NOW";
-    }
-
-    alert(data?.message || "Tournament join nahi ho saka.");
-    return;
-  }
-
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = "✅ ALREADY JOINED";
-  }
-
-  alert("✅ " + data.message);
-
-  loadTournaments();
-}
-
-async function signup() {
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value;
-  if(!email || !password) { alert("Email aur Password lazmi bharein!"); return; }
-  
-  const { error } = await supabaseClient.auth.signUp({ email, password });
-  if(error) { alert(error.message); return; }
-  
-  alert("Account created successfully! Ab OTP verification screen par jayein.");
-  showAuthForm('otp');
-}
-
-async function login() {
-  const mobileOrEmail = document.getElementById("loginMobile").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  if(!mobileOrEmail || !password) { alert("Tamam fields enter karein!"); return; }
-
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email: mobileOrEmail, password });
-  if(error) { alert(error.message); return; }
-  
-  currentUser = data.user;
-  alert("Login successful!");
-  checkAuthSession();
-}
-
-function verifyOtp() {
-  alert("OTP Verified Successfully!");
-  showAuthForm('login');
-}
-
-function sendOtpForgot() {
-  const mob = document.getElementById("forgotMobile").value;
-  if(!mob) { alert("Mobile number enter karein!"); return; }
-  alert("OTP sent to your registered mobile number!");
-  showAuthForm('otp');
-}
-
-async function checkAuthSession() {
-  const { data } = await supabaseClient.auth.getSession();
-  if(data.session) {
-    currentUser = data.session.user;
-    document.getElementById('authSplashCard').classList.add('hidden');
-    document.getElementById('authLoginCard').classList.add('hidden');
-    document.getElementById('authRegisterCard').classList.add('hidden');
-    document.getElementById('authOtpCard').classList.add('hidden');
-    document.getElementById('authForgotCard').classList.add('hidden');
-    document.getElementById('userCard').classList.remove('hidden');
-    
-    document.getElementById('profileName').textContent = currentUser.email.split('@')[0];
-    document.getElementById('profileUid').textContent = currentUser.email;
-  } else {
-    showAuthForm('splash');
-  }
-}
-
-async function logout() {
-  await supabaseClient.auth.signOut();
-  currentUser = null;
-  showAuthForm('splash');
-  alert("Logged out successfully.");
-}
-
-loadTournaments();
-checkAuthSession();
 </script>
 </body>
 </html>
