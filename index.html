@@ -458,9 +458,61 @@ function backToHome() {
 }
 
 async function joinCurrentTournament() {
-  if(!currentUser) { alert("Pehle Login karein!"); switchBottomNav('me'); showAuthForm('login'); return; }
-  alert("Tournament successfully joined!");
+  if (!currentUser) {
+    alert("Pehle Login karein!");
+    switchBottomNav('me');
+    showAuthForm('login');
+    return;
+  }
+
+  if (!selectedTournamentId) {
+    alert("Tournament select nahi hua!");
+    return;
+  }
+
+  const btn = document.querySelector('#matchSection .join-match-btn');
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "JOINING...";
+  }
+
+  const { data, error } = await supabaseClient
+    .rpc('join_tournament', {
+      p_tournament_id: selectedTournamentId
+    });
+
+  if (error) {
+    console.error(error);
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+    }
+
+    alert("Error: " + error.message);
+    return;
+  }
+
+  if (!data || !data.success) {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+    }
+
+    alert(data?.message || "Tournament join nahi ho saka.");
+    return;
+  }
+
+  alert("✅ " + data.message);
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+  }
+
   backToHome();
+  loadTournaments();
 }
 
 async function signup() {
