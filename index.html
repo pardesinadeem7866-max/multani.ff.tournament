@@ -9,7 +9,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
 body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display:flex;justify-content:center;}
-.phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;box-shadow:0 0 30px rgba(0,243,255,0.15);overflow-x:hidden;}
+.phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;box-shadow:0 0 30px rgba(0,243,255,0.15);overflow-x:hidden;padding-bottom:70px;}
 
 :root {
   --neon-blue: #00f3ff;
@@ -143,10 +143,42 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .t-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:#8aa0ae;}
 .join-match-btn{width:100%;margin-top:8px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
 
-/* Bottom Nav - Fixed for 4 buttons inside phone frame */
-.bottom-nav{position:fixed;bottom:0;width:100%;max-width:420px;background:#0d1b22;border-top:1px solid #162935;display:flex;justify-content:space-around;align-items:center;padding:10px 0;z-index:100;}
-.nav-item{background:transparent;border:none;color:#8aa0ae;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;flex:1;}
-.nav-item.active{color:#00ff9d;}
+/* Fixed Bottom Navigation Bar Styles */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  background: #0d1b22;
+  border-top: 1px solid #162935;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  z-index: 1000;
+}
+.nav-item {
+  background: transparent;
+  border: none;
+  color: #8aa0ae;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  flex: 1;
+  padding: 4px 0;
+}
+.nav-item i {
+  font-size: 16px;
+}
+.nav-item.active {
+  color: #00ff9d;
+}
 
 .hidden{display:none;}
 .link-text { color: var(--neon-blue); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 10px; display: inline-block; }
@@ -350,12 +382,12 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
     </div>
   </div>
 
-  <!-- Bottom Nav (4 Buttons: HOME, TOURNAMENTS, WALLET, PROFILE) -->
+  <!-- Fixed Bottom Nav (HOME, TOURNAMENTS, WALLET, PROFILE) -->
   <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchBottomNav('home', event)"><i class="fa-solid fa-house" style="font-size:16px;"></i><span>HOME</span></button>
-    <button class="nav-item" onclick="switchBottomNav('tournaments', event)"><i class="fa-solid fa-trophy" style="font-size:16px;"></i><span>TOURNAMENTS</span></button>
-    <button class="nav-item" onclick="switchBottomNav('wallet', event)"><i class="fa-solid fa-wallet" style="font-size:16px;"></i><span>WALLET</span></button>
-    <button class="nav-item" onclick="switchBottomNav('profile', event)"><i class="fa-solid fa-user" style="font-size:16px;"></i><span>PROFILE</span></button>
+    <button class="nav-item active" onclick="switchBottomNav('home', event)"><i class="fa-solid fa-house"></i><span>HOME</span></button>
+    <button class="nav-item" onclick="switchBottomNav('tournaments', event)"><i class="fa-solid fa-trophy"></i><span>TOURNAMENTS</span></button>
+    <button class="nav-item" onclick="switchBottomNav('wallet', event)"><i class="fa-solid fa-wallet"></i><span>WALLET</span></button>
+    <button class="nav-item" onclick="switchBottomNav('profile', event)"><i class="fa-solid fa-user"></i><span>PROFILE</span></button>
   </nav>
 </div>
 
@@ -403,7 +435,6 @@ function showAuthForm(formName) {
 function switchBottomNav(tab, evt) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   
-  // Hide all main sections
   document.getElementById('homeSection').classList.add('hidden');
   document.getElementById('tournamentsSection').classList.add('hidden');
   document.getElementById('walletSection').classList.add('hidden');
