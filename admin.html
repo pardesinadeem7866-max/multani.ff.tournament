@@ -143,9 +143,9 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .t-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:#8aa0ae;}
 .join-match-btn{width:100%;margin-top:8px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
 
-/* Bottom Nav - Updated for 4 buttons */
+/* Bottom Nav - Fixed for 4 buttons inside phone frame */
 .bottom-nav{position:fixed;bottom:0;width:100%;max-width:420px;background:#0d1b22;border-top:1px solid #162935;display:flex;justify-content:space-around;align-items:center;padding:10px 0;z-index:100;}
-.nav-item{background:transparent;border:none;color:#8aa0ae;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;}
+.nav-item{background:transparent;border:none;color:#8aa0ae;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;flex:1;}
 .nav-item.active{color:#00ff9d;}
 
 .hidden{display:none;}
@@ -350,7 +350,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
     </div>
   </div>
 
-  <!-- Bottom Nav (4 Buttons: Home, Tournaments, Wallet, Profile) -->
+  <!-- Bottom Nav (4 Buttons: HOME, TOURNAMENTS, WALLET, PROFILE) -->
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="switchBottomNav('home', event)"><i class="fa-solid fa-house" style="font-size:16px;"></i><span>HOME</span></button>
     <button class="nav-item" onclick="switchBottomNav('tournaments', event)"><i class="fa-solid fa-trophy" style="font-size:16px;"></i><span>TOURNAMENTS</span></button>
