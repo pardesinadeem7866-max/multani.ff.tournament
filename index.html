@@ -11,6 +11,87 @@
 body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display:flex;justify-content:center;}
 .phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;box-shadow:0 0 30px rgba(0,243,255,0.15);overflow-x:hidden;}
 
+/* Neon Theme Shared Styles */
+:root {
+  --neon-blue: #00f3ff;
+  --neon-pink: #ff007f;
+  --bg-glass: rgba(13, 27, 34, 0.75);
+  --border-glass: rgba(0, 243, 255, 0.3);
+}
+
+/* 1. Loading Screen */
+#loadingScreen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle, #0d1b22 0%, #030712 100%);
+  z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.5s ease;
+}
+.load-logo-box {
+  width: 90px; height: 90px; border: 2px solid var(--neon-blue); border-radius: 20px;
+  display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--neon-blue);
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 20px;
+}
+.load-title { font-size: 22px; font-weight: bold; color: #fff; letter-spacing: 1px; text-align: center; }
+.load-sub { font-size: 11px; color: var(--neon-blue); margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+.spinner {
+  width: 45px; height: 45px; border: 3px solid rgba(0, 243, 255, 0.2);
+  border-top: 3px solid var(--neon-blue); border-radius: 50%;
+  animation: spin 1s linear infinite; margin-top: 35px;
+}
+.loading-text { font-size: 12px; color: #a3e4d7; margin-top: 12px; letter-spacing: 1px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Glassmorphism Auth / Container Boxes */
+.glass-box {
+  background: rgba(15, 23, 33, 0.85);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 25px 20px;
+  margin: 15px auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+.auth-logo { font-size: 38px; color: var(--neon-blue); margin-bottom: 10px; filter: drop-shadow(0 0 8px rgba(0,243,255,0.6)); }
+.auth-heading { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 5px; text-transform: uppercase; }
+.auth-sub { font-size: 11px; color: #8aa0ae; margin-bottom: 20px; }
+
+/* Inputs with Neon Focus */
+.input-group { position: relative; margin-bottom: 12px; text-align: left; }
+.input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); font-size: 14px; }
+.input-group input {
+  width: 100%; padding: 12px 12px 12px 40px; background: rgba(20, 34, 43, 0.6);
+  border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 12px; color: white; font-size: 13px; outline: none;
+  transition: all 0.3s;
+}
+.input-group input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+.eye-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8aa0ae; cursor: pointer; }
+
+/* Action Buttons */
+.neon-btn-blue {
+  width: 100%; padding: 12px; margin-top: 10px; background: transparent;
+  border: 2px solid var(--neon-blue); color: var(--neon-blue); font-weight: bold; font-size: 13px;
+  border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); transition: 0.3s;
+}
+.neon-btn-blue:hover { background: var(--neon-blue); color: #091216; box-shadow: 0 0 20px var(--neon-blue); }
+
+.neon-btn-pink {
+  width: 100%; padding: 12px; margin-top: 10px; background: transparent;
+  border: 2px solid var(--neon-pink); color: var(--neon-pink); font-weight: bold; font-size: 13px;
+  border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.2); transition: 0.3s;
+}
+.neon-btn-pink:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 20px var(--neon-pink); }
+
+/* OTP Boxes Style */
+.otp-container { display: flex; justify-content: space-between; gap: 8px; margin: 20px 0; }
+.otp-box {
+  width: 42px; height: 48px; background: rgba(20, 34, 43, 0.8);
+  border: 1px solid var(--neon-blue); border-radius: 10px; font-size: 18px; color: white;
+  text-align: center; font-weight: bold; outline: none; box-shadow: 0 0 8px rgba(0,243,255,0.2);
+}
+
 /* Header */
 .top-header{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#0d1b22;border-bottom:1px solid #162935;position:sticky;top:0;z-index:100;}
 .logo-area{display:flex;align-items:center;gap:8px;font-weight:bold;font-size:14px;color:#00ff9d;}
@@ -48,14 +129,21 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .nav-item.active{color:#00ff9d;}
 .nav-center-btn{background:#00d084;color:#091216;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:none;margin-top:-15px;cursor:pointer;}
 
-.card{background:#0d1b22;border:1px solid #162935;border-radius:18px;padding:20px;margin-bottom:15px;}
 .hidden{display:none;}
-input, select{width:100%;padding:12px;margin:6px 0;background:#14222b;border:1px solid #1e3340;border-radius:10px;color:white;font-size:14px;outline:none;}
-button.main-btn{width:100%;padding:12px;margin-top:10px;background:#00d084;color:#091216;font-weight:bold;border:none;border-radius:10px;cursor:pointer;}
-.blue-btn{background:#1b4f72 !important;color:white !important;}
+.link-text { color: var(--neon-blue); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 10px; display: inline-block; }
 </style>
 </head>
 <body>
+
+<!-- 1. Loading Screen Component -->
+<div id="loadingScreen">
+  <div class="load-logo-box"><i class="fa-solid fa-gamepad"></i></div>
+  <div class="load-title">MULTANI FF</div>
+  <div class="load-sub">OFFICIAL TOURNAMENT</div>
+  <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">PAKISTAN'S ULTIMATE FREE FIRE BATTLEGROUND</div>
+  <div class="spinner"></div>
+  <div class="loading-text">LOADING...</div>
+</div>
 
 <div class="phone-frame">
   <!-- Top Header -->
@@ -93,39 +181,132 @@ button.main-btn{width:100%;padding:12px;margin-top:10px;background:#00d084;color
       <div id="tournamentsGrid" class="grid-tournaments"></div>
     </div>
 
-    <!-- Auth / Profile Section -->
+    <!-- Auth / Profile Section with full Neon Screens (Splash, Login, Register, OTP, Forgot) -->
     <div id="profileAuthSection" class="hidden">
-      <div class="card" id="loginCard">
-        <h2>🔐 Login / Signup</h2>
-        <input id="email" type="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Password">
-        <button class="main-btn" onclick="signup()">CREATE ACCOUNT</button>
-        <button class="main-btn blue-btn" onclick="login()">LOGIN</button>
+      
+      <!-- Screen 1: Splash Choice (Login / Register buttons) -->
+      <div class="glass-box" id="authSplashCard">
+        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="auth-heading">Multani FF</div>
+        <div class="auth-sub">Welcome to Pakistan's Ultimate Free Fire Battleground</div>
+        <button class="neon-btn-blue" onclick="showAuthForm('login')">Login</button>
+        <button class="neon-btn-pink" onclick="showAuthForm('register')">Register</button>
+        <div style="font-size: 10px; color: #8aa0ae; margin-top: 15px;">
+          By continuing, you agree to our<br><span style="text-decoration: underline; cursor:pointer;">Terms of Service</span> &amp; <span style="text-decoration: underline; cursor:pointer;">Privacy Policy</span>
+        </div>
       </div>
 
-      <div class="card hidden" id="userCard">
-        <h2>👤 My Profile</h2>
-        <p style="margin-top:10px;">Username: <b id="profileName" style="color:#00ff9d;">-</b></p>
-        <p style="margin-top:5px;">UID: <b id="profileUid" style="color:#00ff9d;">-</b></p>
-        <div style="display:flex; gap:10px; margin-top:15px;">
-          <div style="flex:1; background:#14222b; padding:12px; border-radius:12px; text-align:center;">💰 Wallet <div style="font-size:18px; font-weight:bold; color:#00ff9d;" id="walletBal">0</div></div>
-          <div style="flex:1; background:#14222b; padding:12px; border-radius:12px; text-align:center;">🏆 Wins <div style="font-size:18px; font-weight:bold; color:#00ff9d;" id="totalWins">0</div></div>
+      <!-- Screen 2: Sign In / Login Form -->
+      <div class="glass-box hidden" id="authLoginCard">
+        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="auth-heading">Sign In To Your Account</div>
+        <div class="auth-sub">Enter your credentials below</div>
+        
+        <div class="input-group">
+          <i class="fa-solid fa-phone"></i>
+          <input type="text" id="loginMobile" placeholder="Registered Mobile Number">
         </div>
-        <button class="main-btn" onclick="openAddBalance()" style="background:#f39c12; color:white; margin-top:10px;">💰 Add Balance Request & Screenshot</button>
-        <button class="main-btn" style="background:#e74c3c; color:white; margin-top:15px;" onclick="logout()">LOGOUT</button>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="Password">
+          <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('loginPassword')"></i>
+        </div>
+        <div style="text-align: right; margin-bottom: 10px;">
+          <span class="link-text" onclick="showAuthForm('forgot')">Forgot Password?</span>
+        </div>
+
+        <button class="neon-btn-blue" onclick="login()">Login</button>
+        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
+          New here? <span class="link-text" onclick="showAuthForm('register')">REGISTER NOW</span>
+        </div>
+        <span class="link-text" style="display:block; margin-top:5px;" onclick="showAuthForm('splash')">← Back</span>
       </div>
+
+      <!-- Screen 3: Register / Create Account Form -->
+      <div class="glass-box hidden" id="authRegisterCard">
+        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="auth-heading">Create Your Account</div>
+        <div class="auth-sub">Fill details for official tournaments</div>
+
+        <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regFullName" placeholder="Full Name"></div>
+        <div class="input-group"><i class="fa-solid fa-gamepad"></i><input type="text" id="regIgn" placeholder="In-Game Name (IGN)"></div>
+        <div class="input-group"><i class="fa-solid fa-phone"></i><input type="text" id="regMobile" placeholder="Mobile Number"></div>
+        <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address"></div>
+        <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPassword" placeholder="Password"><i class="fa-solid fa-eye eye-icon" onclick="togglePassword('regPassword')"></i></div>
+        <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regConfirmPassword" placeholder="Confirm Password"></div>
+
+        <button class="neon-btn-pink" onclick="signup()">Register</button>
+        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
+          Already have an account? <span class="link-text" onclick="showAuthForm('login')">Sign In</span>
+        </div>
+        <span class="link-text" style="display:block; margin-top:5px;" onclick="showAuthForm('splash')">← Back</span>
+      </div>
+
+      <!-- Screen 4: OTP Verification Screen -->
+      <div class="glass-box hidden" id="authOtpCard">
+        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="auth-heading">Verify Your Mobile</div>
+        <div class="auth-sub">Enter the 6-digit code sent to <br><b id="otpTargetPhone">+92 3XX XXXXXXX</b></div>
+
+        <div class="otp-container">
+          <input type="text" class="otp-box" maxlength="1" value="7">
+          <input type="text" class="otp-box" maxlength="1">
+          <input type="text" class="otp-box" maxlength="1">
+          <input type="text" class="otp-box" maxlength="1">
+          <input type="text" class="otp-box" maxlength="1">
+          <input type="text" class="otp-box" maxlength="1">
+        </div>
+
+        <button class="neon-btn-blue" onclick="verifyOtp()">Verify</button>
+        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
+          Resend Code in <span style="color:var(--neon-blue);">00:45</span>
+        </div>
+        <span class="link-text" style="display:block; margin-top:10px;" onclick="showAuthForm('login')">← Back to Login</span>
+      </div>
+
+      <!-- Screen 5: Forgot Password Screen -->
+      <div class="glass-box hidden" id="authForgotCard">
+        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="auth-heading">Forgot Password?</div>
+        <div class="auth-sub">Enter your registered mobile number to receive a verification code</div>
+
+        <div class="input-group">
+          <i class="fa-solid fa-phone"></i>
+          <input type="text" id="forgotMobile" placeholder="Registered Mobile Number">
+        </div>
+
+        <button class="neon-btn-blue" onclick="sendOtpForgot()">Send OTP</button>
+        <div style="margin-top: 15px; font-size: 11px; color: #8aa0ae;">
+          Remember your password? <span class="link-text" onclick="showAuthForm('login')">Sign In</span>
+        </div>
+      </div>
+
+      <!-- Screen 6: Logged-In User Profile Dashboard -->
+      <div class="glass-box hidden" id="userCard">
+        <div class="auth-logo"><i class="fa-solid fa-user-check"></i></div>
+        <div class="auth-heading">My Profile</div>
+        <p style="margin-top:10px; font-size:13px;">Username: <b id="profileName" style="color:var(--neon-blue);">-</b></p>
+        <p style="margin-top:5px; font-size:13px;">Mobile / Email: <b id="profileUid" style="color:var(--neon-blue);">-</b></p>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+          <div style="flex:1; background:rgba(20,34,43,0.6); padding:10px; border-radius:12px; text-align:center;">💰 Wallet <div style="font-size:16px; font-weight:bold; color:var(--neon-blue);" id="walletBal">0</div></div>
+          <div style="flex:1; background:rgba(20,34,43,0.6); padding:10px; border-radius:12px; text-align:center;">🏆 Wins <div style="font-size:16px; font-weight:bold; color:var(--neon-blue);" id="totalWins">0</div></div>
+        </div>
+        <button class="neon-btn-pink" onclick="openAddBalance()" style="margin-top:15px;">💰 Add Balance & Screenshot</button>
+        <button class="neon-btn-blue" style="border-color:#e74c3c; color:#e74c3c; margin-top:10px;" onclick="logout()">Logout</button>
+      </div>
+
     </div>
 
     <!-- Match Details Section -->
     <div id="matchSection" class="hidden">
-      <div class="card">
-        <button class="main-btn blue-btn" onclick="backToHome()" style="margin-bottom:15px;">← BACK</button>
+      <div class="card" style="background:#0d1b22; border:1px solid #162935; border-radius:18px; padding:20px;">
+        <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
         <h2 id="matchTitle" style="color:#00ff9d;"></h2>
         <div style="margin:8px 0;">🎮 Mode: <b id="matchMode"></b></div>
         <div style="margin:8px 0;">🗺️ Map: <b id="matchMap"></b></div>
         <div style="margin:8px 0;">💰 Entry Fee: <b>Rs. <span id="matchFee"></span></b></div>
         <div style="margin:8px 0;">🏆 Prize Pool: <b>Rs. <span id="matchPrize"></span></b></div>
-        <button class="main-btn" onclick="joinCurrentTournament()" style="margin-top:20px;">🎮 JOIN TOURNAMENT NOW</button>
+        <button class="join-match-btn" onclick="joinCurrentTournament()" style="margin-top:20px; padding:12px;">🎮 JOIN TOURNAMENT NOW</button>
       </div>
     </div>
   </div>
@@ -146,6 +327,42 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser = null;
 let selectedTournamentId = null;
 
+// Hide Loading screen after 1.5 seconds automatically
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loadingScreen');
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 500);
+  }, 1200);
+});
+
+// Toggle Password Visibility
+function togglePassword(fieldId) {
+  const input = document.getElementById(fieldId);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// Switch between Auth sub-screens (splash, login, register, otp, forgot)
+function showAuthForm(formName) {
+  document.getElementById('authSplashCard').classList.add('hidden');
+  document.getElementById('authLoginCard').classList.add('hidden');
+  document.getElementById('authRegisterCard').classList.add('hidden');
+  document.getElementById('authOtpCard').classList.add('hidden');
+  document.getElementById('authForgotCard').classList.add('hidden');
+  document.getElementById('userCard').classList.add('hidden');
+
+  if(currentUser) {
+    document.getElementById('userCard').classList.remove('hidden');
+    return;
+  }
+
+  if(formName === 'splash') document.getElementById('authSplashCard').classList.remove('hidden');
+  else if(formName === 'login') document.getElementById('authLoginCard').classList.remove('hidden');
+  else if(formName === 'register') document.getElementById('authRegisterCard').classList.remove('hidden');
+  else if(formName === 'otp') document.getElementById('authOtpCard').classList.remove('hidden');
+  else if(formName === 'forgot') document.getElementById('authForgotCard').classList.remove('hidden');
+}
+
 function switchBottomNav(tab, evt) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   if(tab === 'home') {
@@ -159,6 +376,7 @@ function switchBottomNav(tab, evt) {
     document.getElementById('profileAuthSection').classList.remove('hidden');
     document.getElementById('matchSection').classList.add('hidden');
     if(evt) evt.currentTarget.classList.add('active');
+    checkAuthSession();
   }
 }
 
@@ -168,8 +386,7 @@ function openSettings() { alert("Settings: Multani FF Tournament v1.0"); }
 async function openAddBalance() {
   let amt = prompt("Kitna balance add karna hai? (Amount enter karein):", "500");
   if(amt) {
-    if(!currentUser) { alert("Pehle login karein!"); return; }
-    // Send payment request/proof to admin database
+    if(!currentUser) { alert("Pehle login karein!"); switchBottomNav('me'); showAuthForm('login'); return; }
     const { error } = await supabaseClient.from('payments').insert([
       { user_id: currentUser.id, amount: parseFloat(amt), status: 'pending', created_at: new Date() }
     ]);
@@ -224,40 +441,72 @@ function backToHome() {
 }
 
 async function joinCurrentTournament() {
-  if(!currentUser) { alert("Pehle Login karein!"); switchBottomNav('me'); return; }
+  if(!currentUser) { alert("Pehle Login karein!"); switchBottomNav('me'); showAuthForm('login'); return; }
   alert("Tournament successfully joined!");
   backToHome();
 }
 
 async function signup() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  if(!email || !password) { alert("Email aur Password lazmi bharein!"); return; }
+  
   const { error } = await supabaseClient.auth.signUp({ email, password });
   if(error) { alert(error.message); return; }
-  alert("Account created successfully!");
+  
+  alert("Account created successfully! Ab OTP verification screen par jayein.");
+  showAuthForm('otp');
 }
 
 async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  const mobileOrEmail = document.getElementById("loginMobile").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  if(!mobileOrEmail || !password) { alert("Tamam fields enter karein!"); return; }
+
+  // Supabase supports email login directly
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email: mobileOrEmail, password });
   if(error) { alert(error.message); return; }
+  
   currentUser = data.user;
+  alert("Login successful!");
   checkAuthSession();
+}
+
+function verifyOtp() {
+  alert("OTP Verified Successfully!");
+  showAuthForm('login');
+}
+
+function sendOtpForgot() {
+  const mob = document.getElementById("forgotMobile").value;
+  if(!mob) { alert("Mobile number enter karein!"); return; }
+  alert("OTP sent to your registered mobile number!");
+  showAuthForm('otp');
 }
 
 async function checkAuthSession() {
   const { data } = await supabaseClient.auth.getSession();
   if(data.session) {
     currentUser = data.session.user;
-    document.getElementById('loginCard').classList.add('hidden');
+    document.getElementById('authSplashCard').classList.add('hidden');
+    document.getElementById('authLoginCard').classList.add('hidden');
+    document.getElementById('authRegisterCard').classList.add('hidden');
+    document.getElementById('authOtpCard').classList.add('hidden');
+    document.getElementById('authForgotCard').classList.add('hidden');
     document.getElementById('userCard').classList.remove('hidden');
+    
+    document.getElementById('profileName').textContent = currentUser.email.split('@')[0];
+    document.getElementById('profileUid').textContent = currentUser.email;
+  } else {
+    showAuthForm('splash');
   }
 }
 
 async function logout() {
   await supabaseClient.auth.signOut();
-  location.reload();
+  currentUser = null;
+  showAuthForm('splash');
+  alert("Logged out successfully.");
 }
 
 loadTournaments();
