@@ -439,16 +439,49 @@ async function loadTournaments() {
   });
 }
 
-function openMatchDetails(id, title, mode, map, fee, prize) {
+async function openMatchDetails(id, title, mode, map, fee, prize) {
   selectedTournamentId = id;
+
   document.getElementById('matchTitle').textContent = title;
   document.getElementById('matchMode').textContent = mode;
   document.getElementById('matchMap').textContent = map;
   document.getElementById('matchFee').textContent = fee;
   document.getElementById('matchPrize').textContent = prize;
+
   document.getElementById('homeSection').classList.add('hidden');
   document.getElementById('profileAuthSection').classList.add('hidden');
   document.getElementById('matchSection').classList.remove('hidden');
+
+  const btn = document.querySelector('#matchSection .join-match-btn');
+
+  if (!currentUser) {
+    btn.disabled = false;
+    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "CHECKING...";
+
+  const { data: joined, error } = await supabaseClient
+    .rpc('check_tournament_joined', {
+      p_tournament_id: id
+    });
+
+  if (error) {
+    console.error(error);
+    btn.disabled = false;
+    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+    return;
+  }
+
+  if (joined === true) {
+    btn.disabled = true;
+    btn.textContent = "✅ ALREADY JOINED";
+  } else {
+    btn.disabled = false;
+    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+  }
 }
 
 function backToHome() {
@@ -474,6 +507,33 @@ async function joinCurrentTournament() {
 
   if (btn) {
     btn.disabled = true;
+    btn.textContent = "CHECKING...";
+  }
+
+  const { data: joined, error: checkError } = await supabaseClient
+    .rpc('check_tournament_joined', {
+      p_tournament_id: selectedTournamentId
+    });
+
+  if (checkError) {
+    console.error(checkError);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+    }
+    alert("Error: " + checkError.message);
+    return;
+  }
+
+  if (joined === true) {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "✅ ALREADY JOINED";
+    }
+    return;
+  }
+
+  if (btn) {
     btn.textContent = "JOINING...";
   }
 
@@ -504,14 +564,13 @@ async function joinCurrentTournament() {
     return;
   }
 
-  alert("✅ " + data.message);
-
   if (btn) {
-    btn.disabled = false;
-    btn.textContent = "🎮 JOIN TOURNAMENT NOW";
+    btn.disabled = true;
+    btn.textContent = "✅ ALREADY JOINED";
   }
 
-  backToHome();
+  alert("✅ " + data.message);
+
   loadTournaments();
 }
 
