@@ -507,7 +507,7 @@ window.addEventListener('load', () => {
   }, 1200);
   initDraggableRobot();
   loadNotifications();
-  renderChatBubbles();
+  fetchChatBubblesFromSupabase();
 });
 
 // Draggable Robot Floating Button Script
@@ -543,7 +543,7 @@ function initDraggableRobot() {
 
 function openAdminChatModal() {
   document.getElementById('adminChatModal').classList.remove('hidden');
-  renderChatBubbles();
+  fetchChatBubblesFromSupabase();
 }
 
 function closeAdminChatModal() {
@@ -562,30 +562,25 @@ async function sendMsgToAdminPanel() {
   if(!msg) return;
 
   const userId = currentUser ? currentUser.id : 'guest_' + Math.floor(Math.random()*1000);
-  
-  let chatHistory = JSON.parse(localStorage.getItem('multaniff_chat_history') || '[]');
-  const newMsg = {
-    id: Date.now(),
-    sender: 'user',
-    message: msg,
-    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-  };
-  chatHistory.push(newMsg);
-  localStorage.setItem('multaniff_chat_history', JSON.stringify(chatHistory));
 
-  await supabaseClient.from('admin_messages').insert([
+  const { error } = await supabaseClient.from('admin_messages').insert([
     { user_id: userId, message: msg, status: 'unread', created_at: new Date() }
   ]);
 
+  if(error) {
+    alert("Error: " + error.message);
+    return;
+  }
+
   msgInput.value = '';
-  renderChatBubbles();
+  fetchChatBubblesFromSupabase();
 }
 
-function renderChatBubbles() {
+async function fetchChatBubblesFromSupabase() {
   const container = document.getElementById('chatMessagesList');
-  let chatHistory = JSON.parse(localStorage.getItem('multaniff_chat_history') || '[]');
+  const { data, error } = await supabaseClient.from('admin_messages').select('*').order('created_at', { ascending: true });
 
-  if(chatHistory.length === 0) {
+  if(!data || data.length === 0) {
     container.innerHTML = `
       <div style="text-align:center; color:#8aa0ae; font-size:11px; margin-top:20px;">
         <i class="fa-solid fa-headset" style="font-size:24px; color:#00ff9d; margin-bottom:6px;"></i><br>
@@ -596,23 +591,26 @@ function renderChatBubbles() {
   }
 
   container.innerHTML = '';
-  chatHistory.forEach(item => {
+  data.forEach(item => {
+    const timeStr = new Date(item.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     container.innerHTML += `
-      <div class="chat-bubble ${item.sender}">
+      <div class="chat-bubble user">
         ${item.message}
-        <div class="bubble-time">${item.time}</div>
-        <button class="bubble-delete" onclick="deleteChatMessage(${item.id})"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bubble-time">${timeStr}</div>
+        <button class="bubble-delete" onclick="deleteChatMessage('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
       </div>
     `;
   });
   container.scrollTop = container.scrollHeight;
 }
 
-function deleteChatMessage(id) {
-  let chatHistory = JSON.parse(localStorage.getItem('multaniff_chat_history') || '[]');
-  chatHistory = chatHistory.filter(item => item.id !== id);
-  localStorage.setItem('multaniff_chat_history', JSON.stringify(chatHistory));
-  renderChatBubbles();
+async function deleteChatMessage(id) {
+  const { error } = await supabaseClient.from('admin_messages').delete().eq('id', id);
+  if(error) {
+    alert("Error deleting message: " + error.message);
+    return;
+  }
+  fetchChatBubblesFromSupabase();
 }
 
 function openAddBalanceModal() {
