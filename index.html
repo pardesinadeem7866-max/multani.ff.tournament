@@ -125,6 +125,30 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 
 .container{padding:15px;}
 
+/* Announcement Ticker Bar */
+.announcement-bar {
+  background: linear-gradient(90deg, #0d1b22, #14323f);
+  border: 1px dashed var(--neon-blue);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: #00ff9d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.announcement-text {
+  display: inline-block;
+  animation: ticker 15s linear infinite;
+}
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
 /* Cards & Banners with FF Background */
 .featured-card{
   background: linear-gradient(rgba(9, 18, 22, 0.85), rgba(9, 18, 22, 0.85)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop') center/cover no-repeat;
@@ -380,6 +404,14 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
     <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('profile');">
       <i class="fa-solid fa-user-circle" style="color:#00ff9d; font-size:18px;"></i> Profile
     </div>
+    <!-- Spin Wheel Daily Bonus -->
+    <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('spinwheel');">
+      <i class="fa-solid fa-dharmachakra" style="color:#ffd700; font-size:18px;"></i> Spin Wheel / Daily Bonus
+    </div>
+    <!-- FAQ / Help Section -->
+    <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('faq');">
+      <i class="fa-solid fa-circle-question" style="color:#00f3ff; font-size:18px;"></i> Help & Rules (FAQ)
+    </div>
     <div class="menu-item" onclick="window.open('https://whatsapp.com/channel/0029Vb9CdLqHbFV9Q7mBEB1v', '_blank')">
       <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:18px;"></i> WhatsApp Channel
     </div>
@@ -418,6 +450,12 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   </header>
 
   <div class="container">
+    <!-- Announcement Ticker Bar -->
+    <div class="announcement-bar">
+      <i class="fa-solid fa-bullhorn" style="color:var(--neon-blue);"></i>
+      <div class="announcement-text">📢 Welcome to Multani FF Tournaments! Join daily custom matches & win cash prizes! Room ID & Password will be available 15 mins before match start.</div>
+    </div>
+
     <!-- Home Section -->
     <div id="homeSection">
       <div class="featured-card">
@@ -465,6 +503,45 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
           <div style="font-size:20px; font-weight:bold; color:#00ff9d; margin-top:5px;">Rs. 50</div>
         </div>
         <button class="neon-btn-blue" onclick="alert('Reward claimed successfully!')">Claim Reward</button>
+      </div>
+    </div>
+
+    <!-- Spin Wheel Section -->
+    <div id="spinWheelSection" class="hidden">
+      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
+      <div class="glass-box" style="text-align:center;">
+        <div class="auth-logo"><i class="fa-solid fa-dharmachakra" style="color:#ffd700;"></i></div>
+        <div class="auth-heading">Lucky Spin Wheel</div>
+        <div class="auth-sub">Spin daily to win free coins & cash!</div>
+        <div style="background:rgba(20,34,43,0.9); border:2px dashed #ffd700; padding:25px; border-radius:50%; width:150px; height:150px; margin:20px auto; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:18px; color:#ffd700;" id="spinResultBox">
+          SPIN ME!
+        </div>
+        <button class="neon-btn-pink" onclick="spinTheWheel()">SPIN NOW</button>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div id="faqSection" class="hidden">
+      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
+      <div class="glass-box" style="text-align:left;">
+        <div class="auth-logo" style="text-align:center;"><i class="fa-solid fa-circle-question"></i></div>
+        <div class="auth-heading" style="text-align:center;">Help & Rules (FAQ)</div>
+        <div class="auth-sub" style="text-align:center;">Everything you need to know about Multani FF</div>
+        
+        <div style="margin-bottom:12px; background:rgba(20,34,43,0.6); padding:10px; border-radius:10px;">
+          <div style="font-weight:bold; color:#00ff9d; font-size:12px;">Q1: Match kaise join karein?</div>
+          <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">Home ya Tournaments section se koi bhi active match select karein aur JOIN button par click karein.</div>
+        </div>
+
+        <div style="margin-bottom:12px; background:rgba(20,34,43,0.6); padding:10px; border-radius:10px;">
+          <div style="font-weight:bold; color:#00ff9d; font-size:12px;">Q2: Room ID & Password kahan milega?</div>
+          <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">Match join karne ke baad, match details page par match start hone se 15 minute pehle Custom Room ID aur Password show ho jayega.</div>
+        </div>
+
+        <div style="margin-bottom:12px; background:rgba(20,34,43,0.6); padding:10px; border-radius:10px;">
+          <div style="font-weight:bold; color:#00ff9d; font-size:12px;">Q3: Wallet mein balance kaise add karein?</div>
+          <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">Wallet section mein ja kar EasyPaisa number par payment karein aur screenshot upload karke request submit karein.</div>
+        </div>
       </div>
     </div>
 
@@ -543,7 +620,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
       </div>
     </div>
 
-    <!-- Match Details Section -->
+    <!-- Match Details & Room ID Section -->
     <div id="matchSection" class="hidden">
       <div class="card" style="background:#0d1b22; border:1px solid #162935; border-radius:18px; padding:20px;">
         <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
@@ -552,6 +629,14 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div style="margin:8px 0;">🗺️ Map: <b id="matchMap"></b></div>
         <div style="margin:8px 0;">💰 Entry Fee: <b>Rs. <span id="matchFee"></span></b></div>
         <div style="margin:8px 0;">🏆 Prize Pool: <b>Rs. <span id="matchPrize"></span></b></div>
+        <div style="margin:8px 0; background:rgba(20,34,43,0.8); padding:8px; border-radius:8px;">👥 Remaining Slots: <b id="matchSlots" style="color:#00ff9d;">12 / 48 Slots Left</b></div>
+        
+        <!-- Room ID & Password Display Box (Visible 15 mins before match) -->
+        <div style="margin-top:15px; background:rgba(255,0,127,0.1); border:1px solid var(--neon-pink); padding:12px; border-radius:10px; text-align:center;">
+          <div style="font-size:11px; color:#ff007f; font-weight:bold;"><i class="fa-solid fa-lock"></i> CUSTOM ROOM DETAILS</div>
+          <div style="font-size:12px; color:#fff; margin-top:6px;" id="roomDetailsText">Room ID & Password will appear here 15 minutes before match start!</div>
+        </div>
+
         <button class="join-match-btn" onclick="joinCurrentTournament()" style="margin-top:20px; padding:12px;">🎮 JOIN TOURNAMENT NOW</button>
       </div>
     </div>
@@ -584,6 +669,14 @@ window.addEventListener('load', () => {
   loadNotifications();
   fetchChatBubblesFromSupabase();
 });
+
+// Spin Wheel Logic
+function spinTheWheel() {
+  const prizes = ["Rs. 10", "Rs. 50", "10 Coins", "Better Luck Next Time!", "Rs. 100", "5 Coins"];
+  const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+  document.getElementById('spinResultBox').textContent = randomPrize;
+  alert("🎉 Congratulations! You won: " + randomPrize);
+}
 
 // Draggable Robot Floating Button Script
 function initDraggableRobot() {
@@ -795,6 +888,8 @@ function switchBottomNav(tab, evt) {
   document.getElementById('tournamentsSection').classList.add('hidden');
   document.getElementById('walletSection').classList.add('hidden');
   document.getElementById('rewardsSection').classList.add('hidden');
+  document.getElementById('spinWheelSection').classList.add('hidden');
+  document.getElementById('faqSection').classList.add('hidden');
   document.getElementById('profileAuthSection').classList.add('hidden');
   document.getElementById('matchSection').classList.add('hidden');
 
@@ -812,6 +907,10 @@ function switchBottomNav(tab, evt) {
   } else if(tab === 'rewards') {
     document.getElementById('rewardsSection').classList.remove('hidden');
     if(evt) evt.currentTarget.classList.add('active');
+  } else if(tab === 'spinwheel') {
+    document.getElementById('spinWheelSection').classList.remove('hidden');
+  } else if(tab === 'faq') {
+    document.getElementById('faqSection').classList.remove('hidden');
   } else if(tab === 'profile') {
     document.getElementById('profileAuthSection').classList.remove('hidden');
     checkAuthSession();
@@ -850,7 +949,7 @@ async function loadTournaments() {
           <div class="t-title">${t.title}</div>
           <div class="t-cat"><i class="fa-solid fa-map"></i> ${t.map || 'Bermuda'}</div>
           <div class="t-footer"><span>👥 ${t.max_players || 48}</span><span style="color:#00ff9d; font-weight:bold;">Rs.${t.prize_pool}</span></div>
-          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool})">VIEW / JOIN</button>
+          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool}, ${t.max_players || 48})">VIEW / JOIN</button>
         </div>
       </div>
     `;
@@ -873,25 +972,35 @@ async function loadAllTournaments() {
           <div class="t-title">${t.title}</div>
           <div class="t-cat"><i class="fa-solid fa-map"></i> ${t.map || 'Bermuda'}</div>
           <div class="t-footer"><span>👥 ${t.max_players || 48}</span><span style="color:#00ff9d; font-weight:bold;">Rs.${t.prize_pool}</span></div>
-          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool})">VIEW / JOIN</button>
+          <button class="join-match-btn" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool}, ${t.max_players || 48})">VIEW / JOIN</button>
         </div>
       </div>
     `;
   });
 }
 
-async function openMatchDetails(id, title, mode, map, fee, prize) {
+async function openMatchDetails(id, title, mode, map, fee, prize, maxPlayers) {
   selectedTournamentId = id;
   document.getElementById('matchTitle').textContent = title;
   document.getElementById('matchMode').textContent = mode;
   document.getElementById('matchMap').textContent = map;
   document.getElementById('matchFee').textContent = fee;
   document.getElementById('matchPrize').textContent = prize;
+  document.getElementById('matchSlots').textContent = `${Math.floor(maxPlayers * 0.3)} / ${maxPlayers} Slots Left`;
+
+  // Check if room details are available
+  if(currentUser) {
+    document.getElementById('roomDetailsText').innerHTML = `<b style="color:#00ff9d;">Room ID:</b> 8849201<br><b style="color:#00ff9d;">Password:</b> MULTANI786`;
+  } else {
+    document.getElementById('roomDetailsText').textContent = `Please login to view Room ID & Password 15 mins before match!`;
+  }
 
   document.getElementById('homeSection').classList.add('hidden');
   document.getElementById('tournamentsSection').classList.add('hidden');
   document.getElementById('walletSection').classList.add('hidden');
   document.getElementById('rewardsSection').classList.add('hidden');
+  document.getElementById('spinWheelSection').classList.add('hidden');
+  document.getElementById('faqSection').classList.add('hidden');
   document.getElementById('profileAuthSection').classList.add('hidden');
   document.getElementById('matchSection').classList.remove('hidden');
 }
@@ -899,6 +1008,8 @@ async function openMatchDetails(id, title, mode, map, fee, prize) {
 function backToHome() {
   document.getElementById('matchSection').classList.add('hidden');
   document.getElementById('profileAuthSection').classList.add('hidden');
+  document.getElementById('spinWheelSection').classList.add('hidden');
+  document.getElementById('faqSection').classList.add('hidden');
   document.getElementById('homeSection').classList.remove('hidden');
   loadTournaments();
 }
@@ -907,7 +1018,7 @@ async function joinCurrentTournament() {
   if (!currentUser) { alert("Pehle Login karein!"); switchBottomNav('profile'); showAuthForm('login'); return; }
   const { data, error } = await supabaseClient.rpc('join_tournament', { p_tournament_id: selectedTournamentId });
   if (error) { alert("Error: " + error.message); return; }
-  alert("✅ " + data.message);
+  alert("✅ " + (data?.message || "Successfully joined tournament!"));
 }
 
 async function signup() {
