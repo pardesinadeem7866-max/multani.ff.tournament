@@ -453,8 +453,10 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
       </div>
     </div>
 
-    <!-- Profile Section -->
+    <!-- Profile Section (New Full Page View) -->
     <div id="profileAuthSection" class="hidden">
+      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
+
       <div class="glass-box" id="authSplashCard">
         <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="auth-heading">Multani FF</div>
@@ -467,7 +469,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="auth-heading">Sign In To Your Account</div>
         <div class="input-group">
-          <i class="fa-solid envelope"></i>
+          <i class="fa-solid fa-envelope"></i>
           <input type="email" id="loginMobile" placeholder="Registered Email Address">
         </div>
         <div class="input-group">
@@ -523,7 +525,6 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <p style="margin-top:6px; font-size:13px;">Game UID: <b id="profileGameUid" style="color:var(--neon-blue);">-</b></p>
         <p style="margin-top:6px; font-size:13px;">Mobile Number: <b id="profileMobile" style="color:var(--neon-blue);">-</b></p>
         <p style="margin-top:6px; font-size:13px;">Email Address: <b id="profileEmail" style="color:var(--neon-blue);">-</b></p>
-        <button class="neon-btn-blue" style="border-color:#e74c3c; color:#e74c3c; margin-top:15px;" onclick="logout()">Logout</button>
       </div>
     </div>
 
@@ -882,6 +883,7 @@ async function openMatchDetails(id, title, mode, map, fee, prize) {
 
 function backToHome() {
   document.getElementById('matchSection').classList.add('hidden');
+  document.getElementById('profileAuthSection').classList.add('hidden');
   document.getElementById('homeSection').classList.remove('hidden');
   loadTournaments();
 }
