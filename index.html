@@ -80,13 +80,13 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 
 /* Inputs with Neon Focus */
 .input-group { position: relative; margin-bottom: 12px; text-align: left; }
-.input-group > i:not(.eye-icon) { position: absolute; left: 14px; top: 14px; color: var(--neon-blue); font-size: 14px; pointer-events: none; z-index: 2; }
-.input-group input, .input-group textarea {
+.input-group > i:not(.eye-icon) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); font-size: 14px; pointer-events: none; z-index: 2; }
+.input-group input {
   width: 100%; padding: 12px 12px 12px 40px; background: rgba(20, 34, 43, 0.6);
   border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 12px; color: white; font-size: 13px; outline: none;
-  transition: all 0.3s; position: relative; z-index: 1; resize: none;
+  transition: all 0.3s; position: relative; z-index: 1;
 }
-.input-group input:focus, .input-group textarea:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+.input-group input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
 .eye-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8aa0ae; cursor: pointer; z-index: 3; }
 
 /* Action Buttons */
@@ -163,7 +163,59 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 }
 #floatingRobotBtn:active { cursor: grabbing; }
 
-/* Custom Modal for Admin Messaging */
+/* Real SMS / WhatsApp Style Chat Window Modal */
+.chat-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85); z-index: 3000; display: flex; align-items: center; justify-content: center;
+}
+.chat-window {
+  background: #091216; border: 1px solid var(--neon-blue); border-radius: 18px;
+  width: 95%; max-width: 380px; height: 80vh; display: flex; flex-direction: column;
+  box-shadow: 0 0 25px rgba(0,243,255,0.3); overflow: hidden;
+}
+.chat-header {
+  background: #0d1b22; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #162935;
+}
+.chat-messages-container {
+  flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+  background: radial-gradient(circle, #091216 0%, #030712 100%);
+}
+
+/* Chat Bubbles */
+.chat-bubble {
+  max-width: 75%; padding: 10px 12px; border-radius: 12px; font-size: 13px; position: relative; word-break: break-word;
+}
+.chat-bubble.user {
+  background: #00ff9d; color: #030712; align-self: flex-end; border-bottom-right-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0,255,157,0.3);
+}
+.chat-bubble.admin {
+  background: #14222b; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px;
+  border: 1px solid #1e3340;
+}
+.bubble-time { font-size: 9px; opacity: 0.7; margin-top: 4px; text-align: right; }
+.bubble-delete {
+  position: absolute; top: -6px; right: -6px; background: #ff007f; color: white; border: none;
+  border-radius: 50%; width: 18px; height: 18px; font-size: 9px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Chat Input Bar */
+.chat-input-bar {
+  background: #0d1b22; padding: 10px; display: flex; align-items: center; gap: 8px; border-top: 1px solid #162935;
+}
+.chat-input-bar input {
+  flex: 1; background: rgba(20, 34, 43, 0.8); border: 1px solid rgba(0, 243, 255, 0.3);
+  border-radius: 20px; padding: 10px 15px; color: white; font-size: 13px; outline: none;
+}
+.chat-send-btn {
+  background: var(--neon-blue); color: #030712; border: none; width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: bold;
+  box-shadow: 0 0 10px rgba(0,243,255,0.4);
+}
+
+/* Notification Modal */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center;
@@ -171,21 +223,6 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .modal-content {
   background: #0d1b22; border: 1px solid var(--neon-blue); border-radius: 18px;
   width: 90%; max-width: 350px; padding: 20px; box-shadow: 0 0 20px rgba(0,243,255,0.3);
-}
-
-/* Chat Message List Item Styles */
-.msg-history-box {
-  max-height: 150px; overflow-y: auto; margin-top: 10px; margin-bottom: 10px;
-  display: flex; flex-direction: column; gap: 6px;
-}
-.msg-item {
-  background: rgba(20, 34, 43, 0.9); border: 1px solid rgba(0, 243, 255, 0.2);
-  padding: 8px 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;
-  font-size: 12px; color: #fff;
-}
-.msg-del-btn {
-  background: #ff007f; color: white; border: none; border-radius: 4px; padding: 3px 6px;
-  cursor: pointer; font-size: 10px; font-weight: bold;
 }
 
 /* Fixed Bottom Navigation Bar Styles */
@@ -242,23 +279,29 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   <i class="fa-solid fa-robot"></i>
 </div>
 
-<!-- Admin Chat Modal with History List & Delete Option -->
-<div id="adminChatModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-robot"></i> Admin Support Chat</h3>
-      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeAdminChatModal()"></i>
+<!-- Real WhatsApp/SMS Style Chat Modal Window -->
+<div id="adminChatModal" class="chat-modal-overlay hidden">
+  <div class="chat-window">
+    <div class="chat-header">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="background:#00ff9d; color:#030712; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <div style="font-weight:bold; font-size:13px; color:#00ff9d;">Admin Support</div>
+          <div style="font-size:9px; color:#8aa0ae;">Online</div>
+        </div>
+      </div>
+      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:18px; color:#8aa0ae;" onclick="closeAdminChatModal()"></i>
     </div>
-    <div style="font-size:11px; color:#8aa0ae; margin-bottom:6px;">Apna message type karein:</div>
-    <div class="input-group" style="margin-bottom:8px;">
-      <i class="fa-solid fa-comment"></i>
-      <textarea id="adminMessageInput" rows="2" placeholder="Yahan apna message likhein..."></textarea>
+
+    <!-- Message Bubbles Container -->
+    <div id="chatMessagesList" class="chat-messages-container">
+      <!-- Messages will load here -->
     </div>
-    <button class="neon-btn-blue" style="margin-top:0; padding:10px;" onclick="sendMsgToAdminPanel()">Send Message</button>
-    
-    <div style="font-size:11px; color:#00ff9d; margin-top:12px; font-weight:bold; border-top:1px solid #162935; padding-top:8px;">Aapke Sent Messages:</div>
-    <div id="msgHistoryList" class="msg-history-box">
-      <div style="font-size:11px; color:#8aa0ae; text-align:center; padding:10px;">Koi message nahi bheja gaya.</div>
+
+    <!-- Bottom Type Bar -->
+    <div class="chat-input-bar">
+      <input type="text" id="adminMessageInput" placeholder="Type a message..." onkeypress="handleChatKeyPress(event)">
+      <button class="chat-send-btn" onclick="sendMsgToAdminPanel()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
 </div>
@@ -438,7 +481,7 @@ window.addEventListener('load', () => {
   }, 1200);
   initDraggableRobot();
   loadNotifications();
-  renderMessageHistory();
+  renderChatBubbles();
 });
 
 // Draggable Robot Floating Button Script
@@ -474,61 +517,77 @@ function initDraggableRobot() {
 
 function openAdminChatModal() {
   document.getElementById('adminChatModal').classList.remove('hidden');
-  renderMessageHistory();
+  renderChatBubbles();
 }
 
 function closeAdminChatModal() {
   document.getElementById('adminChatModal').classList.add('hidden');
 }
 
+function handleChatKeyPress(e) {
+  if (e.key === 'Enter') {
+    sendMsgToAdminPanel();
+  }
+}
+
 async function sendMsgToAdminPanel() {
   const msgInput = document.getElementById('adminMessageInput');
   const msg = msgInput.value.trim();
-  if(!msg) { alert("Pehle message type karein!"); return; }
+  if(!msg) return;
 
   const userId = currentUser ? currentUser.id : 'guest_' + Math.floor(Math.random()*1000);
   
-  // Save to local storage list so it instantly stays visible and manageable
-  let localMsgs = JSON.parse(localStorage.getItem('multaniff_chat_msgs') || '[]');
-  const newMsgObj = { id: Date.now(), message: msg, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
-  localMsgs.unshift(newMsgObj);
-  localStorage.setItem('multaniff_chat_msgs', JSON.stringify(localMsgs));
+  let chatHistory = JSON.parse(localStorage.getItem('multaniff_chat_history') || '[]');
+  const newMsg = {
+    id: Date.now(),
+    sender: 'user',
+    message: msg,
+    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+  };
+  chatHistory.push(newMsg);
+  localStorage.setItem('multaniff_chat_history', JSON.stringify(chatHistory));
 
-  // Try sending to Supabase table
+  // Sync with Supabase
   await supabaseClient.from('admin_messages').insert([
     { user_id: userId, message: msg, status: 'unread', created_at: new Date() }
   ]);
 
   msgInput.value = '';
-  renderMessageHistory();
-  alert("Message sent & saved successfully!");
+  renderChatBubbles();
 }
 
-function renderMessageHistory() {
-  const listContainer = document.getElementById('msgHistoryList');
-  let localMsgs = JSON.parse(localStorage.getItem('multaniff_chat_msgs') || '[]');
-  
-  if(localMsgs.length === 0) {
-    listContainer.innerHTML = `<div style="font-size:11px; color:#8aa0ae; text-align:center; padding:10px;">Koi message nahi bheja gaya.</div>`;
+function renderChatBubbles() {
+  const container = document.getElementById('chatMessagesList');
+  let chatHistory = JSON.parse(localStorage.getItem('multaniff_chat_history') || '[]');
+
+  if(chatHistory.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; color:#8aa0ae; font-size:11px; margin-top:20px;">
+        <i class="fa-solid fa-headset" style="font-size:24px; color:#00ff9d; margin-bottom:6px;"></i><br>
+        Admin se chat shuru karne ke liye apna message neeche type karein.
+      </div>
+    `;
     return;
   }
 
-  listContainer.innerHTML = '';
-  localMsgs.forEach((m) => {
-    listContainer.innerHTML += `
-      <div class="msg-item">
-        <span style="word-break: break-all; max-width: 220px;">${m.message}</span>
-        <button class="msg-del-btn" onclick="deleteMessage(${m.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+  container.innerHTML = '';
+  chatHistory.forEach(item => {
+    container.innerHTML += `
+      <div class="chat-bubble ${item.sender}">
+        ${item.message}
+        <div class="bubble-time">${item.time}</div>
+        <button class="bubble-delete" onclick="deleteChatMessage(${item.id})"><i class="fa-solid fa-xmark"></i></button>
       </div>
     `;
   });
+  container.scrollTop = container.scrollHeight;
 }
 
-function deleteMessage(id) {
-  let localMsgs = JSON.parse(localStorage.getItem('multaniff_chat_msgs') || '[]');
-  localMsgs = localMsgs.filter(m => m.id !== id);
-  localStorage.setItem('multaniff_chat_msgs', JSON.stringify(localMsgs));
-  renderMessageHistory();
+function deleteChatMessage(id) {
+  let chatHistory = JSON.parse(localStorage.getItem('multaniff_chat_history') || '[]');
+  chatHistory = chatHistory.filter(item => item.id !== id);
+  localStorage.setItem('multaniff_chat_history', JSON.stringify(chatHistory));
+  renderChatBubbles();
 }
 
 function openNotifications() {
