@@ -445,8 +445,8 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="auth-heading">Sign In To Your Account</div>
         <div class="input-group">
-          <i class="fa-solid fa-phone"></i>
-          <input type="text" id="loginMobile" placeholder="Registered Mobile Number / Email">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="loginMobile" placeholder="Registered Email Address">
         </div>
         <div class="input-group">
           <i class="fa-solid fa-lock"></i>
@@ -880,6 +880,7 @@ async function signup() {
     return; 
   }
 
+  // Save fields directly inside Supabase Auth user_metadata
   const { data, error } = await supabaseClient.auth.signUp({ 
     email, 
     password,
@@ -899,12 +900,14 @@ async function signup() {
 }
 
 async function login() {
-  const mobileOrEmail = document.getElementById("loginMobile").value.trim();
+  const email = document.getElementById("loginMobile").value.trim();
   const password = document.getElementById("loginPassword").value;
-  if(!mobileOrEmail || !password) { alert("Tamam fields enter karein!"); return; }
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email: mobileOrEmail, password });
+  if(!email || !password) { alert("Tamam fields enter karein!"); return; }
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if(error) { alert(error.message); return; }
   currentUser = data.user;
+  
   alert("Login successful!");
   checkAuthSession();
 }
@@ -923,7 +926,9 @@ async function checkAuthSession() {
     document.getElementById('authForgotCard').classList.add('hidden');
     document.getElementById('userCard').classList.remove('hidden');
 
-    const meta = currentUser.user_metadata || {};
+    // Read saved details directly from Supabase user_metadata
+    let meta = currentUser.user_metadata || {};
+
     document.getElementById('profileFullName').textContent = meta.full_name || '-';
     document.getElementById('profileIgn').textContent = meta.ign || '-';
     document.getElementById('profileGameUid').textContent = meta.game_uid || '-';
