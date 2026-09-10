@@ -214,7 +214,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   box-shadow: 0 0 10px rgba(0,243,255,0.4);
 }
 
-/* Modal Overlay for Add Balance & Notifications */
+/* Modal Overlay for Add Balance, Notifications & 3-Line Menu */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.85); z-index: 3000; display: flex; align-items: center; justify-content: center;
@@ -223,6 +223,13 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   background: #0d1b22; border: 1px solid var(--neon-blue); border-radius: 18px;
   width: 90%; max-width: 350px; padding: 20px; box-shadow: 0 0 20px rgba(0,243,255,0.3);
 }
+
+.menu-item {
+  background: rgba(20,34,43,0.8); border: 1px solid rgba(0,243,255,0.2);
+  padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: bold; color: #fff; cursor: pointer; transition: 0.3s;
+}
+.menu-item:hover { border-color: #00ff9d; color: #00ff9d; }
 
 /* Fixed Bottom Navigation Bar Styles */
 .bottom-nav {
@@ -346,10 +353,35 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   </div>
 </div>
 
+<!-- 3-Line Menu Modal -->
+<div id="menuModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-bars"></i> Multani FF Menu</h3>
+      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeMenuModal()"></i>
+    </div>
+
+    <div class="menu-item" onclick="window.open('https://whatsapp.com/channel/0029Vb9CdLqHbFV9Q7mBEB1v', '_blank')">
+      <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:18px;"></i> WhatsApp Channel
+    </div>
+    <div class="menu-item" onclick="window.open('https://chat.whatsapp.com/CehXYPf6QGPJQtYR0fpooO?s=cl&p=a&mlu=4&ilr=4', '_blank')">
+      <i class="fa-solid fa-users" style="color:#00ff9d; font-size:18px;"></i> WhatsApp Group
+    </div>
+    <div class="menu-item" onclick="window.open('https://www.tiktok.com/@multaniffgaming', '_blank')">
+      <i class="fa-brands fa-tiktok" style="color:#ff007f; font-size:18px;"></i> TikTok ID
+    </div>
+    <div class="menu-item" onclick="window.open('https://youtube.com/@multaniff-b2k?si=ZMnyTFSC9QStDPte', '_blank')">
+      <i class="fa-brands fa-youtube" style="color:#FF0000; font-size:18px;"></i> YouTube Channel
+    </div>
+  </div>
+</div>
+
 <div class="phone-frame">
   <!-- Top Header -->
   <header class="top-header">
     <div class="logo-area">
+      <!-- 3-Line Menu Button -->
+      <div class="icon-btn" onclick="openMenuModal()" style="margin-right:4px;"><i class="fa-solid fa-bars"></i></div>
       <div class="logo-icon"><i class="fa-solid fa-fire"></i></div>
       <span>Multani FF</span>
     </div>
@@ -359,7 +391,6 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
     <div class="header-icons">
       <div class="icon-btn" onclick="openNotifications()"><i class="fa-solid fa-bell"></i><div class="notif-dot" id="notifDot"></div></div>
       <div class="icon-btn" onclick="shareApp()"><i class="fa-solid fa-share-nodes"></i></div>
-      <div class="icon-btn" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
     </div>
   </header>
 
@@ -539,6 +570,14 @@ function initDraggableRobot() {
     isDragging = false;
     btn.releasePointerCapture(e.pointerId);
   });
+}
+
+function openMenuModal() {
+  document.getElementById('menuModal').classList.remove('hidden');
+}
+
+function closeMenuModal() {
+  document.getElementById('menuModal').classList.add('hidden');
 }
 
 function openAdminChatModal() {
@@ -733,7 +772,6 @@ function switchBottomNav(tab, evt) {
 }
 
 function shareApp() { alert("Website link copied!"); }
-function openSettings() { alert("Settings: Multani FF Tournament v1.0"); }
 
 async function loadTournaments() {
   const { data } = await supabaseClient.from('tournaments').select('*').order('match_date', { ascending: true });
