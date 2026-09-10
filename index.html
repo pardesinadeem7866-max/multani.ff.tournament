@@ -446,7 +446,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div class="auth-heading">Sign In To Your Account</div>
         <div class="input-group">
           <i class="fa-solid fa-phone"></i>
-          <input type="text" id="loginMobile" placeholder="Registered Mobile Number">
+          <input type="text" id="loginMobile" placeholder="Registered Mobile Number / Email">
         </div>
         <div class="input-group">
           <i class="fa-solid fa-lock"></i>
@@ -462,6 +462,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div class="auth-heading">Create Your Account</div>
         <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regFullName" placeholder="Full Name"></div>
         <div class="input-group"><i class="fa-solid fa-gamepad"></i><input type="text" id="regIgn" placeholder="In-Game Name (IGN)"></div>
+        <div class="input-group"><i class="fa-solid fa-id-badge"></i><input type="text" id="regGameUid" placeholder="Game UID"></div>
         <div class="input-group"><i class="fa-solid fa-phone"></i><input type="text" id="regMobile" placeholder="Mobile Number"></div>
         <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address"></div>
         <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPassword" placeholder="Password"></div>
@@ -490,12 +491,17 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <button class="neon-btn-blue" onclick="sendOtpForgot()">Send OTP</button>
       </div>
 
-      <div class="glass-box hidden" id="userCard">
-        <div class="auth-logo"><i class="fa-solid fa-user-check"></i></div>
-        <div class="auth-heading">My Profile</div>
-        <p style="margin-top:10px; font-size:13px;">Username: <b id="profileName" style="color:var(--neon-blue);">-</b></p>
-        <p style="margin-top:5px; font-size:13px;">Email: <b id="profileUid" style="color:var(--neon-blue);">-</b></p>
-        <button class="neon-btn-blue" style="border-color:#e74c3c; color:#e74c3c; margin-top:10px;" onclick="logout()">Logout</button>
+      <div class="glass-box hidden" id="userCard" style="text-align: left;">
+        <div style="text-align: center;">
+          <div class="auth-logo"><i class="fa-solid fa-user-check"></i></div>
+          <div class="auth-heading">My Profile</div>
+        </div>
+        <p style="margin-top:12px; font-size:13px;">Full Name: <b id="profileFullName" style="color:var(--neon-blue);">-</b></p>
+        <p style="margin-top:6px; font-size:13px;">In-Game Name (IGN): <b id="profileIgn" style="color:var(--neon-blue);">-</b></p>
+        <p style="margin-top:6px; font-size:13px;">Game UID: <b id="profileGameUid" style="color:var(--neon-blue);">-</b></p>
+        <p style="margin-top:6px; font-size:13px;">Mobile Number: <b id="profileMobile" style="color:var(--neon-blue);">-</b></p>
+        <p style="margin-top:6px; font-size:13px;">Email Address: <b id="profileEmail" style="color:var(--neon-blue);">-</b></p>
+        <button class="neon-btn-blue" style="border-color:#e74c3c; color:#e74c3c; margin-top:15px;" onclick="logout()">Logout</button>
       </div>
     </div>
 
@@ -771,7 +777,21 @@ function switchBottomNav(tab, evt) {
   }
 }
 
-function shareApp() { alert("Website link copied!"); }
+// Working Share Button Function
+function shareApp() {
+  const shareData = {
+    title: 'Multani FF Official Tournament',
+    text: 'Join Pakistan Ultimate Free Fire Battleground!',
+    url: window.location.href
+  };
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      alert("Website link copied to clipboard!");
+    });
+  }
+}
 
 async function loadTournaments() {
   const { data } = await supabaseClient.from('tournaments').select('*').order('match_date', { ascending: true });
@@ -848,10 +868,31 @@ async function joinCurrentTournament() {
 }
 
 async function signup() {
+  const fullName = document.getElementById("regFullName").value.trim();
+  const ign = document.getElementById("regIgn").value.trim();
+  const gameUid = document.getElementById("regGameUid").value.trim();
+  const mobile = document.getElementById("regMobile").value.trim();
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value;
-  if(!email || !password) { alert("Email aur Password lazmi bharein!"); return; }
-  const { error } = await supabaseClient.auth.signUp({ email, password });
+
+  if(!email || !password || !fullName || !gameUid) { 
+    alert("Barah-e-karam Full Name, Game UID, Email aur Password lazmi bharein!"); 
+    return; 
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({ 
+    email, 
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        ign: ign,
+        game_uid: gameUid,
+        mobile: mobile
+      }
+    }
+  });
+
   if(error) { alert(error.message); return; }
   alert("Account created successfully!");
   showAuthForm('otp');
@@ -881,8 +922,13 @@ async function checkAuthSession() {
     document.getElementById('authOtpCard').classList.add('hidden');
     document.getElementById('authForgotCard').classList.add('hidden');
     document.getElementById('userCard').classList.remove('hidden');
-    document.getElementById('profileName').textContent = currentUser.email.split('@')[0];
-    document.getElementById('profileUid').textContent = currentUser.email;
+
+    const meta = currentUser.user_metadata || {};
+    document.getElementById('profileFullName').textContent = meta.full_name || '-';
+    document.getElementById('profileIgn').textContent = meta.ign || '-';
+    document.getElementById('profileGameUid').textContent = meta.game_uid || '-';
+    document.getElementById('profileMobile').textContent = meta.mobile || '-';
+    document.getElementById('profileEmail').textContent = currentUser.email || '-';
   } else {
     showAuthForm('splash');
   }
