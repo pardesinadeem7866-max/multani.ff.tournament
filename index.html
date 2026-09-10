@@ -361,6 +361,10 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
       <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeMenuModal()"></i>
     </div>
 
+    <!-- Profile Option inside 3-Line Menu -->
+    <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('profile');">
+      <i class="fa-solid fa-user-circle" style="color:#00ff9d; font-size:18px;"></i> Profile
+    </div>
     <div class="menu-item" onclick="window.open('https://whatsapp.com/channel/0029Vb9CdLqHbFV9Q7mBEB1v', '_blank')">
       <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:18px;"></i> WhatsApp Channel
     </div>
@@ -372,6 +376,10 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
     </div>
     <div class="menu-item" onclick="window.open('https://youtube.com/@multaniff-b2k?si=ZMnyTFSC9QStDPte', '_blank')">
       <i class="fa-brands fa-youtube" style="color:#FF0000; font-size:18px;"></i> YouTube Channel
+    </div>
+    <!-- Logout Option at the very bottom of 3-Line Menu -->
+    <div class="menu-item" onclick="closeMenuModal(); logout();" style="border-color:#e74c3c; color:#e74c3c; margin-top:15px;">
+      <i class="fa-solid fa-right-from-bracket" style="font-size:18px;"></i> Logout
     </div>
   </div>
 </div>
@@ -431,6 +439,20 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
       </div>
     </div>
 
+    <!-- Rewards Section -->
+    <div id="rewardsSection" class="hidden">
+      <div class="glass-box" style="text-align:center;">
+        <div class="auth-logo"><i class="fa-solid fa-gift"></i></div>
+        <div class="auth-heading">Rewards & Bonuses</div>
+        <div class="auth-sub">Claim your daily rewards & tournament bonuses</div>
+        <div style="background:rgba(20,34,43,0.8); padding:15px; border-radius:14px; margin-bottom:15px;">
+          <div style="font-size:12px; color:#8aa0ae;">Available Bonus</div>
+          <div style="font-size:20px; font-weight:bold; color:#00ff9d; margin-top:5px;">Rs. 50</div>
+        </div>
+        <button class="neon-btn-blue" onclick="alert('Reward claimed successfully!')">Claim Reward</button>
+      </div>
+    </div>
+
     <!-- Profile Section -->
     <div id="profileAuthSection" class="hidden">
       <div class="glass-box" id="authSplashCard">
@@ -445,7 +467,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="auth-heading">Sign In To Your Account</div>
         <div class="input-group">
-          <i class="fa-solid fa-envelope"></i>
+          <i class="fa-solid envelope"></i>
           <input type="email" id="loginMobile" placeholder="Registered Email Address">
         </div>
         <div class="input-group">
@@ -524,7 +546,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
     <button class="nav-item active" onclick="switchBottomNav('home', event)"><i class="fa-solid fa-house"></i><span>HOME</span></button>
     <button class="nav-item" onclick="switchBottomNav('tournaments', event)"><i class="fa-solid fa-trophy"></i><span>TOURNAMENTS</span></button>
     <button class="nav-item" onclick="switchBottomNav('wallet', event)"><i class="fa-solid fa-wallet"></i><span>WALLET</span></button>
-    <button class="nav-item" onclick="switchBottomNav('profile', event)"><i class="fa-solid fa-user"></i><span>PROFILE</span></button>
+    <button class="nav-item" onclick="switchBottomNav('rewards', event)"><i class="fa-solid fa-gift"></i><span>REWARD</span></button>
   </nav>
 </div>
 
@@ -756,6 +778,7 @@ function switchBottomNav(tab, evt) {
   document.getElementById('homeSection').classList.add('hidden');
   document.getElementById('tournamentsSection').classList.add('hidden');
   document.getElementById('walletSection').classList.add('hidden');
+  document.getElementById('rewardsSection').classList.add('hidden');
   document.getElementById('profileAuthSection').classList.add('hidden');
   document.getElementById('matchSection').classList.add('hidden');
 
@@ -770,9 +793,11 @@ function switchBottomNav(tab, evt) {
   } else if(tab === 'wallet') {
     document.getElementById('walletSection').classList.remove('hidden');
     if(evt) evt.currentTarget.classList.add('active');
+  } else if(tab === 'rewards') {
+    document.getElementById('rewardsSection').classList.remove('hidden');
+    if(evt) evt.currentTarget.classList.add('active');
   } else if(tab === 'profile') {
     document.getElementById('profileAuthSection').classList.remove('hidden');
-    if(evt) evt.currentTarget.classList.add('active');
     checkAuthSession();
   }
 }
@@ -850,6 +875,7 @@ async function openMatchDetails(id, title, mode, map, fee, prize) {
   document.getElementById('homeSection').classList.add('hidden');
   document.getElementById('tournamentsSection').classList.add('hidden');
   document.getElementById('walletSection').classList.add('hidden');
+  document.getElementById('rewardsSection').classList.add('hidden');
   document.getElementById('profileAuthSection').classList.add('hidden');
   document.getElementById('matchSection').classList.remove('hidden');
 }
@@ -880,7 +906,6 @@ async function signup() {
     return; 
   }
 
-  // Save fields directly inside Supabase Auth user_metadata
   const { data, error } = await supabaseClient.auth.signUp({ 
     email, 
     password,
@@ -926,7 +951,6 @@ async function checkAuthSession() {
     document.getElementById('authForgotCard').classList.add('hidden');
     document.getElementById('userCard').classList.remove('hidden');
 
-    // Read saved details directly from Supabase user_metadata
     let meta = currentUser.user_metadata || {};
 
     document.getElementById('profileFullName').textContent = meta.full_name || '-';
