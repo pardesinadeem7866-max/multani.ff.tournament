@@ -181,6 +181,25 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .t-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:#8aa0ae;}
 .join-match-btn{width:100%;margin-top:8px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
 
+/* Wallet Transactions History List */
+.txn-list {
+  margin-top: 15px;
+  max-height: 180px;
+  overflow-y: auto;
+  text-align: left;
+}
+.txn-item {
+  background: #14222b;
+  border: 1px solid #1e3340;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
 /* FF Custom Room Lobby Slots Style */
 .ff-room-container {
   background: #091216;
@@ -444,17 +463,37 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
       <div id="allTournamentsGrid" class="grid-tournaments"></div>
     </div>
 
-    <!-- Wallet Section -->
+    <!-- Wallet Section with History Ledger -->
     <div id="walletSection" class="hidden">
       <div class="glass-box" style="text-align:left;">
-        <div class="auth-logo"><i class="fa-solid fa-wallet"></i></div>
-        <div class="auth-heading">My Wallet</div>
-        <div class="auth-sub">Manage your tournament balance & funds</div>
-        <div style="background:rgba(20,34,43,0.8); padding:15px; border-radius:14px; margin-bottom:15px; text-align:center;">
-          <div style="font-size:12px; color:#8aa0ae;">Current Balance</div>
-          <div style="font-size:24px; font-weight:bold; color:var(--neon-blue); margin-top:5px;">Rs. <span id="walletPageBal">0</span></div>
+        <div style="text-align:center;">
+          <div class="auth-logo"><i class="fa-solid fa-wallet"></i></div>
+          <div class="auth-heading">My Wallet</div>
+          <div class="auth-sub">Manage your tournament balance & funds</div>
+          <div style="background:rgba(20,34,43,0.8); padding:15px; border-radius:14px; margin-bottom:15px; text-align:center;">
+            <div style="font-size:12px; color:#8aa0ae;">Current Balance</div>
+            <div style="font-size:24px; font-weight:bold; color:var(--neon-blue); margin-top:5px;">Rs. <span id="walletPageBal">0</span></div>
+          </div>
+          <button class="neon-btn-blue" onclick="openAddBalanceModal()">💰 Add Balance</button>
         </div>
-        <button class="neon-btn-blue" onclick="openAddBalanceModal()">💰 Add Balance</button>
+
+        <div style="margin-top:20px; border-top:1px solid #162935; padding-top:12px;">
+          <div style="font-size:12px; font-weight:bold; color:#00ff9d; margin-bottom:8px;"><i class="fa-solid fa-clock-rotate-left"></i> Transaction History</div>
+          <div class="txn-list" id="transactionHistoryList">
+            <div class="txn-item">
+              <span>Deposit Request (Pending)</span>
+              <span style="color:#ffd700;">+Rs. 500</span>
+            </div>
+            <div class="txn-item">
+              <span>Tournament Entry Fee</span>
+              <span style="color:#ff007f;">-Rs. 50</span>
+            </div>
+            <div class="txn-item">
+              <span>Tournament Prize Won</span>
+              <span style="color:#00ff9d;">+Rs. 500</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -611,7 +650,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let selectedTournamentId = null;
-let joinedTournaments = []; // Track joined matches locally or state
+let joinedTournaments = [];
 
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -828,7 +867,6 @@ function openMatchDetails(id, title, mode, map, fee, prize, maxPlayers) {
     roomBox.classList.add('hidden');
   }
 
-  // Render FF style slots (1 to 48)
   const slotsContainer = document.getElementById('ffSlotsList');
   slotsContainer.innerHTML = '';
   let filledCount = isJoined ? 1 : 0;
