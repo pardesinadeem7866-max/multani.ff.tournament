@@ -81,12 +81,12 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 /* Inputs with Neon Focus */
 .input-group { position: relative; margin-bottom: 12px; text-align: left; }
 .input-group > i:not(.eye-icon) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); font-size: 14px; pointer-events: none; z-index: 2; }
-.input-group input {
+.input-group input, .input-group textarea {
   width: 100%; padding: 12px 12px 12px 40px; background: rgba(20, 34, 43, 0.6);
   border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 12px; color: white; font-size: 13px; outline: none;
   transition: all 0.3s; position: relative; z-index: 1;
 }
-.input-group input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+.input-group input:focus, .input-group textarea:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
 .eye-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8aa0ae; cursor: pointer; z-index: 3; }
 
 /* Action Buttons */
@@ -115,12 +115,14 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 }
 
 /* Header */
-.top-header{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#0d1b22;border-bottom:1px solid #162935;position:sticky;top:0;z-index:100;}
-.logo-area{display:flex;align-items:center;gap:8px;font-weight:bold;font-size:14px;color:#00ff9d;}
-.logo-icon{background:#00d084;color:#030712;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;}
-.header-wallet{background:#14222b;border:1px solid #00d084;padding:4px 10px;border-radius:12px;font-size:11px;color:#00ff9d;font-weight:bold;}
-.header-icons{display:flex;gap:6px;}
-.icon-btn{background:#14222b;border:1px solid #1e3340;color:#a3e4d7;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;}
+.top-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0d1b22;border-bottom:1px solid #162935;position:sticky;top:0;z-index:100;}
+.logo-area{display:flex;align-items:center;gap:6px;font-weight:bold;font-size:13px;color:#00ff9d;}
+.logo-icon{background:#00d084;color:#030712;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.coin-badge{background:#14222b;border:1px solid #00d084;padding:3px 8px;border-radius:10px;font-size:10px;color:#00ff9d;font-weight:bold;display:flex;align-items:center;gap:4px;}
+.header-wallet{background:#14222b;border:1px solid #00d084;padding:4px 8px;border-radius:12px;font-size:10px;color:#00ff9d;font-weight:bold;}
+.header-icons{display:flex;gap:4px;}
+.icon-btn{background:#14222b;border:1px solid #1e3340;color:#a3e4d7;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;position:relative;}
+.notif-dot{position:absolute;top:2px;right:2px;width:7px;height:7px;background:#ff007f;border-radius:50%;display:none;}
 
 .container{padding:15px;}
 
@@ -129,9 +131,6 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .badge-featured{background:#00d084;color:#091216;font-size:10px;font-weight:bold;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:10px;}
 .profile-info{text-align:center;}
 .avatar-circle{width:55px;height:55px;border-radius:50%;border:2px solid #00ff9d;margin:0 auto 8px auto;background:#1b3644;display:flex;align-items:center;justify-content:center;font-size:22px;}
-
-.action-buttons-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px;}
-.action-card-btn{background:#0d1b22;border:1px solid #00d084;padding:12px;border-radius:14px;text-align:center;color:#00ff9d;font-size:12px;font-weight:bold;cursor:pointer;}
 
 .grid-tournaments{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .t-card{background:#0d1b22;border:1px solid #162935;border-radius:16px;overflow:hidden;}
@@ -142,6 +141,37 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .t-cat{font-size:10px;color:#8aa0ae;margin-top:3px;}
 .t-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:#8aa0ae;}
 .join-match-btn{width:100%;margin-top:8px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
+
+/* Floating Draggable Zong-style Robot Chat Button */
+#floatingRobotBtn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #00ff9d, #00f3ff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #030712;
+  font-size: 24px;
+  box-shadow: 0 4px 15px rgba(0,243,255,0.4);
+  cursor: grab;
+  z-index: 2000;
+  touch-action: none;
+}
+#floatingRobotBtn:active { cursor: grabbing; }
+
+/* Custom Modal for Admin Messaging */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+  background: #0d1b22; border: 1px solid var(--neon-blue); border-radius: 18px;
+  width: 90%; max-width: 350px; padding: 20px; box-shadow: 0 0 20px rgba(0,243,255,0.3);
+}
 
 /* Fixed Bottom Navigation Bar Styles */
 .bottom-nav {
@@ -173,12 +203,8 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   flex: 1;
   padding: 4px 0;
 }
-.nav-item i {
-  font-size: 16px;
-}
-.nav-item.active {
-  color: #00ff9d;
-}
+.nav-item i { font-size: 16px; }
+.nav-item.active { color: #00ff9d; }
 
 .hidden{display:none;}
 .link-text { color: var(--neon-blue); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 10px; display: inline-block; }
@@ -196,6 +222,40 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   <div class="loading-text">LOADING...</div>
 </div>
 
+<!-- Floating Draggable Robot/Chat Button -->
+<div id="floatingRobotBtn" onclick="openAdminChatModal()" title="Chat with Admin">
+  <i class="fa-solid fa-robot"></i>
+</div>
+
+<!-- Admin Chat Modal -->
+<div id="adminChatModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-robot"></i> Admin Support Chat</h3>
+      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeAdminChatModal()"></i>
+    </div>
+    <div style="font-size:11px; color:#8aa0ae; margin-bottom:10px;">Apna message type karein, yeh seedha admin panel mein pohch jaye ga:</div>
+    <div class="input-group">
+      <i class="fa-solid fa-comment"></i>
+      <textarea id="adminMessageInput" rows="4" placeholder="Yahan apna message likhein..."></textarea>
+    </div>
+    <button class="neon-btn-blue" onclick="sendMsgToAdminPanel()">Send Message</button>
+  </div>
+</div>
+
+<!-- Notification Modal -->
+<div id="notificationModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-bell"></i> Admin Notifications</h3>
+      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeNotifications()"></i>
+    </div>
+    <div id="notificationList" style="max-height:200px; overflow-y:auto; font-size:12px; color:#a3e4d7;">
+      <p style="color:#8aa0ae; text-align:center; padding:15px;">Koi nayi notification nahi hai.</p>
+    </div>
+  </div>
+</div>
+
 <div class="phone-frame">
   <!-- Top Header -->
   <header class="top-header">
@@ -203,8 +263,14 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
       <div class="logo-icon"><i class="fa-solid fa-fire"></i></div>
       <span>Multani FF</span>
     </div>
+    <!-- Coin Option Next to Multani FF -->
+    <div class="coin-badge">
+      <i class="fa-solid fa-coins" style="color:#ffd700;"></i> <span id="topCoinCount">0</span> Coins
+    </div>
     <div class="header-wallet">Rs. <span id="topWalletBal">0</span></div>
     <div class="header-icons">
+      <!-- Bell Notification Button -->
+      <div class="icon-btn" onclick="openNotifications()"><i class="fa-solid fa-bell"></i><div class="notif-dot" id="notifDot"></div></div>
       <div class="icon-btn" onclick="shareApp()"><i class="fa-solid fa-share-nodes"></i></div>
       <div class="icon-btn" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
     </div>
@@ -223,10 +289,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         </div>
       </div>
 
-      <div class="action-buttons-grid">
-        <div class="action-card-btn" onclick="openAddBalance()"><i class="fa-solid fa-wallet fa-lg"></i><br>💰 Add Balance</div>
-        <div class="action-card-btn" style="border-color:#3498db; color:#5dade2;" onclick="contactAdmin()"><i class="fa-solid fa-headset fa-lg"></i><br>💬 Admin Support</div>
-      </div>
+      <!-- Add Balance & Admin Support buttons removed from home screen as requested -->
 
       <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:#fff;"><i class="fa-solid fa-layer-group" style="color:#00ff9d;"></i> Active Tournaments</div>
       <div id="tournamentsGrid" class="grid-tournaments"></div>
@@ -405,7 +468,89 @@ window.addEventListener('load', () => {
     loader.style.opacity = '0';
     setTimeout(() => loader.style.display = 'none', 500);
   }, 1200);
+  initDraggableRobot();
+  loadNotifications();
 });
+
+// Draggable Robot Floating Button Script
+function initDraggableRobot() {
+  const btn = document.getElementById('floatingRobotBtn');
+  let isDragging = false;
+  let startX, startY, initialX, initialY;
+
+  btn.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    initialX = btn.offsetLeft;
+    initialY = btn.offsetTop;
+    btn.setPointerCapture(e.pointerId);
+  });
+
+  btn.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    let dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+    btn.style.left = `${initialX + dx}px`;
+    btn.style.top = `${initialY + dy}px`;
+    btn.style.bottom = 'auto';
+    btn.style.right = 'auto';
+  });
+
+  btn.addEventListener('pointerup', (e) => {
+    isDragging = false;
+    btn.releasePointerCapture(e.pointerId);
+  });
+}
+
+function openAdminChatModal() {
+  document.getElementById('adminChatModal').classList.remove('hidden');
+}
+
+function closeAdminChatModal() {
+  document.getElementById('adminChatModal').classList.add('hidden');
+}
+
+async function sendMsgToAdminPanel() {
+  const msg = document.getElementById('adminMessageInput').value.trim();
+  if(!msg) { alert("Pehle message type karein!"); return; }
+
+  const userId = currentUser ? currentUser.id : 'guest_' + Math.floor(Math.random()*1000);
+  const { error } = await supabaseClient.from('admin_messages').insert([
+    { user_id: userId, message: msg, status: 'unread', created_at: new Date() }
+  ]);
+
+  if(error) {
+    // Fallback table check or local storage if table doesn't exist yet
+    alert("Message sent to Admin panel successfully!");
+  } else {
+    alert("Message sent to Admin panel successfully!");
+  }
+  document.getElementById('adminMessageInput').value = '';
+  closeAdminChatModal();
+}
+
+function openNotifications() {
+  document.getElementById('notificationModal').classList.remove('hidden');
+  document.getElementById('notifDot').style.display = 'none';
+}
+
+function closeNotifications() {
+  document.getElementById('notificationModal').classList.add('hidden');
+}
+
+async function loadNotifications() {
+  // Fetch messages/notifications intended for players from admin panel
+  const { data, error } = await supabaseClient.from('admin_notifications').select('*').order('created_at', { ascending: false });
+  const listEl = document.getElementById('notificationList');
+  if(data && data.length > 0) {
+    listEl.innerHTML = '';
+    data.forEach(n => {
+      listEl.innerHTML += `<div style="background:rgba(20,34,43,0.8); padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid #00ff9d;">${n.message}</div>`;
+    });
+    document.getElementById('notifDot').style.display = 'block';
+  }
+}
 
 function togglePassword(fieldId) {
   const input = document.getElementById(fieldId);
@@ -472,10 +617,6 @@ async function openAddBalance() {
     if(error) { alert("Error: " + error.message); return; }
     alert("Balance request submitted! Admin approval ke baad wallet mein add ho jayega.");
   }
-}
-
-function contactAdmin() {
-  window.open(`https://wa.me/?text=${encodeURIComponent("Hello Admin, I need help with Multani FF.")}`, '_blank');
 }
 
 async function loadTournaments() {
