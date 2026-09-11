@@ -315,7 +315,7 @@
 
         function updateBackButtonVisibility() {
             const backContainer = document.getElementById('back-btn-container');
-            if (state.currentView === 'home' || state.currentView === 'matches' || state.currentView === 'my-matches' || state.currentView === 'wallet' || state.currentView === 'profile') {
+            if (['home', 'matches', 'my-matches', 'wallet', 'profile'].includes(state.currentView)) {
                 backContainer.classList.add('hidden');
             } else {
                 backContainer.classList.remove('hidden');
@@ -342,7 +342,6 @@
             setGlobalLoading(true, 'CONNECTING TO ARENA...');
             
             try {
-                // Initialize Auth Listener only once
                 if (!authListenerRegistered) {
                     authListenerRegistered = true;
                     supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -370,7 +369,6 @@
                 await fetchInitialData();
                 setupRealtimeSubscriptions();
 
-                // Determine initial view based on auth
                 if (!state.currentUser) {
                     navigateTo('login', {}, false);
                 } else if (state.isBanned) {
@@ -402,7 +400,6 @@
                     state.currentProfile = data;
                     state.isBanned = Boolean(data.is_banned);
                     
-                    // Check admin status via admin_users
                     const { data: adminData } = await supabaseClient
                         .from('admin_users')
                         .select('*')
@@ -411,7 +408,6 @@
 
                     state.isAdmin = Boolean(adminData || data.is_admin);
                     
-                    // Toggle admin button visibility
                     const adminContainer = document.getElementById('admin-btn-container');
                     if (state.isAdmin) {
                         adminContainer.classList.remove('hidden');
@@ -430,14 +426,12 @@
 
         async function fetchInitialData() {
             try {
-                // Fetch tournaments
                 const { data: tourns } = await supabaseClient
                     .from('tournaments')
                     .select('*')
                     .order('match_date', { ascending: true });
                 state.tournamentsCache = tourns || [];
 
-                // Fetch winners
                 const { data: wins } = await supabaseClient
                     .from('winners')
                     .select('*')
@@ -445,24 +439,20 @@
                     .limit(20);
                 state.winnersCache = wins || [];
 
-                // Fetch giveaways
                 const { data: giveaways } = await supabaseClient
                     .from('giveaways')
                     .select('*')
                     .order('created_at', { ascending: false });
                 state.giveawaysCache = giveaways || [];
 
-                // Fetch site settings
                 const { data: settings } = await supabaseClient
                     .from('site_settings')
                     .select('*');
                 
-                if (settings) {
-                    if (Array.isArray(settings)) {
-                        settings.forEach(s => {
-                            if (s.key && s.value) state.siteSettings[s.key] = s.value;
-                        });
-                    }
+                if (settings && Array.isArray(settings)) {
+                    settings.forEach(s => {
+                        if (s.key && s.value) state.siteSettings[s.key] = s.value;
+                    });
                 }
 
                 if (state.currentUser) {
@@ -476,14 +466,12 @@
         async function fetchUserDataAuthenticated() {
             if (!state.currentUser) return;
             try {
-                // Fetch my tournament entries
                 const { data: entries } = await supabaseClient
                     .from('tournament_entries')
                     .select('*, tournaments(*)')
                     .eq('user_id', state.currentUser.id);
                 state.myMatchesCache = entries || [];
 
-                // Fetch notifications
                 const { data: notifs } = await supabaseClient
                     .from('notifications')
                     .select('*')
@@ -493,7 +481,6 @@
                 state.notificationsCache = notifs || [];
                 updateNotificationBadge();
 
-                // Fetch support messages
                 const { data: support } = await supabaseClient
                     .from('support_messages')
                     .select('*')
@@ -501,7 +488,6 @@
                     .order('created_at', { ascending: true });
                 state.supportCache = support || [];
 
-                // Fetch payments / deposits
                 const { data: payments } = await supabaseClient
                     .from('deposit_requests')
                     .select('*')
@@ -573,7 +559,6 @@
                 state.currentView = 'banned';
             }
 
-            // Hide bottom nav on auth & banned views
             if (['login', 'register', 'forgot', 'banned'].includes(state.currentView)) {
                 bottomNav.classList.add('hidden');
             } else {
@@ -649,7 +634,6 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-5">
-                    <!-- Announcement Bar -->
                     <div class="glass-card rounded-xl p-3 border-neonYellow/20 bg-gradient-to-r from-amber-950/20 to-darkBg flex items-center space-x-3">
                         <div class="w-8 h-8 rounded-lg bg-neonYellow/10 flex items-center justify-center text-neonYellow flex-shrink-0">
                             <i class="fa-solid fa-bullhorn text-sm"></i>
@@ -659,7 +643,6 @@
                         </div>
                     </div>
 
-                    <!-- User Greeting & Wallet Card -->
                     <div class="glass-card rounded-2xl p-4 relative overflow-hidden border-neonRed/20 bg-gradient-to-br from-cardBg via-cardBg to-rose-950/30">
                         <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-neonRed/10 rounded-full blur-2xl pointer-events-none"></div>
                         <div class="flex items-center justify-between mb-4">
@@ -702,7 +685,6 @@
                         </div>
                     </div>
 
-                    <!-- Quick Navigation Grid -->
                     <div class="grid grid-cols-4 gap-2">
                         <button onclick="navigateTo('matches')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonRed/40 transition group">
                             <div class="w-10 h-10 rounded-xl bg-neonRed/10 text-neonRed flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
@@ -730,7 +712,6 @@
                         </button>
                     </div>
 
-                    <!-- Featured Tournaments Section -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="heading-font font-bold text-base text-white tracking-wide">Featured Tournaments</h3>
@@ -749,7 +730,6 @@
                         `}
                     </div>
 
-                    <!-- Recent Winners Section -->
                     ${recentWinners.length > 0 ? `
                         <div>
                             <div class="flex items-center justify-between mb-3">
@@ -778,7 +758,6 @@
                         </div>
                     ` : ''}
 
-                    <!-- Referral Card -->
                     <div class="glass-card rounded-2xl p-4 bg-gradient-to-r from-blue-950/20 to-purple-950/20 border-accentBlue/20 flex items-center justify-between">
                         <div>
                             <span class="text-[10px] font-bold text-accentBlue uppercase tracking-wider">Refer & Earn</span>
@@ -830,7 +809,6 @@
                         <span class="text-slate-300 font-semibold">${filled}/${max} Joined</span>
                     </div>
 
-                    <!-- Progress bar -->
                     <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div class="h-full bg-gradient-to-r from-neonRed to-neonYellow rounded-full" style="width: ${progress}%"></div>
                     </div>
@@ -856,7 +834,6 @@
                         <span class="text-xs text-slate-400 font-medium">${tournaments.length} available</span>
                     </div>
 
-                    <!-- Filters Bar -->
                     <div class="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar">
                         <button onclick="setTournamentFilter('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'all' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">All</button>
                         <button onclick="setTournamentFilter('live')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'live' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">Live</button>
@@ -865,7 +842,6 @@
                         <button onclick="setTournamentFilter('free')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'free' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">Free Entry</button>
                     </div>
 
-                    <!-- Tournament List -->
                     ${tournaments.length === 0 ? `
                         <div class="glass-card rounded-2xl p-10 text-center text-slate-400 flex flex-col items-center justify-center">
                             <i class="fa-solid fa-gamepad text-4xl mb-3 text-slate-600"></i>
@@ -929,7 +905,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Room Credentials (If Released) -->
                                         ${t.room_id ? `
                                             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 mb-3 space-y-2">
                                                 <div class="flex items-center justify-between text-xs">
@@ -976,7 +951,6 @@
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">My Wallet</h2>
 
-                    <!-- Balance Card -->
                     <div class="glass-card rounded-2xl p-5 border-neonYellow/20 bg-gradient-to-br from-cardBg via-cardBg to-amber-950/20 text-center relative overflow-hidden">
                         <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold block mb-1">Available Balance</span>
                         <h1 class="heading-font font-bold text-3xl text-neonYellow mb-4">${formatCurrency(profile.wallet_balance)}</h1>
@@ -1004,7 +978,6 @@
                         </div>
                     </div>
 
-                    <!-- Deposit Requests Section -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="heading-font font-bold text-base text-white">Recent Transactions</h3>
@@ -1176,7 +1149,6 @@
                         </div>
                     </div>
 
-                    <!-- Statistics Card -->
                     <div class="glass-card rounded-2xl p-4 border border-cardBorder">
                         <h4 class="heading-font font-bold text-sm text-white mb-3">Battle Statistics</h4>
                         <div class="grid grid-cols-3 gap-2 text-center">
@@ -1231,9 +1203,11 @@
                             <input type="text" id="edit-phone" value="${escapeHTML(profile.phone || '')}" placeholder="03001234567" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
                         </div>
 
+                        <!-- REPLACED AVATAR URL WITH DIRECT REAL PHOTO / FILE UPLOAD -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Avatar Image URL</label>
-                            <input type="text" id="edit-avatar" value="${escapeHTML(profile.avatar_url || '')}" placeholder="https://..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Profile Photo / Real DP</label>
+                            <input type="file" id="edit-avatar-file" accept="image/*" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neonRed file:text-white hover:file:bg-rose-600 focus:outline-none">
+                            <input type="hidden" id="edit-avatar-url" value="${escapeHTML(profile.avatar_url || '')}">
                         </div>
 
                         <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition mt-2">Save Changes</button>
@@ -1251,10 +1225,20 @@
             const ffUid = document.getElementById('edit-ff-uid').value.trim();
             const ffName = document.getElementById('edit-ff-name').value.trim();
             const phone = document.getElementById('edit-phone').value.trim();
-            const avatarUrl = document.getElementById('edit-avatar').value.trim();
+            const fileInput = document.getElementById('edit-avatar-file');
+            let avatarUrl = document.getElementById('edit-avatar-url').value.trim();
 
             setGlobalLoading(true, 'SAVING PROFILE...');
             try {
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    avatarUrl = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
                 const { error } = await supabaseClient
                     .from('profiles')
                     .update({
@@ -1293,7 +1277,6 @@
             }
 
             const isJoined = (state.myMatchesCache || []).some(entry => entry.tournament_id === t.id);
-            const isLive = t.status === 'live';
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
@@ -1325,7 +1308,6 @@
                             </div>
                         </div>
 
-                        <!-- Rules Section -->
                         <div class="space-y-2">
                             <h4 class="heading-font font-bold text-sm text-white">Tournament Rules</h4>
                             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed">
@@ -1333,7 +1315,6 @@
                             </div>
                         </div>
 
-                        <!-- Winning Rules -->
                         <div class="space-y-2">
                             <h4 class="heading-font font-bold text-sm text-white">Winning & Prize Distribution</h4>
                             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed">
@@ -1341,7 +1322,6 @@
                             </div>
                         </div>
 
-                        <!-- Room Details if Joined -->
                         ${isJoined && t.room_id ? `
                             <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-2">
                                 <span class="text-xs font-bold text-emerald-400 block"><i class="fa-solid fa-key mr-1"></i> Room Credentials Released</span>
@@ -1356,7 +1336,6 @@
                             </div>
                         ` : ''}
 
-                        <!-- Action Buttons -->
                         <div class="pt-2">
                             ${isJoined ? `
                                 <div class="flex space-x-2">
@@ -1439,8 +1418,6 @@
         }
 
         function renderLeaderboardView() {
-            const leaders = (state.tournamentsCache || []); // Fallback or leaderboard data
-
             return `
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">Leaderboard</h2>
