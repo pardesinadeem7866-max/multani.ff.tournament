@@ -372,7 +372,7 @@
 
             return `
                 <div class="p-3 flex flex-col space-y-3">
-                    <!-- 4 Compact Stats Boxes (Extra Small & Compact) -->
+                    <!-- 4 Compact Stats Boxes -->
                     <div class="grid grid-cols-2 gap-2">
                         <div class="glass-card rounded-xl p-2.5 border border-cardBorder">
                             <span class="text-[9px] text-slate-400 font-medium block">Total Tournaments</span>
@@ -444,7 +444,7 @@
             `;
         }
 
-        // --- SUB-PAGES FOR THE BUTTONS ---
+        // --- SUB-PAGES ---
 
         function renderWinnerAnnouncementPage() {
             const winners = state.winnersCache || [];
@@ -502,22 +502,11 @@
                 let proofUrl = '';
                 if (fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    const fileExt = file.name.split('.').pop();
-                    const fileName = `${Date.now()}_${Math.random().toString(36.substring(2)}.${fileExt}`;
-                    const filePath = `winners/${fileName}`;
-
-                    const { error: uploadError } = await supabaseClient.storage.from('screenshots').upload(filePath, file);
-                    if (uploadError) {
-                        // Fallback data URL if storage bucket is not configured yet
-                        proofUrl = await new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => resolve(e.target.result);
-                            reader.readAsDataURL(file);
-                        });
-                    } else {
-                        const { data: publicURLData } = supabaseClient.storage.from('screenshots').getPublicUrl(filePath);
-                        proofUrl = publicURLData.publicUrl;
-                    }
+                    proofUrl = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
                 }
 
                 const { error } = await supabaseClient.from('winners').insert({
@@ -674,8 +663,6 @@
                 </div>
             `;
         }
-
-        // --- COMPACT TOURNAMENT FORM WITH FREE FIRE MAP FILTER ---
 
         function renderAdminTournamentForm(tournamentId = null) {
             const isEdit = Boolean(tournamentId);
