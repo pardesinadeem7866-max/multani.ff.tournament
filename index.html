@@ -44,7 +44,6 @@
         .heading-font {
             font-family: 'Rajdhani', sans-serif;
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -67,9 +66,6 @@
         .neon-glow-yellow {
             box-shadow: 0 0 15px rgba(255, 190, 11, 0.3);
         }
-        .animate-pulse-slow {
-            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
     </style>
 </head>
 <body class="pb-24 select-none">
@@ -80,16 +76,11 @@
             <div class="absolute inset-0 border-4 border-neonRed/20 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-neonRed rounded-full border-t-transparent animate-spin"></div>
         </div>
-        <p id="loader-text" class="heading-font text-lg tracking-wider text-slate-300 font-semibold animate-pulse">LOADING MULTANI FF...</p>
+        <p id="loader-text" class="heading-font text-base tracking-wider text-slate-300 font-semibold text-center px-4 animate-pulse">Welcome to multani.ff official tournament</p>
     </div>
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md flex flex-col gap-2 pointer-events-none"></div>
-
-    <!-- Connection Status Banner -->
-    <div id="connection-banner" class="hidden fixed top-0 left-0 right-0 z-50 bg-red-600 text-white text-xs py-1 text-center font-medium">
-        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Connection Issue / Offline Mode
-    </div>
 
     <!-- MAIN APP CONTAINER -->
     <div id="app" class="relative w-full min-h-screen flex flex-col">
@@ -116,12 +107,10 @@
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- Notifications Bell -->
                 <button onclick="navigateTo('notifications')" class="relative w-9 h-9 rounded-xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition">
                     <i class="fa-solid fa-bell text-sm"></i>
                     <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-neonRed text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
                 </button>
-                <!-- Admin Portal Button (Conditional) -->
                 <div id="admin-btn-container" class="hidden">
                     <a href="admin.html" class="px-2.5 py-1.5 rounded-xl bg-neonRed/10 border border-neonRed/30 text-neonRed text-xs font-semibold flex items-center space-x-1 hover:bg-neonRed/20 transition">
                         <i class="fa-solid fa-shield-halved"></i>
@@ -162,35 +151,20 @@
 
     </div>
 
-    <!-- MODAL ROOT -->
-    <div id="modal-root" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <!-- Dynamic Modal Content -->
-    </div>
-
     <!-- JAVASCRIPT APPLICATION CORE -->
     <script>
-        /* ==========================================================================
-           1. SUPABASE CLIENT & CONFIGURATION
-           ========================================================================== */
         const SUPABASE_URL = 'https://eyrwqmirdigsckcwbmxn.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX';
 
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-            }
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
         });
 
-        /* ==========================================================================
-           2. GLOBAL APPLICATION STATE
-           ========================================================================== */
         let state = {
             currentUser: null,
             currentProfile: null,
-            currentView: 'home',
+            currentView: 'login',
             navigationHistory: [],
             tournamentsCache: [],
             myMatchesCache: [],
@@ -208,9 +182,6 @@
         let authListenerRegistered = false;
         let realtimeSubscriptions = [];
 
-        /* ==========================================================================
-           3. SECURITY & UTILITY HELPERS
-           ========================================================================== */
         function escapeHTML(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -242,17 +213,14 @@
             `;
 
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-2', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
 
-        function setGlobalLoading(isLoading, text = 'LOADING MULTANI FF...') {
+        function setGlobalLoading(isLoading, text = 'Welcome to multani.ff official tournament') {
             const loader = document.getElementById('global-loader');
             const loaderText = document.getElementById('loader-text');
             if (isLoading) {
@@ -273,13 +241,10 @@
             return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
 
-        /* ==========================================================================
-           4. NAVIGATION SYSTEM & HISTORY MANAGEMENT
-           ========================================================================== */
         function navigateTo(viewName, params = {}, pushHistory = true) {
             if (state.currentView === viewName && JSON.stringify(state.currentParams || {}) === JSON.stringify(params)) return;
 
-            if (pushHistory && state.currentView) {
+            if (pushHistory && state.currentView && !['login', 'register', 'banned'].includes(state.currentView)) {
                 state.navigationHistory.push({ view: state.currentView, params: state.currentParams || {} });
             }
 
@@ -305,17 +270,9 @@
             }
         }
 
-        window.addEventListener('popstate', (e) => {
-            if (state.navigationHistory.length > 0) {
-                goBack();
-            } else {
-                navigateTo('home', {}, false);
-            }
-        });
-
         function updateBackButtonVisibility() {
             const backContainer = document.getElementById('back-btn-container');
-            if (['home', 'matches', 'my-matches', 'wallet', 'profile'].includes(state.currentView)) {
+            if (['home', 'matches', 'my-matches', 'wallet', 'profile', 'login', 'register', 'banned'].includes(state.currentView)) {
                 backContainer.classList.add('hidden');
             } else {
                 backContainer.classList.remove('hidden');
@@ -335,17 +292,13 @@
             });
         }
 
-        /* ==========================================================================
-           5. INITIALIZATION & AUTHENTICATION BOOTSTRAP
-           ========================================================================== */
         document.addEventListener('DOMContentLoaded', async () => {
-            setGlobalLoading(true, 'CONNECTING TO ARENA...');
+            setGlobalLoading(true, 'Welcome to multani.ff official tournament');
             
             try {
                 if (!authListenerRegistered) {
                     authListenerRegistered = true;
                     supabaseClient.auth.onAuthStateChange(async (event, session) => {
-                        console.log('Auth state change:', event);
                         if (session?.user) {
                             state.currentUser = session.user;
                             await fetchUserProfile(session.user.id);
@@ -379,7 +332,6 @@
 
             } catch (err) {
                 console.error('Initialization error:', err);
-                showToast('Failed to connect securely to server.', 'error');
                 navigateTo('login', {}, false);
             } finally {
                 setGlobalLoading(false);
@@ -513,44 +465,19 @@
 
         function setupRealtimeSubscriptions() {
             if (realtimeSubscriptions.length > 0) return;
-
             try {
                 const tournSub = supabaseClient
                     .channel('public:tournaments')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'tournaments' }, payload => {
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'tournaments' }, () => {
                         fetchInitialData().then(() => renderCurrentView());
                     })
                     .subscribe();
-
-                const winnerSub = supabaseClient
-                    .channel('public:winners')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'winners' }, payload => {
-                        fetchInitialData().then(() => renderCurrentView());
-                    })
-                    .subscribe();
-
-                realtimeSubscriptions.push(tournSub, winnerSub);
-
-                if (state.currentUser) {
-                    const profileSub = supabaseClient
-                        .channel(`public:profiles:id=eq.${state.currentUser.id}`)
-                        .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${state.currentUser.id}` }, payload => {
-                            if (payload.new) {
-                                state.currentProfile = payload.new;
-                                renderCurrentView();
-                            }
-                        })
-                        .subscribe();
-                    realtimeSubscriptions.push(profileSub);
-                }
+                realtimeSubscriptions.push(tournSub);
             } catch (err) {
                 console.error('Realtime subscription error:', err);
             }
         }
 
-        /* ==========================================================================
-           6. VIEW ROUTER & RENDER ENGINE
-           ========================================================================== */
         function renderCurrentView() {
             const container = document.getElementById('main-content');
             const bottomNav = document.getElementById('bottom-nav');
@@ -559,72 +486,32 @@
                 state.currentView = 'banned';
             }
 
-            if (['login', 'register', 'forgot', 'banned'].includes(state.currentView)) {
+            if (['login', 'register', 'banned'].includes(state.currentView)) {
                 bottomNav.classList.add('hidden');
             } else {
                 bottomNav.classList.remove('hidden');
             }
 
             switch (state.currentView) {
-                case 'home':
-                    container.innerHTML = renderHomeView();
-                    break;
-                case 'matches':
-                    container.innerHTML = renderMatchesView();
-                    break;
-                case 'my-matches':
-                    container.innerHTML = renderMyMatchesView();
-                    break;
-                case 'wallet':
-                    container.innerHTML = renderWalletView();
-                    break;
-                case 'profile':
-                    container.innerHTML = renderProfileView();
-                    break;
-                case 'tournament-detail':
-                    container.innerHTML = renderTournamentDetailView(state.currentParams?.id);
-                    break;
-                case 'leaderboard':
-                    container.innerHTML = renderLeaderboardView();
-                    break;
-                case 'giveaways':
-                    container.innerHTML = renderGiveawaysView();
-                    break;
-                case 'notifications':
-                    container.innerHTML = renderNotificationsView();
-                    break;
-                case 'support':
-                    container.innerHTML = renderSupportView();
-                    break;
-                case 'payment-history':
-                    container.innerHTML = renderPaymentHistoryView();
-                    break;
-                case 'deposit':
-                    container.innerHTML = renderDepositView();
-                    break;
-                case 'edit-profile':
-                    container.innerHTML = renderEditProfileView();
-                    break;
-                case 'login':
-                    container.innerHTML = renderLoginView();
-                    break;
-                case 'register':
-                    container.innerHTML = renderRegisterView();
-                    break;
-                case 'forgot':
-                    container.innerHTML = renderForgotView();
-                    break;
-                case 'banned':
-                    container.innerHTML = renderBannedView();
-                    break;
-                default:
-                    container.innerHTML = renderHomeView();
+                case 'home': container.innerHTML = renderHomeView(); break;
+                case 'matches': container.innerHTML = renderMatchesView(); break;
+                case 'my-matches': container.innerHTML = renderMyMatchesView(); break;
+                case 'wallet': container.innerHTML = renderWalletView(); break;
+                case 'profile': container.innerHTML = renderProfileView(); break;
+                case 'tournament-detail': container.innerHTML = renderTournamentDetailView(state.currentParams?.id); break;
+                case 'leaderboard': container.innerHTML = renderLeaderboardView(); break;
+                case 'giveaways': container.innerHTML = renderGiveawaysView(); break;
+                case 'notifications': container.innerHTML = renderNotificationsView(); break;
+                case 'support': container.innerHTML = renderSupportView(); break;
+                case 'payment-history': container.innerHTML = renderPaymentHistoryView(); break;
+                case 'deposit': container.innerHTML = renderDepositView(); break;
+                case 'edit-profile': container.innerHTML = renderEditProfileView(); break;
+                case 'login': container.innerHTML = renderLoginView(); break;
+                case 'register': container.innerHTML = renderRegisterView(); break;
+                case 'banned': container.innerHTML = renderBannedView(); break;
+                default: container.innerHTML = renderLoginView();
             }
         }
-
-        /* ==========================================================================
-           7. VIEW TEMPLATE BUILDERS
-           ========================================================================== */
 
         function renderHomeView() {
             const profile = state.currentProfile || {};
@@ -639,12 +526,11 @@
                             <i class="fa-solid fa-bullhorn text-sm"></i>
                         </div>
                         <div class="overflow-hidden flex-1">
-                            <p class="text-xs text-slate-300 font-medium whitespace-nowrap animate-marquee">${escapeHTML(announcement)}</p>
+                            <p class="text-xs text-slate-300 font-medium whitespace-nowrap">${escapeHTML(announcement)}</p>
                         </div>
                     </div>
 
                     <div class="glass-card rounded-2xl p-4 relative overflow-hidden border-neonRed/20 bg-gradient-to-br from-cardBg via-cardBg to-rose-950/30">
-                        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-neonRed/10 rounded-full blur-2xl pointer-events-none"></div>
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-3">
                                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-neonRed to-neonYellow p-0.5 flex items-center justify-center">
@@ -686,28 +572,20 @@
                     </div>
 
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="navigateTo('matches')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonRed/40 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-neonRed/10 text-neonRed flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-gamepad text-base"></i>
-                            </div>
+                        <button onclick="navigateTo('matches')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonRed/40 transition">
+                            <div class="w-10 h-10 rounded-xl bg-neonRed/10 text-neonRed flex items-center justify-center mb-1.5"><i class="fa-solid fa-gamepad text-base"></i></div>
                             <span class="text-[11px] font-semibold text-slate-300">Tournaments</span>
                         </button>
-                        <button onclick="navigateTo('leaderboard')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonYellow/40 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-neonYellow/10 text-neonYellow flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-trophy text-base"></i>
-                            </div>
+                        <button onclick="navigateTo('leaderboard')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonYellow/40 transition">
+                            <div class="w-10 h-10 rounded-xl bg-neonYellow/10 text-neonYellow flex items-center justify-center mb-1.5"><i class="fa-solid fa-trophy text-base"></i></div>
                             <span class="text-[11px] font-semibold text-slate-300">Leaderboard</span>
                         </button>
-                        <button onclick="navigateTo('giveaways')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonGreen/40 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-neonGreen/10 text-neonGreen flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-gift text-base"></i>
-                            </div>
+                        <button onclick="navigateTo('giveaways')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-neonGreen/40 transition">
+                            <div class="w-10 h-10 rounded-xl bg-neonGreen/10 text-neonGreen flex items-center justify-center mb-1.5"><i class="fa-solid fa-gift text-base"></i></div>
                             <span class="text-[11px] font-semibold text-slate-300">Giveaways</span>
                         </button>
-                        <button onclick="navigateTo('support')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-accentBlue/40 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-accentBlue/10 text-accentBlue flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-headset text-base"></i>
-                            </div>
+                        <button onclick="navigateTo('support')" class="glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-accentBlue/40 transition">
+                            <div class="w-10 h-10 rounded-xl bg-accentBlue/10 text-accentBlue flex items-center justify-center mb-1.5"><i class="fa-solid fa-headset text-base"></i></div>
                             <span class="text-[11px] font-semibold text-slate-300">Support</span>
                         </button>
                     </div>
@@ -717,32 +595,21 @@
                             <h3 class="heading-font font-bold text-base text-white tracking-wide">Featured Tournaments</h3>
                             <button onclick="navigateTo('matches')" class="text-xs text-neonRed font-semibold hover:underline">View All</button>
                         </div>
-
                         ${featuredTournaments.length === 0 ? `
                             <div class="glass-card rounded-2xl p-6 text-center text-slate-400">
-                                <i class="fa-solid fa-calendar-xmark text-2xl mb-2 text-slate-500"></i>
                                 <p class="text-xs font-medium">No active tournaments available right now.</p>
                             </div>
-                        ` : `
-                            <div class="flex flex-col space-y-3">
-                                ${featuredTournaments.map(t => renderTournamentCard(t)).join('')}
-                            </div>
-                        `}
+                        ` : `<div class="flex flex-col space-y-3">${featuredTournaments.map(t => renderTournamentCard(t)).join('')}</div>`}
                     </div>
 
                     ${recentWinners.length > 0 ? `
                         <div>
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="heading-font font-bold text-base text-white tracking-wide">Recent Champions</h3>
-                                <i class="fa-solid fa-award text-neonYellow"></i>
-                            </div>
+                            <div class="flex items-center justify-between mb-3"><h3 class="heading-font font-bold text-base text-white tracking-wide">Recent Champions</h3></div>
                             <div class="glass-card rounded-2xl p-3 flex flex-col space-y-2.5">
                                 ${recentWinners.map(w => `
                                     <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/50 border border-slate-800">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 rounded-lg bg-neonYellow/10 text-neonYellow flex items-center justify-center font-bold text-xs">
-                                                <i class="fa-solid fa-crown"></i>
-                                            </div>
+                                            <div class="w-8 h-8 rounded-lg bg-neonYellow/10 text-neonYellow flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-crown"></i></div>
                                             <div>
                                                 <h4 class="text-xs font-bold text-white">${escapeHTML(w.ign)}</h4>
                                                 <span class="text-[10px] text-slate-400 font-medium">UID: ${escapeHTML(w.free_fire_uid || 'N/A')}</span>
@@ -750,24 +617,12 @@
                                         </div>
                                         <div class="text-right">
                                             <span class="heading-font font-bold text-sm text-neonYellow">${formatCurrency(w.prize_amount)}</span>
-                                            <span class="text-[9px] text-slate-500 block">${formatDate(w.created_at)}</span>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
                     ` : ''}
-
-                    <div class="glass-card rounded-2xl p-4 bg-gradient-to-r from-blue-950/20 to-purple-950/20 border-accentBlue/20 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-accentBlue uppercase tracking-wider">Refer & Earn</span>
-                            <h4 class="heading-font font-bold text-sm text-white mt-0.5">Invite Friends to Multani FF</h4>
-                            <p class="text-[11px] text-slate-400 mt-1">Share your referral code and earn bonuses when friends join.</p>
-                        </div>
-                        <button onclick="copyReferralCode()" class="px-3 py-2 rounded-xl bg-accentBlue text-white text-xs font-bold hover:bg-blue-600 transition flex-shrink-0 ml-3">
-                            <i class="fa-solid fa-copy mr-1"></i> Code
-                        </button>
-                    </div>
                 </div>
             `;
         }
@@ -783,32 +638,20 @@
             const progress = Math.min(Math.round((filled / max) * 100), 100);
 
             return `
-                <div onclick="navigateTo('tournament-detail', { id: '${t.id}' })" class="glass-card rounded-2xl p-4 border border-cardBorder hover:border-neonRed/40 transition cursor-pointer relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-neonRed/5 rounded-bl-full pointer-events-none"></div>
-                    
+                <div onclick="navigateTo('tournament-detail', { id: '${t.id}' })" class="glass-card rounded-2xl p-4 border border-cardBorder hover:border-neonRed/40 transition cursor-pointer relative overflow-hidden">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-neonYellow">${escapeHTML(t.game || 'Free Fire')} • ${escapeHTML(t.mode || 'Squad')} • ${escapeHTML(t.map || 'Bermuda')}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-neonYellow">${escapeHTML(t.game || 'Free Fire')} • ${escapeHTML(t.mode || 'Squad')}</span>
                         ${statusBadge}
                     </div>
-
-                    <h4 class="heading-font font-bold text-base text-white mb-2 group-hover:text-neonRed transition">${escapeHTML(t.title)}</h4>
-
+                    <h4 class="heading-font font-bold text-base text-white mb-2">${escapeHTML(t.title)}</h4>
                     <div class="grid grid-cols-2 gap-2 mb-3 py-2 border-y border-slate-800/80">
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-medium">Prize Pool</span>
-                            <span class="heading-font font-bold text-sm text-neonGreen">${formatCurrency(t.prize_pool)}</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-medium">Entry Fee</span>
-                            <span class="heading-font font-bold text-sm text-white">${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'}</span>
-                        </div>
+                        <div><span class="text-[10px] text-slate-400 font-medium">Prize Pool</span><span class="heading-font font-bold text-sm text-neonGreen">${formatCurrency(t.prize_pool)}</span></div>
+                        <div><span class="text-[10px] text-slate-400 font-medium">Entry Fee</span><span class="heading-font font-bold text-sm text-white">${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'}</span></div>
                     </div>
-
                     <div class="flex items-center justify-between text-xs mb-2">
                         <span class="text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${formatDate(t.match_date)}</span>
                         <span class="text-slate-300 font-semibold">${filled}/${max} Joined</span>
                     </div>
-
                     <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div class="h-full bg-gradient-to-r from-neonRed to-neonYellow rounded-full" style="width: ${progress}%"></div>
                     </div>
@@ -829,30 +672,14 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="heading-font font-bold text-xl text-white">All Tournaments</h2>
-                        <span class="text-xs text-slate-400 font-medium">${tournaments.length} available</span>
+                    <h2 class="heading-font font-bold text-xl text-white">All Tournaments</h2>
+                    <div class="flex items-center space-x-2 overflow-x-auto pb-1">
+                        <button onclick="setTournamentFilter('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'all' ? 'bg-neonRed text-white' : 'bg-slate-800 text-slate-300'}">All</button>
+                        <button onclick="setTournamentFilter('live')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'live' ? 'bg-neonRed text-white' : 'bg-slate-800 text-slate-300'}">Live</button>
+                        <button onclick="setTournamentFilter('upcoming')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'upcoming' ? 'bg-neonRed text-white' : 'bg-slate-800 text-slate-300'}">Upcoming</button>
+                        <button onclick="setTournamentFilter('free')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'free' ? 'bg-neonRed text-white' : 'bg-slate-800 text-slate-300'}">Free Entry</button>
                     </div>
-
-                    <div class="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar">
-                        <button onclick="setTournamentFilter('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'all' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">All</button>
-                        <button onclick="setTournamentFilter('live')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'live' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">Live</button>
-                        <button onclick="setTournamentFilter('upcoming')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'upcoming' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">Upcoming</button>
-                        <button onclick="setTournamentFilter('completed')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'completed' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">Completed</button>
-                        <button onclick="setTournamentFilter('free')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${filter === 'free' ? 'bg-neonRed text-white shadow-lg neon-glow-red' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">Free Entry</button>
-                    </div>
-
-                    ${tournaments.length === 0 ? `
-                        <div class="glass-card rounded-2xl p-10 text-center text-slate-400 flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-gamepad text-4xl mb-3 text-slate-600"></i>
-                            <h4 class="heading-font font-bold text-lg text-white mb-1">No Tournaments Found</h4>
-                            <p class="text-xs">There are no tournaments matching this filter right now.</p>
-                        </div>
-                    ` : `
-                        <div class="flex flex-col space-y-3">
-                            ${tournaments.map(t => renderTournamentCard(t)).join('')}
-                        </div>
-                    `}
+                    ${tournaments.length === 0 ? `<div class="glass-card rounded-2xl p-10 text-center text-slate-400"><p class="text-xs">No tournaments found.</p></div>` : `<div class="flex flex-col space-y-3">${tournaments.map(t => renderTournamentCard(t)).join('')}</div>`}
                 </div>
             `;
         }
@@ -864,22 +691,13 @@
 
         function renderMyMatchesView() {
             const matches = state.myMatchesCache || [];
-
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="heading-font font-bold text-xl text-white">My Registered Matches</h2>
-                        <button onclick="fetchUserDataAuthenticated(); showToast('Refreshed matches', 'success');" class="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition">
-                            <i class="fa-solid fa-rotate text-xs"></i>
-                        </button>
-                    </div>
-
+                    <h2 class="heading-font font-bold text-xl text-white">My Registered Matches</h2>
                     ${matches.length === 0 ? `
-                        <div class="glass-card rounded-2xl p-10 text-center text-slate-400 flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-ticket text-4xl mb-3 text-slate-600"></i>
-                            <h4 class="heading-font font-bold text-lg text-white mb-1">No Matches Joined Yet</h4>
-                            <p class="text-xs mb-4">Join your first Free Fire tournament and compete for cash prizes!</p>
-                            <button onclick="navigateTo('matches')" class="px-4 py-2 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Browse Tournaments</button>
+                        <div class="glass-card rounded-2xl p-10 text-center text-slate-400">
+                            <p class="text-xs mb-4">No matches joined yet.</p>
+                            <button onclick="navigateTo('matches')" class="px-4 py-2 rounded-xl bg-neonRed text-white text-xs font-bold">Browse Tournaments</button>
                         </div>
                     ` : `
                         <div class="flex flex-col space-y-3">
@@ -887,53 +705,15 @@
                                 const t = entry.tournaments || {};
                                 return `
                                     <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-[10px] font-bold uppercase tracking-wider text-neonYellow">${escapeHTML(t.game || 'Free Fire')} • ${escapeHTML(t.mode || 'Squad')}</span>
-                                            <span class="px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase">REGISTERED</span>
-                                        </div>
-
-                                        <h4 class="heading-font font-bold text-base text-white mb-2">${escapeHTML(t.title || 'Tournament Match')}</h4>
-
-                                        <div class="grid grid-cols-2 gap-2 mb-3 py-2 border-y border-slate-800">
-                                            <div>
-                                                <span class="text-[10px] text-slate-400 font-medium">Match Date</span>
-                                                <span class="text-xs font-semibold text-slate-200 block">${formatDate(t.match_date)}</span>
-                                            </div>
-                                            <div>
-                                                <span class="text-[10px] text-slate-400 font-medium">Prize Pool</span>
-                                                <span class="heading-font font-bold text-sm text-neonGreen">${formatCurrency(t.prize_pool)}</span>
-                                            </div>
-                                        </div>
-
+                                        <h4 class="heading-font font-bold text-base text-white mb-2">${escapeHTML(t.title || 'Match')}</h4>
+                                        <div class="text-xs text-slate-400 mb-3">Match Date: ${formatDate(t.match_date)}</div>
                                         ${t.room_id ? `
-                                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 mb-3 space-y-2">
-                                                <div class="flex items-center justify-between text-xs">
-                                                    <span class="text-slate-400 font-medium">Room ID:</span>
-                                                    <div class="flex items-center space-x-2">
-                                                        <span class="font-bold text-white font-mono">${escapeHTML(t.room_id)}</span>
-                                                        <button onclick="copyToClipboard('${escapeHTML(t.room_id)}', 'Room ID')" class="px-2 py-1 rounded bg-slate-800 text-neonYellow text-[10px] hover:bg-slate-700">Copy</button>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center justify-between text-xs">
-                                                    <span class="text-slate-400 font-medium">Password:</span>
-                                                    <div class="flex items-center space-x-2">
-                                                        <span class="font-bold text-white font-mono">${escapeHTML(t.room_password || 'N/A')}</span>
-                                                        <button onclick="copyToClipboard('${escapeHTML(t.room_password || '')}', 'Room Password')" class="px-2 py-1 rounded bg-slate-800 text-neonYellow text-[10px] hover:bg-slate-700">Copy</button>
-                                                    </div>
-                                                </div>
+                                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 mb-3 space-y-1">
+                                                <div class="text-xs text-white">Room ID: <span class="font-mono font-bold text-neonYellow">${escapeHTML(t.room_id)}</span></div>
+                                                <div class="text-xs text-white">Password: <span class="font-mono font-bold text-neonYellow">${escapeHTML(t.room_password || 'N/A')}</span></div>
                                             </div>
-                                        ` : `
-                                            <div class="p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 mb-3 text-center">
-                                                <span class="text-[11px] text-slate-400 italic"><i class="fa-solid fa-lock mr-1"></i> Room ID & Password will be revealed before match start</span>
-                                            </div>
-                                        `}
-
-                                        <div class="flex space-x-2">
-                                            <button onclick="navigateTo('tournament-detail', { id: '${t.id}' })" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition text-center">View Match Details</button>
-                                            ${t.status === 'upcoming' ? `
-                                                <button onclick="leaveTournamentPrompt('${t.id}')" class="px-4 py-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-900/40 text-xs font-semibold transition">Leave</button>
-                                            ` : ''}
-                                        </div>
+                                        ` : `<div class="text-xs text-slate-400 italic mb-3">Room ID will be revealed before match start.</div>`}
+                                        <button onclick="navigateTo('tournament-detail', { id: '${t.id}' })" class="w-full py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold">View Details</button>
                                     </div>
                                 `;
                             }).join('')}
@@ -946,76 +726,16 @@
         function renderWalletView() {
             const profile = state.currentProfile || {};
             const payments = state.paymentsCache || [];
-
             return `
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">My Wallet</h2>
-
-                    <div class="glass-card rounded-2xl p-5 border-neonYellow/20 bg-gradient-to-br from-cardBg via-cardBg to-amber-950/20 text-center relative overflow-hidden">
+                    <div class="glass-card rounded-2xl p-5 border-neonYellow/20 text-center">
                         <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold block mb-1">Available Balance</span>
                         <h1 class="heading-font font-bold text-3xl text-neonYellow mb-4">${formatCurrency(profile.wallet_balance)}</h1>
-                        
-                        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800">
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-medium block">Total Winnings</span>
-                                <span class="heading-font font-bold text-base text-neonGreen">${formatCurrency(profile.total_won)}</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-medium block">Total Matches</span>
-                                <span class="heading-font font-bold text-base text-white">${profile.total_matches || 0}</span>
-                            </div>
+                        <div class="flex space-x-2">
+                            <button onclick="navigateTo('deposit')" class="flex-1 py-2.5 rounded-xl bg-neonRed text-white text-xs font-bold">Add Funds</button>
+                            <button onclick="navigateTo('payment-history')" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold">History</button>
                         </div>
-
-                        <div class="mt-4 flex space-x-2">
-                            <button onclick="navigateTo('deposit')" class="flex-1 py-2.5 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-plus-circle"></i>
-                                <span>Add Funds</span>
-                            </button>
-                            <button onclick="navigateTo('payment-history')" class="flex-1 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold hover:bg-slate-700 transition flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-clock-rotate-left"></i>
-                                <span>History</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="heading-font font-bold text-base text-white">Recent Transactions</h3>
-                            <button onclick="navigateTo('payment-history')" class="text-xs text-neonRed font-semibold hover:underline">View All</button>
-                        </div>
-
-                        ${payments.length === 0 ? `
-                            <div class="glass-card rounded-2xl p-6 text-center text-slate-400">
-                                <i class="fa-solid fa-receipt text-2xl mb-2 text-slate-600"></i>
-                                <p class="text-xs">No deposit transactions recorded yet.</p>
-                            </div>
-                        ` : `
-                            <div class="flex flex-col space-y-2">
-                                ${payments.slice(0, 5).map(p => {
-                                    let badgeColor = 'bg-amber-950/80 text-amber-400 border-amber-500/30';
-                                    if (p.status === 'approved') badgeColor = 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30';
-                                    if (p.status === 'rejected') badgeColor = 'bg-rose-950/80 text-rose-400 border-rose-500/30';
-
-                                    return `
-                                        <div class="glass-card rounded-xl p-3 flex items-center justify-between border border-slate-800">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-9 h-9 rounded-xl bg-slate-800 text-neonYellow flex items-center justify-center font-bold text-xs">
-                                                    <i class="fa-solid fa-wallet"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 class="text-xs font-bold text-white">${escapeHTML(p.payment_method || 'Deposit')}</h4>
-                                                    <span class="text-[10px] text-slate-400 font-mono">TXN: ${escapeHTML(p.transaction_id || 'N/A')}</span>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="heading-font font-bold text-sm text-white block">${formatCurrency(p.amount)}</span>
-                                                <span class="px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase ${badgeColor}">${escapeHTML(p.status)}</span>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `}
                     </div>
                 </div>
             `;
@@ -1025,46 +745,27 @@
             return `
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">Add Funds / Deposit</h2>
-
-                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-4">
-                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <span class="text-xs font-bold text-neonYellow block"><i class="fa-solid fa-circle-info mr-1"></i> Deposit Instructions</span>
-                            <p class="text-[11px] text-slate-300 leading-relaxed">
-                                Send funds via Easypaisa or JazzCash to our official account: <br>
-                                <strong class="text-white">Account Name:</strong> Multani FF Official<br>
-                                <strong class="text-white">Account Number:</strong> 0300-1234567<br>
-                                After payment, submit your Transaction ID and screenshot below. Admin will approve within 15 minutes.
-                            </p>
+                    <form onsubmit="handleDepositSubmit(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 leading-relaxed">
+                            Send funds via Easypaisa/JazzCash to: <strong class="text-white">0300-1234567</strong> (Multani FF Official). Enter your Transaction ID below.
                         </div>
-
-                        <form onsubmit="handleDepositSubmit(event)" class="space-y-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-1">Amount (PKR)</label>
-                                <input type="number" id="deposit-amount" min="50" required placeholder="Enter amount (e.g. 500)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Method</label>
-                                <select id="deposit-method" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
-                                    <option value="Easypaisa">Easypaisa</option>
-                                    <option value="JazzCash">JazzCash</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-1">Transaction ID / TID</label>
-                                <input type="text" id="deposit-txn" required placeholder="Enter transaction reference ID" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-1">Screenshot URL (Optional)</label>
-                                <input type="text" id="deposit-screenshot" placeholder="Paste image URL of payment receipt" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
-                            </div>
-
-                            <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Submit Deposit Request</button>
-                        </form>
-                    </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Amount (PKR)</label>
+                            <input type="number" id="deposit-amount" min="50" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Method</label>
+                            <select id="deposit-method" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
+                                <option value="Easypaisa">Easypaisa</option>
+                                <option value="JazzCash">JazzCash</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Transaction ID / TID</label>
+                            <input type="text" id="deposit-txn" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold">Submit Deposit Request</button>
+                    </form>
                 </div>
             `;
         }
@@ -1072,38 +773,21 @@
         async function handleDepositSubmit(e) {
             e.preventDefault();
             if (!state.currentUser) return;
-
             const amount = parseFloat(document.getElementById('deposit-amount').value);
             const method = document.getElementById('deposit-method').value;
             const txnId = document.getElementById('deposit-txn').value.trim();
-            const screenshot = document.getElementById('deposit-screenshot').value.trim();
-
-            if (!amount || amount <= 0) {
-                showToast('Please enter a valid deposit amount.', 'error');
-                return;
-            }
 
             setGlobalLoading(true, 'SUBMITTING DEPOSIT...');
             try {
-                const { error } = await supabaseClient
-                    .from('deposit_requests')
-                    .insert({
-                        user_id: state.currentUser.id,
-                        amount: amount,
-                        payment_method: method,
-                        transaction_id: txnId,
-                        screenshot_url: screenshot || null,
-                        status: 'pending'
-                    });
-
+                const { error } = await supabaseClient.from('deposit_requests').insert({
+                    user_id: state.currentUser.id, amount, payment_method: method, transaction_id: txnId, status: 'pending'
+                });
                 if (error) throw error;
-
-                showToast('Deposit request submitted successfully!', 'success');
+                showToast('Deposit request submitted!', 'success');
                 await fetchUserDataAuthenticated();
                 navigateTo('wallet');
             } catch (err) {
-                console.error('Deposit error:', err);
-                showToast(err.message || 'Failed to submit deposit request.', 'error');
+                showToast(err.message || 'Failed to submit deposit.', 'error');
             } finally {
                 setGlobalLoading(false);
             }
@@ -1111,60 +795,18 @@
 
         function renderProfileView() {
             const profile = state.currentProfile || {};
-
             return `
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">Player Profile</h2>
-
-                    <div class="glass-card rounded-2xl p-5 border border-cardBorder flex flex-col items-center text-center relative overflow-hidden">
-                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-neonRed to-neonYellow p-0.5 mb-3 shadow-xl neon-glow-red">
-                            <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden">
-                                ${profile.avatar_url ? `<img src="${escapeHTML(profile.avatar_url)}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-2xl text-slate-400"></i>`}
-                            </div>
+                    <div class="glass-card rounded-2xl p-5 border border-cardBorder flex flex-col items-center text-center">
+                        <h3 class="heading-font font-bold text-xl text-white mb-1">${escapeHTML(profile.username || 'Warrior')}</h3>
+                        <span class="text-xs text-slate-400 mb-3">${escapeHTML(state.currentUser?.email || '')}</span>
+                        <div class="w-full grid grid-cols-2 gap-2 pt-3 border-t border-slate-800 mb-4 text-left">
+                            <div class="bg-slate-900 p-2.5 rounded-xl"><span class="text-[10px] text-slate-400 block">UID</span><span class="font-mono text-xs font-bold text-neonYellow">${escapeHTML(profile.free_fire_uid || 'N/A')}</span></div>
+                            <div class="bg-slate-900 p-2.5 rounded-xl"><span class="text-[10px] text-slate-400 block">Nickname</span><span class="text-xs font-bold text-white">${escapeHTML(profile.free_fire_name || 'N/A')}</span></div>
                         </div>
-
-                        <h3 class="heading-font font-bold text-xl text-white">${escapeHTML(profile.username || 'Free Fire Warrior')}</h3>
-                        <span class="text-xs text-slate-400 font-medium mb-3">${escapeHTML(state.currentUser?.email || '')}</span>
-
-                        <div class="w-full grid grid-cols-2 gap-2 pt-3 border-t border-slate-800 mb-4">
-                            <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
-                                <span class="text-[10px] text-slate-400 block font-medium">Free Fire UID</span>
-                                <span class="font-mono font-bold text-sm text-neonYellow">${escapeHTML(profile.free_fire_uid || 'Not Set')}</span>
-                            </div>
-                            <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
-                                <span class="text-[10px] text-slate-400 block font-medium">Free Fire IGN</span>
-                                <span class="font-bold text-sm text-white">${escapeHTML(profile.free_fire_name || 'Not Set')}</span>
-                            </div>
-                        </div>
-
-                        <div class="w-full space-y-2">
-                            <button onclick="navigateTo('edit-profile')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-user-pen"></i>
-                                <span>Edit Profile & FF Details</span>
-                            </button>
-                            <button onclick="handleLogout()" class="w-full py-2.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-900/40 text-xs font-bold transition flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                                <span>Logout</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                        <h4 class="heading-font font-bold text-sm text-white mb-3">Battle Statistics</h4>
-                        <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                                <span class="text-[10px] text-slate-400 block">Matches</span>
-                                <span class="heading-font font-bold text-base text-white">${profile.total_matches || 0}</span>
-                            </div>
-                            <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                                <span class="text-[10px] text-slate-400 block">Wins</span>
-                                <span class="heading-font font-bold text-base text-neonGreen">${profile.total_wins || 0}</span>
-                            </div>
-                            <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                                <span class="text-[10px] text-slate-400 block">Win Rate</span>
-                                <span class="heading-font font-bold text-base text-neonYellow">${profile.total_matches > 0 ? Math.round((profile.total_wins / profile.total_matches) * 100) : 0}%</span>
-                            </div>
-                        </div>
+                        <button onclick="navigateTo('edit-profile')" class="w-full py-2.5 rounded-xl bg-slate-800 text-white text-xs font-bold mb-2">Edit Profile & Details</button>
+                        <button onclick="handleLogout()" class="w-full py-2.5 rounded-xl bg-rose-950/40 text-rose-400 text-xs font-bold">Logout</button>
                     </div>
                 </div>
             `;
@@ -1172,45 +814,27 @@
 
         function renderEditProfileView() {
             const profile = state.currentProfile || {};
-
             return `
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">Edit Profile</h2>
-
                     <form onsubmit="handleProfileUpdate(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
-                            <input type="text" id="edit-username" value="${escapeHTML(profile.username || '')}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="text" id="edit-username" value="${escapeHTML(profile.username || '')}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-                            <input type="text" id="edit-fullname" value="${escapeHTML(profile.full_name || '')}" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
-                        </div>
-
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Free Fire UID</label>
-                            <input type="text" id="edit-ff-uid" value="${escapeHTML(profile.free_fire_uid || '')}" required placeholder="e.g. 123456789" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="text" id="edit-ff-uid" value="${escapeHTML(profile.free_fire_uid || '')}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Free Fire IGN (In-Game Name)</label>
-                            <input type="text" id="edit-ff-name" value="${escapeHTML(profile.free_fire_name || '')}" required placeholder="e.g. MULTANI_KING" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Free Fire Nickname</label>
+                            <input type="text" id="edit-ff-name" value="${escapeHTML(profile.free_fire_name || '')}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
-                            <input type="text" id="edit-phone" value="${escapeHTML(profile.phone || '')}" placeholder="03001234567" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="text" id="edit-phone" value="${escapeHTML(profile.phone || '')}" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-
-                        <!-- REPLACED AVATAR URL WITH DIRECT REAL PHOTO / FILE UPLOAD -->
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Profile Photo / Real DP</label>
-                            <input type="file" id="edit-avatar-file" accept="image/*" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neonRed file:text-white hover:file:bg-rose-600 focus:outline-none">
-                            <input type="hidden" id="edit-avatar-url" value="${escapeHTML(profile.avatar_url || '')}">
-                        </div>
-
-                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition mt-2">Save Changes</button>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold">Save Changes</button>
                     </form>
                 </div>
             `;
@@ -1219,47 +843,22 @@
         async function handleProfileUpdate(e) {
             e.preventDefault();
             if (!state.currentUser) return;
-
             const username = document.getElementById('edit-username').value.trim();
-            const fullName = document.getElementById('edit-fullname').value.trim();
             const ffUid = document.getElementById('edit-ff-uid').value.trim();
             const ffName = document.getElementById('edit-ff-name').value.trim();
             const phone = document.getElementById('edit-phone').value.trim();
-            const fileInput = document.getElementById('edit-avatar-file');
-            let avatarUrl = document.getElementById('edit-avatar-url').value.trim();
 
             setGlobalLoading(true, 'SAVING PROFILE...');
             try {
-                if (fileInput.files && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    avatarUrl = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.readAsDataURL(file);
-                    });
-                }
-
-                const { error } = await supabaseClient
-                    .from('profiles')
-                    .update({
-                        username: username,
-                        full_name: fullName,
-                        free_fire_uid: ffUid,
-                        free_fire_name: ffName,
-                        phone: phone,
-                        avatar_url: avatarUrl,
-                        updated_at: new Date()
-                    })
-                    .eq('id', state.currentUser.id);
-
+                const { error } = await supabaseClient.from('profiles').update({
+                    username, free_fire_uid: ffUid, free_fire_name: ffName, phone, updated_at: new Date()
+                }).eq('id', state.currentUser.id);
                 if (error) throw error;
-
-                showToast('Profile updated successfully!', 'success');
+                showToast('Profile updated!', 'success');
                 await fetchUserProfile(state.currentUser.id);
                 navigateTo('profile');
             } catch (err) {
-                console.error('Profile update error:', err);
-                showToast(err.message || 'Failed to update profile.', 'error');
+                showToast(err.message || 'Update failed.', 'error');
             } finally {
                 setGlobalLoading(false);
             }
@@ -1267,368 +866,101 @@
 
         function renderTournamentDetailView(tournamentId) {
             const t = state.tournamentsCache.find(item => item.id === tournamentId);
-            if (!t) {
-                return `
-                    <div class="p-8 text-center">
-                        <h3 class="text-white text-base font-bold mb-2">Tournament not found</h3>
-                        <button onclick="navigateTo('matches')" class="px-4 py-2 bg-neonRed text-white text-xs rounded-xl font-bold">Back to Matches</button>
-                    </div>
-                `;
-            }
-
+            if (!t) return `<div class="p-8 text-center"><button onclick="navigateTo('matches')" class="px-4 py-2 bg-neonRed text-white text-xs rounded-xl">Back</button></div>`;
             const isJoined = (state.myMatchesCache || []).some(entry => entry.tournament_id === t.id);
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-neonYellow">${escapeHTML(t.game || 'Free Fire')} • ${escapeHTML(t.mode || 'Squad')} • ${escapeHTML(t.map || 'Bermuda')}</span>
-                            <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-bold uppercase">${escapeHTML(t.status)}</span>
-                        </div>
-
+                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
                         <h2 class="heading-font font-bold text-xl text-white">${escapeHTML(t.title)}</h2>
-                        <p class="text-xs text-slate-300 leading-relaxed">${escapeHTML(t.description || 'No description provided.')}</p>
-
-                        <div class="grid grid-cols-2 gap-3 py-3 border-y border-slate-800">
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-medium">Prize Pool</span>
-                                <span class="heading-font font-bold text-lg text-neonGreen">${formatCurrency(t.prize_pool)}</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-medium">Entry Fee</span>
-                                <span class="heading-font font-bold text-lg text-white">${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'}</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-medium">Match Date</span>
-                                <span class="text-xs font-semibold text-slate-200 block">${formatDate(t.match_date)}</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-medium">Slots Filled</span>
-                                <span class="text-xs font-semibold text-slate-200 block">${t.joined_players || 0} / ${t.max_players || 48}</span>
-                            </div>
+                        <p class="text-xs text-slate-300">${escapeHTML(t.description || '')}</p>
+                        <div class="grid grid-cols-2 gap-2 py-2 border-y border-slate-800 text-xs">
+                            <div>Prize: <span class="text-neonGreen font-bold">${formatCurrency(t.prize_pool)}</span></div>
+                            <div>Fee: <span class="text-white font-bold">${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'}</span></div>
                         </div>
-
-                        <div class="space-y-2">
-                            <h4 class="heading-font font-bold text-sm text-white">Tournament Rules</h4>
-                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed">
-                                ${escapeHTML(t.rules || 'Standard Free Fire tournament rules apply. Emulators allowed only if specified. No teaming or hacking.')}
-                            </div>
-                        </div>
-
-                        <div class="space-y-2">
-                            <h4 class="heading-font font-bold text-sm text-white">Winning & Prize Distribution</h4>
-                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed">
-                                ${escapeHTML(t.winning_rules || 'Prize pool is distributed according to placement and kills. Top 3 teams win cash prizes.')}
-                            </div>
-                        </div>
-
                         ${isJoined && t.room_id ? `
-                            <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-2">
-                                <span class="text-xs font-bold text-emerald-400 block"><i class="fa-solid fa-key mr-1"></i> Room Credentials Released</span>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-400">Room ID:</span>
-                                    <span class="font-mono font-bold text-white">${escapeHTML(t.room_id)}</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-400">Password:</span>
-                                    <span class="font-mono font-bold text-white">${escapeHTML(t.room_password || 'N/A')}</span>
-                                </div>
+                            <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs">
+                                <div>Room ID: <span class="font-mono font-bold text-white">${escapeHTML(t.room_id)}</span></div>
+                                <div>Password: <span class="font-mono font-bold text-white">${escapeHTML(t.room_password || 'N/A')}</span></div>
                             </div>
                         ` : ''}
-
-                        <div class="pt-2">
-                            ${isJoined ? `
-                                <div class="flex space-x-2">
-                                    <div class="flex-1 py-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs font-bold text-center flex items-center justify-center space-x-1">
-                                        <i class="fa-solid fa-check-circle"></i>
-                                        <span>Successfully Joined</span>
-                                    </div>
-                                    ${t.status === 'upcoming' ? `
-                                        <button onclick="leaveTournamentPrompt('${t.id}')" class="px-5 py-3 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-900/40 text-xs font-bold transition">Leave</button>
-                                    ` : ''}
-                                </div>
-                            ` : `
-                                <button onclick="joinTournamentRPC('${t.id}')" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition flex items-center justify-center space-x-2">
-                                    <i class="fa-solid fa-gamepad"></i>
-                                    <span>Join Tournament (${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'})</span>
-                                </button>
-                            `}
-                        </div>
+                        ${isJoined ? `<button onclick="leaveTournamentPrompt('${t.id}')" class="w-full py-3 rounded-xl bg-rose-950/40 text-rose-400 text-xs font-bold">Leave Tournament</button>` : `<button onclick="joinTournamentRPC('${t.id}')" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold">Join Tournament</button>`}
                     </div>
                 </div>
             `;
         }
 
         async function joinTournamentRPC(tournamentId) {
-            if (!state.currentUser) {
-                showToast('Please login to join tournaments.', 'error');
-                navigateTo('login');
-                return;
-            }
-
+            if (!state.currentUser) { navigateTo('login'); return; }
             if (!state.currentProfile?.free_fire_uid || !state.currentProfile?.free_fire_name) {
-                showToast('Please set your Free Fire UID and IGN in your profile first.', 'error');
+                showToast('Please set your Free Fire UID and Nickname first.', 'error');
                 navigateTo('edit-profile');
                 return;
             }
-
-            setGlobalLoading(true, 'JOINING TOURNAMENT...');
+            setGlobalLoading(true, 'JOINING...');
             try {
-                const { data, error } = await supabaseClient.rpc('join_tournament', {
-                    tournament_id_input: tournamentId,
-                    user_id_input: state.currentUser.id
-                });
-
+                const { error } = await supabaseClient.rpc('join_tournament', { tournament_id_input: tournamentId, user_id_input: state.currentUser.id });
                 if (error) throw error;
-
-                showToast('Successfully joined tournament!', 'success');
+                showToast('Joined successfully!', 'success');
                 await fetchInitialData();
                 await fetchUserDataAuthenticated();
                 navigateTo('tournament-detail', { id: tournamentId });
             } catch (err) {
-                console.error('Join tournament error:', err);
-                showToast(err.message || 'Failed to join tournament.', 'error');
-            } finally {
-                setGlobalLoading(false);
-            }
+                showToast(err.message || 'Failed to join.', 'error');
+            } finally { setGlobalLoading(false); }
         }
 
         async function leaveTournamentPrompt(tournamentId) {
-            if (!confirm('Are you sure you want to leave this tournament?')) return;
-
-            setGlobalLoading(true, 'LEAVING TOURNAMENT...');
+            if (!confirm('Are you sure you want to leave?')) return;
+            setGlobalLoading(true, 'LEAVING...');
             try {
-                const { data, error } = await supabaseClient.rpc('leave_tournament', {
-                    tournament_id_input: tournamentId,
-                    user_id_input: state.currentUser.id
-                });
-
+                const { error } = await supabaseClient.rpc('leave_tournament', { tournament_id_input: tournamentId, user_id_input: state.currentUser.id });
                 if (error) throw error;
-
-                showToast('Successfully left tournament.', 'success');
+                showToast('Left tournament.', 'success');
                 await fetchInitialData();
                 await fetchUserDataAuthenticated();
                 navigateTo('matches');
             } catch (err) {
-                console.error('Leave tournament error:', err);
-                showToast(err.message || 'Failed to leave tournament.', 'error');
-            } finally {
-                setGlobalLoading(false);
-            }
+                showToast(err.message || 'Failed to leave.', 'error');
+            } finally { setGlobalLoading(false); }
         }
 
         function renderLeaderboardView() {
-            return `
-                <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">Leaderboard</h2>
-                    <div class="glass-card rounded-2xl p-6 text-center text-slate-400">
-                        <i class="fa-solid fa-trophy text-4xl mb-3 text-neonYellow"></i>
-                        <h4 class="heading-font font-bold text-lg text-white mb-1">Top Champions Arena</h4>
-                        <p class="text-xs">Leaderboard rankings update automatically after completed matches and prize distribution.</p>
-                    </div>
-                </div>
-            `;
+            return `<div class="p-4"><h2 class="heading-font font-bold text-xl text-white mb-2">Leaderboard</h2><div class="glass-card rounded-2xl p-6 text-center text-slate-400 text-xs">Rankings update automatically.</div></div>`;
         }
-
         function renderGiveawaysView() {
-            const giveaways = state.giveawaysCache || [];
-
-            return `
-                <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">Active Giveaways</h2>
-
-                    ${giveaways.length === 0 ? `
-                        <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
-                            <i class="fa-solid fa-gift text-4xl mb-3 text-neonGreen"></i>
-                            <h4 class="heading-font font-bold text-lg text-white mb-1">No Active Giveaways</h4>
-                            <p class="text-xs">Check back soon for free UC, diamonds, and cash giveaways!</p>
-                        </div>
-                    ` : `
-                        <div class="flex flex-col space-y-3">
-                            ${giveaways.map(g => `
-                                <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-neonGreen">GIVEAWAY</span>
-                                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-bold uppercase">${escapeHTML(g.status || 'Active')}</span>
-                                    </div>
-                                    <h4 class="heading-font font-bold text-base text-white mb-2">${escapeHTML(g.title || 'Free Fire Giveaway')}</h4>
-                                    <p class="text-xs text-slate-300 mb-3">${escapeHTML(g.description || '')}</p>
-                                    <button onclick="showToast('Giveaway entry registered successfully!', 'success')" class="w-full py-2.5 rounded-xl bg-neonGreen text-slate-950 font-bold text-xs hover:bg-emerald-400 transition">Enter Giveaway</button>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `}
-                </div>
-            `;
+            return `<div class="p-4"><h2 class="heading-font font-bold text-xl text-white mb-2">Giveaways</h2><div class="glass-card rounded-2xl p-6 text-center text-slate-400 text-xs">No active giveaways.</div></div>`;
         }
-
         function renderNotificationsView() {
-            const notifs = state.notificationsCache || [];
-
-            return `
-                <div class="p-4 flex flex-col space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="heading-font font-bold text-xl text-white">Notifications</h2>
-                        <button onclick="markAllNotificationsRead()" class="text-xs text-neonRed font-semibold hover:underline">Mark all read</button>
-                    </div>
-
-                    ${notifs.length === 0 ? `
-                        <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
-                            <i class="fa-solid fa-bell-slash text-4xl mb-3 text-slate-600"></i>
-                            <p class="text-xs">No notifications right now.</p>
-                        </div>
-                    ` : `
-                        <div class="flex flex-col space-y-2">
-                            ${notifs.map(n => `
-                                <div class="glass-card rounded-xl p-3.5 border border-cardBorder flex items-start space-x-3">
-                                    <div class="w-8 h-8 rounded-xl bg-neonRed/10 text-neonRed flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <i class="fa-solid fa-bell text-xs"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h4 class="text-xs font-bold text-white mb-1">${escapeHTML(n.title || 'Notification')}</h4>
-                                        <p class="text-xs text-slate-300 leading-relaxed">${escapeHTML(n.message || n.content || '')}</p>
-                                        <span class="text-[9px] text-slate-500 mt-1 block">${formatDate(n.created_at)}</span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `}
-                </div>
-            `;
+            return `<div class="p-4"><h2 class="heading-font font-bold text-xl text-white mb-2">Notifications</h2><div class="glass-card rounded-2xl p-6 text-center text-slate-400 text-xs">No notifications.</div></div>`;
         }
-
         function renderSupportView() {
-            const support = state.supportCache || [];
-
-            return `
-                <div class="p-4 flex flex-col space-y-4 h-[calc(100vh-120px)]">
-                    <h2 class="heading-font font-bold text-xl text-white">Help & Support Chat</h2>
-
-                    <div id="support-chat-box" class="flex-1 glass-card rounded-2xl p-4 overflow-y-auto space-y-3 border border-cardBorder flex flex-col">
-                        ${support.length === 0 ? `
-                            <div class="m-auto text-center text-slate-400 py-10">
-                                <i class="fa-solid fa-headset text-3xl mb-2 text-accentBlue"></i>
-                                <p class="text-xs font-medium">Have questions or deposit issues? Send a message to our support admins.</p>
-                            </div>
-                        ` : `
-                            ${support.map(m => {
-                                const isAdminMsg = m.is_admin || m.sender === 'admin';
-                                return `
-                                    <div class="flex flex-col ${isAdminMsg ? 'items-start' : 'items-end'}">
-                                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs ${isAdminMsg ? 'bg-slate-800 text-slate-200 border border-slate-700' : 'bg-neonRed text-white shadow-lg neon-glow-red'}">
-                                            <p class="leading-relaxed">${escapeHTML(m.message || m.content || '')}</p>
-                                        </div>
-                                        <span class="text-[9px] text-slate-500 mt-1 px-1">${formatDate(m.created_at)}</span>
-                                    </div>
-                                `;
-                            }).join('')}
-                        `}
-                    </div>
-
-                    <form onsubmit="handleSupportSend(event)" class="flex space-x-2">
-                        <input type="text" id="support-input" required placeholder="Type your message to support..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-neonRed">
-                        <button type="submit" class="px-5 py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition flex items-center justify-center">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
-                    </form>
-                </div>
-            `;
+            return `<div class="p-4"><h2 class="heading-font font-bold text-xl text-white mb-2">Support</h2><div class="glass-card rounded-2xl p-6 text-center text-slate-400 text-xs">Contact admin for help.</div></div>`;
         }
-
-        async function handleSupportSend(e) {
-            e.preventDefault();
-            if (!state.currentUser) return;
-
-            const input = document.getElementById('support-input');
-            const message = input.value.trim();
-            if (!message) return;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('support_messages')
-                    .insert({
-                        user_id: state.currentUser.id,
-                        message: message,
-                        sender: 'user'
-                    });
-
-                if (error) throw error;
-
-                input.value = '';
-                await fetchUserDataAuthenticated();
-                renderCurrentView();
-                
-                const chatBox = document.getElementById('support-chat-box');
-                if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (err) {
-                console.error('Support message error:', err);
-                showToast('Failed to send support message.', 'error');
-            }
-        }
-
         function renderPaymentHistoryView() {
-            const payments = state.paymentsCache || [];
-
-            return `
-                <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">Payment & Deposit History</h2>
-
-                    ${payments.length === 0 ? `
-                        <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
-                            <i class="fa-solid fa-receipt text-4xl mb-3 text-slate-600"></i>
-                            <p class="text-xs">No transactions found.</p>
-                        </div>
-                    ` : `
-                        <div class="flex flex-col space-y-2">
-                            ${payments.map(p => `
-                                <div class="glass-card rounded-xl p-3.5 border border-cardBorder flex items-center justify-between">
-                                    <div>
-                                        <h4 class="text-xs font-bold text-white mb-0.5">${escapeHTML(p.payment_method)}</h4>
-                                        <span class="text-[10px] text-slate-400 font-mono">TID: ${escapeHTML(p.transaction_id || 'N/A')}</span>
-                                        <span class="text-[9px] text-slate-500 block mt-1">${formatDate(p.created_at)}</span>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="heading-font font-bold text-sm text-white block mb-1">${formatCurrency(p.amount)}</span>
-                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase bg-slate-800 text-slate-300">${escapeHTML(p.status)}</span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `}
-                </div>
-            `;
+            return `<div class="p-4"><h2 class="heading-font font-bold text-xl text-white mb-2">Payment History</h2></div>`;
         }
 
         function renderLoginView() {
             return `
                 <div class="p-6 flex flex-col justify-center min-h-screen">
-                    <div class="text-center mb-8">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-neonRed to-neonYellow p-0.5 mx-auto mb-3 shadow-xl neon-glow-red flex items-center justify-center">
-                            <div class="w-full h-full bg-darkBg rounded-[14px] flex items-center justify-center">
-                                <i class="fa-solid fa-fire text-neonRed text-2xl"></i>
-                            </div>
-                        </div>
+                    <div class="text-center mb-6">
                         <h1 class="heading-font font-bold text-2xl text-white tracking-wider">MULTANI FF</h1>
                         <p class="text-xs text-slate-400 mt-1">Official Esports Tournament Platform</p>
                     </div>
-
                     <form onsubmit="handleLoginSubmit(event)" class="glass-card rounded-2xl p-5 border border-cardBorder space-y-4">
                         <h2 class="heading-font font-bold text-base text-white">Login to Your Account</h2>
-
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
-                            <input type="email" id="login-email" required placeholder="player@example.com" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="email" id="login-email" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
-                            <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="password" id="login-password" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-
-                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Login to Arena</button>
-
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold">Login to Arena</button>
                         <div class="text-center pt-2">
-                            <span class="text-xs text-slate-400">Don't have an account? <button type="button" onclick="navigateTo('register', {}, false)" class="text-neonRed font-bold hover:underline">Register</button></span>
+                            <span class="text-xs text-slate-400">Don't have an account? <button type="button" onclick="navigateTo('register', {}, false)" class="text-neonRed font-bold">Register</button></span>
                         </div>
                     </form>
                 </div>
@@ -1642,22 +974,14 @@
 
             setGlobalLoading(true, 'LOGGING IN...');
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-
                 showToast('Login successful!', 'success');
                 await fetchInitialData();
-                if (state.isBanned) {
-                    navigateTo('banned', {}, false);
-                } else {
-                    navigateTo('home', {}, false);
-                }
+                navigateTo('home', {}, false);
             } catch (err) {
-                console.error('Login error:', err);
                 showToast(err.message || 'Invalid email or password.', 'error');
-            } finally {
-                setGlobalLoading(false);
-            }
+            } finally { setGlobalLoading(false); }
         }
 
         function renderRegisterView() {
@@ -1665,39 +989,36 @@
                 <div class="p-6 flex flex-col justify-center min-h-screen">
                     <div class="text-center mb-6">
                         <h1 class="heading-font font-bold text-2xl text-white tracking-wider">CREATE ACCOUNT</h1>
-                        <p class="text-xs text-slate-400 mt-1">Join the ultimate Free Fire esports arena</p>
+                        <p class="text-xs text-slate-400 mt-1">Join the ultimate Free Fire arena</p>
                     </div>
-
                     <form onsubmit="handleRegisterSubmit(event)" class="glass-card rounded-2xl p-5 border border-cardBorder space-y-3">
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
-                            <input type="text" id="reg-username" required placeholder="MultaniKing" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="text" id="reg-username" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                         </div>
-
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
-                            <input type="email" id="reg-email" required placeholder="player@example.com" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="email" id="reg-email" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                         </div>
-
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
-                            <input type="password" id="reg-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="password" id="reg-password" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                         </div>
-
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+                            <input type="text" id="reg-phone" required placeholder="03001234567" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Free Fire UID</label>
-                            <input type="text" id="reg-ff-uid" required placeholder="123456789" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <input type="text" id="reg-ff-uid" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                         </div>
-
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Free Fire IGN</label>
-                            <input type="text" id="reg-ff-name" required placeholder="MULTANI_WARRIOR" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Free Fire Nickname</label>
+                            <input type="text" id="reg-ff-name" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                         </div>
-
-                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition mt-2">Register Account</button>
-
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold mt-2">Register Account</button>
                         <div class="text-center pt-2">
-                            <span class="text-xs text-slate-400">Already have an account? <button type="button" onclick="navigateTo('login', {}, false)" class="text-neonRed font-bold hover:underline">Login</button></span>
+                            <span class="text-xs text-slate-400">Already have an account? <button type="button" onclick="navigateTo('login', {}, false)" class="text-neonRed font-bold">Login</button></span>
                         </div>
                     </form>
                 </div>
@@ -1709,44 +1030,30 @@
             const username = document.getElementById('reg-username').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const password = document.getElementById('reg-password').value;
+            const phone = document.getElementById('reg-phone').value.trim();
             const ffUid = document.getElementById('reg-ff-uid').value.trim();
             const ffName = document.getElementById('reg-ff-name').value.trim();
 
             setGlobalLoading(true, 'CREATING ACCOUNT...');
             try {
-                const { data, error } = await supabaseClient.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            username: username,
-                            free_fire_uid: ffUid,
-                            free_fire_name: ffName
-                        }
-                    }
+                const { error } = await supabaseClient.auth.signUp({
+                    email, password,
+                    options: { data: { username, phone, free_fire_uid: ffUid, free_fire_name: ffName } }
                 });
-
                 if (error) throw error;
-
                 showToast('Registration successful! Please login.', 'success');
                 navigateTo('login', {}, false);
             } catch (err) {
-                console.error('Registration error:', err);
                 showToast(err.message || 'Registration failed.', 'error');
-            } finally {
-                setGlobalLoading(false);
-            }
+            } finally { setGlobalLoading(false); }
         }
 
         function renderBannedView() {
             return `
                 <div class="p-6 flex flex-col items-center justify-center min-h-screen text-center">
-                    <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-neonRed flex items-center justify-center text-3xl mb-4 border border-rose-500/20">
-                        <i class="fa-solid fa-ban"></i>
-                    </div>
                     <h1 class="heading-font font-bold text-2xl text-white mb-2">Account Banned</h1>
-                    <p class="text-xs text-slate-400 mb-6 leading-relaxed">Your account has been restricted due to violation of platform rules or fair play policies.</p>
-                    <button onclick="handleLogout()" class="px-6 py-3 rounded-xl bg-slate-800 text-white text-xs font-bold hover:bg-slate-700 transition">Logout</button>
+                    <p class="text-xs text-slate-400 mb-6">Your account has been restricted.</p>
+                    <button onclick="handleLogout()" class="px-6 py-3 rounded-xl bg-slate-800 text-white text-xs font-bold">Logout</button>
                 </div>
             `;
         }
@@ -1757,48 +1064,8 @@
                 await supabaseClient.auth.signOut();
                 state.currentUser = null;
                 state.currentProfile = null;
-                state.isAdmin = false;
-                state.isBanned = false;
-                showToast('Logged out successfully', 'success');
                 navigateTo('login', {}, false);
-            } catch (err) {
-                console.error('Logout error:', err);
-            } finally {
-                setGlobalLoading(false);
-            }
-        }
-
-        function copyToClipboard(text, label = 'Text') {
-            if (!text) {
-                showToast(`No ${label} available to copy.`, 'error');
-                return;
-            }
-            navigator.clipboard.writeText(text).then(() => {
-                showToast(`${label} copied to clipboard!`, 'success');
-            }).catch(() => {
-                showToast(`Failed to copy ${label}.`, 'error');
-            });
-        }
-
-        function copyReferralCode() {
-            const code = state.currentProfile?.referral_code || state.currentUser?.id?.slice(0, 8) || 'MULTANI2026';
-            copyToClipboard(code, 'Referral Code');
-        }
-
-        async function markAllNotificationsRead() {
-            if (!state.currentUser) return;
-            try {
-                await supabaseClient
-                    .from('notifications')
-                    .update({ is_read: true })
-                    .eq('user_id', state.currentUser.id);
-                
-                await fetchUserDataAuthenticated();
-                renderCurrentView();
-                showToast('Marked all as read', 'success');
-            } catch (err) {
-                console.error('Error marking notifications read:', err);
-            }
+            } finally { setGlobalLoading(false); }
         }
     </script>
 </body>
