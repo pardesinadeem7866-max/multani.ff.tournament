@@ -180,7 +180,6 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
 .t-details{font-size:10px;color:#a3e4d7;margin-top:4px;display:flex;gap:10px;}
 .join-match-btn{width:100%;margin-top:6px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
 
-/* Wallet Transactions History List */
 .txn-list {
   margin-top: 15px;
   max-height: 180px;
@@ -199,7 +198,6 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
   font-size: 11px;
 }
 
-/* FF Custom Room Lobby Slots Style */
 .ff-room-container {
   background: #091216;
   border: 1px solid #1a3848;
@@ -479,18 +477,7 @@ body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display
         <div style="margin-top:20px; border-top:1px solid #162935; padding-top:12px;">
           <div style="font-size:12px; font-weight:bold; color:#00ff9d; margin-bottom:8px;"><i class="fa-solid fa-clock-rotate-left"></i> Transaction History</div>
           <div class="txn-list" id="transactionHistoryList">
-            <div class="txn-item">
-              <span>Deposit Request (Pending)</span>
-              <span style="color:#ffd700;">+Rs. 500</span>
-            </div>
-            <div class="txn-item">
-              <span>Tournament Entry Fee</span>
-              <span style="color:#ff007f;">-Rs. 50</span>
-            </div>
-            <div class="txn-item">
-              <span>Tournament Prize Won</span>
-              <span style="color:#00ff9d;">+Rs. 500</span>
-            </div>
+            <div style="text-align:center; color:#8aa0ae; padding:10px; font-size:11px;">Loading transactions...</div>
           </div>
         </div>
       </div>
@@ -647,9 +634,10 @@ const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const sb = supabaseClient;
+
 let currentUser = null;
 let selectedTournamentId = null;
-let joinedTournaments = [];
 
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -707,7 +695,8 @@ async function sendMsgToAdminPanel() {
   const msgInput = document.getElementById('adminMessageInput');
   const msg = msgInput.value.trim();
   if(!msg) return;
-  const userId = currentUser ? currentUser.id : 'guest_' + Math.floor(Math.random()*1000);
+  const userId = currentUser ? currentUser.id : null;
+  if(!userId) { alert("Pehle login karein."); return; }
   await supabaseClient.from('admin_messages').insert([{ user_id: userId, message: msg, status: 'unread', created_at: new Date() }]);
   msgInput.value = '';
   fetchChatBubblesFromSupabase();
@@ -715,7 +704,11 @@ async function sendMsgToAdminPanel() {
 
 async function fetchChatBubblesFromSupabase() {
   const container = document.getElementById('chatMessagesList');
-  const { data } = await supabaseClient.from('admin_messages').select('*').order('created_at', { ascending: true });
+  if(!currentUser) {
+    container.innerHTML = `<div style="text-align:center; color:#8aa0ae; font-size:11px; margin-top:20px;">Support chat ke liye pehle login karein.</div>`;
+    return;
+  }
+  const { data } = await supabaseClient.from('admin_messages').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: true });
   if(!data || data.length === 0) {
     container.innerHTML = `<div style="text-align:center; color:#8aa0ae; font-size:11px; margin-top:20px;"><i class="fa-solid fa-headset" style="font-size:24px; color:#00ff9d; margin-bottom:6px;"></i><br>Admin se chat shuru karein.</div>`;
     return;
@@ -736,16 +729,158 @@ async function deleteChatMessage(id) {
 function openAddBalanceModal() { document.getElementById('addBalanceModal').classList.remove('hidden'); }
 function closeAddBalanceModal() { document.getElementById('addBalanceModal').classList.add('hidden'); }
 
-async function submitDepositRequest() {
-  const amt = document.getElementById('depositAmount').value.trim();
-  const fileInput = document.getElementById('depositScreenshot');
-  if(!amt || isNaN(amt) || parseFloat(amt) <= 0) { alert("Sahih amount enter karein!"); return; }
-  if(!currentUser) { alert("Pehle login karein!"); switchBottomNav('profile'); showAuthForm('login'); closeAddBalanceModal(); return; }
-  await supabaseClient.from('payments').insert([{ user_id: currentUser.id, amount: parseFloat(amt), status: 'pending', has_screenshot: fileInput.files.length > 0, created_at: new Date() }]);
-  alert("✅ Payment request bhej di gayi hai!");
-  document.getElementById('depositAmount').value = '';
-  fileInput.value = '';
+async function submitDepositRequest(){
+  if(!currentUser){
+    alert("Pehle login karein.");
+    openAuthModal();
+    return;
+  }
+
+  const amountInput = document.getElementById("depositAmount");
+  const screenshotInput = document.getElementById("depositScreenshot");
+
+  const amount = Number(amountInput.value);
+  const screenshot = screenshotInput.files[0];
+
+  if(!Number.isFinite(amount) || amount <= 0){
+    alert("Sahi deposit amount enter karein.");
+    return;
+  }
+
+  if(amount < 50){
+    alert("Minimum deposit Rs. 50 hai.");
+    return;
+  }
+
+  if(!screenshot){
+    alert("Payment screenshot upload karein.");
+    return;
+  }
+
+  const fileExt = screenshot.name.split(".").pop();
+  const fileName = currentUser.id + "_" + Date.now() + "." + fileExt;
+
+  const { data: uploadData, error: uploadError } = await sb.storage
+    .from("payment-screenshots")
+    .upload(fileName, screenshot, {
+      cacheControl: "3600",
+      upsert: false
+    });
+
+  if(uploadError){
+    console.error(uploadError);
+    alert("Screenshot upload nahi hua:\n" + uploadError.message);
+    return;
+  }
+
+  const { data: urlData } = sb.storage
+    .from("payment-screenshots")
+    .getPublicUrl(fileName);
+
+  const screenshotUrl = urlData.publicUrl;
+
+  const { data, error } = await sb
+    .from("payments")
+    .insert({
+      user_id: currentUser.id,
+      amount: amount,
+      status: "pending",
+      has_screenshot: true,
+      screenshot_url: screenshotUrl
+    })
+    .select()
+    .single();
+
+  if(error){
+    console.error(error);
+    alert("Payment request save nahi hui:\n" + error.message);
+    return;
+  }
+
+  alert(
+    "✅ Payment Request Submit Ho Gayi!\n\n" +
+    "Amount: Rs. " + amount.toFixed(2) +
+    "\nScreenshot: Uploaded 📸" +
+    "\nStatus: Pending ⏳\n\n" +
+    "Admin approval ke baad wallet mein balance add hoga."
+  );
+
+  amountInput.value = "";
+  screenshotInput.value = "";
+
   closeAddBalanceModal();
+  await loadTransactionHistory();
+}
+
+async function loadWalletBalance(){
+  if(!currentUser){
+    return;
+  }
+
+  const { data, error } = await sb
+    .from("profiles")
+    .select("wallet_balance, total_won, total_matches, total_wins")
+    .eq("id", currentUser.id)
+    .single();
+
+  if(error){
+    console.error("Wallet load error:", error);
+    return;
+  }
+
+  const balance = Number(data.wallet_balance || 0);
+
+  const walletPageBal = document.getElementById("walletPageBal");
+  if(walletPageBal){
+    walletPageBal.textContent = balance.toFixed(2);
+  }
+
+  const topCoinCount = document.getElementById("topCoinCount");
+  if(topCoinCount){
+    topCoinCount.textContent = balance.toFixed(2);
+  }
+}
+
+async function loadTransactionHistory(){
+  if(!currentUser) return;
+
+  const { data, error } = await sb
+    .from("payments")
+    .select("amount, status, created_at")
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: false });
+
+  const listContainer = document.getElementById("transactionHistoryList");
+  if(!listContainer) return;
+
+  if(error || !data || data.length === 0){
+    listContainer.innerHTML = `<div style="text-align:center; color:#8aa0ae; padding:10px; font-size:11px;">Koi transaction history nahi hai.</div>`;
+    return;
+  }
+
+  listContainer.innerHTML = data.map(tx => {
+    let statusColor = "#ffd700";
+    let statusText = "Pending ⏳";
+    if(tx.status === "approved") {
+      statusColor = "#00ff9d";
+      statusText = "Approved ✅";
+    } else if(tx.status === "rejected") {
+      statusColor = "#ff007f";
+      statusText = "Rejected ❌";
+    }
+
+    const dateStr = new Date(tx.created_at).toLocaleDateString([], {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'});
+
+    return `
+      <div class="txn-item">
+        <div>
+          <div>Deposit (${statusText})</div>
+          <div style="font-size:9px; color:#8aa0ae; margin-top:2px;">${dateStr}</div>
+        </div>
+        <span style="color:${statusColor}; font-weight:bold;">+Rs. ${Number(tx.amount).toFixed(2)}</span>
+      </div>
+    `;
+  }).join("");
 }
 
 function openNotifications() { document.getElementById('notificationModal').classList.remove('hidden'); document.getElementById('notifDot').style.display = 'none'; }
@@ -782,6 +917,11 @@ function showAuthForm(formName) {
   else if(formName === 'forgot') document.getElementById('authForgotCard').classList.remove('hidden');
 }
 
+function openAuthModal() {
+  switchBottomNav('profile');
+  showAuthForm('login');
+}
+
 function switchBottomNav(tab, evt) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('homeSection').classList.add('hidden');
@@ -795,7 +935,7 @@ function switchBottomNav(tab, evt) {
 
   if(tab === 'home') { document.getElementById('homeSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); loadTournaments(); }
   else if(tab === 'tournaments') { document.getElementById('tournamentsSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); loadAllTournaments(); }
-  else if(tab === 'wallet') { document.getElementById('walletSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); }
+  else if(tab === 'wallet') { document.getElementById('walletSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); loadWalletBalance(); loadTransactionHistory(); }
   else if(tab === 'rewards') { document.getElementById('rewardsSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); }
   else if(tab === 'spinwheel') { document.getElementById('spinWheelSection').classList.remove('hidden'); }
   else if(tab === 'faq') { document.getElementById('faqSection').classList.remove('hidden'); }
@@ -819,10 +959,6 @@ async function renderTournaments(elementId) {
     return;
   }
   data.forEach(t => {
-    const isJoined = joinedTournaments.includes(t.id);
-    const btnText = isJoined ? 'JOINED' : 'VIEW / JOIN';
-    const btnBg = isJoined ? '#14222b; color:#00ff9d; border:1px solid #00ff9d;' : '#00d084; color:#091216;';
-    
     grid.innerHTML += `
       <div class="t-card">
         <div class="t-thumb"><span class="whatsapp-tag">${t.mode || 'Solo'}</span></div>
@@ -833,57 +969,131 @@ async function renderTournaments(elementId) {
             <span>💰 Fee: <b>Rs.${t.entry_fee || 0}</b></span>
             <span>🏆 Prize: <b style="color:#00ff9d;">Rs.${t.prize_pool}</b></span>
           </div>
-          <div style="font-size:10px; color:#8aa0ae; margin-top:2px;">👥 Slots: ${t.max_players || 48}</div>
-          <button class="join-match-btn" style="background:${btnBg};" onclick="openMatchDetails('${t.id}', '${t.title}', '${t.mode}', '${t.map}', ${t.entry_fee || 0}, ${t.prize_pool}, ${t.max_players || 48})">${btnText}</button>
+          <div style="font-size:10px; color:#8aa0ae; margin-top:2px;">👥 Slots: ${t.joined_players || 0}/${t.max_players || 48}</div>
+          <button class="join-match-btn" onclick="openMatchDetails('${t.id}')">VIEW / JOIN</button>
         </div>
       </div>
     `;
   });
 }
 
-function openMatchDetails(id, title, mode, map, fee, prize, maxPlayers) {
+async function openMatchDetails(id) {
   selectedTournamentId = id;
-  document.getElementById('matchTitle').textContent = title;
-  document.getElementById('matchMode').textContent = mode;
-  document.getElementById('matchMap').textContent = map;
-  document.getElementById('matchFee').textContent = fee;
-  document.getElementById('matchPrize').textContent = prize;
 
-  const isJoined = joinedTournaments.includes(id);
+  const { data: tournament, error: tournamentError } = await sb
+    .from("tournaments")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if(tournamentError){
+    console.error(tournamentError);
+    alert("Tournament details load nahi ho saken.");
+    return;
+  }
+
+  document.getElementById('matchTitle').textContent = tournament.title || "";
+  document.getElementById('matchMode').textContent = tournament.mode || "";
+  document.getElementById('matchMap').textContent = tournament.map || "";
+  document.getElementById('matchFee').textContent = tournament.entry_fee ?? "0";
+  document.getElementById('matchPrize').textContent = tournament.prize_pool ?? "0";
+
+  let participant = null;
+
+  if(currentUser){
+    const { data, error } = await sb
+      .from("tournament_participants")
+      .select("id, slot_number, free_fire_uid, ign, joined_at")
+      .eq("tournament_id", id)
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if(!error){
+      participant = data;
+    }
+  }
+
+  const isJoined = !!participant;
   const joinBtn = document.getElementById('joinMatchBtn');
   const roomBox = document.getElementById('roomDetailsBox');
 
-  if(isJoined) {
-    joinBtn.textContent = "JOINED";
-    joinBtn.style.background = "#14222b";
-    joinBtn.style.color = "#00ff9d";
-    joinBtn.style.border = "1px solid #00ff9d";
-    joinBtn.disabled = true;
+  if(isJoined){
+    joinBtn.textContent = "LEAVE TOURNAMENT";
+    joinBtn.style.background = "#e74c3c";
+    joinBtn.style.color = "white";
+    joinBtn.style.border = "none";
+    joinBtn.disabled = false;
+    joinBtn.onclick = leaveCurrentTournament;
+
+    const { data: matchData, error: matchError } = await sb.rpc(
+      "get_my_match_details",
+      {
+        p_tournament_id: id
+      }
+    );
+
     roomBox.classList.remove('hidden');
-    document.getElementById('roomDetailsText').innerHTML = `Room ID: <b>8849201</b> | Password: <b>MULTANI786</b>`;
+
+    if(matchError || !matchData || !matchData.success){
+      document.getElementById('roomDetailsText').innerHTML =
+        `Your Slot: <b>#${participant.slot_number}</b><br>
+         Room ID / Password abhi available nahi hain.`;
+    } else {
+      document.getElementById('roomDetailsText').innerHTML =
+        `Your Slot: <b>#${matchData.slot_number}</b><br>
+         Room ID: <b>${matchData.room_id || "Not Added Yet"}</b><br>
+         Password: <b>${matchData.room_password || "Not Added Yet"}</b>`;
+    }
+
   } else {
     joinBtn.textContent = "JOIN TOURNAMENT NOW";
     joinBtn.style.background = "#00d084";
     joinBtn.style.color = "#091216";
     joinBtn.style.border = "none";
     joinBtn.disabled = false;
+    joinBtn.onclick = joinCurrentTournament;
+
     roomBox.classList.add('hidden');
   }
 
+  const { data: participants, error: participantsError } = await sb
+    .from("tournament_participants")
+    .select("slot_number, ign, free_fire_uid")
+    .eq("tournament_id", id)
+    .order("slot_number", { ascending: true });
+
   const slotsContainer = document.getElementById('ffSlotsList');
   slotsContainer.innerHTML = '';
-  let filledCount = isJoined ? 1 : 0;
-  
-  const meta = currentUser ? currentUser.user_metadata || {} : {};
-  const userName = meta.ign || meta.full_name || '☆𝐌r᭄🇳adeem';
 
-  for(let i=1; i<=maxPlayers; i++) {
-    if(i === 1 && isJoined) {
-      slotsContainer.innerHTML += `<div class="ff-slot-box filled"><span>${i}. ${userName}</span><i class="fa-solid fa-check"></i></div>`;
+  const participantMap = {};
+  if(participants){
+    participants.forEach(p => {
+      participantMap[p.slot_number] = p;
+    });
+  }
+
+  const filledCount = participants ? participants.length : 0;
+  const maxPlayers = tournament.max_players || 48;
+
+  for(let i = 1; i <= maxPlayers; i++){
+    const player = participantMap[i];
+    if(player){
+      const playerName = player.ign || player.free_fire_uid || "Player";
+      slotsContainer.innerHTML += `
+        <div class="ff-slot-box filled">
+          <span>${i}. ${playerName}</span>
+          <i class="fa-solid fa-check"></i>
+        </div>
+      `;
     } else {
-      slotsContainer.innerHTML += `<div class="ff-slot-box"><span>${i}. Empty Slot</span></div>`;
+      slotsContainer.innerHTML += `
+        <div class="ff-slot-box">
+          <span>${i}. Empty Slot</span>
+        </div>
+      `;
     }
   }
+
   document.getElementById('slotCountText').textContent = `${filledCount}/${maxPlayers}`;
 
   document.getElementById('homeSection').classList.add('hidden');
@@ -905,15 +1115,73 @@ function backToHome() {
   loadTournaments();
 }
 
-async function joinCurrentTournament() {
-  if (!currentUser) { alert("Pehle Login karein!"); switchBottomNav('profile'); showAuthForm('login'); return; }
-  
-  if(!joinedTournaments.includes(selectedTournamentId)) {
-    joinedTournaments.push(selectedTournamentId);
+async function joinCurrentTournament(){
+  if(!currentUser){
+    alert("Pehle login karein.");
+    openAuthModal();
+    return;
   }
 
-  alert("✅ Successfully joined tournament! Slot confirmed.");
-  openMatchDetails(selectedTournamentId, document.getElementById('matchTitle').textContent, document.getElementById('matchMode').textContent, document.getElementById('matchMap').textContent, document.getElementById('matchFee').textContent, document.getElementById('matchPrize').textContent, 48);
+  if(!selectedTournamentId){
+    alert("Tournament select nahi hua.");
+    return;
+  }
+
+  if(!confirm("Kya aap tournament join karna chahte hain?")) return;
+
+  const { data, error } = await sb.rpc("join_tournament", {
+    p_tournament_id: selectedTournamentId
+  });
+
+  if(error){
+    alert("Join error: " + error.message);
+    return;
+  }
+
+  if(!data || !data.success){
+    alert(data?.message || "Tournament join nahi hua.");
+    return;
+  }
+
+  alert("🎮 Tournament joined successfully!\n\nYour Slot: #" + data.slot_number);
+
+  await loadTournaments();
+  await loadWalletBalance();
+  openMatchDetails(selectedTournamentId);
+}
+
+async function leaveCurrentTournament(){
+  if(!currentUser){
+    alert("Pehle login karein.");
+    return;
+  }
+
+  if(!selectedTournamentId){
+    alert("Tournament select nahi hua.");
+    return;
+  }
+
+  if(!confirm("Kya aap tournament leave karna chahte hain? Entry fee wallet mein refund kar di jayegi.")) return;
+
+  const { data, error } = await sb.rpc("leave_tournament", {
+    p_tournament_id: selectedTournamentId
+  });
+
+  if(error){
+    alert("Leave error: " + error.message);
+    return;
+  }
+
+  if(!data || !data.success){
+    alert(data?.message || "Tournament leave nahi ho saka.");
+    return;
+  }
+
+  alert("✅ Tournament left successfully! Entry fee refunded.");
+
+  await loadTournaments();
+  await loadWalletBalance();
+  openMatchDetails(selectedTournamentId);
 }
 
 async function signup() {
@@ -926,8 +1194,21 @@ async function signup() {
 
   if(!email || !password || !fullName || !gameUid) { alert("Tamam zaroori fields bharein!"); return; }
 
-  const { error } = await supabaseClient.auth.signUp({ email, password, options: { data: { full_name: fullName, ign, game_uid: gameUid, mobile } } });
+  const { data: authData, error } = await supabaseClient.auth.signUp({ email, password, options: { data: { full_name: fullName, ign, game_uid: gameUid, mobile } } });
   if(error) { alert(error.message); return; }
+
+  if(authData && authData.user){
+    await supabaseClient.from("profiles").upsert({
+      id: authData.user.id,
+      full_name: fullName,
+      ign: ign,
+      free_fire_uid: gameUid,
+      phone: mobile,
+      email: email,
+      wallet_balance: 0
+    });
+  }
+
   alert("Account created successfully!");
   showAuthForm('login');
 }
@@ -942,10 +1223,11 @@ async function login() {
   currentUser = data.user;
   alert("Login successful!");
   checkAuthSession();
+  loadWalletBalance();
 }
 
-function verifyOtp() { alert("Verified!"); showAuthForm('login'); }
-function sendOtpForgot() { alert("OTP sent!"); }
+verifyOtp = function() { alert("Verified!"); showAuthForm('login'); };
+sendOtpForgot = function() { alert("OTP sent!"); };
 
 async function checkAuthSession() {
   const { data } = await supabaseClient.auth.getSession();
@@ -964,6 +1246,8 @@ async function checkAuthSession() {
     document.getElementById('profileGameUid').textContent = meta.game_uid || '-';
     document.getElementById('profileMobile').textContent = meta.mobile || '-';
     document.getElementById('profileEmail').textContent = currentUser.email || '-';
+    
+    loadWalletBalance();
   } else {
     showAuthForm('splash');
   }
@@ -972,7 +1256,6 @@ async function checkAuthSession() {
 async function logout() {
   await supabaseClient.auth.signOut();
   currentUser = null;
-  joinedTournaments = [];
   showAuthForm('splash');
   alert("Logged out successfully.");
 }
