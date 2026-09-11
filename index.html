@@ -520,6 +520,10 @@
             const recentWinners = state.winnersCache.slice(0, 3);
             const announcement = state.siteSettings.announcement_text || 'Welcome to Multani FF Official Esports Platform! Join matches & win big prizes.';
 
+            const displayName = escapeHTML(profile.username || profile.full_name || 'Free Fire Warrior');
+            const nickName = escapeHTML(profile.free_fire_name || 'No Nickname');
+            const ffUid = escapeHTML(profile.free_fire_uid || 'N/A');
+
             return `
                 <div class="p-4 flex flex-col space-y-5">
                     <div class="glass-card rounded-xl p-3 border-neonYellow/20 bg-gradient-to-r from-amber-950/20 to-darkBg flex items-center space-x-3">
@@ -540,8 +544,13 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Welcome Back</span>
-                                    <h2 class="heading-font font-bold text-lg text-white leading-tight">${escapeHTML(profile.username || profile.full_name || 'Free Fire Warrior')}</h2>
+                                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold block">WELCOME BACK</span>
+                                    <h2 class="heading-font font-bold text-lg text-white leading-tight">${displayName}</h2>
+                                    <div class="flex items-center space-x-2 mt-0.5">
+                                        <span class="text-[11px] text-neonYellow font-semibold">${nickName}</span>
+                                        <span class="text-[10px] text-slate-500">•</span>
+                                        <span class="text-[10px] text-slate-400 font-mono">UID: ${ffUid}</span>
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="fetchInitialData(); showToast('Refreshed arena data', 'success');" class="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition">
@@ -726,7 +735,6 @@
 
         function renderWalletView() {
             const profile = state.currentProfile || {};
-            const payments = state.paymentsCache || [];
             return `
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">My Wallet</h2>
