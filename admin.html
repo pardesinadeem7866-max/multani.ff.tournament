@@ -122,24 +122,8 @@
         <!-- BOTTOM NAVIGATION BAR (Admin Control Tabs) -->
         <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto glass-card border-t border-cardBorder px-2 py-2 z-40 flex items-center justify-around">
             <button onclick="navigateTo('admin-dashboard')" data-nav="admin-dashboard" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
-                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-wide">Dashboard</span>
-            </button>
-            <button onclick="navigateTo('admin-tournaments')" data-nav="admin-tournaments" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
-                <i class="fa-solid fa-gamepad text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-wide">Tourneys</span>
-            </button>
-            <button onclick="navigateTo('admin-deposits')" data-nav="admin-deposits" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
-                <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-wide">Deposits</span>
-            </button>
-            <button onclick="navigateTo('admin-users')" data-nav="admin-users" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
-                <i class="fa-solid fa-users text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-wide">Users</span>
-            </button>
-            <button onclick="navigateTo('admin-settings')" data-nav="admin-settings" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
-                <i class="fa-solid fa-gear text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-wide">Settings</span>
+                <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Home</span>
             </button>
         </nav>
 
@@ -261,7 +245,7 @@
 
         function updateBackButtonVisibility() {
             const backContainer = document.getElementById('back-btn-container');
-            if (['admin-dashboard', 'admin-tournaments', 'admin-deposits', 'admin-users', 'admin-settings'].includes(state.currentView)) {
+            if (state.currentView === 'admin-dashboard') {
                 backContainer.classList.add('hidden');
             } else {
                 backContainer.classList.remove('hidden');
@@ -326,20 +310,34 @@
 
         function renderCurrentView() {
             const container = document.getElementById('main-content');
-            const bottomNav = document.getElementById('bottom-nav');
 
             switch (state.currentView) {
                 case 'admin-dashboard':
                     container.innerHTML = renderAdminDashboard();
                     break;
-                case 'admin-tournaments':
-                    container.innerHTML = renderAdminTournaments();
+                case 'admin-winner-announcement':
+                    container.innerHTML = renderWinnerAnnouncementPage();
+                    break;
+                case 'admin-register-players':
+                    container.innerHTML = renderRegisterPlayerListPage();
+                    break;
+                case 'admin-tournaments-list':
+                    container.innerHTML = renderTournamentsSubPage();
                     break;
                 case 'admin-create-tournament':
                     container.innerHTML = renderAdminTournamentForm();
                     break;
                 case 'admin-edit-tournament':
                     container.innerHTML = renderAdminTournamentForm(state.currentParams?.id);
+                    break;
+                case 'admin-chat':
+                    container.innerHTML = renderChatPage();
+                    break;
+                case 'admin-payment':
+                    container.innerHTML = renderPaymentPage();
+                    break;
+                case 'admin-analytics':
+                    container.innerHTML = renderAnalyticsPage();
                     break;
                 case 'admin-deposits':
                     container.innerHTML = renderAdminDeposits();
@@ -365,37 +363,63 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <div class="glass-card rounded-2xl p-4 border-neonRed/20 bg-gradient-to-br from-cardBg via-cardBg to-rose-950/30">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Command Center</span>
-                        <h2 class="heading-font font-bold text-xl text-white">Multani FF Admin</h2>
-                        <p class="text-xs text-slate-300 mt-1">Manage matches, verify deposits, and control platform settings effortlessly.</p>
+                    <!-- 4 Compact Stats Boxes (Replacing Multani FF Admin Banner) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="glass-card rounded-2xl p-3 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Total Tournaments</span>
+                            <span class="heading-font font-bold text-xl text-neonYellow">${totalTourneys}</span>
+                            <span class="text-[9px] text-emerald-400 mt-0.5 block">${activeTourneys} Active/Upcoming</span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-3 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Pending Deposits</span>
+                            <span class="heading-font font-bold text-xl text-neonRed">${pendingDeposits}</span>
+                            <span class="text-[9px] text-slate-400 mt-0.5 block">Requires action</span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-3 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Total Users</span>
+                            <span class="heading-font font-bold text-xl text-white">${totalUsers}</span>
+                            <span class="text-[9px] text-slate-400 mt-0.5 block">Registered players</span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-3 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Platform Status</span>
+                            <span class="heading-font font-bold text-base text-neonGreen">ONLINE</span>
+                            <span class="text-[9px] text-slate-400 mt-0.5 block">Supabase Connected</span>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                            <span class="text-[10px] text-slate-400 font-medium block">Total Tournaments</span>
-                            <span class="heading-font font-bold text-2xl text-neonYellow">${totalTourneys}</span>
-                            <span class="text-[10px] text-emerald-400 mt-1 block">${activeTourneys} Active/Upcoming</span>
-                        </div>
-                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                            <span class="text-[10px] text-slate-400 font-medium block">Pending Deposits</span>
-                            <span class="heading-font font-bold text-2xl text-neonRed">${pendingDeposits}</span>
-                            <span class="text-[10px] text-slate-400 mt-1 block">Requires action</span>
-                        </div>
-                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                            <span class="text-[10px] text-slate-400 font-medium block">Total Users</span>
-                            <span class="heading-font font-bold text-2xl text-white">${totalUsers}</span>
-                            <span class="text-[10px] text-slate-400 mt-1 block">Registered players</span>
-                        </div>
-                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
-                            <span class="text-[10px] text-slate-400 font-medium block">Platform Status</span>
-                            <span class="heading-font font-bold text-lg text-neonGreen">ONLINE</span>
-                            <span class="text-[10px] text-slate-400 mt-1 block">Supabase Connected</span>
+                    <!-- 6 Feature Buttons -->
+                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <h3 class="heading-font font-bold text-base text-white">Admin Control Center</h3>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="navigateTo('admin-winner-announcement')" class="py-3 px-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1.5 hover:bg-slate-700 hover:border-neonYellow/50 transition active:scale-95">
+                                <i class="fa-solid fa-trophy text-neonYellow text-base"></i>
+                                <span class="text-center">Winner Announcement</span>
+                            </button>
+                            <button onclick="navigateTo('admin-register-players')" class="py-3 px-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1.5 hover:bg-slate-700 hover:border-accentBlue/50 transition active:scale-95">
+                                <i class="fa-solid fa-users-rectangle text-accentBlue text-base"></i>
+                                <span class="text-center">Register Player List</span>
+                            </button>
+                            <button onclick="navigateTo('admin-tournaments-list')" class="py-3 px-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1.5 hover:bg-slate-700 hover:border-neonRed/50 transition active:scale-95">
+                                <i class="fa-solid fa-gamepad text-neonRed text-base"></i>
+                                <span class="text-center">Tournaments</span>
+                            </button>
+                            <button onclick="navigateTo('admin-chat')" class="py-3 px-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1.5 hover:bg-slate-700 hover:border-emerald-400/50 transition active:scale-95">
+                                <i class="fa-solid fa-comments text-emerald-400 text-base"></i>
+                                <span class="text-center">Chat</span>
+                            </button>
+                            <button onclick="navigateTo('admin-payment')" class="py-3 px-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1.5 hover:bg-slate-700 hover:border-neonYellow/50 transition active:scale-95">
+                                <i class="fa-solid fa-wallet text-neonYellow text-base"></i>
+                                <span class="text-center">Payment</span>
+                            </button>
+                            <button onclick="navigateTo('admin-analytics')" class="py-3 px-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1.5 hover:bg-slate-700 hover:border-purple-400/50 transition active:scale-95">
+                                <i class="fa-solid fa-chart-line text-purple-400 text-base"></i>
+                                <span class="text-center">Analytics & Logs</span>
+                            </button>
                         </div>
                     </div>
 
                     <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
-                        <h3 class="heading-font font-bold text-base text-white">Quick Actions</h3>
+                        <h3 class="heading-font font-bold text-base text-white">Quick Shortcuts</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="navigateTo('admin-create-tournament')" class="py-2.5 px-3 rounded-xl bg-neonRed text-white text-xs font-semibold flex items-center justify-center space-x-2 shadow-lg neon-glow-red hover:bg-rose-600 transition">
                                 <i class="fa-solid fa-plus-circle"></i>
@@ -411,67 +435,146 @@
             `;
         }
 
-        function renderAdminTournaments() {
-            const tourns = state.tournamentsCache;
+        // --- SUB-PAGES FOR THE 6 BUTTONS (Includes Back functionality) ---
 
+        function renderWinnerAnnouncementPage() {
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="heading-font font-bold text-xl text-white">Manage Tournaments</h2>
-                        <button onclick="navigateTo('admin-create-tournament')" class="px-3 py-2 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition flex items-center space-x-1">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>Create New</span>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
                         </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Winner Announcement</h2>
                     </div>
-
-                    ${tourns.length === 0 ? `
-                        <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
-                            <i class="fa-solid fa-gamepad text-3xl mb-2 text-slate-600"></i>
-                            <p class="text-xs">No tournaments created yet.</p>
-                        </div>
-                    ` : `
-                        <div class="flex flex-col space-y-3">
-                            ${tourns.map(t => `
-                                <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-neonYellow">${escapeHTML(t.game || 'Free Fire')} • ${escapeHTML(t.mode || 'Squad')}</span>
-                                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-bold uppercase">${escapeHTML(t.status)}</span>
-                                    </div>
-
-                                    <h4 class="heading-font font-bold text-base text-white">${escapeHTML(t.title)}</h4>
-
-                                    <div class="grid grid-cols-2 gap-2 py-2 border-y border-slate-800 text-xs">
-                                        <div>
-                                            <span class="text-slate-400">Prize Pool:</span> <strong class="text-neonGreen">${formatCurrency(t.prize_pool)}</strong>
-                                        </div>
-                                        <div>
-                                            <span class="text-slate-400">Entry Fee:</span> <strong class="text-white">${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'}</strong>
-                                        </div>
-                                        <div>
-                                            <span class="text-slate-400">Date:</span> <span class="text-slate-200">${formatDate(t.match_date)}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-slate-400">Room ID:</span> <span class="font-mono text-white">${escapeHTML(t.room_id || 'Not Set')}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex space-x-2 pt-1">
-                                        <button onclick="navigateTo('admin-edit-tournament', { id: '${t.id}' })" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition text-center flex items-center justify-center space-x-1">
-                                            <i class="fa-solid fa-pen-to-square text-accentBlue"></i>
-                                            <span>Edit</span>
-                                        </button>
-                                        <button onclick="deleteTournament('${t.id}')" class="px-4 py-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-900/40 text-xs font-semibold transition flex items-center justify-center space-x-1">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                            <span>Delete</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `}
+                    <div class="glass-card rounded-2xl p-6 text-center space-y-3 border border-cardBorder">
+                        <i class="fa-solid fa-trophy text-4xl text-neonYellow mb-1"></i>
+                        <h3 class="font-bold text-sm text-white">Publish Match Winners</h3>
+                        <p class="text-xs text-slate-400">Select completed tournaments and announce winners to credit rewards or display public banners.</p>
+                        <button onclick="showToast('Feature coming active soon!', 'success')" class="px-4 py-2 bg-neonRed text-white text-xs font-bold rounded-xl shadow-lg neon-glow-red">Create Winner Post</button>
+                    </div>
                 </div>
             `;
         }
+
+        function renderRegisterPlayerListPage() {
+            const users = state.usersCache;
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Register Player List</h2>
+                    </div>
+                    <div class="flex flex-col space-y-3">
+                        ${users.map(u => `
+                            <div class="glass-card rounded-2xl p-3 border border-cardBorder flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-bold text-xs text-white">${escapeHTML(u.username || 'Player')}</h4>
+                                    <span class="text-[10px] text-slate-400">UID: ${escapeHTML(u.free_fire_uid || 'N/A')} | IGN: ${escapeHTML(u.free_fire_name || 'N/A')}</span>
+                                </div>
+                                <span class="text-xs font-bold text-neonYellow">${formatCurrency(u.wallet_balance)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTournamentsSubPage() {
+            const tourns = state.tournamentsCache;
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                                <i class="fa-solid fa-arrow-left text-sm"></i>
+                            </button>
+                            <h2 class="heading-font font-bold text-xl text-white">Tournaments Management</h2>
+                        </div>
+                        <button onclick="navigateTo('admin-create-tournament')" class="px-3 py-2 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red">Create</button>
+                    </div>
+                    <div class="flex flex-col space-y-3">
+                        ${tourns.map(t => `
+                            <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold text-neonYellow uppercase">${escapeHTML(t.game)} • ${escapeHTML(t.mode)}</span>
+                                    <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] uppercase">${escapeHTML(t.status)}</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-white">${escapeHTML(t.title)}</h4>
+                                <div class="flex space-x-2 pt-1">
+                                    <button onclick="navigateTo('admin-edit-tournament', { id: '${t.id}' })" class="flex-1 py-1.5 bg-slate-800 text-white text-xs rounded-xl font-semibold">Edit</button>
+                                    <button onclick="deleteTournament('${t.id}')" class="px-3 py-1.5 bg-rose-950/40 border border-rose-500/30 text-rose-400 text-xs rounded-xl font-semibold">Delete</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChatPage() {
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Global Player Chat</h2>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 text-center space-y-3 border border-cardBorder">
+                        <i class="fa-solid fa-comments text-4xl text-emerald-400 mb-1"></i>
+                        <h3 class="font-bold text-sm text-white">Live Moderation Chat</h3>
+                        <p class="text-xs text-slate-400">Monitor community conversations, filter messages, and broadcast announcements directly to the player app chatroom.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPaymentPage() {
+            const deposits = state.depositsCache;
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Payment & Deposits</h2>
+                    </div>
+                    <div class="flex flex-col space-y-3">
+                        ${deposits.map(d => `
+                            <div class="glass-card rounded-2xl p-3 border border-cardBorder flex justify-between items-center text-xs">
+                                <div>
+                                    <strong class="text-white">${formatCurrency(d.amount)}</strong> (${escapeHTML(d.payment_method)})
+                                    <div class="text-[10px] text-slate-400">TID: ${escapeHTML(d.transaction_id || 'N/A')}</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-slate-800 text-neonYellow">${escapeHTML(d.status)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalyticsPage() {
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Analytics & System Logs</h2>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 text-center space-y-3 border border-cardBorder">
+                        <i class="fa-solid fa-chart-line text-4xl text-purple-400 mb-1"></i>
+                        <h3 class="font-bold text-sm text-white">Performance Overview</h3>
+                        <p class="text-xs text-slate-400">Review total platform turnover, active participant metrics, and recent database security audits.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- TOURNAMENT FORM WITH FREE FIRE MAP FILTER ---
 
         function renderAdminTournamentForm(tournamentId = null) {
             const isEdit = Boolean(tournamentId);
@@ -479,7 +582,12 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">${isEdit ? 'Edit Tournament' : 'Create Tournament'}</h2>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">${isEdit ? 'Edit Tournament' : 'Create Tournament'}</h2>
+                    </div>
 
                     <form onsubmit="handleTournamentSubmit(event, '${tournamentId || ''}')" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
                         <div>
@@ -500,6 +608,18 @@
                                     <option value="Solo" ${t.mode === 'Solo' ? 'selected' : ''}>Solo</option>
                                 </select>
                             </div>
+                        </div>
+
+                        <!-- FREE FIRE MAP FILTER BUTTON / SELECTOR -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1"><i class="fa-solid fa-map text-neonYellow mr-1"></i> Free Fire Map Filter</label>
+                            <select id="t-map" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                                <option value="Bermuda" ${t.map === 'Bermuda' ? 'selected' : ''}>Bermuda</option>
+                                <option value="Purgatory" ${t.map === 'Purgatory' ? 'selected' : ''}>Purgatory</option>
+                                <option value="Kalahari" ${t.map === 'Kalahari' ? 'selected' : ''}>Kalahari</option>
+                                <option value="Alpine" ${t.map === 'Alpine' ? 'selected' : ''}>Alpine</option>
+                                <option value="Nexterra" ${t.map === 'Nexterra' ? 'selected' : ''}>Nexterra</option>
+                            </select>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
@@ -560,6 +680,7 @@
             const title = document.getElementById('t-title').value.trim();
             const game = document.getElementById('t-game').value.trim();
             const mode = document.getElementById('t-mode').value;
+            const mapFilter = document.getElementById('t-map').value;
             const prizePool = parseFloat(document.getElementById('t-prize').value);
             const entryFee = parseFloat(document.getElementById('t-fee').value);
             const maxPlayers = parseInt(document.getElementById('t-max').value);
@@ -572,7 +693,7 @@
             setGlobalLoading(true, 'SAVING TOURNAMENT...');
             try {
                 const payload = {
-                    title, game, mode, prize_pool: prizePool, entry_fee: entryFee,
+                    title, game, mode, map: mapFilter, prize_pool: prizePool, entry_fee: entryFee,
                     max_players: maxPlayers, status, match_date: matchDate,
                     room_id: roomId || null, room_password: roomPassword || null, description
                 };
@@ -590,7 +711,7 @@
 
                 showToast('Tournament saved successfully!', 'success');
                 await fetchAdminData();
-                navigateTo('admin-tournaments');
+                navigateTo('admin-tournaments-list');
             } catch (err) {
                 console.error('Save tournament error:', err);
                 showToast(err.message || 'Failed to save tournament.', 'error');
@@ -623,7 +744,12 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">Deposit Requests</h2>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Deposit Requests</h2>
+                    </div>
 
                     ${deposits.length === 0 ? `
                         <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
@@ -738,7 +864,12 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">Manage Users</h2>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Manage Users</h2>
+                    </div>
 
                     <div class="flex flex-col space-y-3">
                         ${users.map(u => `
@@ -802,44 +933,32 @@
         }
 
         function renderAdminSettings() {
-            const announcement = state.settingsCache.announcement_text || '';
-
             return `
                 <div class="p-4 flex flex-col space-y-4">
-                    <h2 class="heading-font font-bold text-xl text-white">Platform Settings</h2>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 class="heading-font font-bold text-xl text-white">Platform Controls & Features</h2>
+                    </div>
 
-                    <form onsubmit="handleSettingsSubmit(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Announcement Marquee Text</label>
-                            <textarea id="s-announcement" rows="3" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">${escapeHTML(announcement)}</textarea>
+                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <h3 class="font-bold text-sm text-white">Quick Management Modules</h3>
+                        <p class="text-xs text-slate-400">Choose a control panel module below to manage app users, deposits, or configuration items.</p>
+                        
+                        <div class="grid grid-cols-2 gap-2 pt-2">
+                            <button onclick="navigateTo('admin-deposits')" class="py-3 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-wallet text-neonYellow"></i>
+                                <span>Deposits</span>
+                            </button>
+                            <button onclick="navigateTo('admin-users')" class="py-3 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-users text-accentBlue"></i>
+                                <span>Users Control</span>
+                            </button>
                         </div>
-
-                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Save Settings</button>
-                    </form>
+                    </div>
                 </div>
             `;
-        }
-
-        async function handleSettingsSubmit(e) {
-            e.preventDefault();
-            const announcementText = document.getElementById('s-announcement').value.trim();
-
-            setGlobalLoading(true, 'SAVING SETTINGS...');
-            try {
-                const { error } = await supabaseClient
-                    .from('site_settings')
-                    .upsert({ key: 'announcement_text', value: announcementText }, { onConflict: 'key' });
-
-                if (error) throw error;
-
-                showToast('Settings saved successfully!', 'success');
-                await fetchAdminData();
-            } catch (err) {
-                console.error('Settings save error:', err);
-                showToast('Failed to save settings.', 'error');
-            } finally {
-                setGlobalLoading(false);
-            }
         }
     </script>
 </body>
