@@ -469,8 +469,8 @@
                             <input type="text" id="w-uid" required placeholder="Enter Free Fire UID" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neonRed">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Screenshot Link / Proof</label>
-                            <input type="text" id="w-proof" placeholder="Paste image link or transaction detail" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neonRed">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Screenshot</label>
+                            <input type="file" id="w-proof-file" accept="image/*" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neonRed file:text-white hover:file:bg-rose-600 focus:outline-none">
                         </div>
                         <button type="submit" class="w-full py-2.5 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Publish Announcement</button>
                     </form>
@@ -481,7 +481,7 @@
                             <div class="glass-card rounded-xl p-3 border border-cardBorder flex justify-between items-center text-xs">
                                 <div>
                                     <strong class="text-white">${escapeHTML(w.player_name)}</strong> (UID: ${escapeHTML(w.free_fire_uid)})
-                                    <div class="text-[10px] text-slate-400">Proof: ${escapeHTML(w.payment_proof || 'N/A')}</div>
+                                    <div class="text-[10px] text-slate-400">Proof: ${w.payment_proof ? `<a href="${escapeHTML(w.payment_proof)}" target="_blank" class="text-neonYellow underline">View Image</a>` : 'N/A'}</div>
                                 </div>
                                 <button onclick="deleteWinner('${w.id}')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
@@ -495,14 +495,35 @@
             e.preventDefault();
             const playerName = document.getElementById('w-name').value.trim();
             const freeFireUid = document.getElementById('w-uid').value.trim();
-            const paymentProof = document.getElementById('w-proof').value.trim();
-
-            setGlobalLoading(true, 'PUBLISHING WINNER...');
+            const fileInput = document.getElementById('w-proof-file');
+            
+            setGlobalLoading(true, 'UPLOADING & PUBLISHING...');
             try {
+                let proofUrl = '';
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${Date.now()}_${Math.random().toString(36.substring(2)}.${fileExt}`;
+                    const filePath = `winners/${fileName}`;
+
+                    const { error: uploadError } = await supabaseClient.storage.from('screenshots').upload(filePath, file);
+                    if (uploadError) {
+                        // Fallback data URL if storage bucket is not configured yet
+                        proofUrl = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.readAsDataURL(file);
+                        });
+                    } else {
+                        const { data: publicURLData } = supabaseClient.storage.from('screenshots').getPublicUrl(filePath);
+                        proofUrl = publicURLData.publicUrl;
+                    }
+                }
+
                 const { error } = await supabaseClient.from('winners').insert({
                     player_name: playerName,
                     free_fire_uid: freeFireUid,
-                    payment_proof: paymentProof
+                    payment_proof: proofUrl
                 });
                 if (error) throw error;
                 showToast('Winner announced successfully!', 'success');
