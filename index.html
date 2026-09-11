@@ -3,1265 +3,1090 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multani FF Official Tournament</title>
+<title>Multani FF Admin Panel</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
-body{background:#030712;color:white;min-height:100vh;padding-bottom:90px;display:flex;justify-content:center;}
-.phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;box-shadow:0 0 30px rgba(0,243,255,0.15);overflow-x:hidden;padding-bottom:70px;}
+body{background:#030712;color:white;min-height:100vh;display:flex;justify-content:center;padding-bottom:70px;}
+.phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;overflow-x:hidden;box-shadow:0 0 30px rgba(0,243,255,.15);}
 
-:root {
-  --neon-blue: #00f3ff;
-  --neon-pink: #ff007f;
-  --bg-glass: rgba(13, 27, 34, 0.75);
-  --border-glass: rgba(0, 243, 255, 0.3);
-}
-
-@keyframes rgbGlow {
-  0% { color: #ff0055; text-shadow: 0 0 8px #ff0055, 0 0 15px #ff0055; }
-  33% { color: #00f3ff; text-shadow: 0 0 8px #00f3ff, 0 0 15px #00f3ff; }
-  66% { color: #00ff9d; text-shadow: 0 0 8px #00ff9d, 0 0 15px #00ff9d; }
-  100% { color: #ff0055; text-shadow: 0 0 8px #ff0055, 0 0 15px #ff0055; }
+:root{
+ --blue:#00f3ff;
+ --green:#00d084;
+ --pink:#ff007f;
+ --red:#e74c3c;
+ --orange:#ffa500;
+ --card:#0d1b22;
+ --border:#162935;
+ --muted:#8aa0ae;
 }
 
-.glowing-name {
-  font-size: 16px;
-  font-weight: bold;
-  animation: rgbGlow 3s infinite;
-  margin-top: 5px;
-  display: inline-block;
-  padding: 4px 12px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(0, 243, 255, 0.4);
-  border-radius: 8px;
-}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:15px 14px;background:#0d1b22;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:500;}
+.top-title{font-size:16px;font-weight:bold;color:var(--green);}
+.top-actions{display:flex;gap:7px;}
+.top-btn{border:1px solid #24404c;background:#14222b;color:white;width:34px;height:34px;border-radius:9px;cursor:pointer;}
+.top-btn:hover{border-color:var(--green);color:var(--green);}
 
-.glowing-brand {
-  font-size: 14px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  animation: rgbGlow 3s infinite reverse;
-  margin-top: 6px;
-}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 5px;text-align:center;}
+.stat-num{font-size:19px;font-weight:bold;margin-bottom:3px;}
+.stat-label{font-size:8px;color:var(--muted);text-transform:uppercase;}
 
-/* Loading Screen */
-#loadingScreen {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle, #0d1b22 0%, #030712 100%);
-  z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.5s ease;
-}
-.load-logo-box {
-  width: 90px; height: 90px; border: 2px solid var(--neon-blue); border-radius: 20px;
-  display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--neon-blue);
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 20px;
-}
-.load-title { font-size: 22px; font-weight: bold; color: #fff; letter-spacing: 1px; text-align: center; }
-.load-sub { font-size: 11px; color: var(--neon-blue); margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
-.spinner {
-  width: 45px; height: 45px; border: 3px solid rgba(0, 243, 255, 0.2);
-  border-top: 3px solid var(--neon-blue); border-radius: 50%;
-  animation: spin 1s linear infinite; margin-top: 35px;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.dashboard-actions-box{background:white;color:#030712;border-radius:20px;padding:18px 12px;margin:10px 12px 15px;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px 8px;text-align:center;}
+.action-item{cursor:pointer;display:flex;flex-direction:column;align-items:center;position:relative;}
+.action-icon-circle{width:48px;height:48px;border-radius:50%;background:#f0f4f8;border:1px solid #d1d8e0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#2c3e50;margin-bottom:6px;}
+.action-item:active .action-icon-circle{transform:scale(.94);}
+.action-text{font-size:9px;font-weight:bold;color:#2c3e50;line-height:1.2;}
+.badge-count{position:absolute;top:-2px;right:4px;background:var(--red);color:white;font-size:9px;padding:2px 5px;border-radius:10px;font-weight:bold;}
 
-.glass-box {
-  background: rgba(15, 23, 33, 0.85);
-  border: 1px solid var(--border-glass);
-  backdrop-filter: blur(12px);
-  border-radius: 24px;
-  padding: 25px 20px;
-  margin: 15px auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  text-align: center;
-}
-.auth-logo { font-size: 38px; color: var(--neon-blue); margin-bottom: 10px; filter: drop-shadow(0 0 8px rgba(0,243,255,0.6)); }
-.auth-heading { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 5px; text-transform: uppercase; }
-.auth-sub { font-size: 11px; color: #8aa0ae; margin-bottom: 20px; }
+.banner-btn{background:var(--card);border:1px solid var(--green);border-radius:14px;padding:12px;margin:0 12px 15px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--green);font-weight:bold;font-size:11px;cursor:pointer;}
 
-.input-group { position: relative; margin-bottom: 12px; text-align: left; }
-.input-group > i:not(.eye-icon) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); font-size: 14px; pointer-events: none; z-index: 2; }
-.input-group input {
-  width: 100%; padding: 12px 12px 12px 40px; background: rgba(20, 34, 43, 0.6);
-  border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 12px; color: white; font-size: 13px; outline: none;
-  transition: all 0.3s; position: relative; z-index: 1;
-}
-.input-group input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
-.eye-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8aa0ae; cursor: pointer; z-index: 3; }
+.section-title-bar{display:flex;justify-content:space-between;align-items:center;margin:15px 12px 10px;}
+.section-heading{font-size:13px;font-weight:bold;color:var(--orange);display:flex;align-items:center;gap:6px;}
+.add-match-btn{background:var(--green);color:#030712;border:none;padding:7px 11px;border-radius:8px;font-weight:bold;font-size:10px;cursor:pointer;}
 
-.neon-btn-blue {
-  width: 100%; padding: 12px; margin-top: 10px; background: transparent;
-  border: 2px solid var(--neon-blue); color: var(--neon-blue); font-weight: bold; font-size: 13px;
-  border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); transition: 0.3s;
-}
-.neon-btn-blue:hover { background: var(--neon-blue); color: #091216; box-shadow: 0 0 20px var(--neon-blue); }
+.admin-t-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:0 12px 12px;}
+.admin-t-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.admin-t-info{flex:1;}
+.admin-t-info h4{font-size:13px;color:white;}
+.admin-t-info p{font-size:9px;color:var(--muted);margin-top:5px;line-height:1.5;}
+.admin-btn-group{display:flex;gap:5px;}
+.btn-edit,.btn-delete{color:white;border:none;padding:6px 8px;border-radius:6px;font-size:9px;font-weight:bold;cursor:pointer;}
+.btn-edit{background:#27ae60;}
+.btn-delete{background:var(--red);}
 
-.neon-btn-pink {
-  width: 100%; padding: 12px; margin-top: 10px; background: transparent;
-  border: 2px solid var(--neon-pink); color: var(--neon-pink); font-weight: bold; font-size: 13px;
-  border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-  box-shadow: 0 0 10px rgba(255, 0, 127, 0.2); transition: 0.3s;
-}
-.neon-btn-pink:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 20px var(--neon-pink); }
+.room-details-box{background:#14222b;border:1px solid #1e3340;border-radius:8px;padding:9px;font-size:10px;color:var(--blue);margin-top:9px;line-height:1.6;}
+.room-subtext{font-size:9px;color:var(--muted);margin-top:3px;}
 
-.top-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0d1b22;border-bottom:1px solid #162935;position:sticky;top:0;z-index:100;}
-.logo-area{display:flex;align-items:center;gap:6px;font-weight:bold;font-size:13px;color:#00ff9d;}
-.logo-icon{background:#00d084;color:#030712;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;}
-.coin-badge{background:#14222b;border:1px solid #00d084;padding:3px 8px;border-radius:10px;font-size:10px;color:#00ff9d;font-weight:bold;display:flex;align-items:center;gap:4px;}
-.header-icons{display:flex;gap:4px;}
-.icon-btn{background:#14222b;border:1px solid #1e3340;color:#a3e4d7;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;position:relative;}
-.notif-dot{position:absolute;top:2px;right:2px;width:7px;height:7px;background:#ff007f;border-radius:50%;display:none;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;}
+.modal-box{background:#0d1b22;border:1px solid rgba(0,243,255,.3);border-radius:18px;padding:18px;width:100%;max-width:390px;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-weight:bold;font-size:14px;color:var(--green);}
+.modal-close{background:none;border:none;color:white;font-size:18px;cursor:pointer;}
 
-.container{padding:15px;}
+.admin-input{width:100%;padding:10px;background:#14222b;border:1px solid #1e3340;border-radius:8px;color:white;font-size:11px;margin-bottom:10px;outline:none;}
+.admin-input:focus{border-color:var(--green);}
+.admin-label{display:block;font-size:9px;color:var(--muted);margin-bottom:4px;}
 
-.announcement-bar {
-  background: linear-gradient(90deg, #0d1b22, #14323f);
-  border: 1px dashed var(--neon-blue);
-  border-radius: 10px;
-  padding: 8px 12px;
-  margin-bottom: 12px;
-  font-size: 11px;
-  color: #00ff9d;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.announcement-text {
-  display: inline-block;
-  animation: ticker 15s linear infinite;
-}
-@keyframes ticker {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
+.list-item{background:#14222b;border:1px solid #1e3340;padding:10px;border-radius:10px;margin-bottom:8px;}
+.list-title{font-size:11px;font-weight:bold;color:white;}
+.list-info{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5;}
 
-.featured-card{
-  background: linear-gradient(rgba(9, 18, 22, 0.85), rgba(9, 18, 22, 0.85)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop') center/cover no-repeat;
-  border: 1px solid #1a3848;
-  border-radius: 18px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-.badge-featured{background:#00d084;color:#091216;font-size:10px;font-weight:bold;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:10px;}
-.profile-info{text-align:center;}
-.avatar-circle{
-  width:55px;
-  height:55px;
-  border-radius:50%;
-  border:2px solid #00f3ff;
-  margin:0 auto 8px auto;
-  background: radial-gradient(circle, #1b3644 0%, #091216 100%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  box-shadow: 0 0 12px rgba(0,243,255,0.4);
-}
+.empty{text-align:center;padding:20px;color:var(--muted);font-size:11px;}
+.loading{text-align:center;padding:20px;color:var(--blue);font-size:11px;}
 
-.grid-tournaments{display:grid;grid-template-columns:1fr;gap:12px;}
-.t-card{background:#0d1b22;border:1px solid #162935;border-radius:16px;overflow:hidden;display:flex;flex-direction:row;align-items:center;padding:10px;gap:12px;}
-.t-thumb{
-  width:90px;
-  height:80px;
-  border-radius:10px;
-  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=400&auto=format&fit=crop') center/cover no-repeat;
-  position:relative;
-  flex-shrink:0;
-}
-.whatsapp-tag{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);color:#00ff9d;font-size:8px;padding:2px 5px;border-radius:4px;border:1px solid #00d084;}
-.t-body{flex:1;}
-.t-title{font-size:13px;font-weight:bold;color:#fff;}
-.t-cat{font-size:10px;color:#8aa0ae;margin-top:2px;}
-.t-details{font-size:10px;color:#a3e4d7;margin-top:4px;display:flex;gap:10px;}
-.join-match-btn{width:100%;margin-top:6px;background:#00d084;color:#091216;border:none;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;cursor:pointer;}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#0d1b22;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:800;}
+.nav-item{background:transparent;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;font-weight:bold;cursor:pointer;flex:1;}
+.nav-item.active{color:var(--green);}
+.nav-item i{font-size:16px;}
 
-.txn-list {
-  margin-top: 15px;
-  max-height: 180px;
-  overflow-y: auto;
-  text-align: left;
-}
-.txn-item {
-  background: #14222b;
-  border: 1px solid #1e3340;
-  border-radius: 8px;
-  padding: 8px 10px;
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-}
+.hidden{display:none!important;}
+.success{color:var(--green);}
+.danger{color:var(--red);}
 
-.ff-room-container {
-  background: #091216;
-  border: 1px solid #1a3848;
-  border-radius: 12px;
-  padding: 12px;
-  margin-top: 15px;
-}
-.ff-slots-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 10px;
-  max-height: 220px;
-  overflow-y: auto;
-}
-.ff-slot-box {
-  background: #14222b;
-  border: 1px solid #1e3340;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 11px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #a3e4d7;
-}
-.ff-slot-box.filled {
-  background: rgba(0, 208, 132, 0.15);
-  border-color: #00d084;
-  color: #00ff9d;
-  font-weight: bold;
-}
-
-#floatingRobotBtn {
-  position: fixed; bottom: 80px; right: 20px; width: 50px; height: 50px;
-  background: linear-gradient(135deg, #00ff9d, #00f3ff); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; color: #030712;
-  font-size: 24px; box-shadow: 0 4px 15px rgba(0,243,255,0.4); cursor: grab; z-index: 2000; touch-action: none;
-}
-#floatingRobotBtn:active { cursor: grabbing; }
-
-.chat-modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.85); z-index: 3000; display: flex; align-items: center; justify-content: center;
-}
-.chat-window {
-  background: #091216; border: 1px solid var(--neon-blue); border-radius: 18px;
-  width: 95%; max-width: 380px; height: 80vh; display: flex; flex-direction: column;
-  box-shadow: 0 0 25px rgba(0,243,255,0.3); overflow: hidden;
-}
-.chat-header {
-  background: #0d1b22; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid #162935;
-}
-.chat-messages-container {
-  flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-  background: radial-gradient(circle, #091216 0%, #030712 100%);
-}
-.chat-bubble {
-  max-width: 75%; padding: 10px 12px; border-radius: 12px; font-size: 13px; position: relative; word-break: break-word;
-}
-.chat-bubble.user {
-  background: #00ff9d; color: #030712; align-self: flex-end; border-bottom-right-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0,255,157,0.3);
-}
-.bubble-time { font-size: 9px; opacity: 0.7; margin-top: 4px; text-align: right; }
-.bubble-delete {
-  position: absolute; top: -6px; right: -6px; background: #ff007f; color: white; border: none;
-  border-radius: 50%; width: 18px; height: 18px; font-size: 9px; cursor: pointer; display: flex;
-  align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-}
-.chat-input-bar {
-  background: #0d1b22; padding: 10px; display: flex; align-items: center; gap: 8px; border-top: 1px solid #162935;
-}
-.chat-input-bar input {
-  flex: 1; background: rgba(20, 34, 43, 0.8); border: 1px solid rgba(0, 243, 255, 0.3);
-  border-radius: 20px; padding: 10px 15px; color: white; font-size: 13px; outline: none;
-}
-.chat-send-btn {
-  background: var(--neon-blue); color: #030712; border: none; width: 38px; height: 38px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: bold;
-  box-shadow: 0 0 10px rgba(0,243,255,0.4);
-}
-
-.modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.85); z-index: 3000; display: flex; align-items: center; justify-content: center;
-}
-.modal-content {
-  background: #0d1b22; border: 1px solid var(--neon-blue); border-radius: 18px;
-  width: 90%; max-width: 350px; padding: 20px; box-shadow: 0 0 20px rgba(0,243,255,0.3);
-}
-.menu-item {
-  background: rgba(20,34,43,0.8); border: 1px solid rgba(0,243,255,0.2);
-  padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
-  font-size: 13px; font-weight: bold; color: #fff; cursor: pointer; transition: 0.3s;
-}
-.menu-item:hover { border-color: #00ff9d; color: #00ff9d; }
-
-.bottom-nav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 420px; background: #0d1b22; border-top: 1px solid #162935;
-  display: flex; justify-content: space-around; align-items: center; padding: 8px 0; z-index: 1000;
-}
-.nav-item {
-  background: transparent; border: none; color: #8aa0ae; display: flex;
-  flex-direction: column; align-items: center; gap: 3px; font-size: 9px; font-weight: bold; cursor: pointer; flex: 1; padding: 4px 0;
-}
-.nav-item i { font-size: 16px; }
-.nav-item.active { color: #00ff9d; }
-
-.hidden{display:none;}
-.link-text { color: var(--neon-blue); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 10px; display: inline-block; }
+/* Neon Admin Login Screen Styles */
+#adminLoginScreen{position:absolute;inset:0;background:#091216;z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;}
+.login-card{background:var(--card);border:1px solid rgba(0,208,132,0.4);border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 0 25px rgba(0,208,132,0.15);}
+.login-header{text-align:center;margin-bottom:20px;}
+.login-shield{width:60px;height:60px;background:rgba(0,208,132,0.1);border:1px solid var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:var(--green);box-shadow:0 0 15px rgba(0,208,132,0.2);}
+.login-title{font-size:18px;font-weight:bold;color:white;margin-bottom:4px;}
+.login-subtitle{font-size:10px;color:var(--muted);}
+.login-btn{width:100%;padding:12px;background:var(--green);color:#030712;border:none;border-radius:10px;font-weight:bold;font-size:12px;cursor:pointer;margin-top:10px;transition:all 0.2s;}
+.login-btn:hover{background:#00b070;}
+.login-btn:disabled{opacity:0.7;cursor:not-allowed;}
+.login-error{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:var(--red);font-size:10px;padding:8px;border-radius:8px;margin-top:10px;text-align:center;}
 </style>
 </head>
+
 <body>
 
-<div id="loadingScreen">
-  <div class="load-logo-box"><i class="fa-solid fa-gamepad"></i></div>
-  <div class="load-title">MULTANI FF</div>
-  <div class="load-sub">OFFICIAL TOURNAMENT</div>
-  <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">PAKISTAN'S ULTIMATE FREE FIRE BATTLEGROUND</div>
-  <div class="spinner"></div>
-  <div class="loading-text">LOADING...</div>
-</div>
-
-<div id="floatingRobotBtn" onclick="openAdminChatModal()" title="Chat with Admin">
-  <i class="fa-solid fa-robot"></i>
-</div>
-
-<div id="adminChatModal" class="chat-modal-overlay hidden">
-  <div class="chat-window">
-    <div class="chat-header">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <div style="background:#00ff9d; color:#030712; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-robot"></i></div>
-        <div>
-          <div style="font-weight:bold; font-size:13px; color:#00ff9d;">Admin Support</div>
-          <div style="font-size:9px; color:#8aa0ae;">Online</div>
-        </div>
-      </div>
-      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:18px; color:#8aa0ae;" onclick="closeAdminChatModal()"></i>
-    </div>
-    <div id="chatMessagesList" class="chat-messages-container"></div>
-    <div class="chat-input-bar">
-      <input type="text" id="adminMessageInput" placeholder="Type a message..." onkeypress="handleChatKeyPress(event)">
-      <button class="chat-send-btn" onclick="sendMsgToAdminPanel()"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-  </div>
-</div>
-
-<div id="addBalanceModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-wallet"></i> Add Balance</h3>
-      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeAddBalanceModal()"></i>
-    </div>
-    <div style="background:rgba(20,34,43,0.9); border:1px solid #00ff9d; padding:12px; border-radius:12px; margin-bottom:12px; text-align:center;">
-      <div style="font-size:11px; color:#8aa0ae;">EasyPaisa Account Details:</div>
-      <div style="font-size:14px; font-weight:bold; color:#00ff9d; margin-top:4px;">0318-6815926</div>
-      <div style="font-size:12px; color:#fff; font-weight:bold;">Name: MUHAMMAD NADEEM</div>
-    </div>
-    <div class="input-group">
-      <i class="fa-solid fa-coins"></i>
-      <input type="number" id="depositAmount" placeholder="Enter Amount (e.g. 500)">
-    </div>
-    <div class="input-group" style="margin-bottom:10px;">
-      <i class="fa-solid fa-image"></i>
-      <input type="file" id="depositScreenshot" accept="image/*" style="padding-left:40px; font-size:11px;">
-    </div>
-    <button class="neon-btn-blue" onclick="submitDepositRequest()">Submit Request</button>
-  </div>
-</div>
-
-<div id="notificationModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-bell"></i> Admin Notifications</h3>
-      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeNotifications()"></i>
-    </div>
-    <div id="notificationList" style="max-height:200px; overflow-y:auto; font-size:12px; color:#a3e4d7;">
-      <p style="color:#8aa0ae; text-align:center; padding:15px;">Koi nayi notification nahi hai.</p>
-    </div>
-  </div>
-</div>
-
-<div id="menuModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h3 style="color:#00ff9d; font-size:15px;"><i class="fa-solid fa-bars"></i> Multani FF Menu</h3>
-      <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="closeMenuModal()"></i>
-    </div>
-    <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('profile');">
-      <i class="fa-solid fa-user-circle" style="color:#00ff9d; font-size:18px;"></i> Profile
-    </div>
-    <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('spinwheel');">
-      <i class="fa-solid fa-dharmachakra" style="color:#ffd700; font-size:18px;"></i> Spin Wheel / Daily Bonus
-    </div>
-    <div class="menu-item" onclick="closeMenuModal(); switchBottomNav('faq');">
-      <i class="fa-solid fa-circle-question" style="color:#00f3ff; font-size:18px;"></i> Help & Rules (FAQ)
-    </div>
-    <div class="menu-item" onclick="window.open('https://whatsapp.com/channel/0029Vb9CdLqHbFV9Q7mBEB1v', '_blank')">
-      <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:18px;"></i> WhatsApp Channel
-    </div>
-    <div class="menu-item" onclick="window.open('https://chat.whatsapp.com/CehXYPf6QGPJQtYR0fpooO?s=cl&p=a&mlu=4&ilr=4', '_blank')">
-      <i class="fa-solid fa-users" style="color:#00ff9d; font-size:18px;"></i> WhatsApp Group
-    </div>
-    <div class="menu-item" onclick="window.open('https://www.tiktok.com/@multaniffgaming', '_blank')">
-      <i class="fa-brands fa-tiktok" style="color:#ff007f; font-size:18px;"></i> TikTok ID
-    </div>
-    <div class="menu-item" onclick="window.open('https://youtube.com/@multaniff-b2k?si=ZMnyTFSC9QStDPte', '_blank')">
-      <i class="fa-brands fa-youtube" style="color:#FF0000; font-size:18px;"></i> YouTube Channel
-    </div>
-    <div class="menu-item" onclick="closeMenuModal(); logout();" style="border-color:#e74c3c; color:#e74c3c; margin-top:15px;">
-      <i class="fa-solid fa-right-from-bracket" style="font-size:18px;"></i> Logout
-    </div>
-  </div>
-</div>
-
 <div class="phone-frame">
-  <header class="top-header">
-    <div class="logo-area">
-      <div class="icon-btn" onclick="openMenuModal()" style="margin-right:4px;"><i class="fa-solid fa-bars"></i></div>
-      <div class="logo-icon"><i class="fa-solid fa-fire"></i></div>
-      <span>Multani FF</span>
-    </div>
-    <div class="coin-badge">
-      <i class="fa-solid fa-coins" style="color:#ffd700;"></i> <span id="topCoinCount">0</span> Coins
-    </div>
-    <div class="header-icons">
-      <div class="icon-btn" onclick="openNotifications()"><i class="fa-solid fa-bell"></i><div class="notif-dot" id="notifDot"></div></div>
-      <div class="icon-btn" onclick="shareApp()"><i class="fa-solid fa-share-nodes"></i></div>
-    </div>
-  </header>
 
-  <div class="container">
-    <div class="announcement-bar">
-      <i class="fa-solid fa-bullhorn" style="color:var(--neon-blue);"></i>
-      <div class="announcement-text">📢 Welcome to Multani FF Tournaments! Join daily custom matches & win cash prizes!</div>
-    </div>
-
-    <!-- Home Section -->
-    <div id="homeSection">
-      <div class="featured-card">
-        <span class="badge-featured">🔥 OFFICIAL TOURNAMENT</span>
-        <div class="profile-info">
-          <div class="avatar-circle"><i class="fa-solid fa-circle-check" style="color:#00f3ff; filter: drop-shadow(0 0 6px rgba(0,243,255,0.8));"></i></div>
-          <div class="glowing-name">☆𝐌r᭄🇳adeemᶠᶠⓋ</div>
-          <div class="glowing-brand">MULTANIFF</div>
-          <div style="font-size:11px; color:#a3e4d7; margin-top:6px;">Free Fire UID: <span id="dashUid">3239454397</span></div>
-        </div>
-      </div>
-
-      <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:#fff;"><i class="fa-solid fa-layer-group" style="color:#00ff9d;"></i> Active Tournaments</div>
-      <div id="tournamentsGrid" class="grid-tournaments"></div>
-    </div>
-
-    <!-- Tournaments Section -->
-    <div id="tournamentsSection" class="hidden">
-      <div style="font-size:16px; font-weight:bold; margin-bottom:15px; color:#fff;"><i class="fa-solid fa-trophy" style="color:#00ff9d;"></i> All Tournaments</div>
-      <div id="allTournamentsGrid" class="grid-tournaments"></div>
-    </div>
-
-    <!-- Wallet Section with History Ledger -->
-    <div id="walletSection" class="hidden">
-      <div class="glass-box" style="text-align:left;">
-        <div style="text-align:center;">
-          <div class="auth-logo"><i class="fa-solid fa-wallet"></i></div>
-          <div class="auth-heading">My Wallet</div>
-          <div class="auth-sub">Manage your tournament balance & funds</div>
-          <div style="background:rgba(20,34,43,0.8); padding:15px; border-radius:14px; margin-bottom:15px; text-align:center;">
-            <div style="font-size:12px; color:#8aa0ae;">Current Balance</div>
-            <div style="font-size:24px; font-weight:bold; color:var(--neon-blue); margin-top:5px;">Rs. <span id="walletPageBal">0</span></div>
-          </div>
-          <button class="neon-btn-blue" onclick="openAddBalanceModal()">💰 Add Balance</button>
-        </div>
-
-        <div style="margin-top:20px; border-top:1px solid #162935; padding-top:12px;">
-          <div style="font-size:12px; font-weight:bold; color:#00ff9d; margin-bottom:8px;"><i class="fa-solid fa-clock-rotate-left"></i> Transaction History</div>
-          <div class="txn-list" id="transactionHistoryList">
-            <div style="text-align:center; color:#8aa0ae; padding:10px; font-size:11px;">Loading transactions...</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rewards Section -->
-    <div id="rewardsSection" class="hidden">
-      <div class="glass-box" style="text-align:center;">
-        <div class="auth-logo"><i class="fa-solid fa-gift"></i></div>
-        <div class="auth-heading">Rewards & Bonuses</div>
-        <div class="auth-sub">Claim your daily rewards & tournament bonuses</div>
-        <div style="background:rgba(20,34,43,0.8); padding:15px; border-radius:14px; margin-bottom:15px;">
-          <div style="font-size:12px; color:#8aa0ae;">Available Bonus</div>
-          <div style="font-size:20px; font-weight:bold; color:#00ff9d; margin-top:5px;">Rs. 50</div>
-        </div>
-        <button class="neon-btn-blue" onclick="alert('Reward claimed successfully!')">Claim Reward</button>
-      </div>
-    </div>
-
-    <!-- Spin Wheel Section -->
-    <div id="spinWheelSection" class="hidden">
-      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
-      <div class="glass-box" style="text-align:center;">
-        <div class="auth-logo"><i class="fa-solid fa-dharmachakra" style="color:#ffd700;"></i></div>
-        <div class="auth-heading">Lucky Spin Wheel</div>
-        <div class="auth-sub">Spin daily to win free coins & cash!</div>
-        <div style="background:rgba(20,34,43,0.9); border:2px dashed #ffd700; padding:25px; border-radius:50%; width:150px; height:150px; margin:20px auto; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:18px; color:#ffd700;" id="spinResultBox">
-          SPIN ME!
-        </div>
-        <button class="neon-btn-pink" onclick="spinTheWheel()">SPIN NOW</button>
-      </div>
-    </div>
-
-    <!-- FAQ Section -->
-    <div id="faqSection" class="hidden">
-      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
-      <div class="glass-box" style="text-align:left;">
-        <div class="auth-logo" style="text-align:center;"><i class="fa-solid fa-circle-question"></i></div>
-        <div class="auth-heading" style="text-align:center;">Help & Rules (FAQ)</div>
-        <div style="margin-bottom:12px; background:rgba(20,34,43,0.6); padding:10px; border-radius:10px;">
-          <div style="font-weight:bold; color:#00ff9d; font-size:12px;">Q1: Match kaise join karein?</div>
-          <div style="font-size:11px; color:#a3e4d7; margin-top:4px;">Home ya Tournaments section se koi bhi active match select karein aur JOIN button par click karein.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Profile Section -->
-    <div id="profileAuthSection" class="hidden">
-      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
-
-      <div class="glass-box" id="authSplashCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Multani FF</div>
-        <button class="neon-btn-blue" onclick="showAuthForm('login')">Login</button>
-        <button class="neon-btn-pink" onclick="showAuthForm('register')">Register</button>
-      </div>
-
-      <div class="glass-box hidden" id="authLoginCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Sign In To Your Account</div>
-        <div class="input-group">
-          <i class="fa-solid fa-envelope"></i>
-          <input type="email" id="loginMobile" placeholder="Registered Email Address">
-        </div>
-        <div class="input-group">
-          <i class="fa-solid fa-lock"></i>
-          <input type="password" id="loginPassword" placeholder="Password">
-          <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('loginPassword')"></i>
-        </div>
-        <button class="neon-btn-blue" onclick="login()">Login</button>
-        <span class="link-text" style="display:block; margin-top:5px;" onclick="showAuthForm('splash')">← Back</span>
-      </div>
-
-      <div class="glass-box hidden" id="authRegisterCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Create Your Account</div>
-        <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regFullName" placeholder="Full Name"></div>
-        <div class="input-group"><i class="fa-solid fa-gamepad"></i><input type="text" id="regIgn" placeholder="In-Game Name (IGN)"></div>
-        <div class="input-group"><i class="fa-solid fa-id-badge"></i><input type="text" id="regGameUid" placeholder="Game UID"></div>
-        <div class="input-group"><i class="fa-solid fa-phone"></i><input type="text" id="regMobile" placeholder="Mobile Number"></div>
-        <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address"></div>
-        <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPassword" placeholder="Password"></div>
-        <button class="neon-btn-pink" onclick="signup()">Register</button>
-        <span class="link-text" style="display:block; margin-top:5px;" onclick="showAuthForm('splash')">← Back</span>
-      </div>
-
-      <div class="glass-box hidden" id="authOtpCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Verify Your Mobile</div>
-        <button class="neon-btn-blue" onclick="verifyOtp()">Verify</button>
-      </div>
-
-      <div class="glass-box hidden" id="authForgotCard">
-        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="auth-heading">Forgot Password?</div>
-        <button class="neon-btn-blue" onclick="sendOtpForgot()">Send OTP</button>
-      </div>
-
-      <div class="glass-box hidden" id="userCard" style="text-align: left;">
-        <div style="text-align: center;">
-          <div class="auth-logo"><i class="fa-solid fa-user-check"></i></div>
-          <div class="auth-heading">My Profile</div>
-        </div>
-        <p style="margin-top:12px; font-size:13px;">Full Name: <b id="profileFullName" style="color:var(--neon-blue);">-</b></p>
-        <p style="margin-top:6px; font-size:13px;">In-Game Name (IGN): <b id="profileIgn" style="color:var(--neon-blue);">-</b></p>
-        <p style="margin-top:6px; font-size:13px;">Game UID: <b id="profileGameUid" style="color:var(--neon-blue);">-</b></p>
-        <p style="margin-top:6px; font-size:13px;">Mobile Number: <b id="profileMobile" style="color:var(--neon-blue);">-</b></p>
-        <p style="margin-top:6px; font-size:13px;">Email Address: <b id="profileEmail" style="color:var(--neon-blue);">-</b></p>
-      </div>
-    </div>
-
-    <!-- Match Details & Real FF Custom Room Lobby Layout -->
-    <div id="matchSection" class="hidden">
-      <button class="neon-btn-blue" onclick="backToHome()" style="margin-bottom:15px; width:auto; padding:6px 15px;">← BACK</button>
-      <div style="background:#0d1b22; border:1px solid #162935; border-radius:18px; padding:15px;">
-        <h2 id="matchTitle" style="color:#00ff9d; font-size:16px; margin-bottom:8px;"></h2>
-        <div style="font-size:12px; margin:4px 0;">🎮 Mode: <b id="matchMode"></b></div>
-        <div style="font-size:12px; margin:4px 0;">🗺️ Map: <b id="matchMap"></b></div>
-        <div style="font-size:12px; margin:4px 0;">💰 Entry Fee: <b>Rs. <span id="matchFee"></span></b></div>
-        <div style="font-size:12px; margin:4px 0;">🏆 Prize Pool: <b>Rs. <span id="matchPrize"></span></b></div>
-
-        <!-- Real FF Room Lobby Style Slots View -->
-        <div class="ff-room-container">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#8aa0ae;">
-            <span><i class="fa-solid fa-users"></i> <span id="slotCountText">1/48</span> Slots</span>
-            <span style="color:#00ff9d;">Battle Royale - Classic</span>
-          </div>
-          <div class="ff-slots-grid" id="ffSlotsList">
-            <!-- Dynamic Slots -->
-          </div>
-        </div>
-
-        <!-- Room ID & Password Box (Only visible when joined & updated) -->
-        <div id="roomDetailsBox" class="hidden" style="margin-top:12px; background:rgba(255,0,127,0.1); border:1px solid var(--neon-pink); padding:10px; border-radius:10px; text-align:center;">
-          <div style="font-size:11px; color:#ff007f; font-weight:bold;"><i class="fa-solid fa-lock"></i> CUSTOM ROOM DETAILS</div>
-          <div style="font-size:12px; color:#fff; margin-top:4px;" id="roomDetailsText">Room ID: <b>--</b> | Password: <b>--</b></div>
-        </div>
-
-        <button id="joinMatchBtn" class="join-match-btn" onclick="joinCurrentTournament()" style="margin-top:15px; padding:12px;">🎮 JOIN TOURNAMENT NOW</button>
-      </div>
-    </div>
+<!-- ADMIN LOGIN SCREEN -->
+<div id="adminLoginScreen" class="hidden">
+ <div class="login-card">
+  <div class="login-header">
+   <div class="login-shield"><i class="fa-solid fa-shield-halved"></i></div>
+   <div class="login-title">Multani FF Admin Login</div>
+   <div class="login-subtitle">Secure Administration Portal</div>
   </div>
+  <form onsubmit="event.preventDefault(); adminLogin();">
+   <label class="admin-label">Admin Email</label>
+   <input type="email" id="adminLoginEmail" class="admin-input" placeholder="admin@multaniff.com" required>
+   <label class="admin-label">Password</label>
+   <input type="password" id="adminLoginPassword" class="admin-input" placeholder="••••••••" required>
+   <button type="submit" id="adminLoginSubmitBtn" class="login-btn">Login to Dashboard</button>
+   <div id="adminLoginError" class="login-error hidden"></div>
+  </form>
+ </div>
+</div>
 
-  <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchBottomNav('home', event)"><i class="fa-solid fa-house"></i><span>HOME</span></button>
-    <button class="nav-item" onclick="switchBottomNav('tournaments', event)"><i class="fa-solid fa-trophy"></i><span>TOURNAMENTS</span></button>
-    <button class="nav-item" onclick="switchBottomNav('wallet', event)"><i class="fa-solid fa-wallet"></i><span>WALLET</span></button>
-    <button class="nav-item" onclick="switchBottomNav('rewards', event)"><i class="fa-solid fa-gift"></i><span>REWARD</span></button>
-  </nav>
+<!-- ADMIN DASHBOARD WRAPPER -->
+<div id="adminDashboardWrapper" class="hidden">
+<div class="topbar">
+ <div class="top-title"><i class="fa-solid fa-shield-halved"></i> Multani FF Admin Panel</div>
+ <div class="top-actions">
+  <button class="top-btn" onclick="refreshAdmin()" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
+  <button class="top-btn" onclick="logoutAdmin()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+ </div>
+</div>
+
+<div class="stats-grid">
+ <div class="stat-card">
+  <div class="stat-num" id="statLiveMatches">0</div>
+  <div class="stat-label"><i class="fa-solid fa-gamepad" style="color:var(--blue)"></i> Matches</div>
+ </div>
+ <div class="stat-card">
+  <div class="stat-num" id="statApprovedSlots">0</div>
+  <div class="stat-label"><i class="fa-solid fa-users" style="color:var(--green)"></i> Players</div>
+ </div>
+ <div class="stat-card">
+  <div class="stat-num" id="statPendingApprovals">0</div>
+  <div class="stat-label"><i class="fa-solid fa-clock" style="color:var(--orange)"></i> Pending</div>
+ </div>
+</div>
+
+<div class="dashboard-actions-box">
+ <div class="actions-grid">
+  <div class="action-item" onclick="openCreateMatchModal()">
+   <div class="action-icon-circle"><i class="fa-solid fa-plus"></i></div>
+   <div class="action-text">Create Match</div>
+  </div>
+  <div class="action-item" onclick="openGiveaways()">
+   <div class="action-icon-circle"><i class="fa-solid fa-gift" style="color:#e74c3c"></i></div>
+   <div class="action-text">Giveaways</div>
+  </div>
+  <div class="action-item" onclick="openPaymentApprovals()">
+   <div class="action-icon-circle">
+    <i class="fa-solid fa-file-invoice-dollar"></i>
+    <span class="badge-count" id="badgePayments">0</span>
+   </div>
+   <div class="action-text">Payments</div>
+  </div>
+  <div class="action-item" onclick="openBanPlayerModal()">
+   <div class="action-icon-circle"><i class="fa-solid fa-user-slash" style="color:#e74c3c"></i></div>
+   <div class="action-text">Ban Player</div>
+  </div>
+  <div class="action-item" onclick="switchAdminTab('matches')">
+   <div class="action-icon-circle"><i class="fa-solid fa-list-check"></i></div>
+   <div class="action-text">Match Manager</div>
+  </div>
+  <div class="action-item" onclick="openHelpChats()">
+   <div class="action-icon-circle"><i class="fa-solid fa-comments" style="color:#27ae60"></i></div>
+   <div class="action-text">Help Chats</div>
+  </div>
+  <div class="action-item" onclick="openPlayerListModal()">
+   <div class="action-icon-circle"><i class="fa-solid fa-address-book" style="color:#3498db"></i></div>
+   <div class="action-text">Players</div>
+  </div>
+  <div class="action-item" onclick="openWinnerModal()">
+   <div class="action-icon-circle"><i class="fa-solid fa-trophy" style="color:#f1c40f"></i></div>
+   <div class="action-text">Winner</div>
+  </div>
+ </div>
+</div>
+
+<div class="banner-btn" onclick="openPaymentApprovals()">
+ <i class="fa-solid fa-file-invoice-dollar"></i> Payment Approvals & Match Requests
+</div>
+
+<div id="adminMatchManagerSection">
+ <div class="section-title-bar">
+  <div class="section-heading"><i class="fa-solid fa-gamepad"></i> Active Tournaments</div>
+  <button class="add-match-btn" onclick="openCreateMatchModal()">+ Add Match</button>
+ </div>
+ <div id="adminTournamentsList"><div class="loading">Loading tournaments...</div></div>
+</div>
+
+<div id="adminModalContainer"></div>
+
+<nav class="bottom-nav">
+ <button class="nav-item active" onclick="switchAdminTab('home',event)"><i class="fa-solid fa-house"></i><span>Home</span></button>
+ <button class="nav-item" onclick="switchAdminTab('matches',event)"><i class="fa-solid fa-gamepad"></i><span>Matches</span></button>
+ <button class="nav-item" onclick="switchAdminTab('banned',event)"><i class="fa-solid fa-ban"></i><span>Banned</span></button>
+ <button class="nav-item" onclick="switchAdminTab('chats',event)"><i class="fa-solid fa-comments"></i><span>Chats</span></button>
+</nav>
+</div>
+
 </div>
 
 <script>
 const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+});
 
 const sb = supabaseClient;
 
-let currentUser = null;
-let selectedTournamentId = null;
+let adminInitializing = false;
+let adminReady = false;
+let authListenerReady = false;
 
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const loader = document.getElementById('loadingScreen');
-    loader.style.opacity = '0';
-    setTimeout(() => loader.style.display = 'none', 500);
-  }, 1200);
-  initDraggableRobot();
-  loadNotifications();
-  fetchChatBubblesFromSupabase();
-});
+// ===============================
+// ADMIN SESSION CHECK
+// ===============================
+async function verifyAdminSession(session) {
+  if (!session || !session.user) return false;
 
-function spinTheWheel() {
-  const prizes = ["Rs. 10", "Rs. 50", "10 Coins", "Better Luck Next Time!", "Rs. 100", "5 Coins"];
-  const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-  document.getElementById('spinResultBox').textContent = randomPrize;
-  alert("🎉 Congratulations! You won: " + randomPrize);
-}
-
-function initDraggableRobot() {
-  const btn = document.getElementById('floatingRobotBtn');
-  let isDragging = false;
-  let startX, startY, initialX, initialY;
-
-  btn.addEventListener('pointerdown', (e) => {
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    initialX = btn.offsetLeft;
-    initialY = btn.offsetTop;
-    btn.setPointerCapture(e.pointerId);
-  });
-  btn.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    let dx = e.clientX - startX;
-    let dy = e.clientY - startY;
-    btn.style.left = `${initialX + dx}px`;
-    btn.style.top = `${initialY + dy}px`;
-    btn.style.bottom = 'auto';
-    btn.style.right = 'auto';
-  });
-  btn.addEventListener('pointerup', (e) => {
-    isDragging = false;
-    btn.releasePointerCapture(e.pointerId);
-  });
-}
-
-function openMenuModal() { document.getElementById('menuModal').classList.remove('hidden'); }
-function closeMenuModal() { document.getElementById('menuModal').classList.add('hidden'); }
-function openAdminChatModal() { document.getElementById('adminChatModal').classList.remove('hidden'); fetchChatBubblesFromSupabase(); }
-function closeAdminChatModal() { document.getElementById('adminChatModal').classList.add('hidden'); }
-function handleChatKeyPress(e) { if (e.key === 'Enter') sendMsgToAdminPanel(); }
-
-async function sendMsgToAdminPanel() {
-  const msgInput = document.getElementById('adminMessageInput');
-  const msg = msgInput.value.trim();
-  if(!msg) return;
-  const userId = currentUser ? currentUser.id : null;
-  if(!userId) { alert("Pehle login karein."); return; }
-  await supabaseClient.from('admin_messages').insert([{ user_id: userId, message: msg, status: 'unread', created_at: new Date() }]);
-  msgInput.value = '';
-  fetchChatBubblesFromSupabase();
-}
-
-async function fetchChatBubblesFromSupabase() {
-  const container = document.getElementById('chatMessagesList');
-  if(!currentUser) {
-    container.innerHTML = `<div style="text-align:center; color:#8aa0ae; font-size:11px; margin-top:20px;">Support chat ke liye pehle login karein.</div>`;
-    return;
-  }
-  const { data } = await supabaseClient.from('admin_messages').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: true });
-  if(!data || data.length === 0) {
-    container.innerHTML = `<div style="text-align:center; color:#8aa0ae; font-size:11px; margin-top:20px;"><i class="fa-solid fa-headset" style="font-size:24px; color:#00ff9d; margin-bottom:6px;"></i><br>Admin se chat shuru karein.</div>`;
-    return;
-  }
-  container.innerHTML = '';
-  data.forEach(item => {
-    const timeStr = new Date(item.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    container.innerHTML += `<div class="chat-bubble user">${item.message}<div class="bubble-time">${timeStr}</div><button class="bubble-delete" onclick="deleteChatMessage('${item.id}')"><i class="fa-solid fa-xmark"></i></button></div>`;
-  });
-  container.scrollTop = container.scrollHeight;
-}
-
-async function deleteChatMessage(id) {
-  await supabaseClient.from('admin_messages').delete().eq('id', id);
-  fetchChatBubblesFromSupabase();
-}
-
-function openAddBalanceModal() { document.getElementById('addBalanceModal').classList.remove('hidden'); }
-function closeAddBalanceModal() { document.getElementById('addBalanceModal').classList.add('hidden'); }
-
-async function submitDepositRequest(){
-  if(!currentUser){
-    alert("Pehle login karein.");
-    openAuthModal();
-    return;
-  }
-
-  const amountInput = document.getElementById("depositAmount");
-  const screenshotInput = document.getElementById("depositScreenshot");
-
-  const amount = Number(amountInput.value);
-  const screenshot = screenshotInput.files[0];
-
-  if(!Number.isFinite(amount) || amount <= 0){
-    alert("Sahi deposit amount enter karein.");
-    return;
-  }
-
-  if(amount < 50){
-    alert("Minimum deposit Rs. 50 hai.");
-    return;
-  }
-
-  if(!screenshot){
-    alert("Payment screenshot upload karein.");
-    return;
-  }
-
-  const fileExt = screenshot.name.split(".").pop();
-  const fileName = currentUser.id + "_" + Date.now() + "." + fileExt;
-
-  const { data: uploadData, error: uploadError } = await sb.storage
-    .from("payment-screenshots")
-    .upload(fileName, screenshot, {
-      cacheControl: "3600",
-      upsert: false
-    });
-
-  if(uploadError){
-    console.error(uploadError);
-    alert("Screenshot upload nahi hua:\n" + uploadError.message);
-    return;
-  }
-
-  const { data: urlData } = sb.storage
-    .from("payment-screenshots")
-    .getPublicUrl(fileName);
-
-  const screenshotUrl = urlData.publicUrl;
-
-  const { data, error } = await sb
-    .from("payments")
-    .insert({
-      user_id: currentUser.id,
-      amount: amount,
-      status: "pending",
-      has_screenshot: true,
-      screenshot_url: screenshotUrl
-    })
-    .select()
-    .single();
-
-  if(error){
-    console.error(error);
-    alert("Payment request save nahi hui:\n" + error.message);
-    return;
-  }
-
-  alert(
-    "✅ Payment Request Submit Ho Gayi!\n\n" +
-    "Amount: Rs. " + amount.toFixed(2) +
-    "\nScreenshot: Uploaded 📸" +
-    "\nStatus: Pending ⏳\n\n" +
-    "Admin approval ke baad wallet mein balance add hoga."
-  );
-
-  amountInput.value = "";
-  screenshotInput.value = "";
-
-  closeAddBalanceModal();
-  await loadTransactionHistory();
-}
-
-async function loadWalletBalance(){
-  if(!currentUser){
-    return;
-  }
-
-  const { data, error } = await sb
-    .from("profiles")
-    .select("wallet_balance, total_won, total_matches, total_wins")
-    .eq("id", currentUser.id)
-    .single();
-
-  if(error){
-    console.error("Wallet load error:", error);
-    return;
-  }
-
-  const balance = Number(data.wallet_balance || 0);
-
-  const walletPageBal = document.getElementById("walletPageBal");
-  if(walletPageBal){
-    walletPageBal.textContent = balance.toFixed(2);
-  }
-
-  const topCoinCount = document.getElementById("topCoinCount");
-  if(topCoinCount){
-    topCoinCount.textContent = balance.toFixed(2);
-  }
-}
-
-async function loadTransactionHistory(){
-  if(!currentUser) return;
-
-  const { data, error } = await sb
-    .from("payments")
-    .select("amount, status, created_at")
-    .eq("user_id", currentUser.id)
-    .order("created_at", { ascending: false });
-
-  const listContainer = document.getElementById("transactionHistoryList");
-  if(!listContainer) return;
-
-  if(error || !data || data.length === 0){
-    listContainer.innerHTML = `<div style="text-align:center; color:#8aa0ae; padding:10px; font-size:11px;">Koi transaction history nahi hai.</div>`;
-    return;
-  }
-
-  listContainer.innerHTML = data.map(tx => {
-    let statusColor = "#ffd700";
-    let statusText = "Pending ⏳";
-    if(tx.status === "approved") {
-      statusColor = "#00ff9d";
-      statusText = "Approved ✅";
-    } else if(tx.status === "rejected") {
-      statusColor = "#ff007f";
-      statusText = "Rejected ❌";
-    }
-
-    const dateStr = new Date(tx.created_at).toLocaleDateString([], {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'});
-
-    return `
-      <div class="txn-item">
-        <div>
-          <div>Deposit (${statusText})</div>
-          <div style="font-size:9px; color:#8aa0ae; margin-top:2px;">${dateStr}</div>
-        </div>
-        <span style="color:${statusColor}; font-weight:bold;">+Rs. ${Number(tx.amount).toFixed(2)}</span>
-      </div>
-    `;
-  }).join("");
-}
-
-function openNotifications() { document.getElementById('notificationModal').classList.remove('hidden'); document.getElementById('notifDot').style.display = 'none'; }
-function closeNotifications() { document.getElementById('notificationModal').classList.add('hidden'); }
-
-async function loadNotifications() {
-  const { data } = await supabaseClient.from('admin_notifications').select('*').order('created_at', { ascending: false });
-  const listEl = document.getElementById('notificationList');
-  if(data && data.length > 0) {
-    listEl.innerHTML = '';
-    data.forEach(n => { listEl.innerHTML += `<div style="background:rgba(20,34,43,0.8); padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid #00ff9d;">${n.message}</div>`; });
-    document.getElementById('notifDot').style.display = 'block';
-  }
-}
-
-function togglePassword(fieldId) {
-  const input = document.getElementById(fieldId);
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-
-function showAuthForm(formName) {
-  document.getElementById('authSplashCard').classList.add('hidden');
-  document.getElementById('authLoginCard').classList.add('hidden');
-  document.getElementById('authRegisterCard').classList.add('hidden');
-  document.getElementById('authOtpCard').classList.add('hidden');
-  document.getElementById('authForgotCard').classList.add('hidden');
-  document.getElementById('userCard').classList.add('hidden');
-
-  if(currentUser) { document.getElementById('userCard').classList.remove('hidden'); return; }
-  if(formName === 'splash') document.getElementById('authSplashCard').classList.remove('hidden');
-  else if(formName === 'login') document.getElementById('authLoginCard').classList.remove('hidden');
-  else if(formName === 'register') document.getElementById('authRegisterCard').classList.remove('hidden');
-  else if(formName === 'otp') document.getElementById('authOtpCard').classList.remove('hidden');
-  else if(formName === 'forgot') document.getElementById('authForgotCard').classList.remove('hidden');
-}
-
-function openAuthModal() {
-  switchBottomNav('profile');
-  showAuthForm('login');
-}
-
-function switchBottomNav(tab, evt) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('homeSection').classList.add('hidden');
-  document.getElementById('tournamentsSection').classList.add('hidden');
-  document.getElementById('walletSection').classList.add('hidden');
-  document.getElementById('rewardsSection').classList.add('hidden');
-  document.getElementById('spinWheelSection').classList.add('hidden');
-  document.getElementById('faqSection').classList.add('hidden');
-  document.getElementById('profileAuthSection').classList.add('hidden');
-  document.getElementById('matchSection').classList.add('hidden');
-
-  if(tab === 'home') { document.getElementById('homeSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); loadTournaments(); }
-  else if(tab === 'tournaments') { document.getElementById('tournamentsSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); loadAllTournaments(); }
-  else if(tab === 'wallet') { document.getElementById('walletSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); loadWalletBalance(); loadTransactionHistory(); }
-  else if(tab === 'rewards') { document.getElementById('rewardsSection').classList.remove('hidden'); if(evt) evt.currentTarget.classList.add('active'); }
-  else if(tab === 'spinwheel') { document.getElementById('spinWheelSection').classList.remove('hidden'); }
-  else if(tab === 'faq') { document.getElementById('faqSection').classList.remove('hidden'); }
-  else if(tab === 'profile') { document.getElementById('profileAuthSection').classList.remove('hidden'); checkAuthSession(); }
-}
-
-function shareApp() {
-  if (navigator.share) { navigator.share({ title: 'Multani FF', url: window.location.href }).catch(()=>{}); }
-  else { navigator.clipboard.writeText(window.location.href).then(() => alert("Link copied!")); }
-}
-
-async function loadTournaments() { renderTournaments('tournamentsGrid'); }
-async function loadAllTournaments() { renderTournaments('allTournamentsGrid'); }
-
-async function renderTournaments(elementId) {
-  const { data } = await supabaseClient.from('tournaments').select('*').order('match_date', { ascending: true });
-  const grid = document.getElementById(elementId);
-  grid.innerHTML = '';
-  if(!data || data.length === 0) {
-    grid.innerHTML = `<div style="grid-column: span 1; text-align:center; padding:20px; color:#8aa0ae;">No active tournaments.</div>`;
-    return;
-  }
-  data.forEach(t => {
-    grid.innerHTML += `
-      <div class="t-card">
-        <div class="t-thumb"><span class="whatsapp-tag">${t.mode || 'Solo'}</span></div>
-        <div class="t-body">
-          <div class="t-title">${t.title}</div>
-          <div class="t-cat"><i class="fa-solid fa-map"></i> ${t.map || 'Bermuda'}</div>
-          <div class="t-details">
-            <span>💰 Fee: <b>Rs.${t.entry_fee || 0}</b></span>
-            <span>🏆 Prize: <b style="color:#00ff9d;">Rs.${t.prize_pool}</b></span>
-          </div>
-          <div style="font-size:10px; color:#8aa0ae; margin-top:2px;">👥 Slots: ${t.joined_players || 0}/${t.max_players || 48}</div>
-          <button class="join-match-btn" onclick="openMatchDetails('${t.id}')">VIEW / JOIN</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-async function openMatchDetails(id) {
-  selectedTournamentId = id;
-
-  const { data: tournament, error: tournamentError } = await sb
-    .from("tournaments")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if(tournamentError){
-    console.error(tournamentError);
-    alert("Tournament details load nahi ho saken.");
-    return;
-  }
-
-  document.getElementById('matchTitle').textContent = tournament.title || "";
-  document.getElementById('matchMode').textContent = tournament.mode || "";
-  document.getElementById('matchMap').textContent = tournament.map || "";
-  document.getElementById('matchFee').textContent = tournament.entry_fee ?? "0";
-  document.getElementById('matchPrize').textContent = tournament.prize_pool ?? "0";
-
-  let participant = null;
-
-  if(currentUser){
-    const { data, error } = await sb
-      .from("tournament_participants")
-      .select("id, slot_number, free_fire_uid, ign, joined_at")
-      .eq("tournament_id", id)
-      .eq("user_id", currentUser.id)
+  try {
+    const { data: admin, error } = await supabaseClient
+      .from("admin_users")
+      .select("id")
+      .eq("id", session.user.id)
       .maybeSingle();
 
-    if(!error){
-      participant = data;
+    if (error) {
+      console.error("Admin verification error:", error);
+      return false;
     }
+
+    return !!admin;
+  } catch (err) {
+    console.error("Admin verification exception:", err);
+    return false;
+  }
+}
+
+// ===============================
+// SHOW LOGIN
+// ===============================
+function showLoginScreen() {
+  const loginScreen = document.getElementById("adminLoginScreen");
+  const dashboardWrapper = document.getElementById("adminDashboardWrapper");
+
+  if (loginScreen) {
+    loginScreen.classList.remove("hidden");
   }
 
-  const isJoined = !!participant;
-  const joinBtn = document.getElementById('joinMatchBtn');
-  const roomBox = document.getElementById('roomDetailsBox');
+  if (dashboardWrapper) {
+    dashboardWrapper.classList.add("hidden");
+  }
 
-  if(isJoined){
-    joinBtn.textContent = "LEAVE TOURNAMENT";
-    joinBtn.style.background = "#e74c3c";
-    joinBtn.style.color = "white";
-    joinBtn.style.border = "none";
-    joinBtn.disabled = false;
-    joinBtn.onclick = leaveCurrentTournament;
+  const submitBtn = document.getElementById("adminLoginSubmitBtn");
 
-    const { data: matchData, error: matchError } = await sb.rpc(
-      "get_my_match_details",
-      {
-        p_tournament_id: id
-      }
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Login to Dashboard";
+  }
+
+  adminReady = false;
+}
+
+// ===============================
+// SHOW DASHBOARD
+// ===============================
+function showDashboard() {
+  const loginScreen = document.getElementById("adminLoginScreen");
+  const dashboardWrapper = document.getElementById("adminDashboardWrapper");
+
+  if (loginScreen) {
+    loginScreen.classList.add("hidden");
+  }
+
+  if (dashboardWrapper) {
+    dashboardWrapper.classList.remove("hidden");
+  }
+
+  adminReady = true;
+}
+
+// ===============================
+// LOGIN ERROR
+// ===============================
+function showLoginError(msg) {
+  const errorBox = document.getElementById("adminLoginError");
+
+  if (errorBox) {
+    errorBox.textContent = msg;
+    errorBox.classList.remove("hidden");
+  }
+}
+
+// ===============================
+// ADMIN INITIALIZATION
+// ===============================
+async function initializeAdminPanel() {
+
+  if (adminInitializing) return;
+
+  adminInitializing = true;
+
+  try {
+
+    const {
+      data: { session },
+      error
+    } = await supabaseClient.auth.getSession();
+
+    if (error) {
+      throw error;
+    }
+
+    // No session = stay on admin login page
+    if (!session) {
+      showLoginScreen();
+      return;
+    }
+
+    // Verify admin
+    const isAdmin = await verifyAdminSession(session);
+
+    if (!isAdmin) {
+
+      await supabaseClient.auth.signOut();
+
+      showLoginScreen();
+
+      showLoginError(
+        "Access denied. You are not an admin."
+      );
+
+      return;
+    }
+
+    // Admin verified
+    showDashboard();
+
+    await loadAdminStatsAndTournaments();
+    await loadPendingPayments();
+
+  } catch (err) {
+
+    console.error(
+      "Admin initialization error:",
+      err
     );
 
-    roomBox.classList.remove('hidden');
+    showLoginScreen();
 
-    if(matchError || !matchData || !matchData.success){
-      document.getElementById('roomDetailsText').innerHTML =
-        `Your Slot: <b>#${participant.slot_number}</b><br>
-         Room ID / Password abhi available nahi hain.`;
-    } else {
-      document.getElementById('roomDetailsText').innerHTML =
-        `Your Slot: <b>#${matchData.slot_number}</b><br>
-         Room ID: <b>${matchData.room_id || "Not Added Yet"}</b><br>
-         Password: <b>${matchData.room_password || "Not Added Yet"}</b>`;
-    }
+    showLoginError(
+      "Admin panel load error. Please login again."
+    );
 
-  } else {
-    joinBtn.textContent = "JOIN TOURNAMENT NOW";
-    joinBtn.style.background = "#00d084";
-    joinBtn.style.color = "#091216";
-    joinBtn.style.border = "none";
-    joinBtn.disabled = false;
-    joinBtn.onclick = joinCurrentTournament;
+  } finally {
 
-    roomBox.classList.add('hidden');
+    adminInitializing = false;
+
   }
-
-  const { data: participants, error: participantsError } = await sb
-    .from("tournament_participants")
-    .select("slot_number, ign, free_fire_uid")
-    .eq("tournament_id", id)
-    .order("slot_number", { ascending: true });
-
-  const slotsContainer = document.getElementById('ffSlotsList');
-  slotsContainer.innerHTML = '';
-
-  const participantMap = {};
-  if(participants){
-    participants.forEach(p => {
-      participantMap[p.slot_number] = p;
-    });
-  }
-
-  const filledCount = participants ? participants.length : 0;
-  const maxPlayers = tournament.max_players || 48;
-
-  for(let i = 1; i <= maxPlayers; i++){
-    const player = participantMap[i];
-    if(player){
-      const playerName = player.ign || player.free_fire_uid || "Player";
-      slotsContainer.innerHTML += `
-        <div class="ff-slot-box filled">
-          <span>${i}. ${playerName}</span>
-          <i class="fa-solid fa-check"></i>
-        </div>
-      `;
-    } else {
-      slotsContainer.innerHTML += `
-        <div class="ff-slot-box">
-          <span>${i}. Empty Slot</span>
-        </div>
-      `;
-    }
-  }
-
-  document.getElementById('slotCountText').textContent = `${filledCount}/${maxPlayers}`;
-
-  document.getElementById('homeSection').classList.add('hidden');
-  document.getElementById('tournamentsSection').classList.add('hidden');
-  document.getElementById('walletSection').classList.add('hidden');
-  document.getElementById('rewardsSection').classList.add('hidden');
-  document.getElementById('spinWheelSection').classList.add('hidden');
-  document.getElementById('faqSection').classList.add('hidden');
-  document.getElementById('profileAuthSection').classList.add('hidden');
-  document.getElementById('matchSection').classList.remove('hidden');
 }
 
-function backToHome() {
-  document.getElementById('matchSection').classList.add('hidden');
-  document.getElementById('profileAuthSection').classList.add('hidden');
-  document.getElementById('spinWheelSection').classList.add('hidden');
-  document.getElementById('faqSection').classList.add('hidden');
-  document.getElementById('homeSection').classList.remove('hidden');
-  loadTournaments();
+// ===============================
+// COMPATIBILITY CHECK
+// ===============================
+async function checkAdmin() {
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    return false;
+  }
+
+  return await verifyAdminSession(session);
 }
 
-async function joinCurrentTournament(){
-  if(!currentUser){
-    alert("Pehle login karein.");
-    openAuthModal();
+// ===============================
+// ADMIN LOGIN
+// ===============================
+async function adminLogin() {
+
+  const email =
+    document
+      .getElementById("adminLoginEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("adminLoginPassword")
+      .value;
+
+  const submitBtn =
+    document.getElementById(
+      "adminLoginSubmitBtn"
+    );
+
+  const errorBox =
+    document.getElementById(
+      "adminLoginError"
+    );
+
+  if (!email || !password) {
+
+    showLoginError(
+      "Email aur password enter karein."
+    );
+
     return;
   }
 
-  if(!selectedTournamentId){
-    alert("Tournament select nahi hua.");
-    return;
-  }
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Logging in...";
 
-  if(!confirm("Kya aap tournament join karna chahte hain?")) return;
+  errorBox.classList.add("hidden");
 
-  const { data, error } = await sb.rpc("join_tournament", {
-    p_tournament_id: selectedTournamentId
-  });
+  try {
 
-  if(error){
-    alert("Join error: " + error.message);
-    return;
-  }
-
-  if(!data || !data.success){
-    alert(data?.message || "Tournament join nahi hua.");
-    return;
-  }
-
-  alert("🎮 Tournament joined successfully!\n\nYour Slot: #" + data.slot_number);
-
-  await loadTournaments();
-  await loadWalletBalance();
-  openMatchDetails(selectedTournamentId);
-}
-
-async function leaveCurrentTournament(){
-  if(!currentUser){
-    alert("Pehle login karein.");
-    return;
-  }
-
-  if(!selectedTournamentId){
-    alert("Tournament select nahi hua.");
-    return;
-  }
-
-  if(!confirm("Kya aap tournament leave karna chahte hain? Entry fee wallet mein refund kar di jayegi.")) return;
-
-  const { data, error } = await sb.rpc("leave_tournament", {
-    p_tournament_id: selectedTournamentId
-  });
-
-  if(error){
-    alert("Leave error: " + error.message);
-    return;
-  }
-
-  if(!data || !data.success){
-    alert(data?.message || "Tournament leave nahi ho saka.");
-    return;
-  }
-
-  alert("✅ Tournament left successfully! Entry fee refunded.");
-
-  await loadTournaments();
-  await loadWalletBalance();
-  openMatchDetails(selectedTournamentId);
-}
-
-async function signup() {
-  const fullName = document.getElementById("regFullName").value.trim();
-  const ign = document.getElementById("regIgn").value.trim();
-  const gameUid = document.getElementById("regGameUid").value.trim();
-  const mobile = document.getElementById("regMobile").value.trim();
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value;
-
-  if(!email || !password || !fullName || !gameUid) { alert("Tamam zaroori fields bharein!"); return; }
-
-  const { data: authData, error } = await supabaseClient.auth.signUp({ email, password, options: { data: { full_name: fullName, ign, game_uid: gameUid, mobile } } });
-  if(error) { alert(error.message); return; }
-
-  if(authData && authData.user){
-    await supabaseClient.from("profiles").upsert({
-      id: authData.user.id,
-      full_name: fullName,
-      ign: ign,
-      free_fire_uid: gameUid,
-      phone: mobile,
+    const {
+      data,
+      error
+    } = await supabaseClient.auth.signInWithPassword({
       email: email,
-      wallet_balance: 0
+      password: password
     });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data || !data.session) {
+      throw new Error(
+        "Login session create nahi hui."
+      );
+    }
+
+    const isAdmin =
+      await verifyAdminSession(
+        data.session
+      );
+
+    if (!isAdmin) {
+
+      await supabaseClient.auth.signOut();
+
+      throw new Error(
+        "Access denied. You are not an admin."
+      );
+    }
+
+    // Successful admin login
+    showDashboard();
+
+    await loadAdminStatsAndTournaments();
+    await loadPendingPayments();
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Login to Dashboard";
+
+  } catch (err) {
+
+    console.error(
+      "Admin login error:",
+      err
+    );
+
+    showLoginError(
+      "Login failed: " + err.message
+    );
+
+    submitBtn.disabled = false;
+    submitBtn.textContent =
+      "Login to Dashboard";
+  }
+}
+
+// ===============================
+// AUTH STATE
+// ===============================
+window.addEventListener(
+  "load",
+  initializeAdminPanel
+);
+
+// Prevent duplicate auth listener
+if (!authListenerReady) {
+
+  authListenerReady = true;
+
+  supabaseClient.auth.onAuthStateChange(
+    async (event, session) => {
+
+      console.log(
+        "Admin Auth Event:",
+        event
+      );
+
+      // Login event
+      if (
+        event === "SIGNED_IN" &&
+        session
+      ) {
+
+        // If login function already handled it,
+        // don't load everything again.
+        if (adminReady) {
+          return;
+        }
+
+        if (adminInitializing) {
+          return;
+        }
+
+        const isAdmin =
+          await verifyAdminSession(
+            session
+          );
+
+        if (isAdmin) {
+
+          showDashboard();
+
+          await loadAdminStatsAndTournaments();
+          await loadPendingPayments();
+
+        } else {
+
+          await supabaseClient.auth.signOut();
+
+          showLoginScreen();
+
+          showLoginError(
+            "Access denied. You are not an admin."
+          );
+        }
+      }
+
+      // Logout event
+      else if (
+        event === "SIGNED_OUT"
+      ) {
+
+        adminReady = false;
+
+        showLoginScreen();
+      }
+
+    }
+  );
+}
+
+// ===============================
+// ADMIN REFRESH
+// ===============================
+async function refreshAdmin() {
+
+  if (!adminReady) {
+    showLoginScreen();
+    return;
   }
 
-  alert("Account created successfully!");
-  showAuthForm('login');
-}
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
 
-async function login() {
-  const email = document.getElementById("loginMobile").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  if(!email || !password) { alert("Tamam fields enter karein!"); return; }
+  if (!session) {
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if(error) { alert(error.message); return; }
-  currentUser = data.user;
-  alert("Login successful!");
-  checkAuthSession();
-  loadWalletBalance();
-}
+    adminReady = false;
 
-verifyOtp = function() { alert("Verified!"); showAuthForm('login'); };
-sendOtpForgot = function() { alert("OTP sent!"); };
+    showLoginScreen();
 
-async function checkAuthSession() {
-  const { data } = await supabaseClient.auth.getSession();
-  if(data.session) {
-    currentUser = data.session.user;
-    document.getElementById('authSplashCard').classList.add('hidden');
-    document.getElementById('authLoginCard').classList.add('hidden');
-    document.getElementById('authRegisterCard').classList.add('hidden');
-    document.getElementById('authOtpCard').classList.add('hidden');
-    document.getElementById('authForgotCard').classList.add('hidden');
-    document.getElementById('userCard').classList.remove('hidden');
+    return;
+  }
 
-    let meta = currentUser.user_metadata || {};
-    document.getElementById('profileFullName').textContent = meta.full_name || '-';
-    document.getElementById('profileIgn').textContent = meta.ign || '-';
-    document.getElementById('profileGameUid').textContent = meta.game_uid || '-';
-    document.getElementById('profileMobile').textContent = meta.mobile || '-';
-    document.getElementById('profileEmail').textContent = currentUser.email || '-';
-    
-    loadWalletBalance();
-  } else {
-    showAuthForm('splash');
+  const isAdmin =
+    await verifyAdminSession(
+      session
+    );
+
+  if (!isAdmin) {
+
+    adminReady = false;
+
+    await supabaseClient.auth.signOut();
+
+    showLoginScreen();
+
+    showLoginError(
+      "Admin session expired. Please login again."
+    );
+
+    return;
+  }
+
+  const btn =
+    document.querySelector(
+      ".top-btn i"
+    );
+
+  if (btn) {
+    btn.classList.add("fa-spin");
+  }
+
+  try {
+
+    await loadAdminStatsAndTournaments();
+    await loadPendingPayments();
+
+  } finally {
+
+    if (btn) {
+      setTimeout(() => {
+        btn.classList.remove(
+          "fa-spin"
+        );
+      }, 500);
+    }
+
   }
 }
 
-async function logout() {
-  await supabaseClient.auth.signOut();
-  currentUser = null;
-  showAuthForm('splash');
-  alert("Logged out successfully.");
+// ===============================
+// ADMIN LOGOUT
+// ===============================
+async function logoutAdmin() {
+
+  if (
+    !confirm(
+      "Kya aap Admin Panel se logout karna chahte hain?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    adminReady = false;
+
+    await supabaseClient.auth.signOut();
+
+    // Only logout redirects to index.html
+    window.location.href = "index.html";
+
+  } catch (err) {
+
+    console.error(
+      "Logout error:",
+      err
+    );
+
+    window.location.href =
+      "index.html";
+  }
 }
 
-loadTournaments();
-checkAuthSession();
+function switchAdminTab(tab,evt){
+ if(evt){
+  document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
+  evt.currentTarget.classList.add("active");
+ }
+ if(tab==="home" || tab==="matches"){
+  document.getElementById("adminMatchManagerSection").scrollIntoView({behavior:"smooth"});
+  if(tab==="matches") loadAdminStatsAndTournaments();
+ }
+ if(tab==="banned") openBanPlayerModal();
+ if(tab==="chats") openHelpChats();
+}
+
+async function loadAdminStatsAndTournaments(){
+ const container = document.getElementById("adminTournamentsList");
+ if(!container) return;
+ container.innerHTML = `<div class="loading">Loading tournaments...</div>`;
+ try{
+  const { data, error } = await supabaseClient.from("tournaments").select("*").order("match_date",{ascending:true});
+  if(error){
+   container.innerHTML = `<div class="empty">Error: ${escapeHtml(error.message)}</div>`;
+   return;
+  }
+  document.getElementById("statLiveMatches").textContent = data?.length||0;
+  container.innerHTML="";
+  if(!data || data.length===0){
+   container.innerHTML = `<div class="empty">No tournaments found.<br><br>Create your first match using + Add Match.</div>`;
+   return;
+  }
+  data.forEach(t=>{
+   const card=document.createElement("div");
+   card.className="admin-t-card";
+   card.innerHTML=`
+    <div class="admin-t-header">
+     <div class="admin-t-info">
+      <h4>${escapeHtml(t.title||"Untitled")} (${escapeHtml(t.mode||"Solo")})</h4>
+      <p>
+       Map: ${escapeHtml(t.map||"Bermuda")}<br>
+       Time: ${t.match_date ? new Date(t.match_date).toLocaleString() : "TBD"}<br>
+       Entry Fee: Rs.${Number(t.entry_fee||0)} | Prize: Rs.${Number(t.prize_pool||0)}
+      </p>
+     </div>
+     <div class="admin-btn-group">
+      <button class="btn-edit" onclick='openEditMatchModal(${JSON.stringify(t)})'>Edit</button>
+      <button class="btn-delete" onclick="deleteTournament('${t.id}')">Delete</button>
+     </div>
+    </div>
+    <div class="room-details-box">
+     Room ID: <b>${escapeHtml(t.room_id||"Not set")}</b><br>
+     Password: <b>${escapeHtml(t.room_password||"Not set")}</b>
+    </div>
+   `;
+   container.appendChild(card);
+  });
+  await loadPlayerCount();
+ }catch(err){
+  console.error(err);
+  container.innerHTML = `<div class="empty">Unexpected error occurred.</div>`;
+ }
+}
+
+async function loadPlayerCount(){
+ try{
+  const {count, error} = await supabaseClient.from("tournament_participants").select("*",{count:"exact",head:true});
+  if(!error){
+   document.getElementById("statApprovedSlots").textContent = count||0;
+  }
+ }catch(e){
+  console.log(e);
+ }
+}
+
+async function loadPendingPayments(){
+ try{
+  const {count, error} = await supabaseClient.from("payments").select("*",{count:"exact",head:true}).eq("status","pending");
+  if(!error){
+   const total = count||0;
+   document.getElementById("statPendingApprovals").textContent = total;
+   document.getElementById("badgePayments").textContent = total;
+  }
+ }catch(e){
+  console.log(e);
+ }
+}
+
+function openCreateMatchModal(){
+ document.getElementById("adminModalContainer").innerHTML=`
+ <div class="modal-overlay">
+  <div class="modal-box">
+   <div class="modal-header">
+    <span>Create New Tournament</span>
+    <button class="modal-close" onclick="closeAdminModal()">✕</button>
+   </div>
+   <label class="admin-label">Tournament Title</label>
+   <input id="newTitle" class="admin-input" placeholder="Multani FF Solo">
+   <label class="admin-label">Mode</label>
+   <input id="newMode" class="admin-input" placeholder="Solo / Duo / Squad">
+   <label class="admin-label">Map</label>
+   <input id="newMap" class="admin-input" placeholder="Bermuda / Kalahari">
+   <label class="admin-label">Entry Fee</label>
+   <input id="newFee" type="number" class="admin-input" placeholder="Rs.">
+   <label class="admin-label">Prize Pool</label>
+   <input id="newPrize" type="number" class="admin-input" placeholder="Rs.">
+   <label class="admin-label">Match Date & Time</label>
+   <input id="newDate" type="datetime-local" class="admin-input">
+   <button class="add-match-btn" style="width:100%;padding:11px" onclick="submitCreateMatch()">Publish Match</button>
+  </div>
+ </div>
+ `;
+}
+
+async function submitCreateMatch(){
+ const title = document.getElementById("newTitle").value.trim();
+ const mode = document.getElementById("newMode").value.trim()||"Solo";
+ const map = document.getElementById("newMap").value.trim()||"Bermuda";
+ const entry_fee = Number(document.getElementById("newFee").value)||0;
+ const prize_pool = Number(document.getElementById("newPrize").value)||0;
+ const match_date = document.getElementById("newDate").value||null;
+
+ if(!title){ alert("Tournament title lazmi enter karein."); return; }
+
+ const {error} = await supabaseClient.from("tournaments").insert([{
+  title, mode, map, entry_fee, prize_pool, match_date, room_id:"", room_password:""
+ }]);
+
+ if(error){ alert("Error: "+error.message); return; }
+ alert("✅ Tournament successfully created.");
+ closeAdminModal();
+ loadAdminStatsAndTournaments();
+}
+
+function openEditMatchModal(t){
+ document.getElementById("adminModalContainer").innerHTML=`
+ <div class="modal-overlay">
+  <div class="modal-box">
+   <div class="modal-header">
+    <span>Edit Tournament</span>
+    <button class="modal-close" onclick="closeAdminModal()">✕</button>
+   </div>
+   <label class="admin-label">Title</label>
+   <input id="editTitle" class="admin-input" value="${escapeAttr(t.title||"")}">
+   <label class="admin-label">Mode</label>
+   <input id="editMode" class="admin-input" value="${escapeAttr(t.mode||"")}">
+   <label class="admin-label">Map</label>
+   <input id="editMap" class="admin-input" value="${escapeAttr(t.map||"")}">
+   <label class="admin-label">Entry Fee</label>
+   <input id="editFee" type="number" class="admin-input" value="${Number(t.entry_fee||0)}">
+   <label class="admin-label">Prize Pool</label>
+   <input id="editPrize" type="number" class="admin-input" value="${Number(t.prize_pool||0)}">
+   <label class="admin-label">Room ID</label>
+   <input id="editRoomId" class="admin-input" value="${escapeAttr(t.room_id||"")}" placeholder="Room ID">
+   <label class="admin-label">Room Password</label>
+   <input id="editRoomPass" class="admin-input" value="${escapeAttr(t.room_password||"")}" placeholder="Room Password">
+   <button class="btn-edit" style="width:100%;padding:11px" onclick="submitEditMatch('${t.id}')">Save Changes</button>
+  </div>
+ </div>
+ `;
+}
+
+async function submitEditMatch(id){
+ const title = document.getElementById("editTitle").value.trim();
+ const mode = document.getElementById("editMode").value.trim();
+ const map = document.getElementById("editMap").value.trim();
+ const entry_fee = Number(document.getElementById("editFee").value)||0;
+ const prize_pool = Number(document.getElementById("editPrize").value)||0;
+ const room_id = document.getElementById("editRoomId").value.trim();
+ const room_password = document.getElementById("editRoomPass").value.trim();
+
+ const {error} = await supabaseClient.from("tournaments").update({
+  title, mode, map, entry_fee, prize_pool, room_id, room_password
+ }).eq("id",id);
+
+ if(error){ alert("Error: "+error.message); return; }
+ alert("✅ Tournament updated.");
+ closeAdminModal();
+ loadAdminStatsAndTournaments();
+}
+
+async function deleteTournament(id){
+ if(!confirm("Kya aap waqai is tournament ko delete karna chahte hain?")) return;
+ const {error} = await supabaseClient.from("tournaments").delete().eq("id",id);
+ if(error){ alert("Delete error: "+error.message); return; }
+ alert("🗑️ Tournament deleted.");
+ loadAdminStatsAndTournaments();
+}
+
+async function openPaymentApprovals(){
+  showModal(`
+    <div id="pendingPaymentsList" style="max-height:60vh; overflow-y:auto;">
+      <div style="text-align:center; padding:20px; color:#8aa0ae;">Loading payments...</div>
+    </div>
+  `, "Payment Approvals");
+
+  await loadPendingPaymentsModalList();
+}
+
+async function loadPendingPaymentsModalList(){
+  const { data, error } = await sb
+    .from("payments")
+    .select(`id, user_id, amount, status, screenshot_url, created_at`)
+    .order("created_at", { ascending: false });
+
+  if(error){
+    console.error("Pending payments error:", error);
+    return;
+  }
+
+  const box = document.getElementById("pendingPaymentsList");
+  if(!box) return;
+
+  if(!data || data.length === 0){
+    box.innerHTML = `<div style="text-align:center;padding:20px;color:#8aa0ae;">No payment requests found 🎉</div>`;
+    return;
+  }
+
+  box.innerHTML = data.map(payment => `
+    <div style="background:#14222b; border:1px solid rgba(0,255,157,.25); padding:12px; border-radius:12px; margin-bottom:10px;">
+      <div style="color:#fff;font-weight:bold;">💰 Rs. ${Number(payment.amount||0).toFixed(2)}</div>
+      <div style="font-size:11px;color:#8aa0ae;margin-top:4px;">Status: <b class="${payment.status==="approved"?"success":payment.status==="rejected"?"danger":""}">${escapeHtml(payment.status||"pending")}</b></div>
+      <div style="font-size:11px;color:#8aa0ae;margin-top:2px;">User ID: ${escapeHtml(payment.user_id)}</div>
+      <div style="font-size:11px;color:#8aa0ae;">${payment.created_at ? new Date(payment.created_at).toLocaleString() : ""}</div>
+      ${
+        payment.screenshot_url
+        ? `<button onclick="window.open('${escapeAttr(payment.screenshot_url)}', '_blank')" style="margin-top:10px; width:100%; padding:9px; border:1px solid #00f3ff; background:transparent; color:#00f3ff; border-radius:8px; font-weight:bold; cursor:pointer;">📸 View Screenshot</button>`
+        : `<div style="margin-top:8px;color:#ffcc00;font-size:11px;">Screenshot not available</div>`
+      }
+      ${
+        payment.status === "pending"
+        ? `
+          <button onclick="approvePayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:0; background:#00d084; color:#091216; border-radius:8px; font-weight:bold; cursor:pointer;">✅ APPROVE PAYMENT</button>
+          <button onclick="rejectPayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:1px solid #ff4d6d; background:transparent; color:#ff4d6d; border-radius:8px; font-weight:bold; cursor:pointer;">❌ REJECT PAYMENT</button>
+        `
+        : ""
+      }
+    </div>
+  `).join("");
+}
+
+async function approvePayment(id){
+  if(!confirm("Is payment ko approve karna hai?")) return;
+  const { data, error } = await sb.rpc("approve_payment", { p_payment_id: id });
+  if(error){ alert("Payment approval error: " + error.message); return; }
+  if(!data || !data.success){ alert(data?.message || "Payment approve nahi hui"); return; }
+  alert("Payment approved!\nWallet mein Rs. " + Number(data.amount).toFixed(2) + " add ho gaye.");
+  await loadPendingPayments();
+  await loadAdminStatsAndTournaments();
+  await loadPendingPaymentsModalList();
+}
+
+async function rejectPayment(id){
+  if(!confirm("Is payment ko reject karna hai?")) return;
+  const { data, error } = await sb.rpc("reject_payment", { p_payment_id: id });
+  if(error){ alert("Rejection error: " + error.message); return; }
+  if(!data || !data.success){ alert(data?.message || "Payment reject nahi ho saki."); return; }
+  alert("❌ Payment rejected successfully.");
+  await loadPendingPayments();
+  await loadAdminStatsAndTournaments();
+  await loadPendingPaymentsModalList();
+}
+
+function openBanPlayerModal(){
+ document.getElementById("adminModalContainer").innerHTML=`
+ <div class="modal-overlay">
+  <div class="modal-box">
+   <div class="modal-header">
+    <span>Ban Player</span>
+    <button class="modal-close" onclick="closeAdminModal()">✕</button>
+   </div>
+   <input id="banUID" class="admin-input" placeholder="Free Fire UID">
+   <button class="btn-delete" style="width:100%;padding:11px" onclick="banPlayer()"><i class="fa-solid fa-ban"></i> Ban Player</button>
+   <div style="margin-top:15px"><button class="add-match-btn" style="width:100%" onclick="showBannedPlayers()">View Banned Players</button></div>
+  </div>
+ </div>
+ `;
+}
+
+async function banPlayer(){
+ const uid = document.getElementById("banUID").value.trim();
+ if(!uid){ alert("Free Fire UID enter karein."); return; }
+ const {error} = await supabaseClient.from("banned_uids").insert([{ free_fire_uid:uid }]);
+ if(error){ alert("Ban error: "+error.message); return; }
+ alert("🚫 Player banned successfully.");
+ closeAdminModal();
+}
+
+async function showBannedPlayers(){
+ const {data, error} = await supabaseClient.from("banned_uids").select("*").order("id",{ascending:false});
+ if(error){
+  showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Banned Players");
+  return;
+ }
+ let html="";
+ if(!data || data.length===0){
+  html=`<div class="empty">No banned players.</div>`;
+ } else {
+  data.forEach(p=>{
+   html+=`
+    <div class="list-item">
+     <div class="list-title">UID: ${escapeHtml(p.free_fire_uid)}</div>
+     <button class="btn-edit" style="margin-top:8px" onclick="unbanPlayer('${p.id}')">Unban</button>
+    </div>
+   `;
+  });
+ }
+ showModal(html, "Banned Players");
+}
+
+async function unbanPlayer(id){
+ if(!confirm("Player ko unban karna hai?")) return;
+ const {error} = await supabaseClient.from("banned_uids").delete().eq("id",id);
+ if(error){ alert("Error: "+error.message); return; }
+ showBannedPlayers();
+}
+
+async function openPlayerListModal(){
+ const {data, error} = await supabaseClient.from("tournament_participants").select("*").order("id",{ascending:false});
+ if(error){
+  showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Registered Players");
+  return;
+ }
+ let html="";
+ if(!data || data.length===0){
+  html=`<div class="empty">No participants registered yet.</div>`;
+ } else {
+  data.forEach((p,index)=>{
+   html+=`
+    <div class="list-item">
+     <div class="list-title">Player #${index+1}</div>
+     <div class="list-info">
+      ${p.free_fire_uid ? "UID: "+escapeHtml(p.free_fire_uid)+"<br>" : ""}
+      ${p.tournament_id ? "Tournament: "+escapeHtml(p.tournament_id) : ""}
+     </div>
+    </div>
+   `;
+  });
+ }
+ showModal(html, "Registered Players");
+}
+
+function openWinnerModal(){ announceWinner(); }
+
+async function announceWinner(){
+  const tournamentId = prompt("Tournament ID:");
+  if(!tournamentId) return;
+
+  const ign = prompt("Winner IGN:");
+  if(!ign) return;
+
+  const uid = prompt("Free Fire UID:");
+  if(!uid) return;
+
+  const prize = prompt("Prize Amount:");
+  if(prize === null) return;
+
+  const amount = Number(prize);
+  if(isNaN(amount) || amount < 0){
+    alert("Prize amount sahi enter karo.");
+    return;
+  }
+
+  const { data, error } = await sb.rpc("announce_winner", {
+    p_tournament_id: tournamentId,
+    p_ign: ign,
+    p_free_fire_uid: uid,
+    p_prize_amount: amount
+  });
+
+  if(error){
+    alert("Winner error: " + error.message);
+    return;
+  }
+
+  if(!data || !data.success){
+    alert(data?.message || "Winner announce nahi hua.");
+    return;
+  }
+
+  alert("🏆 Winner announced!\n\nIGN: " + ign + "\nPrize: Rs. " + amount.toFixed(2) + "\n\nPrize player ke wallet mein add ho gaya.");
+}
+
+function openGiveaways(){
+ showModal(`<div class="empty">🎁 Giveaway Management<br><br>Giveaway system ka database module next step mein add kiya jayega.</div>`, "Giveaways");
+}
+
+function openHelpChats(){
+ showModal(`<div class="empty"><i class="fa-solid fa-comments" style="font-size:30px;color:var(--green)"></i><br><br>Help Chats module ready hai.<br><br>Messages table connect karne ke baad admin yahan se users ke messages dekh aur reply kar sakega.</div>`, "Help Chats");
+}
+
+function showModal(content,title){
+ document.getElementById("adminModalContainer").innerHTML=`
+ <div class="modal-overlay">
+  <div class="modal-box">
+   <div class="modal-header">
+    <span>${escapeHtml(title)}</span>
+    <button class="modal-close" onclick="closeAdminModal()">✕</button>
+   </div>
+   ${content}
+  </div>
+ </div>
+ `;
+}
+
+function closeAdminModal(){
+ document.getElementById("adminModalContainer").innerHTML="";
+}
+
+function escapeHtml(value){
+ return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+
+function escapeAttr(value){
+ return escapeHtml(value);
+}
 </script>
 </body>
 </html>
