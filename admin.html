@@ -1,801 +1,858 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multani FF Admin Panel</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
-body{background:#030712;color:white;min-height:100vh;display:flex;justify-content:center;padding-bottom:70px;}
-.phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;overflow-x:hidden;box-shadow:0 0 30px rgba(0,243,255,.15);}
-
-:root{
- --blue:#00f3ff;
- --green:#00d084;
- --pink:#ff007f;
- --red:#e74c3c;
- --orange:#ffa500;
- --card:#0d1b22;
- --border:#162935;
- --muted:#8aa0ae;
-}
-
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:15px 14px;background:#0d1b22;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:500;}
-.top-title{font-size:16px;font-weight:bold;color:var(--green);}
-.top-actions{display:flex;gap:7px;}
-.top-btn{border:1px solid #24404c;background:#14222b;color:white;width:34px;height:34px;border-radius:9px;cursor:pointer;}
-.top-btn:hover{border-color:var(--green);color:var(--green);}
-
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 5px;text-align:center;}
-.stat-num{font-size:19px;font-weight:bold;margin-bottom:3px;}
-.stat-label{font-size:8px;color:var(--muted);text-transform:uppercase;}
-
-.dashboard-actions-box{background:white;color:#030712;border-radius:20px;padding:18px 12px;margin:10px 12px 15px;box-shadow:0 4px 20px rgba(0,0,0,.3);}
-.actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px 8px;text-align:center;}
-.action-item{cursor:pointer;display:flex;flex-direction:column;align-items:center;position:relative;}
-.action-icon-circle{width:48px;height:48px;border-radius:50%;background:#f0f4f8;border:1px solid #d1d8e0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#2c3e50;margin-bottom:6px;}
-.action-item:active .action-icon-circle{transform:scale(.94);}
-.action-text{font-size:9px;font-weight:bold;color:#2c3e50;line-height:1.2;}
-.badge-count{position:absolute;top:-2px;right:4px;background:var(--red);color:white;font-size:9px;padding:2px 5px;border-radius:10px;font-weight:bold;}
-
-.banner-btn{background:var(--card);border:1px solid var(--green);border-radius:14px;padding:12px;margin:0 12px 15px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--green);font-weight:bold;font-size:11px;cursor:pointer;}
-
-.section-title-bar{display:flex;justify-content:space-between;align-items:center;margin:15px 12px 10px;}
-.section-heading{font-size:13px;font-weight:bold;color:var(--orange);display:flex;align-items:center;gap:6px;}
-.add-match-btn{background:var(--green);color:#030712;border:none;padding:7px 11px;border-radius:8px;font-weight:bold;font-size:10px;cursor:pointer;}
-
-.admin-t-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:0 12px 12px;}
-.admin-t-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-.admin-t-info{flex:1;}
-.admin-t-info h4{font-size:13px;color:white;}
-.admin-t-info p{font-size:9px;color:var(--muted);margin-top:5px;line-height:1.5;}
-.admin-btn-group{display:flex;gap:5px;}
-.btn-edit,.btn-delete{color:white;border:none;padding:6px 8px;border-radius:6px;font-size:9px;font-weight:bold;cursor:pointer;}
-.btn-edit{background:#27ae60;}
-.btn-delete{background:var(--red);}
-
-.room-details-box{background:#14222b;border:1px solid #1e3340;border-radius:8px;padding:9px;font-size:10px;color:var(--blue);margin-top:9px;line-height:1.6;}
-.room-subtext{font-size:9px;color:var(--muted);margin-top:3px;}
-
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;}
-.modal-box{background:#0d1b22;border:1px solid rgba(0,243,255,.3);border-radius:18px;padding:18px;width:100%;max-width:390px;max-height:90vh;overflow-y:auto;}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-weight:bold;font-size:14px;color:var(--green);}
-.modal-close{background:none;border:none;color:white;font-size:18px;cursor:pointer;}
-
-.admin-input{width:100%;padding:10px;background:#14222b;border:1px solid #1e3340;border-radius:8px;color:white;font-size:11px;margin-bottom:10px;outline:none;}
-.admin-input:focus{border-color:var(--green);}
-.admin-label{display:block;font-size:9px;color:var(--muted);margin-bottom:4px;}
-
-.list-item{background:#14222b;border:1px solid #1e3340;padding:10px;border-radius:10px;margin-bottom:8px;}
-.list-title{font-size:11px;font-weight:bold;color:white;}
-.list-info{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5;}
-
-.empty{text-align:center;padding:20px;color:var(--muted);font-size:11px;}
-.loading{text-align:center;padding:20px;color:var(--blue);font-size:11px;}
-
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#0d1b22;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:800;}
-.nav-item{background:transparent;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;font-weight:bold;cursor:pointer;flex:1;}
-.nav-item.active{color:var(--green);}
-.nav-item i{font-size:16px;}
-
-.hidden{display:none!important;}
-.success{color:var(--green);}
-.danger{color:var(--red);}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Multani FF Admin Control Center</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#090d16',
+                        cardBg: '#131b2e',
+                        cardBorder: '#1e293b',
+                        neonRed: '#ff2a5f',
+                        neonYellow: '#ffbe0b',
+                        neonGreen: '#06d6a0',
+                        accentBlue: '#3a86ff'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090d16;
+            color: #f8fafc;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .heading-font {
+            font-family: 'Rajdhani', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 2px;
+        }
+        .glass-card {
+            background: rgba(19, 27, 46, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .neon-glow-red {
+            box-shadow: 0 0 15px rgba(255, 42, 95, 0.3);
+        }
+        .neon-glow-yellow {
+            box-shadow: 0 0 15px rgba(255, 190, 11, 0.3);
+        }
+    </style>
 </head>
+<body class="pb-24 select-none">
 
-<body>
-
-<div class="phone-frame">
-<div class="topbar">
- <div class="top-title"><i class="fa-solid fa-shield-halved"></i> Multani FF Admin Panel</div>
- <div class="top-actions">
-  <button class="top-btn" onclick="refreshAdmin()" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
-  <button class="top-btn" onclick="logoutAdmin()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
- </div>
-</div>
-
-<div class="stats-grid">
- <div class="stat-card">
-  <div class="stat-num" id="statLiveMatches">0</div>
-  <div class="stat-label"><i class="fa-solid fa-gamepad" style="color:var(--blue)"></i> Matches</div>
- </div>
- <div class="stat-card">
-  <div class="stat-num" id="statApprovedSlots">0</div>
-  <div class="stat-label"><i class="fa-solid fa-users" style="color:var(--green)"></i> Players</div>
- </div>
- <div class="stat-card">
-  <div class="stat-num" id="statPendingApprovals">0</div>
-  <div class="stat-label"><i class="fa-solid fa-clock" style="color:var(--orange)"></i> Pending</div>
- </div>
-</div>
-
-<div class="dashboard-actions-box">
- <div class="actions-grid">
-  <div class="action-item" onclick="openCreateMatchModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-plus"></i></div>
-   <div class="action-text">Create Match</div>
-  </div>
-  <div class="action-item" onclick="openGiveaways()">
-   <div class="action-icon-circle"><i class="fa-solid fa-gift" style="color:#e74c3c"></i></div>
-   <div class="action-text">Giveaways</div>
-  </div>
-  <div class="action-item" onclick="openPaymentApprovals()">
-   <div class="action-icon-circle">
-    <i class="fa-solid fa-file-invoice-dollar"></i>
-    <span class="badge-count" id="badgePayments">0</span>
-   </div>
-   <div class="action-text">Payments</div>
-  </div>
-  <div class="action-item" onclick="openBanPlayerModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-user-slash" style="color:#e74c3c"></i></div>
-   <div class="action-text">Ban Player</div>
-  </div>
-  <div class="action-item" onclick="switchAdminTab('matches')">
-   <div class="action-icon-circle"><i class="fa-solid fa-list-check"></i></div>
-   <div class="action-text">Match Manager</div>
-  </div>
-  <div class="action-item" onclick="openHelpChats()">
-   <div class="action-icon-circle">
-    <i class="fa-solid fa-comments" style="color:#27ae60"></i>
-    <span class="badge-count" id="badgeChats" style="display:none;">0</span>
-   </div>
-   <div class="action-text">Help Chats</div>
-  </div>
-  <div class="action-item" onclick="openPlayerListModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-address-book" style="color:#3498db"></i></div>
-   <div class="action-text">Players</div>
-  </div>
-  <div class="action-item" onclick="openWinnerModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-trophy" style="color:#f1c40f"></i></div>
-   <div class="action-text">Winner</div>
-  </div>
- </div>
-</div>
-
-<div class="banner-btn" onclick="openPaymentApprovals()">
- <i class="fa-solid fa-file-invoice-dollar"></i> Payment Approvals & Match Requests
-</div>
-
-<div id="adminMatchManagerSection">
- <div class="section-title-bar">
-  <div class="section-heading"><i class="fa-solid fa-gamepad"></i> Active Tournaments</div>
-  <button class="add-match-btn" onclick="openCreateMatchModal()">+ Add Match</button>
- </div>
- <div id="adminTournamentsList"><div class="loading">Loading tournaments...</div></div>
-</div>
-
-<div id="adminModalContainer"></div>
-
-<nav class="bottom-nav">
- <button class="nav-item active" onclick="switchAdminTab('home',event)"><i class="fa-solid fa-house"></i><span>Home</span></button>
- <button class="nav-item" onclick="switchAdminTab('matches',event)"><i class="fa-solid fa-gamepad"></i><span>Matches</span></button>
- <button class="nav-item" onclick="switchAdminTab('banned',event)"><i class="fa-solid fa-ban"></i><span>Banned</span></button>
- <button class="nav-item" onclick="switchAdminTab('chats',event)"><i class="fa-solid fa-comments"></i><span>Chats</span></button>
-</nav>
-
-</div>
-
-<script>
-const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
-const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const sb = supabaseClient;
-
-async function checkAdmin(){
- try{
-  const { data:{session} } = await supabaseClient.auth.getSession();
-  if(!session){
-   alert("Admin login required.");
-   window.location.href="index.html";
-   return false;
-  }
-  const { data:admin, error } = await supabaseClient
-   .from("admin_users")
-   .select("id")
-   .eq("id",session.user.id)
-   .maybeSingle();
-
-  if(error || !admin){
-   // Fallback check on user_id column if table uses user_id
-   const { data:adminAlt } = await supabaseClient
-    .from("admin_users")
-    .select("user_id")
-    .eq("user_id",session.user.id)
-    .maybeSingle();
-
-   if(!adminAlt){
-    alert("Access denied. You are not an admin.");
-    await supabaseClient.auth.signOut();
-    window.location.href="index.html";
-    return false;
-   }
-  }
-  return true;
- }catch(err){
-  console.error(err);
-  alert("Admin check failed.");
-  return false;
- }
-}
-
-window.addEventListener("load", async()=>{
- const allowed = await checkAdmin();
- if(allowed){
-  await loadAdminStatsAndTournaments();
-  await loadPendingPayments();
-  await loadSupportChatsBadgeCount();
- }
-});
-
-async function refreshAdmin(){
- const btn=document.querySelector(".top-btn i");
- if(btn) btn.classList.add("fa-spin");
- await loadAdminStatsAndTournaments();
- await loadPendingPayments();
- await loadSupportChatsBadgeCount();
- if(btn) setTimeout(()=>btn.classList.remove("fa-spin"),500);
-}
-
-async function logoutAdmin(){
- if(!confirm("Kya aap Admin Panel se logout karna chahte hain?")) return;
- await supabaseClient.auth.signOut();
- window.location.href="index.html";
-}
-
-function switchAdminTab(tab,evt){
- if(evt){
-  document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
-  evt.currentTarget.classList.add("active");
- }
- if(tab==="home" || tab==="matches"){
-  document.getElementById("adminMatchManagerSection").scrollIntoView({behavior:"smooth"});
-  if(tab==="matches") loadAdminStatsAndTournaments();
- }
- if(tab==="banned") openBanPlayerModal();
- if(tab==="chats") openHelpChats();
-}
-
-async function loadAdminStatsAndTournaments(){
- const container = document.getElementById("adminTournamentsList");
- container.innerHTML = `<div class="loading">Loading tournaments...</div>`;
- try{
-  const { data, error } = await supabaseClient.from("tournaments").select("*").order("match_date",{ascending:true});
-  if(error){
-   container.innerHTML = `<div class="empty">Error: ${escapeHtml(error.message)}</div>`;
-   return;
-  }
-  document.getElementById("statLiveMatches").textContent = data?.length||0;
-  container.innerHTML="";
-  if(!data || data.length===0){
-   container.innerHTML = `<div class="empty">No tournaments found.<br><br>Create your first match using + Add Match.</div>`;
-   return;
-  }
-  data.forEach(t=>{
-   const card=document.createElement("div");
-   card.className="admin-t-card";
-   card.innerHTML=`
-    <div class="admin-t-header">
-     <div class="admin-t-info">
-      <h4>${escapeHtml(t.title||"Untitled")} (${escapeHtml(t.mode||"Solo")})</h4>
-      <p>
-       Map: ${escapeHtml(t.map||"Bermuda")}<br>
-       Time: ${t.match_date ? new Date(t.match_date).toLocaleString() : "TBD"}<br>
-       Entry Fee: Rs.${Number(t.entry_fee||0)} | Prize: Rs.${Number(t.prize_pool||0)}
-      </p>
-     </div>
-     <div class="admin-btn-group">
-      <button class="btn-edit" onclick='openEditMatchModal(${JSON.stringify(t)})'>Edit</button>
-      <button class="btn-delete" onclick="deleteTournament('${t.id}')">Delete</button>
-     </div>
+    <!-- Global Loading Overlay -->
+    <div id="global-loader" class="fixed inset-0 z-50 bg-darkBg/90 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-300 hidden">
+        <div class="relative w-16 h-16 mb-4">
+            <div class="absolute inset-0 border-4 border-neonRed/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-neonRed rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <p id="loader-text" class="heading-font text-lg tracking-wider text-slate-300 font-semibold animate-pulse">PROCESSING ADMIN ACTION...</p>
     </div>
-    <div class="room-details-box">
-     Room ID: <b>${escapeHtml(t.room_id||"Not set")}</b><br>
-     Password: <b>${escapeHtml(t.room_password||"Not set")}</b>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="relative w-full min-h-screen flex flex-col">
+
+        <!-- HEADER -->
+        <header class="sticky top-0 z-30 glass-card px-4 py-3 flex items-center justify-between border-b border-cardBorder">
+            <div class="flex items-center space-x-3">
+                <div id="back-btn-container" class="hidden">
+                    <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 active:scale-95 transition">
+                        <i class="fa-solid fa-arrow-left text-sm"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-neonRed to-neonYellow p-0.5 flex items-center justify-center shadow-lg neon-glow-red">
+                        <div class="w-full h-full bg-darkBg rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-shield-halved text-neonRed text-sm"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="heading-font font-bold text-lg tracking-wider bg-gradient-to-r from-white via-slate-200 to-neonRed bg-clip-text text-transparent leading-none">ADMIN PANEL</h1>
+                        <span class="text-[10px] text-neonYellow font-semibold tracking-widest uppercase">Multani FF Control</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="navigateTo('user-home')" class="px-2.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold flex items-center space-x-1 hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>App</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- DYNAMIC VIEWS CONTAINER -->
+        <main id="main-content" class="flex-1 flex flex-col pb-16">
+            <!-- Content injected dynamically via JS router -->
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR (Admin Control Tabs) -->
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto glass-card border-t border-cardBorder px-2 py-2 z-40 flex items-center justify-around">
+            <button onclick="navigateTo('admin-dashboard')" data-nav="admin-dashboard" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
+                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Dashboard</span>
+            </button>
+            <button onclick="navigateTo('admin-tournaments')" data-nav="admin-tournaments" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
+                <i class="fa-solid fa-gamepad text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Tourneys</span>
+            </button>
+            <button onclick="navigateTo('admin-deposits')" data-nav="admin-deposits" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
+                <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Deposits</span>
+            </button>
+            <button onclick="navigateTo('admin-users')" data-nav="admin-users" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
+                <i class="fa-solid fa-users text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Users</span>
+            </button>
+            <button onclick="navigateTo('admin-settings')" data-nav="admin-settings" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
+                <i class="fa-solid fa-gear text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Settings</span>
+            </button>
+        </nav>
+
     </div>
-   `;
-   container.appendChild(card);
-  });
-  await loadPlayerCount();
- }catch(err){
-  console.error(err);
-  container.innerHTML = `<div class="empty">Unexpected error occurred.</div>`;
- }
-}
 
-async function loadPlayerCount(){
- try{
-  // Checks tournament_entries or tournament_participants safely depending on active table schema
-  let countResult = await supabaseClient.from("tournament_entries").select("*",{count:"exact",head:true});
-  if(countResult.error){
-   countResult = await supabaseClient.from("tournament_participants").select("*",{count:"exact",head:true});
-  }
-  if(!countResult.error){
-   document.getElementById("statApprovedSlots").textContent = countResult.count||0;
-  }
- }catch(e){
-  console.log(e);
- }
-}
+    <!-- MODAL ROOT -->
+    <div id="modal-root" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden"></div>
 
-async function loadPendingPayments(){
- try{
-  let res = await supabaseClient.from("deposit_requests").select("*",{count:"exact",head:true}).eq("status","pending");
-  if(res.error){
-   res = await supabaseClient.from("payments").select("*",{count:"exact",head:true}).eq("status","pending");
-  }
-  if(!res.error){
-   const total = res.count||0;
-   document.getElementById("statPendingApprovals").textContent = total;
-   document.getElementById("badgePayments").textContent = total;
-  }
- }catch(e){
-  console.log(e);
- }
-}
+    <!-- JAVASCRIPT ADMIN APPLICATION CORE -->
+    <script>
+        const SUPABASE_URL = 'https://eyrwqmirdigsckcwbmxn.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX';
 
-async function loadSupportChatsBadgeCount(){
- try{
-  const { count, error } = await supabaseClient.from("support_messages").select("*", {count:"exact", head:true}).eq("sender", "user");
-  if(!error && count > 0){
-   const badge = document.getElementById("badgeChats");
-   if(badge){
-    badge.textContent = count;
-    badge.style.display = "block";
-   }
-  }
- }catch(e){
-  console.log(e);
- }
-}
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: true, autoRefreshToken: true }
+        });
 
-function openCreateMatchModal(){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>Create New Tournament</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   <label class="admin-label">Tournament Title</label>
-   <input id="newTitle" class="admin-input" placeholder="Multani FF Solo">
-   <label class="admin-label">Mode</label>
-   <input id="newMode" class="admin-input" placeholder="Solo / Duo / Squad">
-   <label class="admin-label">Map</label>
-   <input id="newMap" class="admin-input" placeholder="Bermuda / Kalahari">
-   <label class="admin-label">Entry Fee</label>
-   <input id="newFee" type="number" class="admin-input" placeholder="Rs.">
-   <label class="admin-label">Prize Pool</label>
-   <input id="newPrize" type="number" class="admin-input" placeholder="Rs.">
-   <label class="admin-label">Match Date & Time</label>
-   <input id="newDate" type="datetime-local" class="admin-input">
-   <button class="add-match-btn" style="width:100%;padding:11px" onclick="submitCreateMatch()">Publish Match</button>
-  </div>
- </div>
- `;
-}
+        let state = {
+            currentUser: null,
+            isAdmin: false,
+            currentView: 'admin-dashboard',
+            currentParams: {},
+            navigationHistory: [],
+            tournamentsCache: [],
+            depositsCache: [],
+            usersCache: [],
+            winnersCache: [],
+            settingsCache: {}
+        };
 
-async function submitCreateMatch(){
- const title = document.getElementById("newTitle").value.trim();
- const mode = document.getElementById("newMode").value.trim()||"Solo";
- const map = document.getElementById("newMap").value.trim()||"Bermuda";
- const entry_fee = Number(document.getElementById("newFee").value)||0;
- const prize_pool = Number(document.getElementById("newPrize").value)||0;
- const match_date = document.getElementById("newDate").value||null;
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
- if(!title){ alert("Tournament title lazmi enter karein."); return; }
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-800 border-slate-700 text-slate-200';
+            let icon = 'fa-info-circle text-accentBlue';
+            if (type === 'success') {
+                bgClass = 'bg-emerald-950/90 border-emerald-500/30 text-emerald-200';
+                icon = 'fa-circle-check text-neonGreen';
+            } else if (type === 'error') {
+                bgClass = 'bg-rose-950/90 border-rose-500/30 text-rose-200';
+                icon = 'fa-triangle-exclamation text-neonRed';
+            }
 
- const {error} = await supabaseClient.from("tournaments").insert([{
-  title, mode, map, entry_fee, prize_pool, match_date, room_id:"", room_password:""
- }]);
+            toast.className = `pointer-events-auto flex items-center space-x-3 px-4 py-3 rounded-xl border shadow-xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 ${bgClass}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-base flex-shrink-0"></i>
+                <span class="text-xs font-medium flex-1">${escapeHTML(message)}</span>
+            `;
 
- if(error){ alert("Error: "+error.message); return; }
- alert("✅ Tournament successfully created.");
- closeAdminModal();
- loadAdminStatsAndTournaments();
-}
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
 
-function openEditMatchModal(t){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>Edit Tournament</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   <label class="admin-label">Title</label>
-   <input id="editTitle" class="admin-input" value="${escapeAttr(t.title||"")}">
-   <label class="admin-label">Mode</label>
-   <input id="editMode" class="admin-input" value="${escapeAttr(t.mode||"")}">
-   <label class="admin-label">Map</label>
-   <input id="editMap" class="admin-input" value="${escapeAttr(t.map||"")}">
-   <label class="admin-label">Entry Fee</label>
-   <input id="editFee" type="number" class="admin-input" value="${Number(t.entry_fee||0)}">
-   <label class="admin-label">Prize Pool</label>
-   <input id="editPrize" type="number" class="admin-input" value="${Number(t.prize_pool||0)}">
-   <label class="admin-label">Room ID</label>
-   <input id="editRoomId" class="admin-input" value="${escapeAttr(t.room_id||"")}" placeholder="Room ID">
-   <label class="admin-label">Room Password</label>
-   <input id="editRoomPass" class="admin-input" value="${escapeAttr(t.room_password||"")}" placeholder="Room Password">
-   <button class="btn-edit" style="width:100%;padding:11px" onclick="submitEditMatch('${t.id}')">Save Changes</button>
-  </div>
- </div>
- `;
-}
+        function setGlobalLoading(isLoading, text = 'PROCESSING...') {
+            const loader = document.getElementById('global-loader');
+            const loaderText = document.getElementById('loader-text');
+            if (isLoading) {
+                loaderText.textContent = text;
+                loader.classList.remove('hidden');
+            } else {
+                loader.classList.add('hidden');
+            }
+        }
 
-async function submitEditMatch(id){
- const title = document.getElementById("editTitle").value.trim();
- const mode = document.getElementById("editMode").value.trim();
- const map = document.getElementById("editMap").value.trim();
- const entry_fee = Number(document.getElementById("editFee").value)||0;
- const prize_pool = Number(document.getElementById("editPrize").value)||0;
- const room_id = document.getElementById("editRoomId").value.trim();
- const room_password = document.getElementById("editRoomPass").value.trim();
+        function formatCurrency(amount) {
+            return `Rs. ${Number(amount || 0).toLocaleString()}`;
+        }
 
- const {error} = await supabaseClient.from("tournaments").update({
-  title, mode, map, entry_fee, prize_pool, room_id, room_password
- }).eq("id",id);
+        function formatDate(dateStr) {
+            if (!dateStr) return 'TBD';
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
 
- if(error){ alert("Error: "+error.message); return; }
- alert("✅ Tournament updated.");
- closeAdminModal();
- loadAdminStatsAndTournaments();
-}
+        function navigateTo(viewName, params = {}, pushHistory = true) {
+            if (pushHistory && state.currentView) {
+                state.navigationHistory.push({ view: state.currentView, params: state.currentParams || {} });
+            }
+            state.currentView = viewName;
+            state.currentParams = params;
+            renderCurrentView();
+            updateBottomNavActiveState();
+            updateBackButtonVisibility();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-async function deleteTournament(id){
- if(!confirm("Kya aap waqai is tournament ko delete karna chahte hain?")) return;
- const {error} = await supabaseClient.from("tournaments").delete().eq("id",id);
- if(error){ alert("Delete error: "+error.message); return; }
- alert("🗑️ Tournament deleted.");
- loadAdminStatsAndTournaments();
-}
+        function goBack() {
+            if (state.navigationHistory.length > 0) {
+                const prev = state.navigationHistory.pop();
+                state.currentView = prev.view;
+                state.currentParams = prev.params;
+                renderCurrentView();
+                updateBottomNavActiveState();
+                updateBackButtonVisibility();
+            } else {
+                navigateTo('admin-dashboard', {}, false);
+            }
+        }
 
-async function openPaymentApprovals(){
-  showModal(`
-    <div id="pendingPaymentsList" style="max-height:60vh; overflow-y:auto;">
-      <div style="text-align:center; padding:20px; color:#8aa0ae;">Loading payments...</div>
-    </div>
-  `, "Payment Approvals");
+        function updateBackButtonVisibility() {
+            const backContainer = document.getElementById('back-btn-container');
+            if (['admin-dashboard', 'admin-tournaments', 'admin-deposits', 'admin-users', 'admin-settings'].includes(state.currentView)) {
+                backContainer.classList.add('hidden');
+            } else {
+                backContainer.classList.remove('hidden');
+            }
+        }
 
-  await loadPendingPaymentsModalList();
-}
+        function updateBottomNavActiveState() {
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                const nav = btn.getAttribute('data-nav');
+                if (nav === state.currentView) {
+                    btn.classList.add('text-neonRed');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.remove('text-neonRed');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+        }
 
-async function loadPendingPaymentsModalList(){
-  let query = sb.from("deposit_requests").select(`id, user_id, amount, status, screenshot_url, transaction_id, payment_method, created_at`).order("created_at", { ascending: false });
-  let { data, error } = await query;
-  
-  if(error || !data){
-    let queryAlt = sb.from("payments").select(`id, user_id, amount, status, screenshot_url, transaction_id, payment_method, created_at`).order("created_at", { ascending: false });
-    let resAlt = await queryAlt;
-    data = resAlt.data;
-    error = resAlt.error;
-  }
+        document.addEventListener('DOMContentLoaded', async () => {
+            setGlobalLoading(true, 'VERIFYING ADMIN ACCESS...');
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session?.user) {
+                    showToast('Please login first.', 'error');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                state.currentUser = session.user;
 
-  const box = document.getElementById("pendingPaymentsList");
-  if(!box) return;
+                // Verify admin status
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+                const { data: adminData } = await supabaseClient.from('admin_users').select('*').or(`id.eq.${session.user.id},user_id.eq.${session.user.id}`).maybeSingle();
 
-  if(error || !data || data.length === 0){
-    box.innerHTML = `<div style="text-align:center;padding:20px;color:#8aa0ae;">No payment requests found 🎉</div>`;
-    return;
-  }
+                if (!adminData && !profile?.is_admin) {
+                    showToast('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'index.html', 1500);
+                    return;
+                }
 
-  box.innerHTML = data.map(payment => `
-    <div style="background:#14222b; border:1px solid rgba(0,255,157,.25); padding:12px; border-radius:12px; margin-bottom:10px;">
-      <div style="color:#fff;font-weight:bold;">💰 Rs. ${Number(payment.amount||0).toFixed(2)} (${escapeHtml(payment.payment_method || 'Deposit')})</div>
-      <div style="font-size:11px;color:#8aa0ae;margin-top:4px;">Status: <b class="${payment.status==="approved"?"success":payment.status==="rejected"?"danger":""}">${escapeHtml(payment.status||"pending")}</b></div>
-      <div style="font-size:11px;color:#8aa0ae;margin-top:2px;">User ID: ${escapeHtml(payment.user_id)}</div>
-      ${payment.transaction_id ? `<div style="font-size:11px;color:#00f3ff;margin-top:2px;">TID: ${escapeHtml(payment.transaction_id)}</div>` : ''}
-      <div style="font-size:11px;color:#8aa0ae;">${payment.created_at ? new Date(payment.created_at).toLocaleString() : ""}</div>
-      ${
-        payment.screenshot_url
-        ? `<button onclick="window.open('${escapeAttr(payment.screenshot_url)}', '_blank')" style="margin-top:10px; width:100%; padding:9px; border:1px solid #00f3ff; background:transparent; color:#00f3ff; border-radius:8px; font-weight:bold; cursor:pointer;">📸 View Screenshot Receipt</button>`
-        : `<div style="margin-top:8px;color:#ffcc00;font-size:11px;">Screenshot not provided</div>`
-      }
-      ${
-        payment.status === "pending"
-        ? `
-          <button onclick="approvePayment('${payment.id}', '${payment.user_id}', ${payment.amount})" style="margin-top:8px; width:100%; padding:10px; border:0; background:#00d084; color:#091216; border-radius:8px; font-weight:bold; cursor:pointer;">✅ APPROVE PAYMENT</button>
-          <button onclick="rejectPayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:1px solid #ff4d6d; background:transparent; color:#ff4d6d; border-radius:8px; font-weight:bold; cursor:pointer;">❌ REJECT PAYMENT</button>
-        `
-        : ""
-      }
-    </div>
-  `).join("");
-}
+                state.isAdmin = true;
+                await fetchAdminData();
+                navigateTo('admin-dashboard', {}, false);
+            } catch (err) {
+                console.error('Admin init error:', err);
+                showToast('Authentication check failed.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        });
 
-async function approvePayment(id, userId, amount){
-  if(!confirm("Is payment ko approve karna hai?")) return;
-  
-  // Try RPC first, fallback to direct database update if RPC is missing
-  let { data, error } = await sb.rpc("approve_payment", { p_payment_id: id });
-  
-  if(error){
-    // Fallback direct handling
-    const { error: updateErr } = await sb.from("deposit_requests").update({ status: "approved" }).eq("id", id);
-    if(updateErr){
-      const { error: updateErr2 } = await sb.from("payments").update({ status: "approved" }).eq("id", id);
-      if(updateErr2){ alert("Error updating payment status: " + updateErr2.message); return; }
-    }
-    // Update user profile balance
-    const { data: profileData } = await sb.from("profiles").select("wallet_balance").eq("id", userId).maybeSingle();
-    const newBal = Number(profileData?.wallet_balance || 0) + Number(amount);
-    await sb.from("profiles").update({ wallet_balance: newBal }).eq("id", userId);
-  }
+        async function fetchAdminData() {
+            try {
+                const [tourns, deposits, users, winners, settings] = await Promise.all([
+                    supabaseClient.from('tournaments').select('*').order('match_date', { ascending: false }),
+                    supabaseClient.from('deposit_requests').select('*, profiles(username, free_fire_uid)').order('created_at', { ascending: false }),
+                    supabaseClient.from('profiles').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('winners').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('site_settings').select('*')
+                ]);
 
-  alert("✅ Payment approved successfully and wallet balance updated!");
-  await loadPendingPayments();
-  await loadAdminStatsAndTournaments();
-  await loadPendingPaymentsModalList();
-}
+                state.tournamentsCache = tourns.data || [];
+                state.depositsCache = deposits.data || [];
+                state.usersCache = users.data || [];
+                state.winnersCache = winners.data || [];
 
-async function rejectPayment(id){
-  if(!confirm("Is payment ko reject karna hai?")) return;
-  let { error } = await sb.rpc("reject_payment", { p_payment_id: id });
-  if(error){
-    const { error: err1 } = await sb.from("deposit_requests").update({ status: "rejected" }).eq("id", id);
-    if(err1){
-      await sb.from("payments").update({ status: "rejected" }).eq("id", id);
-    }
-  }
-  alert("❌ Payment rejected successfully.");
-  await loadPendingPayments();
-  await loadAdminStatsAndTournaments();
-  await loadPendingPaymentsModalList();
-}
+                if (settings.data) {
+                    settings.data.forEach(s => {
+                        if (s.key) state.settingsCache[s.key] = s.value;
+                    });
+                }
+            } catch (err) {
+                console.error('Fetch admin data error:', err);
+            }
+        }
 
-function openBanPlayerModal(){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>Ban Player</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   <input id="banUID" class="admin-input" placeholder="Free Fire UID">
-   <button class="btn-delete" style="width:100%;padding:11px" onclick="banPlayer()"><i class="fa-solid fa-ban"></i> Ban Player</button>
-   <div style="margin-top:15px"><button class="add-match-btn" style="width:100%" onclick="showBannedPlayers()">View Banned Players</button></div>
-  </div>
- </div>
- `;
-}
+        function renderCurrentView() {
+            const container = document.getElementById('main-content');
+            const bottomNav = document.getElementById('bottom-nav');
 
-async function banPlayer(){
- const uid = document.getElementById("banUID").value.trim();
- if(!uid){ alert("Free Fire UID enter karein."); return; }
- const {error} = await supabaseClient.from("banned_uids").insert([{ free_fire_uid:uid }]);
- if(error){ alert("Ban error: "+error.message); return; }
- alert("🚫 Player banned successfully.");
- closeAdminModal();
-}
+            switch (state.currentView) {
+                case 'admin-dashboard':
+                    container.innerHTML = renderAdminDashboard();
+                    break;
+                case 'admin-tournaments':
+                    container.innerHTML = renderAdminTournaments();
+                    break;
+                case 'admin-create-tournament':
+                    container.innerHTML = renderAdminTournamentForm();
+                    break;
+                case 'admin-edit-tournament':
+                    container.innerHTML = renderAdminTournamentForm(state.currentParams?.id);
+                    break;
+                case 'admin-deposits':
+                    container.innerHTML = renderAdminDeposits();
+                    break;
+                case 'admin-users':
+                    container.innerHTML = renderAdminUsers();
+                    break;
+                case 'admin-settings':
+                    container.innerHTML = renderAdminSettings();
+                    break;
+                default:
+                    container.innerHTML = renderAdminDashboard();
+            }
+        }
 
-async function showBannedPlayers(){
- const {data, error} = await supabaseClient.from("banned_uids").select("*").order("id",{ascending:false});
- if(error){
-  showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Banned Players");
-  return;
- }
- let html="";
- if(!data || data.length===0){
-  html=`<div class="empty">No banned players.</div>`;
- } else {
-  data.forEach(p=>{
-   html+=`
-    <div class="list-item">
-     <div class="list-title">UID: ${escapeHtml(p.free_fire_uid)}</div>
-     <button class="btn-edit" style="margin-top:8px" onclick="unbanPlayer('${p.id}')">Unban</button>
-    </div>
-   `;
-  });
- }
- showModal(html, "Banned Players");
-}
+        // ==================== VIEWS ====================
 
-async function unbanPlayer(id){
- if(!confirm("Player ko unban karna hai?")) return;
- const {error} = await supabaseClient.from("banned_uids").delete().eq("id",id);
- if(error){ alert("Error: "+error.message); return; }
- showBannedPlayers();
-}
+        function renderAdminDashboard() {
+            const totalTourneys = state.tournamentsCache.length;
+            const activeTourneys = state.tournamentsCache.filter(t => t.status === 'live' || t.status === 'upcoming').length;
+            const pendingDeposits = state.depositsCache.filter(d => d.status === 'pending').length;
+            const totalUsers = state.usersCache.length;
 
-async function openPlayerListModal(){
- let {data, error} = await supabaseClient.from("tournament_entries").select("*").order("created_at",{ascending:false});
- if(error || !data){
-  let res2 = await supabaseClient.from("tournament_participants").select("*");
-  data = res2.data;
-  error = res2.error;
- }
- 
- if(error){
-  showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Registered Players");
-  return;
- }
- let html="";
- if(!data || data.length===0){
-  html=`<div class="empty">No participants registered yet.</div>`;
- } else {
-  data.forEach((p,index)=>{
-   html+=`
-    <div class="list-item">
-     <div class="list-title">Participant #${index+1}</div>
-     <div class="list-info">
-      ${p.free_fire_uid ? "UID: "+escapeHtml(p.free_fire_uid)+"<br>" : ""}
-      ${p.user_id ? "User ID: "+escapeHtml(p.user_id)+"<br>" : ""}
-      ${p.tournament_id ? "Tournament ID: "+escapeHtml(p.tournament_id) : ""}
-     </div>
-    </div>
-   `;
-  });
- }
- showModal(html, "Registered Players");
-}
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="glass-card rounded-2xl p-4 border-neonRed/20 bg-gradient-to-br from-cardBg via-cardBg to-rose-950/30">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Command Center</span>
+                        <h2 class="heading-font font-bold text-xl text-white">Multani FF Admin</h2>
+                        <p class="text-xs text-slate-300 mt-1">Manage matches, verify deposits, and control platform settings effortlessly.</p>
+                    </div>
 
-function openWinnerModal(){ announceWinner(); }
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Total Tournaments</span>
+                            <span class="heading-font font-bold text-2xl text-neonYellow">${totalTourneys}</span>
+                            <span class="text-[10px] text-emerald-400 mt-1 block">${activeTourneys} Active/Upcoming</span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Pending Deposits</span>
+                            <span class="heading-font font-bold text-2xl text-neonRed">${pendingDeposits}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 block">Requires action</span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Total Users</span>
+                            <span class="heading-font font-bold text-2xl text-white">${totalUsers}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 block">Registered players</span>
+                        </div>
+                        <div class="glass-card rounded-2xl p-4 border border-cardBorder">
+                            <span class="text-[10px] text-slate-400 font-medium block">Platform Status</span>
+                            <span class="heading-font font-bold text-lg text-neonGreen">ONLINE</span>
+                            <span class="text-[10px] text-slate-400 mt-1 block">Supabase Connected</span>
+                        </div>
+                    </div>
 
-async function announceWinner(){
-  const tournamentId = prompt("Tournament ID:");
-  if(!tournamentId) return;
+                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <h3 class="heading-font font-bold text-base text-white">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="navigateTo('admin-create-tournament')" class="py-2.5 px-3 rounded-xl bg-neonRed text-white text-xs font-semibold flex items-center justify-center space-x-2 shadow-lg neon-glow-red hover:bg-rose-600 transition">
+                                <i class="fa-solid fa-plus-circle"></i>
+                                <span>Create Match</span>
+                            </button>
+                            <button onclick="navigateTo('admin-deposits')" class="py-2.5 px-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center space-x-2 hover:bg-slate-700 transition">
+                                <i class="fa-solid fa-wallet"></i>
+                                <span>Verify Deposits</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-  const ign = prompt("Winner IGN:");
-  if(!ign) return;
+        function renderAdminTournaments() {
+            const tourns = state.tournamentsCache;
 
-  const uid = prompt("Free Fire UID:");
-  if(!uid) return;
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="heading-font font-bold text-xl text-white">Manage Tournaments</h2>
+                        <button onclick="navigateTo('admin-create-tournament')" class="px-3 py-2 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition flex items-center space-x-1">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Create New</span>
+                        </button>
+                    </div>
 
-  const prize = prompt("Prize Amount:");
-  if(prize === null) return;
+                    ${tourns.length === 0 ? `
+                        <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
+                            <i class="fa-solid fa-gamepad text-3xl mb-2 text-slate-600"></i>
+                            <p class="text-xs">No tournaments created yet.</p>
+                        </div>
+                    ` : `
+                        <div class="flex flex-col space-y-3">
+                            ${tourns.map(t => `
+                                <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-neonYellow">${escapeHTML(t.game || 'Free Fire')} • ${escapeHTML(t.mode || 'Squad')}</span>
+                                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-bold uppercase">${escapeHTML(t.status)}</span>
+                                    </div>
 
-  const amount = Number(prize);
-  if(isNaN(amount) || amount < 0){
-    alert("Prize amount sahi enter karo.");
-    return;
-  }
+                                    <h4 class="heading-font font-bold text-base text-white">${escapeHTML(t.title)}</h4>
 
-  let { data, error } = await sb.rpc("announce_winner", {
-    p_tournament_id: tournamentId,
-    p_ign: ign,
-    p_free_fire_uid: uid,
-    p_prize_amount: amount
-  });
+                                    <div class="grid grid-cols-2 gap-2 py-2 border-y border-slate-800 text-xs">
+                                        <div>
+                                            <span class="text-slate-400">Prize Pool:</span> <strong class="text-neonGreen">${formatCurrency(t.prize_pool)}</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-slate-400">Entry Fee:</span> <strong class="text-white">${t.entry_fee > 0 ? formatCurrency(t.entry_fee) : 'FREE'}</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-slate-400">Date:</span> <span class="text-slate-200">${formatDate(t.match_date)}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-slate-400">Room ID:</span> <span class="font-mono text-white">${escapeHTML(t.room_id || 'Not Set')}</span>
+                                        </div>
+                                    </div>
 
-  if(error){
-    // Fallback manual winner insertion
-    const { error: insErr } = await sb.from("winners").insert([{
-      tournament_id: tournamentId,
-      ign: ign,
-      free_fire_uid: uid,
-      prize_amount: amount
-    }]);
-    if(insErr){
-      alert("Winner error: " + insErr.message);
-      return;
-    }
-  }
+                                    <div class="flex space-x-2 pt-1">
+                                        <button onclick="navigateTo('admin-edit-tournament', { id: '${t.id}' })" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition text-center flex items-center justify-center space-x-1">
+                                            <i class="fa-solid fa-pen-to-square text-accentBlue"></i>
+                                            <span>Edit</span>
+                                        </button>
+                                        <button onclick="deleteTournament('${t.id}')" class="px-4 py-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-900/40 text-xs font-semibold transition flex items-center justify-center space-x-1">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                            <span>Delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
 
-  alert("🏆 Winner announced successfully!");
-}
+        function renderAdminTournamentForm(tournamentId = null) {
+            const isEdit = Boolean(tournamentId);
+            const t = isEdit ? state.tournamentsCache.find(item => item.id === tournamentId) || {} : {};
 
-function openGiveaways(){
- showModal(`
-  <div style="space-y:10px;">
-   <label class="admin-label">Giveaway Title</label>
-   <input id="giveawayTitle" class="admin-input" placeholder="Free Fire Diamond Giveaway">
-   <label class="admin-label">Description</label>
-   <textarea id="giveawayDesc" class="admin-input" placeholder="Giveaway details..."></textarea>
-   <button class="add-match-btn" style="width:100%;padding:10px;" onclick="createGiveaway()">Publish Giveaway</button>
-  </div>
- `, "Giveaways Manager");
-}
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <h2 class="heading-font font-bold text-xl text-white">${isEdit ? 'Edit Tournament' : 'Create Tournament'}</h2>
 
-async function createGiveaway(){
- const title = document.getElementById("giveawayTitle").value.trim();
- const description = document.getElementById("giveawayDesc").value.trim();
- if(!title){ alert("Title enter karein"); return; }
- 
- const { error } = await sb.from("giveaways").insert([{ title, description, status: 'active' }]);
- if(error){ alert("Error: " + error.message); return; }
- alert("✅ Giveaway published successfully!");
- closeAdminModal();
-}
+                    <form onsubmit="handleTournamentSubmit(event, '${tournamentId || ''}')" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Tournament Title</label>
+                            <input type="text" id="t-title" value="${escapeHTML(t.title || '')}" required placeholder="e.g. Daily Squad Clash #1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                        </div>
 
-async function openHelpChats(){
- const { data, error } = await sb.from("support_messages").select("*, profiles(username)").order("created_at", { ascending: true });
- if(error){
-  showModal(`<div class="empty">Error loading chats: ${escapeHtml(error.message)}</div>`, "Help Chats");
-  return;
- }
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Game</label>
+                                <input type="text" id="t-game" value="${escapeHTML(t.game || 'Free Fire')}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Mode</label>
+                                <select id="t-mode" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                                    <option value="Squad" ${t.mode === 'Squad' ? 'selected' : ''}>Squad</option>
+                                    <option value="Duo" ${t.mode === 'Duo' ? 'selected' : ''}>Duo</option>
+                                    <option value="Solo" ${t.mode === 'Solo' ? 'selected' : ''}>Solo</option>
+                                </select>
+                            </div>
+                        </div>
 
- if(!data || data.length === 0){
-  showModal(`<div class="empty">No support messages found.</div>`, "Help Chats");
-  return;
- }
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Prize Pool (PKR)</label>
+                                <input type="number" id="t-prize" value="${t.prize_pool || 1000}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Entry Fee (PKR)</label>
+                                <input type="number" id="t-fee" value="${t.entry_fee || 50}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            </div>
+                        </div>
 
- // Group messages by user_id
- const chatsByUser = {};
- data.forEach(m => {
-  if(!chatsByUser[m.user_id]){
-   chatsByUser[m.user_id] = { username: m.profiles?.username || m.user_id, messages: [] };
-  }
-  chatsByUser[m.user_id].messages.push(m);
- });
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Max Players</label>
+                                <input type="number" id="t-max" value="${t.max_players || 48}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Status</label>
+                                <select id="t-status" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                                    <option value="upcoming" ${t.status === 'upcoming' ? 'selected' : ''}>Upcoming</option>
+                                    <option value="live" ${t.status === 'live' ? 'selected' : ''}>Live</option>
+                                    <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                </select>
+                            </div>
+                        </div>
 
- let html = `<div style="max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">`;
- Object.keys(chatsByUser).forEach(uid => {
-  const userChat = chatsByUser[uid];
-  html += `
-   <div style="background:#14222b; border:1px solid #1e3340; border-radius:10px; padding:10px;">
-    <div style="font-weight:bold; color:var(--green); font-size:12px; margin-bottom:6px;">👤 ${escapeHtml(userChat.username)}</div>
-    <div style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:8px; padding-right:5px;">
-  `;
-  userChat.messages.forEach(msg => {
-   const isAdmin = msg.sender === 'admin' || msg.is_admin;
-   html += `
-    <div style="text-align:${isAdmin ? 'right' : 'left'};">
-     <span style="font-size:10px; background:${isAdmin ? '#27ae60' : '#1e293b'}; color:#fff; padding:4px 8px; border-radius:6px; display:inline-block; max-width:85%; word-break:break-word;">
-      ${escapeHtml(msg.message || msg.content || '')}
-     </span>
-    </div>
-   `;
-  });
-  html += `
-    </div>
-    <div style="display:flex; gap:5px;">
-     <input id="reply_${uid}" class="admin-input" placeholder="Type admin reply..." style="margin-bottom:0;">
-     <button class="add-match-btn" onclick="sendAdminReply('${uid}')">Send</button>
-    </div>
-   </div>
-  `;
- });
- html += `</div>`;
- showModal(html, "Help & Support Chats");
-}
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Match Date & Time</label>
+                            <input type="datetime-local" id="t-date" value="${t.match_date ? t.match_date.slice(0, 16) : ''}" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                        </div>
 
-async function sendAdminReply(userId){
- const input = document.getElementById(`reply_${userId}`);
- if(!input || !input.value.trim()) return;
- const msgText = input.value.trim();
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Room ID</label>
+                                <input type="text" id="t-room" value="${escapeHTML(t.room_id || '')}" placeholder="Room ID" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Room Password</label>
+                                <input type="text" id="t-pass" value="${escapeHTML(t.room_password || '')}" placeholder="Password" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">
+                            </div>
+                        </div>
 
- const { error } = await sb.from("support_messages").insert([{
-  user_id: userId,
-  message: msgText,
-  sender: 'admin',
-  is_admin: true
- }]);
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Description / Rules</label>
+                            <textarea id="t-desc" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">${escapeHTML(t.description || '')}</textarea>
+                        </div>
 
- if(error){ alert("Reply error: " + error.message); return; }
- input.value = '';
- openHelpChats();
-}
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition mt-2">${isEdit ? 'Update Tournament' : 'Publish Tournament'}</button>
+                    </form>
+                </div>
+            `;
+        }
 
-function showModal(content,title){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>${escapeHtml(title)}</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   ${content}
-  </div>
- </div>
- `;
-}
+        async function handleTournamentSubmit(e, tournamentId) {
+            e.preventDefault();
+            const title = document.getElementById('t-title').value.trim();
+            const game = document.getElementById('t-game').value.trim();
+            const mode = document.getElementById('t-mode').value;
+            const prizePool = parseFloat(document.getElementById('t-prize').value);
+            const entryFee = parseFloat(document.getElementById('t-fee').value);
+            const maxPlayers = parseInt(document.getElementById('t-max').value);
+            const status = document.getElementById('t-status').value;
+            const matchDate = document.getElementById('t-date').value;
+            const roomId = document.getElementById('t-room').value.trim();
+            const roomPassword = document.getElementById('t-pass').value.trim();
+            const description = document.getElementById('t-desc').value.trim();
 
-function closeAdminModal(){
- document.getElementById("adminModalContainer").innerHTML="";
-}
+            setGlobalLoading(true, 'SAVING TOURNAMENT...');
+            try {
+                const payload = {
+                    title, game, mode, prize_pool: prizePool, entry_fee: entryFee,
+                    max_players: maxPlayers, status, match_date: matchDate,
+                    room_id: roomId || null, room_password: roomPassword || null, description
+                };
 
-function escapeHtml(value){
- return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-}
+                let error;
+                if (tournamentId) {
+                    const res = await supabaseClient.from('tournaments').update(payload).eq('id', tournamentId);
+                    error = res.error;
+                } else {
+                    const res = await supabaseClient.from('tournaments').insert(payload);
+                    error = res.error;
+                }
 
-function escapeAttr(value){
- return escapeHtml(value);
-}
-</script>
+                if (error) throw error;
+
+                showToast('Tournament saved successfully!', 'success');
+                await fetchAdminData();
+                navigateTo('admin-tournaments');
+            } catch (err) {
+                console.error('Save tournament error:', err);
+                showToast(err.message || 'Failed to save tournament.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        async function deleteTournament(id) {
+            if (!confirm('Are you sure you want to delete this tournament?')) return;
+
+            setGlobalLoading(true, 'DELETING TOURNAMENT...');
+            try {
+                const { error } = await supabaseClient.from('tournaments').delete().eq('id', id);
+                if (error) throw error;
+
+                showToast('Tournament deleted successfully.', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                console.error('Delete tournament error:', err);
+                showToast(err.message || 'Failed to delete tournament.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        function renderAdminDeposits() {
+            const deposits = state.depositsCache;
+
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <h2 class="heading-font font-bold text-xl text-white">Deposit Requests</h2>
+
+                    ${deposits.length === 0 ? `
+                        <div class="glass-card rounded-2xl p-8 text-center text-slate-400">
+                            <i class="fa-solid fa-wallet text-3xl mb-2 text-slate-600"></i>
+                            <p class="text-xs">No deposit requests found.</p>
+                        </div>
+                    ` : `
+                        <div class="flex flex-col space-y-3">
+                            ${deposits.map(d => {
+                                const profile = d.profiles || {};
+                                let badgeColor = 'bg-amber-950/80 text-amber-400 border-amber-500/30';
+                                if (d.status === 'approved') badgeColor = 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30';
+                                if (d.status === 'rejected') badgeColor = 'bg-rose-950/80 text-rose-400 border-rose-500/30';
+
+                                return `
+                                    <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-bold text-white">${escapeHTML(profile.username || 'User')} (UID: ${escapeHTML(profile.free_fire_uid || 'N/A')})</span>
+                                            <span class="px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase ${badgeColor}">${escapeHTML(d.status)}</span>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-800">
+                                            <div>
+                                                <span class="text-slate-400">Amount:</span> <strong class="text-neonYellow">${formatCurrency(d.amount)}</strong>
+                                            </div>
+                                            <div>
+                                                <span class="text-slate-400">Method:</span> <strong class="text-white">${escapeHTML(d.payment_method)}</strong>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <span class="text-slate-400">TID:</span> <strong class="font-mono text-white">${escapeHTML(d.transaction_id || 'N/A')}</strong>
+                                            </div>
+                                        </div>
+
+                                        ${d.status === 'pending' ? `
+                                            <div class="flex space-x-2 pt-1">
+                                                <button onclick="approveDeposit('${d.id}', '${d.user_id}', ${d.amount})" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">Approve & Add Balance</button>
+                                                <button onclick="rejectDeposit('${d.id}')" class="px-4 py-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-900/40 text-xs font-bold transition">Reject</button>
+                                            </div>
+                                        ` : `
+                                            <div class="flex space-x-2 pt-1">
+                                                <button onclick="deleteDeposit('${d.id}')" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-semibold transition">Delete Record</button>
+                                            </div>
+                                        `}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        async function approveDeposit(depositId, userId, amount) {
+            setGlobalLoading(true, 'APPROVING DEPOSIT...');
+            try {
+                // Update deposit status
+                const { error: depError } = await supabaseClient.from('deposit_requests').update({ status: 'approved' }).eq('id', depositId);
+                if (depError) throw depError;
+
+                // Fetch current user wallet balance
+                const { data: userProfile, error: profError } = await supabaseClient.from('profiles').select('wallet_balance').eq('id', userId).single();
+                if (profError) throw profError;
+
+                const newBalance = Number(userProfile.wallet_balance || 0) + Number(amount);
+                const { error: updateError } = await supabaseClient.from('profiles').update({ wallet_balance: newBalance }).eq('id', userId);
+                if (updateError) throw updateError;
+
+                showToast('Deposit approved and balance added successfully!', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                console.error('Approve deposit error:', err);
+                showToast(err.message || 'Failed to approve deposit.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        async function rejectDeposit(depositId) {
+            setGlobalLoading(true, 'REJECTING DEPOSIT...');
+            try {
+                const { error } = await supabaseClient.from('deposit_requests').update({ status: 'rejected' }).eq('id', depositId);
+                if (error) throw error;
+
+                showToast('Deposit request rejected.', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                console.error('Reject deposit error:', err);
+                showToast(err.message || 'Failed to reject deposit.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        async function deleteDeposit(depositId) {
+            if (!confirm('Delete this deposit record?')) return;
+            setGlobalLoading(true, 'DELETING...');
+            try {
+                const { error } = await supabaseClient.from('deposit_requests').delete().eq('id', depositId);
+                if (error) throw error;
+                showToast('Deposit record deleted', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                showToast('Failed to delete deposit record', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        function renderAdminUsers() {
+            const users = state.usersCache;
+
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <h2 class="heading-font font-bold text-xl text-white">Manage Users</h2>
+
+                    <div class="flex flex-col space-y-3">
+                        ${users.map(u => `
+                            <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="heading-font font-bold text-base text-white">${escapeHTML(u.username || 'Player')}</h4>
+                                    <span class="text-xs font-bold text-neonYellow">${formatCurrency(u.wallet_balance)}</span>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-800">
+                                    <div>
+                                        <span class="text-slate-400">UID:</span> <strong class="font-mono text-white">${escapeHTML(u.free_fire_uid || 'N/A')}</strong>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400">IGN:</span> <strong class="text-white">${escapeHTML(u.free_fire_name || 'N/A')}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="flex space-x-2 pt-1">
+                                    <button onclick="toggleUserBan('${u.id}', ${Boolean(u.is_banned)})" class="flex-1 py-2 rounded-xl ${u.is_banned ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-400' : 'bg-rose-950/40 border border-rose-500/30 text-rose-400'} text-xs font-semibold transition">
+                                        ${u.is_banned ? 'Unban User' : 'Ban User'}
+                                    </button>
+                                    <button onclick="deleteUser('${u.id}')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-semibold transition">Delete</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function toggleUserBan(userId, currentStatus) {
+            setGlobalLoading(true, 'UPDATING USER STATUS...');
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ is_banned: !currentStatus }).eq('id', userId);
+                if (error) throw error;
+                showToast('User status updated successfully.', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                showToast('Failed to update user status.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user profile?')) return;
+            setGlobalLoading(true, 'DELETING USER...');
+            try {
+                const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+                if (error) throw error;
+                showToast('User deleted successfully.', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                showToast('Failed to delete user.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+
+        function renderAdminSettings() {
+            const announcement = state.settingsCache.announcement_text || '';
+
+            return `
+                <div class="p-4 flex flex-col space-y-4">
+                    <h2 class="heading-font font-bold text-xl text-white">Platform Settings</h2>
+
+                    <form onsubmit="handleSettingsSubmit(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Announcement Marquee Text</label>
+                            <textarea id="s-announcement" rows="3" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-neonRed">${escapeHTML(announcement)}</textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Save Settings</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        async function handleSettingsSubmit(e) {
+            e.preventDefault();
+            const announcementText = document.getElementById('s-announcement').value.trim();
+
+            setGlobalLoading(true, 'SAVING SETTINGS...');
+            try {
+                const { error } = await supabaseClient
+                    .from('site_settings')
+                    .upsert({ key: 'announcement_text', value: announcementText }, { onConflict: 'key' });
+
+                if (error) throw error;
+
+                showToast('Settings saved successfully!', 'success');
+                await fetchAdminData();
+            } catch (err) {
+                console.error('Settings save error:', err);
+                showToast('Failed to save settings.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
+        }
+    </script>
 </body>
 </html>
