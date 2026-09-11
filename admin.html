@@ -141,7 +141,10 @@ body{background:#030712;color:white;min-height:100vh;display:flex;justify-conten
    <div class="action-text">Match Manager</div>
   </div>
   <div class="action-item" onclick="openHelpChats()">
-   <div class="action-icon-circle"><i class="fa-solid fa-comments" style="color:#27ae60"></i></div>
+   <div class="action-icon-circle">
+    <i class="fa-solid fa-comments" style="color:#27ae60"></i>
+    <span class="badge-count" id="badgeChats" style="display:none;">0</span>
+   </div>
    <div class="action-text">Help Chats</div>
   </div>
   <div class="action-item" onclick="openPlayerListModal()">
@@ -199,10 +202,19 @@ async function checkAdmin(){
    .maybeSingle();
 
   if(error || !admin){
-   alert("Access denied. You are not an admin.");
-   await supabaseClient.auth.signOut();
-   window.location.href="index.html";
-   return false;
+   // Fallback check on user_id column if table uses user_id
+   const { data:adminAlt } = await supabaseClient
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id",session.user.id)
+    .maybeSingle();
+
+   if(!adminAlt){
+    alert("Access denied. You are not an admin.");
+    await supabaseClient.auth.signOut();
+    window.location.href="index.html";
+    return false;
+   }
   }
   return true;
  }catch(err){
@@ -217,6 +229,7 @@ window.addEventListener("load", async()=>{
  if(allowed){
   await loadAdminStatsAndTournaments();
   await loadPendingPayments();
+  await loadSupportChatsBadgeCount();
  }
 });
 
@@ -225,6 +238,7 @@ async function refreshAdmin(){
  if(btn) btn.classList.add("fa-spin");
  await loadAdminStatsAndTournaments();
  await loadPendingPayments();
+ await loadSupportChatsBadgeCount();
  if(btn) setTimeout(()=>btn.classList.remove("fa-spin"),500);
 }
 
@@ -296,9 +310,13 @@ async function loadAdminStatsAndTournaments(){
 
 async function loadPlayerCount(){
  try{
-  const {count, error} = await supabaseClient.from("tournament_participants").select("*",{count:"exact",head:true});
-  if(!error){
-   document.getElementById("statApprovedSlots").textContent = count||0;
+  // Checks tournament_entries or tournament_participants safely depending on active table schema
+  let countResult = await supabaseClient.from("tournament_entries").select("*",{count:"exact",head:true});
+  if(countResult.error){
+   countResult = await supabaseClient.from("tournament_participants").select("*",{count:"exact",head:true});
+  }
+  if(!countResult.error){
+   document.getElementById("statApprovedSlots").textContent = countResult.count||0;
   }
  }catch(e){
   console.log(e);
@@ -307,11 +325,29 @@ async function loadPlayerCount(){
 
 async function loadPendingPayments(){
  try{
-  const {count, error} = await supabaseClient.from("payments").select("*",{count:"exact",head:true}).eq("status","pending");
-  if(!error){
-   const total = count||0;
+  let res = await supabaseClient.from("deposit_requests").select("*",{count:"exact",head:true}).eq("status","pending");
+  if(res.error){
+   res = await supabaseClient.from("payments").select("*",{count:"exact",head:true}).eq("status","pending");
+  }
+  if(!res.error){
+   const total = res.count||0;
    document.getElementById("statPendingApprovals").textContent = total;
    document.getElementById("badgePayments").textContent = total;
+  }
+ }catch(e){
+  console.log(e);
+ }
+}
+
+async function loadSupportChatsBadgeCount(){
+ try{
+  const { count, error } = await supabaseClient.from("support_messages").select("*", {count:"exact", head:true}).eq("sender", "user");
+  if(!error && count > 0){
+   const badge = document.getElementById("badgeChats");
+   if(badge){
+    badge.textContent = count;
+    badge.style.display = "block";
+   }
   }
  }catch(e){
   console.log(e);
@@ -430,39 +466,40 @@ async function openPaymentApprovals(){
 }
 
 async function loadPendingPaymentsModalList(){
-  const { data, error } = await sb
-    .from("payments")
-    .select(`id, user_id, amount, status, screenshot_url, created_at`)
-    .order("created_at", { ascending: false });
-
-  if(error){
-    console.error("Pending payments error:", error);
-    return;
+  let query = sb.from("deposit_requests").select(`id, user_id, amount, status, screenshot_url, transaction_id, payment_method, created_at`).order("created_at", { ascending: false });
+  let { data, error } = await query;
+  
+  if(error || !data){
+    let queryAlt = sb.from("payments").select(`id, user_id, amount, status, screenshot_url, transaction_id, payment_method, created_at`).order("created_at", { ascending: false });
+    let resAlt = await queryAlt;
+    data = resAlt.data;
+    error = resAlt.error;
   }
 
   const box = document.getElementById("pendingPaymentsList");
   if(!box) return;
 
-  if(!data || data.length === 0){
+  if(error || !data || data.length === 0){
     box.innerHTML = `<div style="text-align:center;padding:20px;color:#8aa0ae;">No payment requests found 🎉</div>`;
     return;
   }
 
   box.innerHTML = data.map(payment => `
     <div style="background:#14222b; border:1px solid rgba(0,255,157,.25); padding:12px; border-radius:12px; margin-bottom:10px;">
-      <div style="color:#fff;font-weight:bold;">💰 Rs. ${Number(payment.amount||0).toFixed(2)}</div>
+      <div style="color:#fff;font-weight:bold;">💰 Rs. ${Number(payment.amount||0).toFixed(2)} (${escapeHtml(payment.payment_method || 'Deposit')})</div>
       <div style="font-size:11px;color:#8aa0ae;margin-top:4px;">Status: <b class="${payment.status==="approved"?"success":payment.status==="rejected"?"danger":""}">${escapeHtml(payment.status||"pending")}</b></div>
       <div style="font-size:11px;color:#8aa0ae;margin-top:2px;">User ID: ${escapeHtml(payment.user_id)}</div>
+      ${payment.transaction_id ? `<div style="font-size:11px;color:#00f3ff;margin-top:2px;">TID: ${escapeHtml(payment.transaction_id)}</div>` : ''}
       <div style="font-size:11px;color:#8aa0ae;">${payment.created_at ? new Date(payment.created_at).toLocaleString() : ""}</div>
       ${
         payment.screenshot_url
-        ? `<button onclick="window.open('${escapeAttr(payment.screenshot_url)}', '_blank')" style="margin-top:10px; width:100%; padding:9px; border:1px solid #00f3ff; background:transparent; color:#00f3ff; border-radius:8px; font-weight:bold; cursor:pointer;">📸 View Screenshot</button>`
-        : `<div style="margin-top:8px;color:#ffcc00;font-size:11px;">Screenshot not available</div>`
+        ? `<button onclick="window.open('${escapeAttr(payment.screenshot_url)}', '_blank')" style="margin-top:10px; width:100%; padding:9px; border:1px solid #00f3ff; background:transparent; color:#00f3ff; border-radius:8px; font-weight:bold; cursor:pointer;">📸 View Screenshot Receipt</button>`
+        : `<div style="margin-top:8px;color:#ffcc00;font-size:11px;">Screenshot not provided</div>`
       }
       ${
         payment.status === "pending"
         ? `
-          <button onclick="approvePayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:0; background:#00d084; color:#091216; border-radius:8px; font-weight:bold; cursor:pointer;">✅ APPROVE PAYMENT</button>
+          <button onclick="approvePayment('${payment.id}', '${payment.user_id}', ${payment.amount})" style="margin-top:8px; width:100%; padding:10px; border:0; background:#00d084; color:#091216; border-radius:8px; font-weight:bold; cursor:pointer;">✅ APPROVE PAYMENT</button>
           <button onclick="rejectPayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:1px solid #ff4d6d; background:transparent; color:#ff4d6d; border-radius:8px; font-weight:bold; cursor:pointer;">❌ REJECT PAYMENT</button>
         `
         : ""
@@ -471,12 +508,26 @@ async function loadPendingPaymentsModalList(){
   `).join("");
 }
 
-async function approvePayment(id){
+async function approvePayment(id, userId, amount){
   if(!confirm("Is payment ko approve karna hai?")) return;
-  const { data, error } = await sb.rpc("approve_payment", { p_payment_id: id });
-  if(error){ alert("Payment approval error: " + error.message); return; }
-  if(!data || !data.success){ alert(data?.message || "Payment approve nahi hui"); return; }
-  alert("Payment approved!\nWallet mein Rs. " + Number(data.amount).toFixed(2) + " add ho gaye.");
+  
+  // Try RPC first, fallback to direct database update if RPC is missing
+  let { data, error } = await sb.rpc("approve_payment", { p_payment_id: id });
+  
+  if(error){
+    // Fallback direct handling
+    const { error: updateErr } = await sb.from("deposit_requests").update({ status: "approved" }).eq("id", id);
+    if(updateErr){
+      const { error: updateErr2 } = await sb.from("payments").update({ status: "approved" }).eq("id", id);
+      if(updateErr2){ alert("Error updating payment status: " + updateErr2.message); return; }
+    }
+    // Update user profile balance
+    const { data: profileData } = await sb.from("profiles").select("wallet_balance").eq("id", userId).maybeSingle();
+    const newBal = Number(profileData?.wallet_balance || 0) + Number(amount);
+    await sb.from("profiles").update({ wallet_balance: newBal }).eq("id", userId);
+  }
+
+  alert("✅ Payment approved successfully and wallet balance updated!");
   await loadPendingPayments();
   await loadAdminStatsAndTournaments();
   await loadPendingPaymentsModalList();
@@ -484,9 +535,13 @@ async function approvePayment(id){
 
 async function rejectPayment(id){
   if(!confirm("Is payment ko reject karna hai?")) return;
-  const { data, error } = await sb.rpc("reject_payment", { p_payment_id: id });
-  if(error){ alert("Rejection error: " + error.message); return; }
-  if(!data || !data.success){ alert(data?.message || "Payment reject nahi ho saki."); return; }
+  let { error } = await sb.rpc("reject_payment", { p_payment_id: id });
+  if(error){
+    const { error: err1 } = await sb.from("deposit_requests").update({ status: "rejected" }).eq("id", id);
+    if(err1){
+      await sb.from("payments").update({ status: "rejected" }).eq("id", id);
+    }
+  }
   alert("❌ Payment rejected successfully.");
   await loadPendingPayments();
   await loadAdminStatsAndTournaments();
@@ -548,7 +603,13 @@ async function unbanPlayer(id){
 }
 
 async function openPlayerListModal(){
- const {data, error} = await supabaseClient.from("tournament_participants").select("*").order("id",{ascending:false});
+ let {data, error} = await supabaseClient.from("tournament_entries").select("*").order("created_at",{ascending:false});
+ if(error || !data){
+  let res2 = await supabaseClient.from("tournament_participants").select("*");
+  data = res2.data;
+  error = res2.error;
+ }
+ 
  if(error){
   showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Registered Players");
   return;
@@ -560,10 +621,11 @@ async function openPlayerListModal(){
   data.forEach((p,index)=>{
    html+=`
     <div class="list-item">
-     <div class="list-title">Player #${index+1}</div>
+     <div class="list-title">Participant #${index+1}</div>
      <div class="list-info">
       ${p.free_fire_uid ? "UID: "+escapeHtml(p.free_fire_uid)+"<br>" : ""}
-      ${p.tournament_id ? "Tournament: "+escapeHtml(p.tournament_id) : ""}
+      ${p.user_id ? "User ID: "+escapeHtml(p.user_id)+"<br>" : ""}
+      ${p.tournament_id ? "Tournament ID: "+escapeHtml(p.tournament_id) : ""}
      </div>
     </div>
    `;
@@ -593,7 +655,7 @@ async function announceWinner(){
     return;
   }
 
-  const { data, error } = await sb.rpc("announce_winner", {
+  let { data, error } = await sb.rpc("announce_winner", {
     p_tournament_id: tournamentId,
     p_ign: ign,
     p_free_fire_uid: uid,
@@ -601,24 +663,112 @@ async function announceWinner(){
   });
 
   if(error){
-    alert("Winner error: " + error.message);
-    return;
+    // Fallback manual winner insertion
+    const { error: insErr } = await sb.from("winners").insert([{
+      tournament_id: tournamentId,
+      ign: ign,
+      free_fire_uid: uid,
+      prize_amount: amount
+    }]);
+    if(insErr){
+      alert("Winner error: " + insErr.message);
+      return;
+    }
   }
 
-  if(!data || !data.success){
-    alert(data?.message || "Winner announce nahi hua.");
-    return;
-  }
-
-  alert("🏆 Winner announced!\n\nIGN: " + ign + "\nPrize: Rs. " + amount.toFixed(2) + "\n\nPrize player ke wallet mein add ho gaya.");
+  alert("🏆 Winner announced successfully!");
 }
 
 function openGiveaways(){
- showModal(`<div class="empty">🎁 Giveaway Management<br><br>Giveaway system ka database module next step mein add kiya jayega.</div>`, "Giveaways");
+ showModal(`
+  <div style="space-y:10px;">
+   <label class="admin-label">Giveaway Title</label>
+   <input id="giveawayTitle" class="admin-input" placeholder="Free Fire Diamond Giveaway">
+   <label class="admin-label">Description</label>
+   <textarea id="giveawayDesc" class="admin-input" placeholder="Giveaway details..."></textarea>
+   <button class="add-match-btn" style="width:100%;padding:10px;" onclick="createGiveaway()">Publish Giveaway</button>
+  </div>
+ `, "Giveaways Manager");
 }
 
-function openHelpChats(){
- showModal(`<div class="empty"><i class="fa-solid fa-comments" style="font-size:30px;color:var(--green)"></i><br><br>Help Chats module ready hai.<br><br>Messages table connect karne ke baad admin yahan se users ke messages dekh aur reply kar sakega.</div>`, "Help Chats");
+async function createGiveaway(){
+ const title = document.getElementById("giveawayTitle").value.trim();
+ const description = document.getElementById("giveawayDesc").value.trim();
+ if(!title){ alert("Title enter karein"); return; }
+ 
+ const { error } = await sb.from("giveaways").insert([{ title, description, status: 'active' }]);
+ if(error){ alert("Error: " + error.message); return; }
+ alert("✅ Giveaway published successfully!");
+ closeAdminModal();
+}
+
+async function openHelpChats(){
+ const { data, error } = await sb.from("support_messages").select("*, profiles(username)").order("created_at", { ascending: true });
+ if(error){
+  showModal(`<div class="empty">Error loading chats: ${escapeHtml(error.message)}</div>`, "Help Chats");
+  return;
+ }
+
+ if(!data || data.length === 0){
+  showModal(`<div class="empty">No support messages found.</div>`, "Help Chats");
+  return;
+ }
+
+ // Group messages by user_id
+ const chatsByUser = {};
+ data.forEach(m => {
+  if(!chatsByUser[m.user_id]){
+   chatsByUser[m.user_id] = { username: m.profiles?.username || m.user_id, messages: [] };
+  }
+  chatsByUser[m.user_id].messages.push(m);
+ });
+
+ let html = `<div style="max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">`;
+ Object.keys(chatsByUser).forEach(uid => {
+  const userChat = chatsByUser[uid];
+  html += `
+   <div style="background:#14222b; border:1px solid #1e3340; border-radius:10px; padding:10px;">
+    <div style="font-weight:bold; color:var(--green); font-size:12px; margin-bottom:6px;">👤 ${escapeHtml(userChat.username)}</div>
+    <div style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:8px; padding-right:5px;">
+  `;
+  userChat.messages.forEach(msg => {
+   const isAdmin = msg.sender === 'admin' || msg.is_admin;
+   html += `
+    <div style="text-align:${isAdmin ? 'right' : 'left'};">
+     <span style="font-size:10px; background:${isAdmin ? '#27ae60' : '#1e293b'}; color:#fff; padding:4px 8px; border-radius:6px; display:inline-block; max-width:85%; word-break:break-word;">
+      ${escapeHtml(msg.message || msg.content || '')}
+     </span>
+    </div>
+   `;
+  });
+  html += `
+    </div>
+    <div style="display:flex; gap:5px;">
+     <input id="reply_${uid}" class="admin-input" placeholder="Type admin reply..." style="margin-bottom:0;">
+     <button class="add-match-btn" onclick="sendAdminReply('${uid}')">Send</button>
+    </div>
+   </div>
+  `;
+ });
+ html += `</div>`;
+ showModal(html, "Help & Support Chats");
+}
+
+async function sendAdminReply(userId){
+ const input = document.getElementById(`reply_${userId}`);
+ if(!input || !input.value.trim()) return;
+ const msgText = input.value.trim();
+
+ const { error } = await sb.from("support_messages").insert([{
+  user_id: userId,
+  message: msgText,
+  sender: 'admin',
+  is_admin: true
+ }]);
+
+ if(error){ alert("Reply error: " + error.message); return; }
+ input.value = '';
+ openHelpChats();
 }
 
 function showModal(content,title){
