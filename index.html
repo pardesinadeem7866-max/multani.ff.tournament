@@ -546,11 +546,8 @@
                                 <div>
                                     <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold block">WELCOME BACK</span>
                                     <h2 class="heading-font font-bold text-lg text-white leading-tight">${displayName}</h2>
-                                    <div class="flex items-center space-x-2 mt-0.5">
-                                        <span class="text-[11px] text-neonYellow font-semibold">${nickName}</span>
-                                        <span class="text-[10px] text-slate-500">•</span>
-                                        <span class="text-[10px] text-slate-400 font-mono">UID: ${ffUid}</span>
-                                    </div>
+                                    <span class="text-[11px] text-neonYellow font-semibold block mt-0.5">${nickName}</span>
+                                    <span class="text-[10px] text-slate-400 font-mono block">UID: ${ffUid}</span>
                                 </div>
                             </div>
                             <button onclick="fetchInitialData(); showToast('Refreshed arena data', 'success');" class="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition">
@@ -755,8 +752,11 @@
                 <div class="p-4 flex flex-col space-y-4">
                     <h2 class="heading-font font-bold text-xl text-white">Add Funds / Deposit</h2>
                     <form onsubmit="handleDepositSubmit(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
-                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 leading-relaxed">
-                            Send funds via Easypaisa/JazzCash to: <strong class="text-white">0300-1234567</strong> (Multani FF Official). Enter your Transaction ID below.
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 leading-relaxed space-y-1">
+                            <strong class="text-neonYellow block"><i class="fa-solid fa-circle-info mr-1"></i> EasyPaisa Official Account</strong>
+                            <div><strong>Account Name:</strong> Muhammad Nadeem</div>
+                            <div><strong>Account Number:</strong> 03186815926</div>
+                            <div class="text-[10px] text-slate-400 pt-1">Send funds to above account and submit your Transaction ID and Screenshot below.</div>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Amount (PKR)</label>
@@ -765,15 +765,19 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Method</label>
                             <select id="deposit-method" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
-                                <option value="Easypaisa">Easypaisa</option>
-                                <option value="JazzCash">JazzCash</option>
+                                <option value="EasyPaisa">EasyPaisa</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Transaction ID / TID</label>
                             <input type="text" id="deposit-txn" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white">
                         </div>
-                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold">Submit Deposit Request</button>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Screenshot</label>
+                            <input type="file" id="deposit-screenshot-file" accept="image/*" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neonRed file:text-white hover:file:bg-rose-600 focus:outline-none">
+                            <input type="hidden" id="deposit-screenshot-url">
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-neonRed text-white text-xs font-bold mt-2">Submit Deposit Request</button>
                     </form>
                 </div>
             `;
@@ -785,14 +789,31 @@
             const amount = parseFloat(document.getElementById('deposit-amount').value);
             const method = document.getElementById('deposit-method').value;
             const txnId = document.getElementById('deposit-txn').value.trim();
+            const fileInput = document.getElementById('deposit-screenshot-file');
 
             setGlobalLoading(true, 'SUBMITTING DEPOSIT...');
             try {
+                let screenshotUrl = '';
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    screenshotUrl = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
                 const { error } = await supabaseClient.from('deposit_requests').insert({
-                    user_id: state.currentUser.id, amount, payment_method: method, transaction_id: txnId, status: 'pending'
+                    user_id: state.currentUser.id,
+                    amount,
+                    payment_method: method,
+                    transaction_id: txnId,
+                    screenshot_url: screenshotUrl,
+                    status: 'pending'
                 });
+
                 if (error) throw error;
-                showToast('Deposit request submitted!', 'success');
+                showToast('Deposit request submitted successfully!', 'success');
                 await fetchUserDataAuthenticated();
                 navigateTo('wallet');
             } catch (err) {
