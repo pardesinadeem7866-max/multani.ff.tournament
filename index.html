@@ -1,1092 +1,1310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multani FF Admin Panel</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
-body{background:#030712;color:white;min-height:100vh;display:flex;justify-content:center;padding-bottom:70px;}
-.phone-frame{width:100%;max-width:420px;min-height:100vh;background:#091216;position:relative;overflow-x:hidden;box-shadow:0 0 30px rgba(0,243,255,.15);}
-
-:root{
- --blue:#00f3ff;
- --green:#00d084;
- --pink:#ff007f;
- --red:#e74c3c;
- --orange:#ffa500;
- --card:#0d1b22;
- --border:#162935;
- --muted:#8aa0ae;
-}
-
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:15px 14px;background:#0d1b22;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:500;}
-.top-title{font-size:16px;font-weight:bold;color:var(--green);}
-.top-actions{display:flex;gap:7px;}
-.top-btn{border:1px solid #24404c;background:#14222b;color:white;width:34px;height:34px;border-radius:9px;cursor:pointer;}
-.top-btn:hover{border-color:var(--green);color:var(--green);}
-
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 5px;text-align:center;}
-.stat-num{font-size:19px;font-weight:bold;margin-bottom:3px;}
-.stat-label{font-size:8px;color:var(--muted);text-transform:uppercase;}
-
-.dashboard-actions-box{background:white;color:#030712;border-radius:20px;padding:18px 12px;margin:10px 12px 15px;box-shadow:0 4px 20px rgba(0,0,0,.3);}
-.actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px 8px;text-align:center;}
-.action-item{cursor:pointer;display:flex;flex-direction:column;align-items:center;position:relative;}
-.action-icon-circle{width:48px;height:48px;border-radius:50%;background:#f0f4f8;border:1px solid #d1d8e0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#2c3e50;margin-bottom:6px;}
-.action-item:active .action-icon-circle{transform:scale(.94);}
-.action-text{font-size:9px;font-weight:bold;color:#2c3e50;line-height:1.2;}
-.badge-count{position:absolute;top:-2px;right:4px;background:var(--red);color:white;font-size:9px;padding:2px 5px;border-radius:10px;font-weight:bold;}
-
-.banner-btn{background:var(--card);border:1px solid var(--green);border-radius:14px;padding:12px;margin:0 12px 15px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--green);font-weight:bold;font-size:11px;cursor:pointer;}
-
-.section-title-bar{display:flex;justify-content:space-between;align-items:center;margin:15px 12px 10px;}
-.section-heading{font-size:13px;font-weight:bold;color:var(--orange);display:flex;align-items:center;gap:6px;}
-.add-match-btn{background:var(--green);color:#030712;border:none;padding:7px 11px;border-radius:8px;font-weight:bold;font-size:10px;cursor:pointer;}
-
-.admin-t-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:0 12px 12px;}
-.admin-t-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-.admin-t-info{flex:1;}
-.admin-t-info h4{font-size:13px;color:white;}
-.admin-t-info p{font-size:9px;color:var(--muted);margin-top:5px;line-height:1.5;}
-.admin-btn-group{display:flex;gap:5px;}
-.btn-edit,.btn-delete{color:white;border:none;padding:6px 8px;border-radius:6px;font-size:9px;font-weight:bold;cursor:pointer;}
-.btn-edit{background:#27ae60;}
-.btn-delete{background:var(--red);}
-
-.room-details-box{background:#14222b;border:1px solid #1e3340;border-radius:8px;padding:9px;font-size:10px;color:var(--blue);margin-top:9px;line-height:1.6;}
-.room-subtext{font-size:9px;color:var(--muted);margin-top:3px;}
-
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px;}
-.modal-box{background:#0d1b22;border:1px solid rgba(0,243,255,.3);border-radius:18px;padding:18px;width:100%;max-width:390px;max-height:90vh;overflow-y:auto;}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-weight:bold;font-size:14px;color:var(--green);}
-.modal-close{background:none;border:none;color:white;font-size:18px;cursor:pointer;}
-
-.admin-input{width:100%;padding:10px;background:#14222b;border:1px solid #1e3340;border-radius:8px;color:white;font-size:11px;margin-bottom:10px;outline:none;}
-.admin-input:focus{border-color:var(--green);}
-.admin-label{display:block;font-size:9px;color:var(--muted);margin-bottom:4px;}
-
-.list-item{background:#14222b;border:1px solid #1e3340;padding:10px;border-radius:10px;margin-bottom:8px;}
-.list-title{font-size:11px;font-weight:bold;color:white;}
-.list-info{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5;}
-
-.empty{text-align:center;padding:20px;color:var(--muted);font-size:11px;}
-.loading{text-align:center;padding:20px;color:var(--blue);font-size:11px;}
-
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#0d1b22;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:800;}
-.nav-item{background:transparent;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;font-weight:bold;cursor:pointer;flex:1;}
-.nav-item.active{color:var(--green);}
-.nav-item i{font-size:16px;}
-
-.hidden{display:none!important;}
-.success{color:var(--green);}
-.danger{color:var(--red);}
-
-/* Neon Admin Login Screen Styles */
-#adminLoginScreen{position:absolute;inset:0;background:#091216;z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;}
-.login-card{background:var(--card);border:1px solid rgba(0,208,132,0.4);border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 0 25px rgba(0,208,132,0.15);}
-.login-header{text-align:center;margin-bottom:20px;}
-.login-shield{width:60px;height:60px;background:rgba(0,208,132,0.1);border:1px solid var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:var(--green);box-shadow:0 0 15px rgba(0,208,132,0.2);}
-.login-title{font-size:18px;font-weight:bold;color:white;margin-bottom:4px;}
-.login-subtitle{font-size:10px;color:var(--muted);}
-.login-btn{width:100%;padding:12px;background:var(--green);color:#030712;border:none;border-radius:10px;font-weight:bold;font-size:12px;cursor:pointer;margin-top:10px;transition:all 0.2s;}
-.login-btn:hover{background:#00b070;}
-.login-btn:disabled{opacity:0.7;cursor:not-allowed;}
-.login-error{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:var(--red);font-size:10px;padding:8px;border-radius:8px;margin-top:10px;text-align:center;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MULTANI FF OFFICIAL TOURNAMENT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gaming: {
+                            900: '#030712',
+                            800: '#0f172a',
+                            700: '#1e293b',
+                            600: '#334155',
+                            neonGreen: '#10b981',
+                            neonCyan: '#06b6d4',
+                            neonPink: '#ec4899',
+                            neonOrange: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar & mobile frame polish */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .neon-glow-cyan { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
+        .neon-glow-pink { box-shadow: 0 0 15px rgba(236, 72, 153, 0.3); }
+        .neon-border { border: 1px solid rgba(6, 182, 212, 0.4); }
+    </style>
 </head>
-
-<body>
-
-<div class="phone-frame">
-
-<!-- ADMIN LOGIN SCREEN -->
-<div id="adminLoginScreen" class="hidden">
- <div class="login-card">
-  <div class="login-header">
-   <div class="login-shield"><i class="fa-solid fa-shield-halved"></i></div>
-   <div class="login-title">Multani FF Admin Login</div>
-   <div class="login-subtitle">Secure Administration Portal</div>
-  </div>
-  <form onsubmit="event.preventDefault(); adminLogin();">
-   <label class="admin-label">Admin Email</label>
-   <input type="email" id="adminLoginEmail" class="admin-input" placeholder="admin@multaniff.com" required>
-   <label class="admin-label">Password</label>
-   <input type="password" id="adminLoginPassword" class="admin-input" placeholder="••••••••" required>
-   <button type="submit" id="adminLoginSubmitBtn" class="login-btn">Login to Dashboard</button>
-   <div id="adminLoginError" class="login-error hidden"></div>
-  </form>
- </div>
-</div>
-
-<!-- ADMIN DASHBOARD WRAPPER -->
-<div id="adminDashboardWrapper" class="hidden">
-<div class="topbar">
- <div class="top-title"><i class="fa-solid fa-shield-halved"></i> Multani FF Admin Panel</div>
- <div class="top-actions">
-  <button class="top-btn" onclick="refreshAdmin()" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
-  <button class="top-btn" onclick="logoutAdmin()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
- </div>
-</div>
-
-<div class="stats-grid">
- <div class="stat-card">
-  <div class="stat-num" id="statLiveMatches">0</div>
-  <div class="stat-label"><i class="fa-solid fa-gamepad" style="color:var(--blue)"></i> Matches</div>
- </div>
- <div class="stat-card">
-  <div class="stat-num" id="statApprovedSlots">0</div>
-  <div class="stat-label"><i class="fa-solid fa-users" style="color:var(--green)"></i> Players</div>
- </div>
- <div class="stat-card">
-  <div class="stat-num" id="statPendingApprovals">0</div>
-  <div class="stat-label"><i class="fa-solid fa-clock" style="color:var(--orange)"></i> Pending</div>
- </div>
-</div>
-
-<div class="dashboard-actions-box">
- <div class="actions-grid">
-  <div class="action-item" onclick="openCreateMatchModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-plus"></i></div>
-   <div class="action-text">Create Match</div>
-  </div>
-  <div class="action-item" onclick="openGiveaways()">
-   <div class="action-icon-circle"><i class="fa-solid fa-gift" style="color:#e74c3c"></i></div>
-   <div class="action-text">Giveaways</div>
-  </div>
-  <div class="action-item" onclick="openPaymentApprovals()">
-   <div class="action-icon-circle">
-    <i class="fa-solid fa-file-invoice-dollar"></i>
-    <span class="badge-count" id="badgePayments">0</span>
-   </div>
-   <div class="action-text">Payments</div>
-  </div>
-  <div class="action-item" onclick="openBanPlayerModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-user-slash" style="color:#e74c3c"></i></div>
-   <div class="action-text">Ban Player</div>
-  </div>
-  <div class="action-item" onclick="switchAdminTab('matches')">
-   <div class="action-icon-circle"><i class="fa-solid fa-list-check"></i></div>
-   <div class="action-text">Match Manager</div>
-  </div>
-  <div class="action-item" onclick="openHelpChats()">
-   <div class="action-icon-circle"><i class="fa-solid fa-comments" style="color:#27ae60"></i></div>
-   <div class="action-text">Help Chats</div>
-  </div>
-  <div class="action-item" onclick="openPlayerListModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-address-book" style="color:#3498db"></i></div>
-   <div class="action-text">Players</div>
-  </div>
-  <div class="action-item" onclick="openWinnerModal()">
-   <div class="action-icon-circle"><i class="fa-solid fa-trophy" style="color:#f1c40f"></i></div>
-   <div class="action-text">Winner</div>
-  </div>
- </div>
-</div>
-
-<div class="banner-btn" onclick="openPaymentApprovals()">
- <i class="fa-solid fa-file-invoice-dollar"></i> Payment Approvals & Match Requests
-</div>
-
-<div id="adminMatchManagerSection">
- <div class="section-title-bar">
-  <div class="section-heading"><i class="fa-solid fa-gamepad"></i> Active Tournaments</div>
-  <button class="add-match-btn" onclick="openCreateMatchModal()">+ Add Match</button>
- </div>
- <div id="adminTournamentsList"><div class="loading">Loading tournaments...</div></div>
-</div>
-
-<div id="adminModalContainer"></div>
-
-<nav class="bottom-nav">
- <button class="nav-item active" onclick="switchAdminTab('home',event)"><i class="fa-solid fa-house"></i><span>Home</span></button>
- <button class="nav-item" onclick="switchAdminTab('matches',event)"><i class="fa-solid fa-gamepad"></i><span>Matches</span></button>
- <button class="nav-item" onclick="switchAdminTab('banned',event)"><i class="fa-solid fa-ban"></i><span>Banned</span></button>
- <button class="nav-item" onclick="switchAdminTab('chats',event)"><i class="fa-solid fa-comments"></i><span>Chats</span></button>
-</nav>
-</div>
-
-</div>
-
-<script>
-const SUPABASE_URL = "https://eyrwqmirdigsckcwbmxn.supabase.co";
-const SUPABASE_KEY = "sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX";
-
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
-});
-
-const sb = supabaseClient;
-
-let adminInitializing = false;
-let adminReady = false;
-let authListenerReady = false;
-
-// ===============================
-// ADMIN SESSION CHECK
-// ===============================
-async function verifyAdminSession(session) {
-  if (!session || !session.user) return false;
-
-  try {
-    const { data: admin, error } = await supabaseClient
-      .from("admin_users")
-      .select("id")
-      .eq("id", session.user.id)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Admin verification error:", error);
-      return false;
-    }
-
-    return !!admin;
-  } catch (err) {
-    console.error("Admin verification exception:", err);
-    return false;
-  }
-}
-
-// ===============================
-// SHOW LOGIN
-// ===============================
-function showLoginScreen() {
-  const loginScreen = document.getElementById("adminLoginScreen");
-  const dashboardWrapper = document.getElementById("adminDashboardWrapper");
-
-  if (loginScreen) {
-    loginScreen.classList.remove("hidden");
-  }
-
-  if (dashboardWrapper) {
-    dashboardWrapper.classList.add("hidden");
-  }
-
-  const submitBtn = document.getElementById("adminLoginSubmitBtn");
-
-  if (submitBtn) {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Login to Dashboard";
-  }
-
-  adminReady = false;
-}
-
-// ===============================
-// SHOW DASHBOARD
-// ===============================
-function showDashboard() {
-  const loginScreen = document.getElementById("adminLoginScreen");
-  const dashboardWrapper = document.getElementById("adminDashboardWrapper");
-
-  if (loginScreen) {
-    loginScreen.classList.add("hidden");
-  }
-
-  if (dashboardWrapper) {
-    dashboardWrapper.classList.remove("hidden");
-  }
-
-  adminReady = true;
-}
-
-// ===============================
-// LOGIN ERROR
-// ===============================
-function showLoginError(msg) {
-  const errorBox = document.getElementById("adminLoginError");
-
-  if (errorBox) {
-    errorBox.textContent = msg;
-    errorBox.classList.remove("hidden");
-  }
-}
-
-// ===============================
-// ADMIN INITIALIZATION
-// ===============================
-async function initializeAdminPanel() {
-
-  if (adminInitializing) return;
-
-  adminInitializing = true;
-
-  try {
-
-    const {
-      data: { session },
-      error
-    } = await supabaseClient.auth.getSession();
-
-    if (error) {
-      throw error;
-    }
-
-    // No session = stay on admin login page
-    if (!session) {
-      showLoginScreen();
-      return;
-    }
-
-    // Verify admin
-    const isAdmin = await verifyAdminSession(session);
-
-    if (!isAdmin) {
-
-      await supabaseClient.auth.signOut();
-
-      showLoginScreen();
-
-      showLoginError(
-        "Access denied. You are not an admin."
-      );
-
-      return;
-    }
-
-    // Admin verified
-    showDashboard();
-
-    await loadAdminStatsAndTournaments();
-    await loadPendingPayments();
-
-  } catch (err) {
-
-    console.error(
-      "Admin initialization error:",
-      err
-    );
-
-    showLoginScreen();
-
-    showLoginError(
-      "Admin panel load error. Please login again."
-    );
-
-  } finally {
-
-    adminInitializing = false;
-
-  }
-}
-
-// ===============================
-// COMPATIBILITY CHECK
-// ===============================
-async function checkAdmin() {
-
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-    return false;
-  }
-
-  return await verifyAdminSession(session);
-}
-
-// ===============================
-// ADMIN LOGIN
-// ===============================
-async function adminLogin() {
-
-  const email =
-    document
-      .getElementById("adminLoginEmail")
-      .value
-      .trim();
-
-  const password =
-    document
-      .getElementById("adminLoginPassword")
-      .value;
-
-  const submitBtn =
-    document.getElementById(
-      "adminLoginSubmitBtn"
-    );
-
-  const errorBox =
-    document.getElementById(
-      "adminLoginError"
-    );
-
-  if (!email || !password) {
-
-    showLoginError(
-      "Email aur password enter karein."
-    );
-
-    return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Logging in...";
-
-  errorBox.classList.add("hidden");
-
-  try {
-
-    const {
-      data,
-      error
-    } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    if (!data || !data.session) {
-      throw new Error(
-        "Login session create nahi hui."
-      );
-    }
-
-    const isAdmin =
-      await verifyAdminSession(
-        data.session
-      );
-
-    if (!isAdmin) {
-
-      await supabaseClient.auth.signOut();
-
-      throw new Error(
-        "Access denied. You are not an admin."
-      );
-    }
-
-    // Successful admin login
-    showDashboard();
-
-    await loadAdminStatsAndTournaments();
-    await loadPendingPayments();
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Login to Dashboard";
-
-  } catch (err) {
-
-    console.error(
-      "Admin login error:",
-      err
-    );
-
-    showLoginError(
-      "Login failed: " + err.message
-    );
-
-    submitBtn.disabled = false;
-    submitBtn.textContent =
-      "Login to Dashboard";
-  }
-}
-
-// ===============================
-// AUTH STATE
-// ===============================
-window.addEventListener(
-  "load",
-  initializeAdminPanel
-);
-
-// Prevent duplicate auth listener
-if (!authListenerReady) {
-
-  authListenerReady = true;
-
-  supabaseClient.auth.onAuthStateChange(
-    async (event, session) => {
-
-      console.log(
-        "Admin Auth Event:",
-        event
-      );
-
-      // Login event
-      if (
-        event === "SIGNED_IN" &&
-        session
-      ) {
-
-        // If login function already handled it,
-        // don't load everything again.
-        if (adminReady) {
-          return;
+<body class="bg-black text-gray-100 flex justify-center items-center min-h-screen font-sans antialiased overflow-x-hidden">
+
+    <!-- Mobile Frame Container (Max 420px for authentic gaming app feel) -->
+    <div id="app-container" class="w-full max-w-[420px] h-screen sm:h-[860px] bg-gaming-900 flex flex-col relative overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 shadow-2xl">
+
+        <!-- Top Announcement Banner -->
+        <div id="announcement-bar" class="bg-gradient-to-r from-gaming-neonPink to-gaming-neonCyan text-black text-xs font-bold py-1.5 px-3 flex items-center justify-between shrink-0 z-40 hidden">
+            <div class="truncate flex items-center gap-1.5">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span id="announcement-text">Welcome to Multani FF Official Tournaments! Join now & win big!</span>
+            </div>
+            <button onclick="dismissAnnouncement()" class="text-black hover:opacity-70"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Toast Notification Container -->
+        <div id="toast-container" class="absolute top-12 left-0 right-0 z-50 flex flex-col items-center pointer-events-none px-4 space-y-2"></div>
+
+        <!-- ================= AUTH VIEW ================= -->
+        <div id="view-auth" class="flex-1 flex flex-col justify-center p-6 overflow-y-auto z-30 bg-gaming-900 absolute inset-0">
+            <div class="text-center mb-6">
+                <div class="inline-flex p-4 rounded-2xl bg-gaming-800 neon-border mb-3 text-gaming-neonCyan text-3xl">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h1 class="text-2xl font-black tracking-wider text-white">MULTANI FF</h1>
+                <p class="text-xs text-gaming-neonCyan font-semibold tracking-widest uppercase mt-1">Official Tournament Platform</p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="flex bg-gaming-800 p-1 rounded-xl mb-6 border border-slate-700">
+                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-gaming-neonCyan text-black transition">Login</button>
+                <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Email Address</label>
+                    <input type="email" id="login-email" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gaming-neonCyan text-white" placeholder="player@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gaming-neonCyan text-white" placeholder="••••••••">
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="handleForgotPassword()" class="text-xs text-gaming-neonCyan hover:underline">Forgot Password?</button>
+                </div>
+                <button type="submit" id="btn-login-submit" class="w-full py-3.5 bg-gradient-to-r from-gaming-neonCyan to-blue-600 text-black font-extrabold rounded-xl text-sm shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2">
+                    <span>LOGIN TO PLAY</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="form-register" onsubmit="handleRegister(event)" class="space-y-3.5 hidden">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Username</label>
+                        <input type="text" id="reg-username" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="gamer123">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Full Name</label>
+                        <input type="text" id="reg-fullname" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="Ali Khan">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Email Address</label>
+                    <input type="email" id="reg-email" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="player@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Password</label>
+                    <input type="password" id="reg-password" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="••••••••">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Free Fire UID</label>
+                        <input type="text" id="reg-ff-uid" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="123456789">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Free Fire IGN</label>
+                        <input type="text" id="reg-ff-name" required class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="MF_Legend">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Referral Code (Optional)</label>
+                    <input type="text" id="reg-referral" class="w-full bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gaming-neonPink text-white" placeholder="OPTIONALCODE">
+                </div>
+                <button type="submit" id="btn-reg-submit" class="w-full py-3.5 bg-gradient-to-r from-gaming-neonPink to-purple-600 text-white font-extrabold rounded-xl text-sm shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2 mt-2">
+                    <span>CREATE ACCOUNT</span>
+                    <i class="fa-solid fa-user-plus"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- ================= MAIN APP VIEW ================= -->
+        <div id="view-app" class="flex-1 flex flex-col h-full hidden overflow-hidden">
+            
+            <!-- App Header -->
+            <header class="bg-gaming-800 border-b border-slate-800 px-4 py-3 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-gaming-neonCyan to-gaming-neonPink flex items-center justify-center font-black text-black text-lg shadow-md">
+                        M
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-black tracking-wide text-white leading-tight">MULTANI FF</h2>
+                        <span id="header-user-badge" class="text-[10px] text-gaming-neonCyan font-medium">Verified Player</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Admin Panel Button (Hidden by default, shown if admin) -->
+                    <button id="btn-admin-access" onclick="openAdminPanel()" class="hidden bg-amber-500/20 border border-amber-500 text-amber-400 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition hover:bg-amber-500 hover:text-black">
+                        <i class="fa-solid fa-shield-halved"></i> Admin
+                    </button>
+                    <button onclick="switchTab('notifications')" class="relative w-9 h-9 rounded-xl bg-gaming-700 flex items-center justify-center text-gray-300 hover:text-white transition">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-gaming-neonPink text-black text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                    </button>
+                    <button onclick="switchTab('profile')" class="w-9 h-9 rounded-xl bg-gaming-700 overflow-hidden border border-slate-600">
+                        <img id="header-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=default" alt="Avatar" class="w-full h-full object-cover">
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Content Area -->
+            <div id="main-scroll-area" class="flex-1 overflow-y-auto relative pb-20">
+                
+                <!-- HOME TAB -->
+                <div id="tab-content-home" class="p-4 space-y-4">
+                    
+                    <!-- Wallet Quick Card -->
+                    <div class="bg-gradient-to-r from-slate-900 via-gaming-800 to-slate-900 border border-slate-700/60 rounded-2xl p-4 shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-gaming-neonCyan/10 rounded-full blur-xl"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-xs text-gray-400 font-semibold tracking-wider">AVAILABLE BALANCE</span>
+                                <h3 id="wallet-balance-display" class="text-2xl font-black text-gaming-neonCyan mt-0.5">Rs. 0.00</h3>
+                            </div>
+                            <button onclick="switchTab('wallet')" class="bg-gaming-neonCyan text-black px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-lg hover:opacity-90 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-wallet"></i> Add Cash
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-700/50 text-[11px] text-gray-400">
+                            <span id="wallet-total-won">Won: Rs. 0</span>
+                            <span id="wallet-total-matches">Matches: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Hero Banner -->
+                    <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 p-4 border border-purple-500/30 shadow-lg">
+                        <div class="relative z-10">
+                            <span class="bg-gaming-neonPink text-black text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">🔥 Daily Special</span>
+                            <h2 class="text-lg font-black text-white mt-1.5">MULTANI GRAND BATTLE ROYALE</h2>
+                            <p class="text-xs text-gray-200 mt-1 mb-3">Huge Prize Pool! Clash with top Free Fire players.</p>
+                            <button onclick="switchTab('matches')" class="bg-white text-black px-4 py-2 rounded-xl text-xs font-black shadow hover:bg-gaming-neonCyan transition">
+                                VIEW TOURNAMENTS
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Navigation Grid -->
+                    <div class="grid grid-cols-4 gap-2.5">
+                        <button onclick="switchTab('matches')" class="bg-gaming-800 border border-slate-700/60 p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:border-gaming-neonCyan transition">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-gaming-neonCyan flex items-center justify-center text-base"><i class="fa-solid fa-trophy"></i></div>
+                            <span class="text-[11px] font-bold text-gray-300">Matches</span>
+                        </button>
+                        <button onclick="switchTab('leaderboard')" class="bg-gaming-800 border border-slate-700/60 p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:border-gaming-neonPink transition">
+                            <div class="w-10 h-10 rounded-xl bg-pink-500/10 text-gaming-neonPink flex items-center justify-center text-base"><i class="fa-solid fa-medal"></i></div>
+                            <span class="text-[11px] font-bold text-gray-300">Leaders</span>
+                        </button>
+                        <button onclick="switchTab('giveaways')" class="bg-gaming-800 border border-slate-700/60 p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:border-amber-500 transition">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-base"><i class="fa-solid fa-gift"></i></div>
+                            <span class="text-[11px] font-bold text-gray-300">Giveaways</span>
+                        </button>
+                        <button onclick="switchTab('support')" class="bg-gaming-800 border border-slate-700/60 p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:border-gaming-neonGreen transition">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-gaming-neonGreen flex items-center justify-center text-base"><i class="fa-solid fa-headset"></i></div>
+                            <span class="text-[11px] font-bold text-gray-300">Support</span>
+                        </button>
+                    </div>
+
+                    <!-- Featured Tournaments Section -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-black tracking-wide text-white flex items-center gap-2">
+                                <i class="fa-solid fa-fire text-gaming-neonPink"></i> FEATURED TOURNAMENTS
+                            </h3>
+                            <button onclick="switchTab('matches')" class="text-xs text-gaming-neonCyan font-bold hover:underline">View All</button>
+                        </div>
+                        <div id="home-featured-list" class="space-y-3">
+                            <!-- Populated dynamically -->
+                            <div class="text-center py-6 text-gray-500 text-xs">Loading featured tournaments...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MATCHES TAB -->
+                <div id="tab-content-matches" class="p-4 space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-black tracking-wide text-white">TOURNAMENTS</h2>
+                        <button onclick="loadTournaments()" class="w-8 h-8 rounded-xl bg-gaming-800 text-gray-300 flex items-center justify-center hover:text-white"><i class="fa-solid fa-rotate"></i></button>
+                    </div>
+
+                    <!-- Search & Filter Bar -->
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                            <input type="text" id="tournament-search" oninput="filterTournaments()" placeholder="Search tournaments, maps..." class="w-full bg-gaming-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-gaming-neonCyan text-white">
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
+                            <button onclick="setTournamentFilter('all')" id="filter-btn-all" class="px-3 py-1.5 rounded-xl bg-gaming-neonCyan text-black font-extrabold whitespace-nowrap">All</button>
+                            <button onclick="setTournamentFilter('live')" id="filter-btn-live" class="px-3 py-1.5 rounded-xl bg-gaming-800 text-gray-300 font-bold whitespace-nowrap border border-slate-700">Live</button>
+                            <button onclick="setTournamentFilter('upcoming')" id="filter-btn-upcoming" class="px-3 py-1.5 rounded-xl bg-gaming-800 text-gray-300 font-bold whitespace-nowrap border border-slate-700">Upcoming</button>
+                            <button onclick="setTournamentFilter('completed')" id="filter-btn-completed" class="px-3 py-1.5 rounded-xl bg-gaming-800 text-gray-300 font-bold whitespace-nowrap border border-slate-700">Completed</button>
+                        </div>
+                    </div>
+
+                    <!-- Tournament List Container -->
+                    <div id="tournaments-list-container" class="space-y-3">
+                        <div class="text-center py-8 text-gray-500 text-xs">Loading matches...</div>
+                    </div>
+                </div>
+
+                <!-- MY MATCHES TAB -->
+                <div id="tab-content-mymatches" class="p-4 space-y-4 hidden">
+                    <h2 class="text-base font-black tracking-wide text-white">MY REGISTERED MATCHES</h2>
+                    <div id="my-matches-container" class="space-y-3">
+                        <div class="text-center py-8 text-gray-500 text-xs">Loading your joined matches...</div>
+                    </div>
+                </div>
+
+                <!-- WALLET TAB -->
+                <div id="tab-content-wallet" class="p-4 space-y-4 hidden">
+                    <h2 class="text-base font-black tracking-wide text-white">MY WALLET</h2>
+                    
+                    <!-- Main Wallet Card -->
+                    <div class="bg-gradient-to-br from-gaming-800 to-slate-900 border border-slate-700 rounded-2xl p-5 shadow-lg relative">
+                        <div class="text-center mb-4">
+                            <span class="text-xs text-gray-400 font-semibold tracking-widest">TOTAL BALANCE</span>
+                            <h2 id="wallet-page-balance" class="text-3xl font-black text-gaming-neonCyan mt-1">Rs. 0.00</h2>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-700/60 text-center text-xs">
+                            <div>
+                                <span class="text-[10px] text-gray-400 block">Deposited</span>
+                                <span id="wallet-dep" class="font-bold text-white">Rs. 0</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-gray-400 block">Total Won</span>
+                                <span id="wallet-won" class="font-bold text-gaming-neonGreen">Rs. 0</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-gray-400 block">Spent</span>
+                                <span id="wallet-spent" class="font-bold text-gaming-neonPink">Rs. 0</span>
+                            </div>
+                        </div>
+                        <button onclick="openDepositModal()" class="w-full mt-4 py-3 bg-gradient-to-r from-gaming-neonCyan to-blue-600 text-black font-extrabold rounded-xl text-xs shadow hover:opacity-90 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> ADD FUNDS TO WALLET
+                        </button>
+                    </div>
+
+                    <!-- Transaction / Payment History -->
+                    <div>
+                        <h3 class="text-xs font-black tracking-wider text-gray-400 mb-3 uppercase">Payment & Deposit Requests</h3>
+                        <div id="wallet-transactions-list" class="space-y-2.5">
+                            <div class="text-center py-6 text-gray-500 text-xs">No transaction history found.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROFILE TAB -->
+                <div id="tab-content-profile" class="p-4 space-y-4 hidden">
+                    <h2 class="text-base font-black tracking-wide text-white">PLAYER PROFILE</h2>
+                    
+                    <!-- Profile Card -->
+                    <div class="bg-gaming-800 border border-slate-700 rounded-2xl p-4 flex items-center gap-4 shadow">
+                        <img id="profile-avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=default" class="w-16 h-16 rounded-2xl object-cover bg-gaming-700 border border-slate-600">
+                        <div class="flex-1 overflow-hidden">
+                            <h3 id="profile-display-name" class="text-sm font-black text-white truncate">Player Name</h3>
+                            <p id="profile-display-email" class="text-xs text-gray-400 truncate">player@example.com</p>
+                            <div class="flex items-center gap-2 mt-1.5">
+                                <span class="bg-gaming-neonCyan/10 text-gaming-neonCyan text-[10px] font-bold px-2 py-0.5 rounded-md border border-gaming-neonCyan/20">UID: <span id="profile-display-uid">-</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-gaming-800 border border-slate-700/60 p-3 rounded-xl">
+                            <span class="text-[10px] text-gray-400 font-bold block uppercase">Total Matches</span>
+                            <span id="stat-matches" class="text-lg font-black text-white mt-0.5 block">0</span>
+                        </div>
+                        <div class="bg-gaming-800 border border-slate-700/60 p-3 rounded-xl">
+                            <span class="text-[10px] text-gray-400 font-bold block uppercase">Total Wins</span>
+                            <span id="stat-wins" class="text-lg font-black text-gaming-neonGreen mt-0.5 block">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Referral Box -->
+                    <div class="bg-gaming-800 border border-slate-700 rounded-xl p-4">
+                        <span class="text-xs font-bold text-gray-300 block mb-1">Your Referral Code</span>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="profile-referral-code" readonly class="flex-1 bg-gaming-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-gaming-neonCyan" value="LOADING...">
+                            <button onclick="copyReferralCode()" class="bg-gaming-neonCyan text-black px-3 py-2 rounded-lg text-xs font-bold hover:opacity-90"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="space-y-2 pt-2">
+                        <button onclick="openEditProfileModal()" class="w-full py-3 bg-gaming-700 text-white font-bold rounded-xl text-xs hover:bg-gaming-600 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-user-pen"></i> Edit Profile
+                        </button>
+                        <button onclick="handleLogout()" class="w-full py-3 bg-red-500/10 border border-red-500/30 text-red-400 font-bold rounded-xl text-xs hover:bg-red-500 hover:text-white transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LEADERBOARD TAB -->
+                <div id="tab-content-leaderboard" class="p-4 space-y-4 hidden">
+                    <h2 class="text-base font-black tracking-wide text-white">TOP PLAYERS & WINNERS</h2>
+                    <div id="leaderboard-container" class="space-y-2.5">
+                        <div class="text-center py-8 text-gray-500 text-xs">Loading leaderboard...</div>
+                    </div>
+                </div>
+
+                <!-- GIVEAWAYS TAB -->
+                <div id="tab-content-giveaways" class="p-4 space-y-4 hidden">
+                    <h2 class="text-base font-black tracking-wide text-white">ACTIVE GIVEAWAYS</h2>
+                    <div id="giveaways-container" class="space-y-3">
+                        <div class="text-center py-8 text-gray-500 text-xs">Loading giveaways...</div>
+                    </div>
+                </div>
+
+                <!-- SUPPORT TAB -->
+                <div id="tab-content-support" class="p-4 flex flex-col h-full hidden" style="height: calc(100vh - 130px);">
+                    <h2 class="text-base font-black tracking-wide text-white mb-3">ADMIN SUPPORT CHAT</h2>
+                    <div id="support-messages-list" class="flex-1 overflow-y-auto space-y-3 pr-1 mb-3 bg-gaming-800/40 p-3 rounded-2xl border border-slate-800">
+                        <div class="text-center py-4 text-gray-500 text-xs">Loading chat messages...</div>
+                    </div>
+                    <form onsubmit="sendSupportMessage(event)" class="flex gap-2">
+                        <input type="text" id="support-input" required placeholder="Type your issue (e.g. Payment/Match issue)..." class="flex-1 bg-gaming-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-gaming-neonGreen text-white">
+                        <button type="submit" class="bg-gaming-neonGreen text-black px-4 py-2.5 rounded-xl text-xs font-black hover:opacity-90"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </div>
+
+                <!-- NOTIFICATIONS TAB -->
+                <div id="tab-content-notifications" class="p-4 space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-black tracking-wide text-white">NOTIFICATIONS</h2>
+                        <button onclick="markAllNotificationsRead()" class="text-xs text-gaming-neonCyan hover:underline font-bold">Mark all read</button>
+                    </div>
+                    <div id="notifications-list" class="space-y-2.5">
+                        <div class="text-center py-8 text-gray-500 text-xs">No notifications yet.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <nav class="bg-gaming-800 border-t border-slate-800 h-16 flex items-center justify-around px-2 shrink-0 z-40 absolute bottom-0 left-0 right-0">
+                <button onclick="switchTab('home')" id="nav-btn-home" class="flex flex-col items-center justify-center flex-1 py-1 text-gaming-neonCyan transition">
+                    <i class="fa-solid fa-house text-base"></i>
+                    <span class="text-[10px] font-bold mt-1">Home</span>
+                </button>
+                <button onclick="switchTab('matches')" id="nav-btn-matches" class="flex flex-col items-center justify-center flex-1 py-1 text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-trophy text-base"></i>
+                    <span class="text-[10px] font-bold mt-1">Matches</span>
+                </button>
+                <button onclick="switchTab('mymatches')" id="nav-btn-mymatches" class="flex flex-col items-center justify-center flex-1 py-1 text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-gamepad text-base"></i>
+                    <span class="text-[10px] font-bold mt-1">My Matches</span>
+                </button>
+                <button onclick="switchTab('wallet')" id="nav-btn-wallet" class="flex flex-col items-center justify-center flex-1 py-1 text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-wallet text-base"></i>
+                    <span class="text-[10px] font-bold mt-1">Wallet</span>
+                </button>
+                <button onclick="switchTab('profile')" id="nav-btn-profile" class="flex flex-col items-center justify-center flex-1 py-1 text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-user text-base"></i>
+                    <span class="text-[10px] font-bold mt-1">Profile</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- ================= MODALS ================= -->
+
+        <!-- Tournament Details Modal -->
+        <div id="modal-tournament-details" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+            <div class="bg-gaming-800 w-full max-w-[420px] rounded-t-3xl sm:rounded-2xl border border-slate-700 max-h-[90vh] overflow-y-auto p-5 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h3 id="modal-match-title" class="text-base font-black text-white">Tournament Details</h3>
+                    <button onclick="closeModal('modal-tournament-details')" class="text-gray-400 hover:text-white w-8 h-8 rounded-full bg-gaming-700 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="modal-match-body" class="space-y-3 text-xs">
+                    <!-- Dynamic details populated here -->
+                </div>
+                <div id="modal-match-footer" class="pt-2">
+                    <!-- Join/Leave/Credentials buttons -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Deposit / Add Funds Modal -->
+        <div id="modal-deposit" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-gaming-800 w-full max-w-[360px] rounded-2xl border border-slate-700 p-5 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h3 class="text-sm font-black text-white">Add Funds to Wallet</h3>
+                    <button onclick="closeModal('modal-deposit')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form onsubmit="submitDepositRequest(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Amount (Rs.)</label>
+                        <input type="number" id="dep-amount" min="50" required class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-gaming-neonCyan" placeholder="e.g. 500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Payment Method</label>
+                        <select id="dep-method" class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-gaming-neonCyan">
+                            <option value="EasyPaisa">EasyPaisa</option>
+                            <option value="JazzCash">JazzCash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Transaction / Reference ID</label>
+                        <input type="text" id="dep-trx" required class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-gaming-neonCyan" placeholder="Enter Transaction ID">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Screenshot URL (Optional)</label>
+                        <input type="url" id="dep-screenshot" class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-gaming-neonCyan" placeholder="https://image-link.com">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-gaming-neonCyan text-black font-extrabold rounded-xl shadow hover:opacity-90 transition mt-2">
+                        SUBMIT DEPOSIT REQUEST
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="modal-edit-profile" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-gaming-800 w-full max-w-[360px] rounded-2xl border border-slate-700 p-5 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h3 class="text-sm font-black text-white">Edit Profile Details</h3>
+                    <button onclick="closeModal('modal-edit-profile')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form onsubmit="submitEditProfile(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Full Name</label>
+                        <input type="text" id="edit-fullname" required class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Phone Number</label>
+                        <input type="text" id="edit-phone" class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white" placeholder="03001234567">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 font-semibold">Free Fire IGN (Name)</label>
+                        <input type="text" id="edit-ff-name" required class="w-full bg-gaming-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-gaming-neonPink text-white font-extrabold rounded-xl shadow hover:opacity-90 transition mt-2">
+                        SAVE CHANGES
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT APP LOGIC ================= -->
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://eyrwqmirdigsckcwbmxn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_N2bFvVebY84Ac4kF7KPYjw_1YCdUUHX';
+        
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        });
+
+        let currentUser = null;
+        let currentProfile = null;
+        let allTournamentsCache = [];
+        let activeTournamentFilter = 'all';
+
+        // Initialize App on DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuthSession();
+            setupRealtimeSubscriptions();
+        });
+
+        // Toast Notification Function
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgCol = type === 'success' ? 'bg-emerald-600 text-white' : type === 'error' ? 'bg-red-600 text-white' : 'bg-cyan-600 text-white';
+            toast.className = `${bgCol} px-4 py-2.5 rounded-xl text-xs font-bold shadow-xl pointer-events-auto flex items-center gap-2 transition transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info'}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
-        if (adminInitializing) {
-          return;
+        // Authentication State & Tabs
+        function switchAuthTab(tab) {
+            const loginBtn = document.getElementById('tab-login-btn');
+            const registerBtn = document.getElementById('tab-register-btn');
+            const loginForm = document.getElementById('form-login');
+            const registerForm = document.getElementById('form-register');
+
+            if (tab === 'login') {
+                loginBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-gaming-neonCyan text-black transition';
+                registerBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition';
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-gaming-neonPink text-white transition';
+                loginBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition';
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
         }
 
-        const isAdmin =
-          await verifyAdminSession(
-            session
-          );
+        async function checkAuthSession() {
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (session && session.user) {
+                    currentUser = session.user;
+                    await fetchUserProfile();
+                    if (currentProfile && currentProfile.is_banned) {
+                        await supabaseClient.auth.signOut();
+                        showToast('Your account has been banned.', 'error');
+                        showAuthView();
+                        return;
+                    }
+                    showAppView();
+                    loadAppData();
+                } else {
+                    showAuthView();
+                }
+            } catch (err) {
+                console.error('Session check error:', err);
+                showAuthView();
+            }
 
-        if (isAdmin) {
-
-          showDashboard();
-
-          await loadAdminStatsAndTournaments();
-          await loadPendingPayments();
-
-        } else {
-
-          await supabaseClient.auth.signOut();
-
-          showLoginScreen();
-
-          showLoginError(
-            "Access denied. You are not an admin."
-          );
+            supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    currentUser = session.user;
+                    await fetchUserProfile();
+                    showAppView();
+                    loadAppData();
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    currentProfile = null;
+                    showAuthView();
+                }
+            });
         }
-      }
 
-      // Logout event
-      else if (
-        event === "SIGNED_OUT"
-      ) {
-
-        adminReady = false;
-
-        showLoginScreen();
-      }
-
-    }
-  );
-}
-
-// ===============================
-// ADMIN REFRESH
-// ===============================
-async function refreshAdmin() {
-
-  if (!adminReady) {
-    showLoginScreen();
-    return;
-  }
-
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    adminReady = false;
-
-    showLoginScreen();
-
-    return;
-  }
-
-  const isAdmin =
-    await verifyAdminSession(
-      session
-    );
-
-  if (!isAdmin) {
-
-    adminReady = false;
-
-    await supabaseClient.auth.signOut();
-
-    showLoginScreen();
-
-    showLoginError(
-      "Admin session expired. Please login again."
-    );
-
-    return;
-  }
-
-  const btn =
-    document.querySelector(
-      ".top-btn i"
-    );
-
-  if (btn) {
-    btn.classList.add("fa-spin");
-  }
-
-  try {
-
-    await loadAdminStatsAndTournaments();
-    await loadPendingPayments();
-
-  } finally {
-
-    if (btn) {
-      setTimeout(() => {
-        btn.classList.remove(
-          "fa-spin"
-        );
-      }, 500);
-    }
-
-  }
-}
-
-// ===============================
-// ADMIN LOGOUT
-// ===============================
-async function logoutAdmin() {
-
-  if (
-    !confirm(
-      "Kya aap Admin Panel se logout karna chahte hain?"
-    )
-  ) {
-    return;
-  }
-
-  try {
-
-    adminReady = false;
-
-    await supabaseClient.auth.signOut();
-
-    // Only logout redirects to index.html
-    window.location.href = "index.html";
-
-  } catch (err) {
-
-    console.error(
-      "Logout error:",
-      err
-    );
-
-    window.location.href =
-      "index.html";
-  }
-}
-
-function switchAdminTab(tab,evt){
- if(evt){
-  document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
-  evt.currentTarget.classList.add("active");
- }
- if(tab==="home" || tab==="matches"){
-  document.getElementById("adminMatchManagerSection").scrollIntoView({behavior:"smooth"});
-  if(tab==="matches") loadAdminStatsAndTournaments();
- }
- if(tab==="banned") openBanPlayerModal();
- if(tab==="chats") openHelpChats();
-}
-
-async function loadAdminStatsAndTournaments(){
- const container = document.getElementById("adminTournamentsList");
- if(!container) return;
- container.innerHTML = `<div class="loading">Loading tournaments...</div>`;
- try{
-  const { data, error } = await supabaseClient.from("tournaments").select("*").order("match_date",{ascending:true});
-  if(error){
-   container.innerHTML = `<div class="empty">Error: ${escapeHtml(error.message)}</div>`;
-   return;
-  }
-  document.getElementById("statLiveMatches").textContent = data?.length||0;
-  container.innerHTML="";
-  if(!data || data.length===0){
-   container.innerHTML = `<div class="empty">No tournaments found.<br><br>Create your first match using + Add Match.</div>`;
-   return;
-  }
-  data.forEach(t=>{
-   const card=document.createElement("div");
-   card.className="admin-t-card";
-   card.innerHTML=`
-    <div class="admin-t-header">
-     <div class="admin-t-info">
-      <h4>${escapeHtml(t.title||"Untitled")} (${escapeHtml(t.mode||"Solo")})</h4>
-      <p>
-       Map: ${escapeHtml(t.map||"Bermuda")}<br>
-       Time: ${t.match_date ? new Date(t.match_date).toLocaleString() : "TBD"}<br>
-       Entry Fee: Rs.${Number(t.entry_fee||0)} | Prize: Rs.${Number(t.prize_pool||0)}
-      </p>
-     </div>
-     <div class="admin-btn-group">
-      <button class="btn-edit" onclick='openEditMatchModal(${JSON.stringify(t)})'>Edit</button>
-      <button class="btn-delete" onclick="deleteTournament('${t.id}')">Delete</button>
-     </div>
-    </div>
-    <div class="room-details-box">
-     Room ID: <b>${escapeHtml(t.room_id||"Not set")}</b><br>
-     Password: <b>${escapeHtml(t.room_password||"Not set")}</b>
-    </div>
-   `;
-   container.appendChild(card);
-  });
-  await loadPlayerCount();
- }catch(err){
-  console.error(err);
-  container.innerHTML = `<div class="empty">Unexpected error occurred.</div>`;
- }
-}
-
-async function loadPlayerCount(){
- try{
-  const {count, error} = await supabaseClient.from("tournament_participants").select("*",{count:"exact",head:true});
-  if(!error){
-   document.getElementById("statApprovedSlots").textContent = count||0;
-  }
- }catch(e){
-  console.log(e);
- }
-}
-
-async function loadPendingPayments(){
- try{
-  const {count, error} = await supabaseClient.from("payments").select("*",{count:"exact",head:true}).eq("status","pending");
-  if(!error){
-   const total = count||0;
-   document.getElementById("statPendingApprovals").textContent = total;
-   document.getElementById("badgePayments").textContent = total;
-  }
- }catch(e){
-  console.log(e);
- }
-}
-
-function openCreateMatchModal(){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>Create New Tournament</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   <label class="admin-label">Tournament Title</label>
-   <input id="newTitle" class="admin-input" placeholder="Multani FF Solo">
-   <label class="admin-label">Mode</label>
-   <input id="newMode" class="admin-input" placeholder="Solo / Duo / Squad">
-   <label class="admin-label">Map</label>
-   <input id="newMap" class="admin-input" placeholder="Bermuda / Kalahari">
-   <label class="admin-label">Entry Fee</label>
-   <input id="newFee" type="number" class="admin-input" placeholder="Rs.">
-   <label class="admin-label">Prize Pool</label>
-   <input id="newPrize" type="number" class="admin-input" placeholder="Rs.">
-   <label class="admin-label">Match Date & Time</label>
-   <input id="newDate" type="datetime-local" class="admin-input">
-   <button class="add-match-btn" style="width:100%;padding:11px" onclick="submitCreateMatch()">Publish Match</button>
-  </div>
- </div>
- `;
-}
-
-async function submitCreateMatch(){
- const title = document.getElementById("newTitle").value.trim();
- const mode = document.getElementById("newMode").value.trim()||"Solo";
- const map = document.getElementById("newMap").value.trim()||"Bermuda";
- const entry_fee = Number(document.getElementById("newFee").value)||0;
- const prize_pool = Number(document.getElementById("newPrize").value)||0;
- const match_date = document.getElementById("newDate").value||null;
-
- if(!title){ alert("Tournament title lazmi enter karein."); return; }
-
- const {error} = await supabaseClient.from("tournaments").insert([{
-  title, mode, map, entry_fee, prize_pool, match_date, room_id:"", room_password:""
- }]);
-
- if(error){ alert("Error: "+error.message); return; }
- alert("✅ Tournament successfully created.");
- closeAdminModal();
- loadAdminStatsAndTournaments();
-}
-
-function openEditMatchModal(t){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>Edit Tournament</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   <label class="admin-label">Title</label>
-   <input id="editTitle" class="admin-input" value="${escapeAttr(t.title||"")}">
-   <label class="admin-label">Mode</label>
-   <input id="editMode" class="admin-input" value="${escapeAttr(t.mode||"")}">
-   <label class="admin-label">Map</label>
-   <input id="editMap" class="admin-input" value="${escapeAttr(t.map||"")}">
-   <label class="admin-label">Entry Fee</label>
-   <input id="editFee" type="number" class="admin-input" value="${Number(t.entry_fee||0)}">
-   <label class="admin-label">Prize Pool</label>
-   <input id="editPrize" type="number" class="admin-input" value="${Number(t.prize_pool||0)}">
-   <label class="admin-label">Room ID</label>
-   <input id="editRoomId" class="admin-input" value="${escapeAttr(t.room_id||"")}" placeholder="Room ID">
-   <label class="admin-label">Room Password</label>
-   <input id="editRoomPass" class="admin-input" value="${escapeAttr(t.room_password||"")}" placeholder="Room Password">
-   <button class="btn-edit" style="width:100%;padding:11px" onclick="submitEditMatch('${t.id}')">Save Changes</button>
-  </div>
- </div>
- `;
-}
-
-async function submitEditMatch(id){
- const title = document.getElementById("editTitle").value.trim();
- const mode = document.getElementById("editMode").value.trim();
- const map = document.getElementById("editMap").value.trim();
- const entry_fee = Number(document.getElementById("editFee").value)||0;
- const prize_pool = Number(document.getElementById("editPrize").value)||0;
- const room_id = document.getElementById("editRoomId").value.trim();
- const room_password = document.getElementById("editRoomPass").value.trim();
-
- const {error} = await supabaseClient.from("tournaments").update({
-  title, mode, map, entry_fee, prize_pool, room_id, room_password
- }).eq("id",id);
-
- if(error){ alert("Error: "+error.message); return; }
- alert("✅ Tournament updated.");
- closeAdminModal();
- loadAdminStatsAndTournaments();
-}
-
-async function deleteTournament(id){
- if(!confirm("Kya aap waqai is tournament ko delete karna chahte hain?")) return;
- const {error} = await supabaseClient.from("tournaments").delete().eq("id",id);
- if(error){ alert("Delete error: "+error.message); return; }
- alert("🗑️ Tournament deleted.");
- loadAdminStatsAndTournaments();
-}
-
-async function openPaymentApprovals(){
-  showModal(`
-    <div id="pendingPaymentsList" style="max-height:60vh; overflow-y:auto;">
-      <div style="text-align:center; padding:20px; color:#8aa0ae;">Loading payments...</div>
-    </div>
-  `, "Payment Approvals");
-
-  await loadPendingPaymentsModalList();
-}
-
-async function loadPendingPaymentsModalList(){
-  const { data, error } = await sb
-    .from("payments")
-    .select(`id, user_id, amount, status, screenshot_url, created_at`)
-    .order("created_at", { ascending: false });
-
-  if(error){
-    console.error("Pending payments error:", error);
-    return;
-  }
-
-  const box = document.getElementById("pendingPaymentsList");
-  if(!box) return;
-
-  if(!data || data.length === 0){
-    box.innerHTML = `<div style="text-align:center;padding:20px;color:#8aa0ae;">No payment requests found 🎉</div>`;
-    return;
-  }
-
-  box.innerHTML = data.map(payment => `
-    <div style="background:#14222b; border:1px solid rgba(0,255,157,.25); padding:12px; border-radius:12px; margin-bottom:10px;">
-      <div style="color:#fff;font-weight:bold;">💰 Rs. ${Number(payment.amount||0).toFixed(2)}</div>
-      <div style="font-size:11px;color:#8aa0ae;margin-top:4px;">Status: <b class="${payment.status==="approved"?"success":payment.status==="rejected"?"danger":""}">${escapeHtml(payment.status||"pending")}</b></div>
-      <div style="font-size:11px;color:#8aa0ae;margin-top:2px;">User ID: ${escapeHtml(payment.user_id)}</div>
-      <div style="font-size:11px;color:#8aa0ae;">${payment.created_at ? new Date(payment.created_at).toLocaleString() : ""}</div>
-      ${
-        payment.screenshot_url
-        ? `<button onclick="window.open('${escapeAttr(payment.screenshot_url)}', '_blank')" style="margin-top:10px; width:100%; padding:9px; border:1px solid #00f3ff; background:transparent; color:#00f3ff; border-radius:8px; font-weight:bold; cursor:pointer;">📸 View Screenshot</button>`
-        : `<div style="margin-top:8px;color:#ffcc00;font-size:11px;">Screenshot not available</div>`
-      }
-      ${
-        payment.status === "pending"
-        ? `
-          <button onclick="approvePayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:0; background:#00d084; color:#091216; border-radius:8px; font-weight:bold; cursor:pointer;">✅ APPROVE PAYMENT</button>
-          <button onclick="rejectPayment('${payment.id}')" style="margin-top:8px; width:100%; padding:10px; border:1px solid #ff4d6d; background:transparent; color:#ff4d6d; border-radius:8px; font-weight:bold; cursor:pointer;">❌ REJECT PAYMENT</button>
-        `
-        : ""
-      }
-    </div>
-  `).join("");
-}
-
-async function approvePayment(id){
-  if(!confirm("Is payment ko approve karna hai?")) return;
-  const { data, error } = await sb.rpc("approve_payment", { p_payment_id: id });
-  if(error){ alert("Payment approval error: " + error.message); return; }
-  if(!data || !data.success){ alert(data?.message || "Payment approve nahi hui"); return; }
-  alert("Payment approved!\nWallet mein Rs. " + Number(data.amount).toFixed(2) + " add ho gaye.");
-  await loadPendingPayments();
-  await loadAdminStatsAndTournaments();
-  await loadPendingPaymentsModalList();
-}
-
-async function rejectPayment(id){
-  if(!confirm("Is payment ko reject karna hai?")) return;
-  const { data, error } = await sb.rpc("reject_payment", { p_payment_id: id });
-  if(error){ alert("Rejection error: " + error.message); return; }
-  if(!data || !data.success){ alert(data?.message || "Payment reject nahi ho saki."); return; }
-  alert("❌ Payment rejected successfully.");
-  await loadPendingPayments();
-  await loadAdminStatsAndTournaments();
-  await loadPendingPaymentsModalList();
-}
-
-function openBanPlayerModal(){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>Ban Player</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   <input id="banUID" class="admin-input" placeholder="Free Fire UID">
-   <button class="btn-delete" style="width:100%;padding:11px" onclick="banPlayer()"><i class="fa-solid fa-ban"></i> Ban Player</button>
-   <div style="margin-top:15px"><button class="add-match-btn" style="width:100%" onclick="showBannedPlayers()">View Banned Players</button></div>
-  </div>
- </div>
- `;
-}
-
-async function banPlayer(){
- const uid = document.getElementById("banUID").value.trim();
- if(!uid){ alert("Free Fire UID enter karein."); return; }
- const {error} = await supabaseClient.from("banned_uids").insert([{ free_fire_uid:uid }]);
- if(error){ alert("Ban error: "+error.message); return; }
- alert("🚫 Player banned successfully.");
- closeAdminModal();
-}
-
-async function showBannedPlayers(){
- const {data, error} = await supabaseClient.from("banned_uids").select("*").order("id",{ascending:false});
- if(error){
-  showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Banned Players");
-  return;
- }
- let html="";
- if(!data || data.length===0){
-  html=`<div class="empty">No banned players.</div>`;
- } else {
-  data.forEach(p=>{
-   html+=`
-    <div class="list-item">
-     <div class="list-title">UID: ${escapeHtml(p.free_fire_uid)}</div>
-     <button class="btn-edit" style="margin-top:8px" onclick="unbanPlayer('${p.id}')">Unban</button>
-    </div>
-   `;
-  });
- }
- showModal(html, "Banned Players");
-}
-
-async function unbanPlayer(id){
- if(!confirm("Player ko unban karna hai?")) return;
- const {error} = await supabaseClient.from("banned_uids").delete().eq("id",id);
- if(error){ alert("Error: "+error.message); return; }
- showBannedPlayers();
-}
-
-async function openPlayerListModal(){
- const {data, error} = await supabaseClient.from("tournament_participants").select("*").order("id",{ascending:false});
- if(error){
-  showModal(`<div class="empty">${escapeHtml(error.message)}</div>`, "Registered Players");
-  return;
- }
- let html="";
- if(!data || data.length===0){
-  html=`<div class="empty">No participants registered yet.</div>`;
- } else {
-  data.forEach((p,index)=>{
-   html+=`
-    <div class="list-item">
-     <div class="list-title">Player #${index+1}</div>
-     <div class="list-info">
-      ${p.free_fire_uid ? "UID: "+escapeHtml(p.free_fire_uid)+"<br>" : ""}
-      ${p.tournament_id ? "Tournament: "+escapeHtml(p.tournament_id) : ""}
-     </div>
-    </div>
-   `;
-  });
- }
- showModal(html, "Registered Players");
-}
-
-function openWinnerModal(){ announceWinner(); }
-
-async function announceWinner(){
-  const tournamentId = prompt("Tournament ID:");
-  if(!tournamentId) return;
-
-  const ign = prompt("Winner IGN:");
-  if(!ign) return;
-
-  const uid = prompt("Free Fire UID:");
-  if(!uid) return;
-
-  const prize = prompt("Prize Amount:");
-  if(prize === null) return;
-
-  const amount = Number(prize);
-  if(isNaN(amount) || amount < 0){
-    alert("Prize amount sahi enter karo.");
-    return;
-  }
-
-  const { data, error } = await sb.rpc("announce_winner", {
-    p_tournament_id: tournamentId,
-    p_ign: ign,
-    p_free_fire_uid: uid,
-    p_prize_amount: amount
-  });
-
-  if(error){
-    alert("Winner error: " + error.message);
-    return;
-  }
-
-  if(!data || !data.success){
-    alert(data?.message || "Winner announce nahi hua.");
-    return;
-  }
-
-  alert("🏆 Winner announced!\n\nIGN: " + ign + "\nPrize: Rs. " + amount.toFixed(2) + "\n\nPrize player ke wallet mein add ho gaya.");
-}
-
-function openGiveaways(){
- showModal(`<div class="empty">🎁 Giveaway Management<br><br>Giveaway system ka database module next step mein add kiya jayega.</div>`, "Giveaways");
-}
-
-function openHelpChats(){
- showModal(`<div class="empty"><i class="fa-solid fa-comments" style="font-size:30px;color:var(--green)"></i><br><br>Help Chats module ready hai.<br><br>Messages table connect karne ke baad admin yahan se users ke messages dekh aur reply kar sakega.</div>`, "Help Chats");
-}
-
-function showModal(content,title){
- document.getElementById("adminModalContainer").innerHTML=`
- <div class="modal-overlay">
-  <div class="modal-box">
-   <div class="modal-header">
-    <span>${escapeHtml(title)}</span>
-    <button class="modal-close" onclick="closeAdminModal()">✕</button>
-   </div>
-   ${content}
-  </div>
- </div>
- `;
-}
-
-function closeAdminModal(){
- document.getElementById("adminModalContainer").innerHTML="";
-}
-
-function escapeHtml(value){
- return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-}
-
-function escapeAttr(value){
- return escapeHtml(value);
-}
-</script>
+        function showAuthView() {
+            document.getElementById('view-auth').classList.remove('hidden');
+            document.getElementById('view-app').classList.add('hidden');
+            document.getElementById('announcement-bar').classList.add('hidden');
+        }
+
+        function showAppView() {
+            document.getElementById('view-auth').classList.add('hidden');
+            document.getElementById('view-app').classList.remove('hidden');
+            document.getElementById('announcement-bar').classList.remove('hidden');
+            checkAdminStatus();
+        }
+
+        async function fetchUserProfile() {
+            if (!currentUser) return;
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            if (data) {
+                currentProfile = data;
+                updateProfileUI();
+            }
+        }
+
+        async function checkAdminStatus() {
+            if (!currentUser) return;
+            const { data, error } = await supabaseClient
+                .from('admin_users')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .single();
+            if (data) {
+                document.getElementById('btn-admin-access').classList.remove('hidden');
+            }
+        }
+
+        function openAdminPanel() {
+            window.open('admin.html', '_blank');
+        }
+
+        // Login Handler
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('btn-login-submit');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging in...`;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            btn.disabled = false;
+            btn.innerHTML = `<span>LOGIN TO PLAY</span> <i class="fa-solid fa-arrow-right"></i>`;
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Successfully logged in!', 'success');
+            }
+        }
+
+        // Register Handler
+        async function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const full_name = document.getElementById('reg-fullname').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const free_fire_uid = document.getElementById('reg-ff-uid').value;
+            const free_fire_name = document.getElementById('reg-ff-name').value;
+            const referral_code = document.getElementById('reg-referral').value;
+
+            const btn = document.getElementById('btn-reg-submit');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating account...`;
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { username, full_name, free_fire_uid, free_fire_name, referral_code }
+                }
+            });
+
+            btn.disabled = false;
+            btn.innerHTML = `<span>CREATE ACCOUNT</span> <i class="fa-solid fa-user-plus"></i>`;
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Account created! Please check email or login.', 'success');
+                switchAuthTab('login');
+            }
+        }
+
+        async function handleForgotPassword() {
+            const email = prompt('Enter your account email for password reset:');
+            if (!email) return;
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+            if (error) showToast(error.message, 'error');
+            else showToast('Password reset email sent!', 'success');
+        }
+
+        async function handleLogout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            await supabaseClient.auth.signOut();
+            showToast('Logged out successfully', 'info');
+        }
+
+        // Navigation Tabs Router
+        function switchTab(tabName) {
+            const tabs = ['home', 'matches', 'mymatches', 'wallet', 'profile', 'leaderboard', 'giveaways', 'support', 'notifications'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-content-${t}`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`nav-btn-${t}`);
+                if (btn) btn.className = 'flex flex-col items-center justify-center flex-1 py-1 text-gray-400 hover:text-white transition';
+            });
+
+            const targetEl = document.getElementById(`tab-content-${tabName}`);
+            if (targetEl) targetEl.classList.remove('hidden');
+            const targetNav = document.getElementById(`nav-btn-${tabName}`);
+            if (targetNav) targetNav.className = 'flex flex-col items-center justify-center flex-1 py-1 text-gaming-neonCyan transition';
+
+            document.getElementById('main-scroll-area').scrollTop = 0;
+
+            if (tabName === 'matches') loadTournaments();
+            if (tabName === 'mymatches') loadMyMatches();
+            if (tabName === 'wallet') loadWalletData();
+            if (tabName === 'leaderboard') loadLeaderboard();
+            if (tabName === 'giveaways') loadGiveaways();
+            if (tabName === 'support') loadSupportMessages();
+            if (tabName === 'notifications') loadNotifications();
+        }
+
+        // Load All Main App Data
+        function loadAppData() {
+            fetchUserProfile();
+            loadTournaments();
+            loadNotificationsBadge();
+            loadSiteSettings();
+        }
+
+        // Update UI with Profile data
+        function updateProfileUI() {
+            if (!currentProfile) return;
+            document.getElementById('wallet-balance-display').innerText = `Rs. ${Number(currentProfile.wallet_balance || 0).toFixed(2)}`;
+            document.getElementById('wallet-page-balance').innerText = `Rs. ${Number(currentProfile.wallet_balance || 0).toFixed(2)}`;
+            document.getElementById('wallet-won').innerText = `Rs. ${Number(currentProfile.total_won || 0).toFixed(0)}`;
+            document.getElementById('wallet-total-won').innerText = `Won: Rs. ${Number(currentProfile.total_won || 0).toFixed(0)}`;
+            document.getElementById('wallet-total-matches').innerText = `Matches: ${currentProfile.total_matches || 0}`;
+            document.getElementById('stat-matches').innerText = currentProfile.total_matches || 0;
+            document.getElementById('stat-wins').innerText = currentProfile.total_wins || 0;
+
+            document.getElementById('profile-display-name').innerText = currentProfile.username || currentProfile.full_name || 'Player';
+            document.getElementById('profile-display-email').innerText = currentProfile.email || currentUser.email;
+            document.getElementById('profile-display-uid').innerText = currentProfile.free_fire_uid || '-';
+            document.getElementById('profile-referral-code').value = currentProfile.referral_code || 'MULTANI123';
+
+            const avatarUrl = currentProfile.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${currentProfile.username || 'default'}`;
+            document.getElementById('header-avatar').src = avatarUrl;
+            document.getElementById('profile-avatar-img').src = avatarUrl;
+        }
+
+        // Load Site Settings / Announcement
+        async function loadSiteSettings() {
+            const { data } = await supabaseClient.from('site_settings').select('*');
+            if (data && data.length > 0) {
+                const setting = data.find(s => s.key === 'announcement' || s.key === 'site_announcement');
+                if (setting && setting.value) {
+                    document.getElementById('announcement-text').innerText = setting.value;
+                    document.getElementById('announcement-bar').classList.remove('hidden');
+                }
+            }
+        }
+
+        function dismissAnnouncement() {
+            document.getElementById('announcement-bar').classList.add('hidden');
+        }
+
+        // Tournaments System
+        async function loadTournaments() {
+            const container = document.getElementById('tournaments-list-container');
+            const homeFeatured = document.getElementById('home-featured-list');
+            container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs"><i class="fa-solid fa-spinner fa-spin"></i> Loading tournaments...</div>`;
+
+            const { data, error } = await supabaseClient
+                .from('tournaments')
+                .select('*')
+                .order('match_date', { ascending: true });
+
+            if (error) {
+                container.innerHTML = `<div class="text-center py-8 text-red-400 text-xs">Failed to load tournaments</div>`;
+                return;
+            }
+
+            allTournamentsCache = data || [];
+            renderTournamentsList();
+            renderFeaturedHome();
+        }
+
+        function renderTournamentsList() {
+            const container = document.getElementById('tournaments-list-container');
+            const query = document.getElementById('tournament-search').value.toLowerCase();
+
+            let filtered = allTournamentsCache.filter(t => {
+                const matchQuery = t.title.toLowerCase().includes(query) || t.map.toLowerCase().includes(query) || t.game.toLowerCase().includes(query);
+                if (activeTournamentFilter === 'all') return matchQuery;
+                return matchQuery && t.status === activeTournamentFilter;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">No tournaments found.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(t => createTournamentCardHTML(t)).join('');
+        }
+
+        function renderFeaturedHome() {
+            const homeFeatured = document.getElementById('home-featured-list');
+            const featured = allTournamentsCache.filter(t => t.is_featured || t.status === 'live' || t.status === 'upcoming').slice(0, 3);
+            if (featured.length === 0) {
+                homeFeatured.innerHTML = `<div class="text-center py-4 text-gray-500 text-xs">No featured matches right now.</div>`;
+                return;
+            }
+            homeFeatured.innerHTML = featured.map(t => createTournamentCardHTML(t)).join('');
+        }
+
+        function setTournamentFilter(filter) {
+            activeTournamentFilter = filter;
+            ['all', 'live', 'upcoming', 'completed'].forEach(f => {
+                const btn = document.getElementById(`filter-btn-${f}`);
+                if (btn) {
+                    if (f === filter) {
+                        btn.className = 'px-3 py-1.5 rounded-xl bg-gaming-neonCyan text-black font-extrabold whitespace-nowrap';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-xl bg-gaming-800 text-gray-300 font-bold whitespace-nowrap border border-slate-700';
+                    }
+                }
+            });
+            renderTournamentsList();
+        }
+
+        function filterTournaments() {
+            renderTournamentsList();
+        }
+
+        function createTournamentCardHTML(t) {
+            const isLive = t.status === 'live';
+            const badgeClass = isLive ? 'bg-red-500 text-white animate-pulse' : t.status === 'upcoming' ? 'bg-gaming-neonCyan text-black' : 'bg-gray-700 text-gray-300';
+            const slotsLeft = (t.max_players || 48) - (t.joined_players || 0);
+
+            return `
+                <div class="bg-gaming-800 border border-slate-700/80 rounded-2xl p-4 shadow-md relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="${badgeClass} text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">${t.status}</span>
+                            <span class="bg-gaming-700 text-gray-300 text-[10px] font-bold px-2 py-0.5 rounded ml-1">${t.mode || 'Solo'} • ${t.map || 'Bermuda'}</span>
+                        </div>
+                        <span class="text-xs font-black text-gaming-neonCyan">Prize: Rs. ${t.prize_pool || 0}</span>
+                    </div>
+                    <h3 class="text-sm font-black text-white mt-1 mb-2">${t.title}</h3>
+                    <div class="grid grid-cols-3 gap-2 py-2 border-t border-b border-slate-700/60 text-[11px] text-gray-300 mb-3">
+                        <div>
+                            <span class="text-gray-500 block text-[10px]">Entry Fee</span>
+                            <span class="font-bold text-white">Rs. ${t.entry_fee || 0}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 block text-[10px]">Slots Left</span>
+                            <span class="font-bold text-gaming-neonPink">${slotsLeft}/${t.max_players || 48}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 block text-[10px]">Match Time</span>
+                            <span class="font-bold text-white">${new Date(t.match_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="openTournamentDetails('${t.id}')" class="flex-1 py-2 bg-gaming-700 hover:bg-gaming-600 text-white text-xs font-bold rounded-xl transition">
+                            VIEW DETAILS
+                        </button>
+                        <button onclick="openTournamentDetails('${t.id}')" class="px-4 py-2 bg-gaming-neonCyan hover:opacity-90 text-black text-xs font-extrabold rounded-xl transition">
+                            JOIN
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Tournament Details & Join/Leave Modal
+        async function openTournamentDetails(tournamentId) {
+            const modal = document.getElementById('modal-tournament-details');
+            const titleEl = document.getElementById('modal-match-title');
+            const bodyEl = document.getElementById('modal-match-body');
+            const footerEl = document.getElementById('modal-match-footer');
+
+            modal.classList.remove('hidden');
+            bodyEl.innerHTML = `<div class="text-center py-6 text-gray-400"><i class="fa-solid fa-spinner fa-spin"></i> Loading details...</div>`;
+            footerEl.innerHTML = '';
+
+            const t = allTournamentsCache.find(item => item.id === tournamentId);
+            if (!t) {
+                bodyEl.innerHTML = `<div class="text-center py-6 text-red-400">Tournament not found</div>`;
+                return;
+            }
+
+            titleEl.innerText = t.title;
+
+            // Check if current user joined this tournament
+            let isJoined = false;
+            let roomCredentials = null;
+            if (currentUser) {
+                const { data: participantData } = await supabaseClient
+                    .from('tournament_participants')
+                    .select('*')
+                    .eq('tournament_id', t.id)
+                    .eq('user_id', currentUser.id)
+                    .single();
+                if (participantData) isJoined = true;
+            }
+
+            bodyEl.innerHTML = `
+                <div class="space-y-3">
+                    <p class="text-gray-300 text-xs">${t.description || 'No description provided.'}</p>
+                    <div class="grid grid-cols-2 gap-2 bg-gaming-900 p-3 rounded-xl border border-slate-700">
+                        <div><span class="text-gray-500 text-[10px] block">Game / Mode</span><span class="font-bold text-white">${t.game || 'Free Fire'} (${t.mode})</span></div>
+                        <div><span class="text-gray-500 text-[10px] block">Map</span><span class="font-bold text-white">${t.map}</span></div>
+                        <div><span class="text-gray-500 text-[10px] block">Entry Fee</span><span class="font-bold text-gaming-neonCyan">Rs. ${t.entry_fee}</span></div>
+                        <div><span class="text-gray-500 text-[10px] block">Prize Pool</span><span class="font-bold text-gaming-neonGreen">Rs. ${t.prize_pool}</span></div>
+                        <div><span class="text-gray-500 text-[10px] block">Match Date</span><span class="font-bold text-white">${new Date(t.match_date).toLocaleString()}</span></div>
+                        <div><span class="text-gray-500 text-[10px] block">Slots</span><span class="font-bold text-white">${t.joined_players || 0} / ${t.max_players}</span></div>
+                    </div>
+                    
+                    ${isJoined && t.room_id ? `
+                        <div class="bg-emerald-500/10 border border-emerald-500/40 p-3 rounded-xl space-y-1">
+                            <span class="text-gaming-neonGreen font-bold block text-xs">🏆 Room Credentials Unlocked!</span>
+                            <div class="flex justify-between text-xs pt-1">
+                                <span>Room ID: <b>${t.room_id}</b></span>
+                                <span>Password: <b>${t.room_password || 'N/A'}</b></span>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="bg-gaming-900 p-3 rounded-xl border border-slate-700 space-y-1">
+                        <span class="font-bold text-white text-xs block">Rules & Regulations:</span>
+                        <p class="text-gray-400 text-[11px] leading-relaxed">${t.rules || 'No emulator. Fair play only. Screenshot required for winner claims.'}</p>
+                    </div>
+                </div>
+            `;
+
+            if (isJoined) {
+                footerEl.innerHTML = `
+                    <button onclick="leaveTournamentAction('${t.id}')" class="w-full py-3 bg-red-600/20 border border-red-500 text-red-400 font-extrabold rounded-xl hover:bg-red-600 hover:text-white transition">
+                        LEAVE TOURNAMENT
+                    </button>
+                `;
+            } else {
+                footerEl.innerHTML = `
+                    <button onclick="joinTournamentAction('${t.id}')" class="w-full py-3 bg-gaming-neonCyan text-black font-extrabold rounded-xl hover:opacity-90 transition shadow-lg">
+                        JOIN MATCH (Rs. ${t.entry_fee})
+                    </button>
+                `;
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Join Tournament using RPC
+        async function joinTournamentAction(tournamentId) {
+            if (!currentUser) {
+                showToast('Please login first', 'error');
+                return;
+            }
+            if (!confirm('Are you sure you want to join this tournament? Entry fee will be deducted.')) return;
+
+            showToast('Processing tournament join...', 'info');
+            const { data, error } = await supabaseClient.rpc('join_tournament', {
+                tournament_uuid: tournamentId,
+                user_uuid: currentUser.id
+            });
+
+            if (error) {
+                showToast(error.message || 'Failed to join tournament', 'error');
+            } else {
+                showToast('✅ Tournament successfully joined!', 'success');
+                closeModal('modal-tournament-details');
+                loadTournaments();
+                fetchUserProfile();
+            }
+        }
+
+        // Leave Tournament using RPC
+        async function leaveTournamentAction(tournamentId) {
+            if (!confirm('Are you sure you want to leave this match?')) return;
+
+            const { data, error } = await supabaseClient.rpc('leave_tournament', {
+                tournament_uuid: tournamentId,
+                user_uuid: currentUser.id
+            });
+
+            if (error) {
+                showToast(error.message || 'Failed to leave match', 'error');
+            } else {
+                showToast('Successfully left the tournament', 'success');
+                closeModal('modal-tournament-details');
+                loadTournaments();
+                fetchUserProfile();
+            }
+        }
+
+        // My Matches View
+        async function loadMyMatches() {
+            const container = document.getElementById('my-matches-container');
+            container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs"><i class="fa-solid fa-spinner fa-spin"></i> Loading joined matches...</div>`;
+
+            if (!currentUser) return;
+
+            const { data, error } = await supabaseClient
+                .from('tournament_participants')
+                .select('tournaments(*)')
+                .eq('user_id', currentUser.id);
+
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">You haven't joined any matches yet.</div>`;
+                return;
+            }
+
+            const matches = data.map(item => item.tournaments).filter(Boolean);
+            container.innerHTML = matches.map(t => createTournamentCardHTML(t)).join('');
+        }
+
+        // Wallet & Deposit
+        async function loadWalletData() {
+            if (!currentUser) return;
+            const { data } = await supabaseClient
+                .from('payments')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            const listContainer = document.getElementById('wallet-transactions-list');
+            if (!data || data.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-6 text-gray-500 text-xs">No deposit requests found.</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = data.map(p => {
+                const badgeColor = p.status === 'approved' ? 'text-gaming-neonGreen bg-emerald-500/10 border-emerald-500/30' : p.status === 'rejected' ? 'text-red-400 bg-red-500/10 border-red-500/30' : 'text-amber-400 bg-amber-500/10 border-amber-500/30';
+                return `
+                    <div class="bg-gaming-800 border border-slate-700 rounded-xl p-3 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="font-bold text-white block">Rs. ${p.amount} (${p.payment_method || 'Deposit'})</span>
+                            <span class="text-[10px] text-gray-400 font-mono">Trx: ${p.transaction_id || p.reference_id || 'N/A'}</span>
+                        </div>
+                        <span class="${badgeColor} px-2.5 py-1 rounded-lg border text-[10px] font-extrabold uppercase">${p.status}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openDepositModal() {
+            document.getElementById('modal-deposit').classList.remove('hidden');
+        }
+
+        async function submitDepositRequest(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('dep-amount').value);
+            const payment_method = document.getElementById('dep-method').value;
+            const transaction_id = document.getElementById('dep-trx').value;
+            const screenshot_url = document.getElementById('dep-screenshot').value;
+
+            const { error } = await supabaseClient.from('payments').insert([{
+                user_id: currentUser.id,
+                amount,
+                payment_method,
+                transaction_id,
+                screenshot_url,
+                status: 'pending'
+            }]);
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Deposit request submitted! Awaiting admin approval.', 'success');
+                closeModal('modal-deposit');
+                loadWalletData();
+            }
+        }
+
+        // Leaderboard
+        async function loadLeaderboard() {
+            const container = document.getElementById('leaderboard-container');
+            container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs"><i class="fa-solid fa-spinner fa-spin"></i> Loading top players...</div>`;
+
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .order('total_won', { ascending: false })
+                .limit(20);
+
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">No leaderboard stats available.</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map((p, index) => `
+                <div class="bg-gaming-800 border border-slate-700 rounded-xl p-3 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-sm w-6 text-center ${index === 0 ? 'text-amber-400' : index === 1 ? 'text-gray-300' : index === 2 ? 'text-amber-600' : 'text-gray-500'}">#${index + 1}</span>
+                        <img src="${p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.username}`}" class="w-9 h-9 rounded-xl bg-gaming-700 object-cover border border-slate-600">
+                        <div>
+                            <span class="font-bold text-white block">${p.username || p.full_name || 'Gamer'}</span>
+                            <span class="text-[10px] text-gray-400">UID: ${p.free_fire_uid || '-'}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-black text-gaming-neonGreen block">Rs. ${p.total_won || 0}</span>
+                        <span class="text-[10px] text-gray-400">${p.total_wins || 0} Wins</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Giveaways
+        async function loadGiveaways() {
+            const container = document.getElementById('giveaways-container');
+            container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs"><i class="fa-solid fa-spinner fa-spin"></i> Loading giveaways...</div>`;
+
+            const { data, error } = await supabaseClient.from('giveaways').select('*');
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">No active giveaways right now.</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(g => `
+                <div class="bg-gaming-800 border border-slate-700 rounded-2xl p-4 space-y-2">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded">🎉 GIVEAWAY</span>
+                        <span class="text-xs font-black text-gaming-neonCyan">${g.prize || 'Free Pass'}</span>
+                    </div>
+                    <h3 class="text-sm font-black text-white">${g.title || 'Special Giveaway'}</h3>
+                    <p class="text-xs text-gray-300">${g.description || 'Join now to participate.'}</p>
+                    <button onclick="joinGiveaway('${g.id}')" class="w-full py-2.5 bg-amber-500 text-black font-extrabold rounded-xl text-xs hover:opacity-95 transition">
+                        ENTER GIVEAWAY
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function joinGiveaway(giveawayId) {
+            if (!currentUser) return showToast('Please login', 'error');
+            const { error } = await supabaseClient.from('giveaway_entries').insert([{ giveaway_id: giveawayId, user_id: currentUser.id }]);
+            if (error) showToast(error.message || 'Already entered or error', 'error');
+            else showToast('Successfully entered giveaway!', 'success');
+        }
+
+        // Support Chat
+        async function loadSupportMessages() {
+            const container = document.getElementById('support-messages-list');
+            if (!currentUser) return;
+
+            const { data, error } = await supabaseClient
+                .from('support_messages')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: true });
+
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">No support messages yet. Type below to contact Admin.</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(m => {
+                const isAdmin = m.is_admin || m.sender === 'admin';
+                return `
+                    <div class="flex flex-col ${isAdmin ? 'items-start' : 'items-end'}">
+                        <div class="max-w-[80%] rounded-xl px-3 py-2 text-xs ${isAdmin ? 'bg-gaming-700 text-white border border-slate-600' : 'bg-gaming-neonGreen text-black font-medium'}">
+                            ${m.message}
+                        </div>
+                        <span class="text-[9px] text-gray-500 mt-0.5">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                    </div>
+                `;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendSupportMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('support-input');
+            const message = input.value.trim();
+            if (!message || !currentUser) return;
+
+            const { error } = await supabaseClient.from('support_messages').insert([{
+                user_id: currentUser.id,
+                message,
+                sender: 'user'
+            }]);
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                input.value = '';
+                loadSupportMessages();
+            }
+        }
+
+        // Notifications
+        async function loadNotifications() {
+            const container = document.getElementById('notifications-list');
+            if (!currentUser) return;
+
+            const { data, error } = await supabaseClient
+                .from('notifications')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">No notifications.</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(n => `
+                <div class="bg-gaming-800 border border-slate-700 rounded-xl p-3 text-xs space-y-1">
+                    <span class="font-bold text-white block">${n.title || 'Notification'}</span>
+                    <p class="text-gray-300 text-[11px]">${n.message}</p>
+                    <span class="text-[9px] text-gray-500 block">${new Date(n.created_at).toLocaleString()}</span>
+                </div>
+            `).join('');
+        }
+
+        async function loadNotificationsBadge() {
+            if (!currentUser) return;
+            const { count, error } = await supabaseClient
+                .from('notifications')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', currentUser.id)
+                .eq('is_read', false);
+
+            if (count && count > 0) {
+                const badge = document.getElementById('notif-badge');
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+            }
+        }
+
+        async function markAllNotificationsRead() {
+            if (!currentUser) return;
+            await supabaseClient.from('notifications').update({ is_read: true }).eq('user_id', currentUser.id);
+            document.getElementById('notif-badge').classList.add('hidden');
+            showToast('All notifications marked as read', 'success');
+        }
+
+        // Profile Editing
+        function openEditProfileModal() {
+            if (!currentProfile) return;
+            document.getElementById('edit-fullname').value = currentProfile.full_name || '';
+            document.getElementById('edit-phone').value = currentProfile.phone || '';
+            document.getElementById('edit-ff-name').value = currentProfile.free_fire_name || '';
+            document.getElementById('modal-edit-profile').classList.remove('hidden');
+        }
+
+        async function submitEditProfile(e) {
+            e.preventDefault();
+            const full_name = document.getElementById('edit-fullname').value;
+            const phone = document.getElementById('edit-phone').value;
+            const free_fire_name = document.getElementById('edit-ff-name').value;
+
+            const { error } = await supabaseClient
+                .from('profiles')
+                .update({ full_name, phone, free_fire_name })
+                .eq('id', currentUser.id);
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Profile updated successfully', 'success');
+                closeModal('modal-edit-profile');
+                fetchUserProfile();
+            }
+        }
+
+        function copyReferralCode() {
+            const codeInput = document.getElementById('profile-referral-code');
+            navigator.clipboard.writeText(codeInput.value);
+            showToast('Referral code copied to clipboard!', 'success');
+        }
+
+        // Realtime Subscriptions
+        function setupRealtimeSubscriptions() {
+            supabaseClient.channel('public-db-changes')
+                .on('postgres_changes', { event: '*', schema: 'public' }, payload => {
+                    if (payload.table === 'tournaments') loadTournaments();
+                    if (payload.table === 'profiles' && currentUser && payload.new.id === currentUser.id) {
+                        currentProfile = payload.new;
+                        updateProfileUI();
+                    }
+                    if (payload.table === 'notifications' && currentUser) {
+                        loadNotificationsBadge();
+                    }
+                    if (payload.table === 'support_messages' && currentUser) {
+                        loadSupportMessages();
+                    }
+                })
+                .subscribe();
+        }
+    </script>
 </body>
 </html>
