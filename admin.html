@@ -308,8 +308,8 @@
 
                 if (settings.data) {
                     settings.data.forEach(s => {
-                        const k = s.setting_key || s.key;
-                        const v = s.setting_value || s.value;
+                        const k = s.key || s.setting_key;
+                        const v = s.value || s.setting_value;
                         if (k) state.settingsCache[k] = v;
                     });
                 }
@@ -501,20 +501,10 @@
 
             setGlobalLoading(true, 'UPDATING SCROLLING TEXT...');
             try {
-                // Direct update without upsert conflict issues
-                const { data: existing } = await supabaseClient.from('site_settings').select('*').limit(1);
-                
-                let error;
-                // Check if row with announcement_text exists
-                const { data: targetRow } = await supabaseClient.from('site_settings').select('*').eq('setting_key', 'announcement_text').maybeSingle();
-
-                if (targetRow) {
-                    const res = await supabaseClient.from('site_settings').update({ setting_value: newText }).eq('setting_key', 'announcement_text');
-                    error = res.error;
-                } else {
-                    const res = await supabaseClient.from('site_settings').insert({ setting_key: 'announcement_text', setting_value: newText });
-                    error = res.error;
-                }
+                const { error } = await supabaseClient.from('site_settings').upsert({
+                    key: 'announcement_text',
+                    value: newText
+                }, { onConflict: 'key' });
 
                 if (error) throw error;
                 showToast('Scrolling announcement updated!', 'success');
