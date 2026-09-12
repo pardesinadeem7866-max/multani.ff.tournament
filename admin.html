@@ -515,20 +515,16 @@
                         setting_value: newText
                     })
                     .eq('setting_key', 'announcement_text')
-                    .select();
+                    .select('id, setting_key, setting_value');
 
                 if (error) {
                     throw error;
                 }
 
                 if (!data || data.length === 0) {
-                    const { error: upsertError } = await supabaseClient
-                        .from('site_settings')
-                        .upsert({
-                            setting_key: 'announcement_text',
-                            setting_value: newText
-                        }, { onConflict: 'setting_key' });
-                    if (upsertError) throw upsertError;
+                    throw new Error(
+                        'Announcement update failed. Check site_settings RLS policy.'
+                    );
                 }
 
                 state.settingsCache.announcement_text = newText;
