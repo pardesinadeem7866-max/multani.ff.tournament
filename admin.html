@@ -297,7 +297,7 @@
                     supabaseClient.from('profiles').select('*').order('created_at', { ascending: false }),
                     supabaseClient.from('winners').select('*').order('created_at', { ascending: false }),
                     supabaseClient.from('giveaways').select('*').order('created_at', { ascending: false }),
-                    supabaseClient.from('site_settings').select('*')
+                    supabaseClient.from('site_settings').select('setting_key, setting_value')
                 ]);
 
                 state.tournamentsCache = tourns.data || [];
@@ -306,13 +306,17 @@
                 state.winnersCache = winners.data || [];
                 state.giveawaysCache = giveaways.data || [];
 
-                if (settings.data) {
+                state.settingsCache = {};
+
+                if (settings.data && Array.isArray(settings.data)) {
                     settings.data.forEach(s => {
-                        const k = s.setting_key || s.key;
-                        const v = s.setting_value || s.value;
-                        if (k) state.settingsCache[k] = v;
+                        if (s.setting_key) {
+                            state.settingsCache[s.setting_key] = s.setting_value ?? '';
+                        }
                     });
                 }
+
+                console.log('Loaded site settings:', state.settingsCache);
             } catch (err) {
                 console.error('Fetch admin data error:', err);
             }
@@ -484,8 +488,8 @@
                         ${winners.length === 0 ? `<p class="text-xs text-slate-500">No winners announced yet.</p>` : winners.map(w => `
                             <div class="glass-card rounded-xl p-3 border border-cardBorder flex justify-between items-center text-xs">
                                 <div>
-                                    <strong class="text-white">${escapeHTML(w.player_name)}</strong> (UID: ${escapeHTML(w.free_fire_uid)})
-                                    <div class="text-[10px] text-slate-400">Proof: ${w.payment_proof ? `<a href="${escapeHTML(w.payment_proof)}" target="_blank" class="text-neonYellow underline">View Image</a>` : 'N/A'}</div>
+                                    <strong class="text-white">${escapeHTML(w.player_name || w.ign)}</strong> (UID: ${escapeHTML(w.free_fire_uid)})
+                                    <div class="text-[10px] text-slate-400">Prize: ${formatCurrency(w.prize_amount)}</div>
                                 </div>
                                 <button onclick="deleteWinner('${w.id}')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
@@ -554,24 +558,13 @@
             e.preventDefault();
             const playerName = document.getElementById('w-name').value.trim();
             const freeFireUid = document.getElementById('w-uid').value.trim();
-            const fileInput = document.getElementById('w-proof-file');
             
-            setGlobalLoading(true, 'UPLOADING & PUBLISHING...');
+            setGlobalLoading(true, 'PUBLISHING...');
             try {
-                let proofUrl = '';
-                if (fileInput.files && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    proofUrl = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.readAsDataURL(file);
-                    });
-                }
-
                 const { error } = await supabaseClient.from('winners').insert({
-                    player_name: playerName,
+                    ign: playerName,
                     free_fire_uid: freeFireUid,
-                    payment_proof: proofUrl
+                    prize_amount: 100
                 });
                 if (error) throw error;
                 showToast('Winner announced successfully!', 'success');
