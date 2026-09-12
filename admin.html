@@ -119,7 +119,7 @@
             <!-- Content injected dynamically via JS router -->
         </main>
 
-        <!-- BOTTOM NAVIGATION BAR (New 4 Buttons) -->
+        <!-- BOTTOM NAVIGATION BAR -->
         <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto glass-card border-t border-cardBorder px-2 py-2 z-40 flex items-center justify-around">
             <button onclick="navigateTo('admin-dashboard')" data-nav="admin-dashboard" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-neonRed transition">
                 <i class="fa-solid fa-house text-lg mb-0.5"></i>
@@ -221,12 +221,6 @@
             return `Rs. ${Number(amount || 0).toLocaleString()}`;
         }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return 'TBD';
-            const d = new Date(dateStr);
-            return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        }
-
         function navigateTo(viewName, params = {}, pushHistory = true) {
             if (viewName === 'user-home') {
                 window.location.href = 'index.html';
@@ -289,7 +283,6 @@
                 navigateTo('admin-dashboard', {}, false);
             } catch (err) {
                 console.error('Admin init error:', err);
-                showToast('Data load warning.', 'error');
                 navigateTo('admin-dashboard', {}, false);
             } finally {
                 setGlobalLoading(false);
@@ -365,8 +358,6 @@
             }
         }
 
-        // ==================== VIEWS ====================
-
         function renderAdminDashboard() {
             const totalTourneys = state.tournamentsCache.length;
             const activeTourneys = state.tournamentsCache.filter(t => t.status === 'live' || t.status === 'upcoming').length;
@@ -375,7 +366,6 @@
 
             return `
                 <div class="p-3 flex flex-col space-y-3">
-                    <!-- 4 Compact Stats Boxes -->
                     <div class="grid grid-cols-2 gap-2">
                         <div class="glass-card rounded-xl p-2.5 border border-cardBorder">
                             <span class="text-[9px] text-slate-400 font-medium block">Total Tournaments</span>
@@ -399,31 +389,30 @@
                         </div>
                     </div>
 
-                    <!-- 6 Feature Buttons -->
                     <div class="glass-card rounded-2xl p-3.5 border border-cardBorder space-y-2.5">
                         <h3 class="heading-font font-bold text-sm text-white">Admin Control Modules</h3>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="navigateTo('admin-winner-announcement')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-neonYellow/50 transition active:scale-95">
+                            <button onclick="navigateTo('admin-winner-announcement')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-neonYellow/50 transition">
                                 <i class="fa-solid fa-trophy text-neonYellow text-sm"></i>
                                 <span class="text-center">Winner Announcement</span>
                             </button>
-                            <button onclick="navigateTo('admin-register-players')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-accentBlue/50 transition active:scale-95">
+                            <button onclick="navigateTo('admin-register-players')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-accentBlue/50 transition">
                                 <i class="fa-solid fa-users-rectangle text-accentBlue text-sm"></i>
                                 <span class="text-center">Register Player List</span>
                             </button>
-                            <button onclick="navigateTo('admin-tournaments-list')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-neonRed/50 transition active:scale-95">
+                            <button onclick="navigateTo('admin-tournaments-list')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-neonRed/50 transition">
                                 <i class="fa-solid fa-gamepad text-neonRed text-sm"></i>
                                 <span class="text-center">Tournaments</span>
                             </button>
-                            <button onclick="navigateTo('admin-chat')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-emerald-400/50 transition active:scale-95">
+                            <button onclick="navigateTo('admin-chat')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-emerald-400/50 transition">
                                 <i class="fa-solid fa-comments text-emerald-400 text-sm"></i>
                                 <span class="text-center">Chat</span>
                             </button>
-                            <button onclick="navigateTo('admin-payment')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-neonYellow/50 transition active:scale-95">
+                            <button onclick="navigateTo('admin-payment')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-neonYellow/50 transition">
                                 <i class="fa-solid fa-wallet text-neonYellow text-sm"></i>
                                 <span class="text-center">Payment</span>
                             </button>
-                            <button onclick="navigateTo('admin-users')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-purple-400/50 transition active:scale-95">
+                            <button onclick="navigateTo('admin-users')" class="py-2.5 px-2 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs font-semibold flex flex-col items-center justify-center space-y-1 hover:bg-slate-700 hover:border-purple-400/50 transition">
                                 <i class="fa-solid fa-users-gear text-purple-400 text-sm"></i>
                                 <span class="text-center">User List & Ban</span>
                             </button>
@@ -447,10 +436,9 @@
             `;
         }
 
-        // --- SUB-PAGES ---
-
         function renderWinnerAnnouncementPage() {
             const winners = state.winnersCache || [];
+            const currentMarquee = state.settingsCache.announcement_text || '';
 
             return `
                 <div class="p-4 flex flex-col space-y-4">
@@ -458,11 +446,22 @@
                         <button onclick="goBack()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 hover:bg-slate-700 transition">
                             <i class="fa-solid fa-arrow-left text-sm"></i>
                         </button>
-                        <h2 class="heading-font font-bold text-xl text-white">Winner Announcement</h2>
+                        <h2 class="heading-font font-bold text-xl text-white">Winner & Announcement Control</h2>
                     </div>
 
+                    <!-- Marquee Text Updater Form -->
+                    <form onsubmit="handleMarqueeSubmit(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
+                        <h3 class="font-bold text-xs text-neonYellow uppercase tracking-wider"><i class="fa-solid fa-bullhorn mr-1"></i> Live Scrolling Text (Marquee)</h3>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Text to scroll on website</label>
+                            <input type="text" id="m-text" value="${escapeHTML(currentMarquee)}" required placeholder="Type announcement to scroll on app..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neonRed">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-bold hover:bg-slate-700 transition">Update Scrolling Line</button>
+                    </form>
+
+                    <!-- Publish Winner Form -->
                     <form onsubmit="handleWinnerSubmit(event)" class="glass-card rounded-2xl p-4 border border-cardBorder space-y-3">
-                        <h3 class="font-bold text-xs text-neonYellow uppercase tracking-wider">Publish New Winner</h3>
+                        <h3 class="font-bold text-xs text-neonYellow uppercase tracking-wider"><i class="fa-solid fa-trophy mr-1"></i> Publish Winner & Proof</h3>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Player Name</label>
                             <input type="text" id="w-name" required placeholder="Enter player name" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neonRed">
@@ -472,14 +471,14 @@
                             <input type="text" id="w-uid" required placeholder="Enter Free Fire UID" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neonRed">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Screenshot</label>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Payment Screenshot / Proof</label>
                             <input type="file" id="w-proof-file" accept="image/*" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neonRed file:text-white hover:file:bg-rose-600 focus:outline-none">
                         </div>
-                        <button type="submit" class="w-full py-2.5 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Publish Announcement</button>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-neonRed text-white text-xs font-bold shadow-lg neon-glow-red hover:bg-rose-600 transition">Publish Winner Announcement</button>
                     </form>
 
                     <div class="space-y-2">
-                        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider">Recent Announcements</h3>
+                        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider">Published Winners</h3>
                         ${winners.length === 0 ? `<p class="text-xs text-slate-500">No winners announced yet.</p>` : winners.map(w => `
                             <div class="glass-card rounded-xl p-3 border border-cardBorder flex justify-between items-center text-xs">
                                 <div>
@@ -492,6 +491,28 @@
                     </div>
                 </div>
             `;
+        }
+
+        async function handleMarqueeSubmit(e) {
+            e.preventDefault();
+            const newText = document.getElementById('m-text').value.trim();
+
+            setGlobalLoading(true, 'UPDATING SCROLLING TEXT...');
+            try {
+                const { error } = await supabaseClient.from('site_settings').upsert({
+                    key: 'announcement_text',
+                    value: newText
+                }, { onConflict: 'key' });
+
+                if (error) throw error;
+                showToast('Scrolling announcement updated!', 'success');
+                await fetchAdminData();
+                renderCurrentView();
+            } catch (err) {
+                showToast(err.message || 'Failed to update marquee text.', 'error');
+            } finally {
+                setGlobalLoading(false);
+            }
         }
 
         async function handleWinnerSubmit(e) {
@@ -591,7 +612,7 @@
                         ${tourns.map(t => `
                             <div class="glass-card rounded-2xl p-4 border border-cardBorder space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold text-neonYellow uppercase">${escapeHTML(t.game)} • ${escapeHTML(t.mode)} • Map: ${escapeHTML(t.map || 'Bermuda')}</span>
+                                    <span class="text-[10px] font-bold text-neonYellow uppercase">${escapeHTML(t.game)} • ${escapeHTML(t.mode)}</span>
                                     <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] uppercase">${escapeHTML(t.status)}</span>
                                 </div>
                                 <h4 class="font-bold text-sm text-white">${escapeHTML(t.title)}</h4>
@@ -618,7 +639,7 @@
                     <div class="glass-card rounded-2xl p-6 text-center space-y-3 border border-cardBorder">
                         <i class="fa-solid fa-comments text-4xl text-emerald-400 mb-1"></i>
                         <h3 class="font-bold text-sm text-white">Live Moderation Chat</h3>
-                        <p class="text-xs text-slate-400">Monitor community conversations and broadcast announcements directly to the player app chatroom.</p>
+                        <p class="text-xs text-slate-400">Monitor community conversations.</p>
                     </div>
                 </div>
             `;
@@ -702,9 +723,7 @@
 
             setGlobalLoading(true, 'CREATING GIVEAWAY...');
             try {
-                const { error } = await supabaseClient.from('giveaways').insert({
-                    title, code, description
-                });
+                const { error } = await supabaseClient.from('giveaways').insert({ title, code, description });
                 if (error) throw error;
                 showToast('Giveaway created successfully!', 'success');
                 await fetchAdminData();
@@ -766,7 +785,6 @@
                             </div>
                         </div>
 
-                        <!-- FREE FIRE MAP FILTER -->
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-300 mb-0.5"><i class="fa-solid fa-map text-neonYellow mr-1"></i> Free Fire Map Filter</label>
                             <select id="t-map" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-neonRed">
@@ -869,7 +887,6 @@
                 await fetchAdminData();
                 navigateTo('admin-tournaments-list');
             } catch (err) {
-                console.error('Save tournament error:', err);
                 showToast(err.message || 'Failed to save tournament.', 'error');
             } finally {
                 setGlobalLoading(false);
@@ -888,7 +905,6 @@
                 await fetchAdminData();
                 renderCurrentView();
             } catch (err) {
-                console.error('Delete tournament error:', err);
                 showToast(err.message || 'Failed to delete tournament.', 'error');
             } finally {
                 setGlobalLoading(false);
@@ -937,6 +953,11 @@
                                             <div class="col-span-2">
                                                 <span class="text-slate-400">TID:</span> <strong class="font-mono text-white">${escapeHTML(d.transaction_id || 'N/A')}</strong>
                                             </div>
+                                            ${d.screenshot_url ? `
+                                                <div class="col-span-2 pt-1">
+                                                    <a href="${escapeHTML(d.screenshot_url)}" target="_blank" class="text-xs text-neonYellow underline"><i class="fa-solid fa-image mr-1"></i> View Payment Screenshot</a>
+                                                </div>
+                                            ` : ''}
                                         </div>
 
                                         ${d.status === 'pending' ? `
@@ -975,7 +996,6 @@
                 await fetchAdminData();
                 renderCurrentView();
             } catch (err) {
-                console.error('Approve deposit error:', err);
                 showToast(err.message || 'Failed to approve deposit.', 'error');
             } finally {
                 setGlobalLoading(false);
@@ -987,12 +1007,10 @@
             try {
                 const { error } = await supabaseClient.from('deposit_requests').update({ status: 'rejected' }).eq('id', depositId);
                 if (error) throw error;
-
                 showToast('Deposit request rejected.', 'success');
                 await fetchAdminData();
                 renderCurrentView();
             } catch (err) {
-                console.error('Reject deposit error:', err);
                 showToast(err.message || 'Failed to reject deposit.', 'error');
             } finally {
                 setGlobalLoading(false);
