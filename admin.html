@@ -497,32 +497,57 @@
 
         async function handleMarqueeSubmit(e) {
             e.preventDefault();
-            const newText = document.getElementById('m-text').value.trim();
+
+            const input = document.getElementById('m-text');
+            const newText = input ? input.value.trim() : '';
+
+            if (!newText) {
+                showToast('Please enter announcement text.', 'error');
+                return;
+            }
 
             setGlobalLoading(true, 'UPDATING SCROLLING TEXT...');
+
             try {
-                // Delete old announcement and insert fresh to completely bypass any RLS/upsert conflict
-                await supabaseClient.from('site_settings').delete().eq('setting_key', 'announcement_text');
-                await supabaseClient.from('site_settings').delete().eq('key', 'announcement_text');
+                const {
+                    data: { session },
+                    error: sessionError
+                } = await supabaseClient.auth.getSession();
 
-                const { error } = await supabaseClient.from('site_settings').insert({
-                    setting_key: 'announcement_text',
-                    setting_value: newText
-                });
+                if (sessionError) throw sessionError;
 
-                if (error) {
-                    const { error: err2 } = await supabaseClient.from('site_settings').insert({
-                        key: 'announcement_text',
-                        value: newText
-                    });
-                    if (err2) throw err2;
+                if (!session?.user) {
+                    throw new Error('Admin login session expired. Please login again.');
                 }
 
-                showToast('Scrolling announcement updated!', 'success');
+                const { error } = await supabaseClient.rpc(
+                    'admin_update_site_setting',
+                    {
+                        p_key: 'announcement_text',
+                        p_value: newText
+                    }
+                );
+
+                if (error) throw error;
+
+                state.settingsCache.announcement_text = newText;
+
+                showToast(
+                    'Scrolling announcement updated successfully!',
+                    'success'
+                );
+
                 await fetchAdminData();
                 renderCurrentView();
+
             } catch (err) {
-                showToast(err.message || 'Failed to update marquee text.', 'error');
+                console.error('Marquee update error:', err);
+
+                showToast(
+                    err?.message || 'Failed to update scrolling announcement.',
+                    'error'
+                );
+
             } finally {
                 setGlobalLoading(false);
             }
