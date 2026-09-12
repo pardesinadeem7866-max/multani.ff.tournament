@@ -520,10 +520,49 @@
             }
         }
 
+        function showAnnouncementPopupModal() {
+            const announcement = state.siteSettings.announcement_text || 'Welcome to Multani FF Official Esports Platform! Join matches & win big prizes.';
+            const latestWinner = state.winnersCache[0];
+
+            let modalHtml = `
+                <div class="glass-card rounded-2xl p-5 max-w-sm w-full border border-cardBorder space-y-4 text-center relative">
+                    <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+                    <div class="w-12 h-12 rounded-2xl bg-neonYellow/10 text-neonYellow flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <h3 class="heading-font font-bold text-lg text-white">Latest Announcement</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">${escapeHTML(announcement)}</p>
+            `;
+
+            if (latestWinner) {
+                modalHtml += `
+                    <div class="pt-3 border-t border-slate-800 space-y-2">
+                        <span class="text-[10px] uppercase font-bold text-neonGreen tracking-wider block">Latest Winner Proof</span>
+                        <div class="text-xs text-white"><strong>${escapeHTML(latestWinner.player_name)}</strong> (UID: ${escapeHTML(latestWinner.free_fire_uid)})</div>
+                        ${latestWinner.payment_proof ? `<img src="${escapeHTML(latestWinner.payment_proof)}" class="w-full h-36 object-cover rounded-xl border border-slate-700">` : ''}
+                    </div>
+                `;
+            }
+
+            modalHtml += `
+                    <button onclick="closeModal()" class="w-full py-2.5 rounded-xl bg-neonRed text-white text-xs font-bold">Close</button>
+                </div>
+            `;
+
+            const modalRoot = document.getElementById('modal-root');
+            modalRoot.innerHTML = modalHtml;
+            modalRoot.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const modalRoot = document.getElementById('modal-root');
+            modalRoot.classList.add('hidden');
+            modalRoot.innerHTML = '';
+        }
+
         function renderHomeView() {
             const profile = state.currentProfile || {};
             const featuredTournaments = state.tournamentsCache.filter(t => t.is_featured || t.status === 'upcoming' || t.status === 'live').slice(0, 5);
-            const recentWinners = state.winnersCache.slice(0, 3);
             const announcement = state.siteSettings.announcement_text || 'Welcome to Multani FF Official Esports Platform! Join matches & win big prizes.';
 
             const displayName = escapeHTML(profile.username || profile.full_name || 'Free Fire Warrior');
@@ -532,12 +571,15 @@
 
             return `
                 <div class="p-4 flex flex-col space-y-5">
-                    <div class="glass-card rounded-xl p-3 border-neonYellow/20 bg-gradient-to-r from-amber-950/20 to-darkBg flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-neonYellow/10 flex items-center justify-center text-neonYellow flex-shrink-0">
+                    <!-- Live Scrolling Marquee Banner with Clickable Horn Button -->
+                    <div class="glass-card rounded-xl p-3 border-neonYellow/20 bg-gradient-to-r from-amber-950/20 to-darkBg flex items-center space-x-3 overflow-hidden">
+                        <button onclick="showAnnouncementPopupModal()" class="w-8 h-8 rounded-lg bg-neonYellow/10 flex items-center justify-center text-neonYellow flex-shrink-0 hover:bg-neonYellow/20 transition cursor-pointer" title="View Announcements">
                             <i class="fa-solid fa-bullhorn text-sm"></i>
-                        </div>
-                        <div class="overflow-hidden flex-1">
-                            <p class="text-xs text-slate-300 font-medium whitespace-nowrap">${escapeHTML(announcement)}</p>
+                        </button>
+                        <div class="overflow-hidden flex-1 relative whitespace-nowrap">
+                            <marquee scrollamount="5" class="text-xs text-slate-300 font-medium">
+                                <span>${escapeHTML(announcement)}</span>
+                            </marquee>
                         </div>
                     </div>
 
