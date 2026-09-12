@@ -308,7 +308,9 @@
 
                 if (settings.data) {
                     settings.data.forEach(s => {
-                        if (s.key) state.settingsCache[s.key] = s.value;
+                        const k = s.setting_key || s.key;
+                        const v = s.setting_value || s.value;
+                        if (k) state.settingsCache[k] = v;
                     });
                 }
             } catch (err) {
@@ -500,9 +502,9 @@
             setGlobalLoading(true, 'UPDATING SCROLLING TEXT...');
             try {
                 const { error } = await supabaseClient.from('site_settings').upsert({
-                    key: 'announcement_text',
-                    value: newText
-                }, { onConflict: 'key' });
+                    setting_key: 'announcement_text',
+                    setting_value: newText
+                }, { onConflict: 'setting_key' });
 
                 if (error) throw error;
                 showToast('Scrolling announcement updated!', 'success');
